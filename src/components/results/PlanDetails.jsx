@@ -12,6 +12,8 @@ import {
   FiInfo,
 } from "react-icons/fi";
 import { motion } from "framer-motion";
+import { TbCheck, TbClockDollar, TbMailFilled, TbPhone, TbPhoneCall, TbShieldHalfFilled } from "react-icons/tb";
+import { FaUserDoctor } from "react-icons/fa6";
 
 const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
   if (!plan) return null;
@@ -29,33 +31,25 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
 
   // Coverage Card Component
   const CoverageCard = ({ title, amount, icon, color }) => (
-    <div
-      className={`${
-        color === "primary"
-          ? "bg-primary-500/10 border-primary-500/20"
-          : "bg-secondary-500/10 border-secondary-500/20"
-      } backdrop-blur-sm p-4 sm:p-5 rounded-xl border transition-all duration-300 hover:shadow-md`}
-    >
-      <div className="flex items-center mb-2 sm:mb-3">
-        <div
-          className={`h-8 sm:h-10 w-8 sm:w-10 rounded-full ${
-            color === "primary" ? "bg-primary-500/20" : "bg-secondary-500/20"
-          } flex items-center justify-center mr-3 flex-shrink-0`}
-        >
+    <div className="bg-primary-500/95 border-primary-500/20 backdrop-blur-sm px-4 py-2 sm:p-5 rounded-lg border transition-all duration-300 hover:shadow-md">
+      <div className="flex items-center">
+        <div className="h-8 sm:h-10 w-8 sm:w-10 rounded-full bg-neutral-400 flex items-center justify-center mr-3 flex-shrink-0">
           {icon}
         </div>
-        <h4 className="font-medium text-white font-outfit text-sm sm:text-base">
-          {title}
-        </h4>
+        <div className="">
+          <p className="text-xl sm:text-2xl font-bold text-secondary-400">
+            {formatCurrencyFn(amount || 0)}
+          </p>
+          <h4 className=" text-neutral-400 text-xs sm:text-[0.83rem]">
+            {title}
+          </h4>
+        </div>
       </div>
-      <p className="text-xl sm:text-2xl font-bold text-white font-outfit">
-        {formatCurrencyFn(amount || 0)}
-      </p>
     </div>
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Back button for mobile */}
       <motion.button
         whileHover={{ x: -2 }}
@@ -66,9 +60,21 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
         <FiArrowLeft className="mr-2" /> Back to plan list
       </motion.button>
 
+      {/* Back button for desktop */}
+      <div className="hidden md:block">
+        <motion.button
+          whileHover={{ x: -2 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={onBack}
+          className="flex items-center text-neutral-400 hover:text-secondary-500 transition-colors"
+        >
+          <FiArrowLeft className="mr-2" /> Back to plan list
+        </motion.button>
+      </div>
+
       <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-neutral-200">
         {/* Top banner */}
-        <div className="bg-gradient-to-r from-secondary-500 to-secondary-600 p-4 relative">
+        <div className="bg-gradient-to-r from-secondary-700 to-secondary-600 p-4 relative">
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
             <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
@@ -78,7 +84,7 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
               <div className="h-8 w-8 bg-white rounded-full flex items-center justify-center text-secondary-600 font-bold">
                 {plan.rank || 1}
               </div>
-              <span className="text-white font-medium font-outfit">
+              <span className="text-white font-medium">
                 Ranked #{plan.rank || 1} Match
               </span>
             </div>
@@ -91,7 +97,7 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
         <div className="p-4 sm:p-6">
           <div className="flex flex-col md:flex-row justify-between md:items-center mb-6 sm:mb-8">
             <div className="flex items-center space-x-4">
-              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg bg-white border border-neutral-200 flex items-center justify-center overflow-hidden flex-shrink-0">
+              <div className="w-28 h-16 sm:w-36 sm:h-20 rounded-lg bg-neutral-200/50 border border-neutral-200 flex items-center justify-center overflow-hidden flex-shrink-0">
                 <img
                   src={
                     plan.plan?.companyLogo ||
@@ -103,17 +109,17 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
                     plan.companyName ||
                     "Insurance Company"
                   }
-                  className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
+                  className="w-28 h-12 sm:w-36 sm:h-16 object-contain"
                   onError={(e) => {
                     e.target.src = "/insurance-placeholder.png";
                   }}
                 />
               </div>
               <div>
-                <h2 className="text-xl sm:text-2xl font-bold text-neutral-800 font-outfit">
+                <h2 className="text-xl sm:text-2xl font-bold text-primary-600">
                   {plan.plan?.name || plan.planName || "Insurance Plan"}
                 </h2>
-                <p className="text-neutral-600 font-outfit">
+                <p className="text-neutral-700">
                   {plan.plan?.company?.name ||
                     plan.companyName ||
                     "Insurance Company"}{" "}
@@ -121,17 +127,17 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
                 </p>
               </div>
             </div>
-            <div className="mt-4 md:mt-0 text-center bg-secondary-50 rounded-xl px-4 sm:px-6 py-3 border border-secondary-100">
-              <div className="text-xl sm:text-3xl font-bold text-secondary-700 font-outfit">
+            <div className="mt-4 md:mt-0 text-center bg-secondary-50 rounded-lg px-4 sm:px-6 py-3 border border-secondary-100">
+              <div className="text-xl sm:text-3xl font-bold text-secondary-700">
                 {formatCurrencyFn(plan.plan?.premium || plan.premium || 50000)}
               </div>
-              <p className="text-neutral-500 text-xs sm:text-sm font-outfit">
+              <p className="text-primary-600 font-medium text-xs sm:text-sm">
                 Annual Premium
               </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-5 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-5 mb-8">
             <CoverageCard
               title="Inpatient Cover"
               amount={
@@ -140,7 +146,7 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
                 2000000
               }
               formatCurrency={formatCurrencyFn}
-              icon={<FiShield className="text-primary-500" />}
+              icon={<TbShieldHalfFilled className="text-primary-600" size={20}/>}
               color="primary"
             />
             <CoverageCard
@@ -151,7 +157,7 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
                 200000
               }
               formatCurrency={formatCurrencyFn}
-              icon={<FiDollarSign className="text-secondary-500" />}
+              icon={<FaUserDoctor className="text-primary-500" size={20} />}
               color="secondary"
             />
             <CoverageCard
@@ -160,7 +166,7 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
                 plan.plan?.lastExpenseCover || plan.lastExpenseCover || 100000
               }
               formatCurrency={formatCurrencyFn}
-              icon={<FiClock className="text-primary-500" />}
+              icon={<TbClockDollar className="text-primary-500" size={20}/>}
               color="primary"
             />
           </div>
@@ -168,9 +174,9 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
           <div className="mb-8">
             <div className="flex items-center space-x-3 mb-4">
               <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                <FiCheck className="h-4 w-4 text-green-600" />
+                <TbCheck className="h-4 w-4 text-green-600" />
               </div>
-              <h3 className="text-xl font-bold text-neutral-800 font-outfit">
+              <h3 className="text-xl font-bold text-primary-600">
                 Key Benefits
               </h3>
             </div>
@@ -182,19 +188,19 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
                     key={benefit.id || idx}
                     className="flex items-start p-3 sm:p-4 bg-neutral-50 rounded-lg border border-neutral-200"
                   >
-                    <FiCheck className="text-green-500 mt-1 mr-3 shrink-0" />
+                    <TbCheck className="text-green-600 mt-1 mr-3 shrink-0" />
                     <div>
-                      <span className="font-medium text-neutral-800 font-outfit">
+                      <span className="font-semibold text-neutral-800">
                         {benefit.category || "Benefit"}
                       </span>
-                      <p className="text-xs sm:text-sm text-neutral-600 mt-1 font-outfit">
+                      <p className="text-xs sm:text-sm text-neutral-700 mt-1">
                         {benefit.description ||
                           "Coverage details not available"}
                       </p>
                       {benefit.coverageLimit && (
                         <div className="text-xs text-neutral-500 mt-2 flex items-center">
                           <span className="font-medium">Limit:</span>
-                          <span className="ml-1 px-2 py-0.5 bg-green-100 text-green-700 rounded-full">
+                          <span className="ml-1 px-2 py-0.5 bg-green-100 text-green-700 font-semibold rounded-full">
                             {formatCurrencyFn(benefit.coverageLimit)}
                           </span>
                         </div>
@@ -203,7 +209,7 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
                         benefit.waitingPeriod !== "None" && (
                           <p className="text-xs text-neutral-500 mt-1 flex items-center">
                             <span className="font-medium">Waiting period:</span>
-                            <span className="ml-1">
+                            <span className="ml-1 font-semibold text-neutral-800">
                               {benefit.waitingPeriod}
                             </span>
                           </p>
@@ -218,7 +224,7 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
                 (plan.plan?.benefits || plan.benefits || []).length === 0) && (
                 <div className="flex items-start p-4 bg-neutral-50 rounded-lg border border-neutral-200 col-span-2">
                   <FiInfo className="text-blue-500 mt-1 mr-3 shrink-0" />
-                  <p className="text-sm text-neutral-600 font-outfit">
+                  <p className="text-sm text-neutral-600">
                     Detailed benefits information will be provided upon request.
                   </p>
                 </div>
@@ -231,7 +237,7 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
               <div className="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
                 <FiX className="h-4 w-4 text-red-600" />
               </div>
-              <h3 className="text-xl font-bold text-neutral-800 font-outfit">
+              <h3 className="text-xl font-bold text-red-600">
                 Exclusions
               </h3>
             </div>
@@ -241,7 +247,7 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
                   (exclusion, idx) => (
                     <li key={exclusion.id || idx} className="flex items-start">
                       <FiX className="text-red-500 mt-1 mr-3 shrink-0" />
-                      <span className="text-sm text-neutral-700 font-outfit">
+                      <span className="text-sm text-neutral-700">
                         {exclusion.exclusionText ||
                           "Exclusion details not available"}
                       </span>
@@ -255,7 +261,7 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
                     0) && (
                   <li className="flex items-start">
                     <FiInfo className="text-blue-500 mt-1 mr-3 shrink-0" />
-                    <span className="text-sm text-neutral-700 font-outfit">
+                    <span className="text-sm text-neutral-700">
                       Detailed exclusion information will be provided upon
                       request.
                     </span>
@@ -270,11 +276,11 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
       <div className="bg-secondary-50 border border-secondary-100 rounded-xl overflow-hidden">
         <div className="p-4 sm:p-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-            <div className="mb-6 md:mb-0 md:mr-6">
-              <h3 className="text-xl font-bold text-neutral-800 mb-2 font-outfit">
+            <div className="mb-6 md:mb-0 md:mr-6 max-w-[50%]">
+              <h3 className="text-lg sm:text-xl font-bold text-neutral-800 mb-2">
                 Need Help With This Plan?
               </h3>
-              <p className="text-neutral-600 font-outfit text-sm sm:text-base">
+              <p className="text-neutral-700 text-sm sm:text-base">
                 Our insurance experts are ready to answer any questions and help
                 you get enrolled.
               </p>
@@ -284,33 +290,21 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 href={`tel:+254700000000`}
-                className="btn inline-flex items-center justify-center px-4 sm:px-6 py-3 bg-secondary-500 hover:bg-secondary-600 text-white font-medium rounded-lg shadow-md transition-all font-outfit text-sm sm:text-base"
+                className="btn inline-flex items-center justify-center px-4 sm:px-6 py-3 bg-secondary-500 hover:bg-secondary-600 text-white font-medium rounded-lg shadow-md transition-all text-sm sm:text-base"
               >
-                <FiPhone className="mr-2" /> Call Expert
+                <TbPhoneCall className="mr-2" size={20} /> Call Expert
               </motion.a>
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="btn inline-flex items-center justify-center px-4 sm:px-6 py-3 border-2 border-secondary-400 text-secondary-700 hover:bg-secondary-100 font-medium rounded-lg transition-all font-outfit text-sm sm:text-base"
+                className="btn inline-flex items-center justify-center px-4 sm:px-6 py-3 border-2 border-secondary-400 text-secondary-700 hover:bg-secondary-100 font-medium rounded-lg transition-all text-sm sm:text-base"
                 onClick={onRequestCallback}
               >
-                <FiMail className="mr-2" /> Request Callback
+                <TbMailFilled className="mr-2" size={20} /> Request Callback
               </motion.button>
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Back button for desktop */}
-      <div className="hidden md:block">
-        <motion.button
-          whileHover={{ x: -2 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={onBack}
-          className="flex items-center text-neutral-400 hover:text-secondary-500 transition-colors"
-        >
-          <FiArrowLeft className="mr-2" /> Back to plan list
-        </motion.button>
       </div>
     </div>
   );

@@ -407,12 +407,13 @@ const ResultsPage = () => {
             Your Insurance Results
           </motion.h1>
           <motion.p
-            className="text-base sm:text-lg text-neutral-300 max-w-2xl mx-auto"
+            className="text-base sm:text-lg text-neutral-300 max-w-4xl mx-auto"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            We've analyzed multiple plans to find your best match
+            We've analyzed multiple plans to find your best match from the
+            leading insurance providers in Kenya.
           </motion.p>
         </header>
 
@@ -449,10 +450,7 @@ const ResultsPage = () => {
                       formatCurrency={formatCurrency}
                     />
 
-                    <QueryDetails
-                      userQuery={report.userQuery}
-                      formatCurrency={formatCurrency}
-                    />
+                    
 
                     <DownloadReport
                       status={downloadStatus}
@@ -460,10 +458,9 @@ const ResultsPage = () => {
                     />
 
                     <motion.button
-                      whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={handleCallbackRequest}
-                      className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg 
+                      className="w-full py-3 px-4 bg-primary-500 hover:bg-primary-600 text-white rounded-lg 
                       flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition duration-200 font-medium"
                     >
                       <svg
@@ -476,6 +473,10 @@ const ResultsPage = () => {
                       </svg>
                       Schedule a Call
                     </motion.button>
+                    <QueryDetails
+                      userQuery={report.userQuery}
+                      formatCurrency={formatCurrency}
+                    />
                   </div>
                 )}
               </div>
@@ -485,16 +486,11 @@ const ResultsPage = () => {
                 {/* Left Column: PlanList + Query Details + Download */}
                 <motion.div
                   variants={itemVariants}
-                  className="md:col-span-5 lg:col-span-4 space-y-6"
+                  className="md:col-span-5 lg:col-span-4 space-y-4"
                 >
                   <PlanList
                     plans={report.comparisonResults}
                     onSelectPlan={handlePlanSelect}
-                    formatCurrency={formatCurrency}
-                  />
-
-                  <QueryDetails
-                    userQuery={report.userQuery}
                     formatCurrency={formatCurrency}
                   />
 
@@ -504,10 +500,9 @@ const ResultsPage = () => {
                   />
 
                   <motion.button
-                    whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleCallbackRequest}
-                    className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg 
+                    className="w-full py-3 px-4 bg-primary-500 hover:bg-primary-600 text-white rounded-lg 
                     flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition duration-200 font-medium"
                   >
                     <svg
@@ -520,6 +515,11 @@ const ResultsPage = () => {
                     </svg>
                     Schedule a Call
                   </motion.button>
+
+                  <QueryDetails
+                    userQuery={report.userQuery}
+                    formatCurrency={formatCurrency}
+                  />
                 </motion.div>
 
                 {/* Right Column: Plan Details */}
@@ -563,12 +563,9 @@ const ResultsPage = () => {
       {/* Footer with subtle pattern */}
       <div className="mt-8 py-4 border-t border-white/10 relative z-10">
         <div className="container mx-auto px-4 text-center text-neutral-400">
-          <p className="text-sm">
-            &copy; {new Date().getFullYear()} KOLA Insurance. All rights
-            reserved.
-          </p>
+          
           <p className="text-xs mt-2">
-            This is a demonstration. Not an actual insurance product.
+            This is a demonstration. Not the actual insurance products.
           </p>
         </div>
       </div>

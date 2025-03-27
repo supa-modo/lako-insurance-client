@@ -64,7 +64,7 @@ const Header = () => {
           <div className="hidden md:flex items-center space-x-4">
             <a
               href="tel:+1234567890"
-              className="flex items-center text-gray-600 hover:text-primary-500 transition-all duration-300 group"
+              className="flex items-center text-neutral-900 hover:text-primary-500 transition-all duration-300 group"
             >
               <span className="relative w-9 h-9 flex items-center justify-center bg-neutral-200 rounded-full mr-2 overflow-hidden group-hover:bg-primary-50">
                 <TbPhoneCall className="h-5 w-5 text-primary-500 z-10" />
@@ -170,7 +170,7 @@ const Header = () => {
 const NavLink = ({ to, label }) => (
   <Link
     to={to}
-    className="relative px-4 py-2 text-[1.05rem] text-gray-600/80 font-semibold hover:text-primary-600 transition-colors duration-300 rounded-lg hover:bg-neutral-50 overflow-hidden group"
+    className="relative px-4 py-2 text-[1.05rem] text-neutral-800 font-semibold hover:text-primary-600 transition-colors duration-300 rounded-lg hover:bg-neutral-50 overflow-hidden group"
   >
     <span className="relative z-10">{label}</span>
     <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
@@ -184,7 +184,7 @@ const NavDropdown = ({ label, items }) => {
   return (
     <div className="relative" onMouseLeave={() => setIsOpen(false)}>
       <button
-        className="flex items-center px-4 py-2 text-gray-600/80 font-semibold hover:text-primary-600 transition-colors duration-300 rounded-lg hover:bg-neutral-50"
+        className="flex items-center px-4 py-2 text-neutral-800 font-semibold hover:text-primary-600 transition-colors duration-300 rounded-lg hover:bg-neutral-50"
         onMouseEnter={() => setIsOpen(true)}
         onClick={() => setIsOpen(!isOpen)}
       >
@@ -207,7 +207,7 @@ const NavDropdown = ({ label, items }) => {
           <Link
             key={index}
             to={item.to}
-            className="block px-4 py-2 text-gray-700 hover:text-primary-500 hover:bg-neutral-50 transition-colors duration-200"
+            className="block px-4 py-2 text-neutral-800 hover:text-primary-500 hover:bg-neutral-50 transition-colors duration-200"
             onClick={() => setIsOpen(false)}
           >
             {item.label}
@@ -222,12 +222,12 @@ const NavDropdown = ({ label, items }) => {
 const MobileNavLink = ({ to, label, onClick }) => (
   <Link
     to={to}
-    className="flex items-center px-2 py-3 text-gray-800 hover:text-primary-500 font-medium font-outfit border-b border-neutral-100"
+    className="flex items-center px-2 py-3 text-neutral-800 hover:text-primary-500 font-medium font-outfit border-b border-neutral-100"
     onClick={onClick}
   >
     <span>{label}</span>
     <div className="ml-auto">
-      <FiChevronDown className="h-4 w-4 rotate-[-90deg] text-gray-400" />
+      <FiChevronDown className="h-4 w-4 rotate-[-90deg] text-neutral-700" />
     </div>
   </Link>
 );

@@ -13,10 +13,10 @@ import { TbCalendarSmile, TbMailFilled, TbPhone } from "react-icons/tb";
 
 const PersonalDetailsStep = ({ register, errors, onNext }) => {
   return (
-    <div className="space-y-6">
-      <h2 className="text-xl sm:text-2xl font-bold text-primary-400 mb-4 sm:mb-6 flex items-center font-outfit">
-        <PiUserDuotone className="mr-3 text-secondary-400 h-6 w-6" /> Personal
-        Information
+    <div className="space-y-6 sm:space-y-8">
+      <h2 className="text-xl sm:text-2xl font-bold text-secondary-400 mb-4 sm:mb-6 flex items-center font-outfit">
+        <PiUserDuotone className="mr-3 text-secondary-400 h-7 w-7 flex-shrink-0" />
+        <span>Personal Information</span>
       </h2>
 
       {/* Input Fields with Icons */}
@@ -30,12 +30,12 @@ const PersonalDetailsStep = ({ register, errors, onNext }) => {
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-1 flex items-center pl-3 pointer-events-none">
-              <PiUserDuotone className="text-white/70  " size={20} />
+              <PiUserDuotone className="text-primary-400  " size={20} />
             </div>
             <input
               id="name"
               type="text"
-              className={`w-full h-11 sm:h-[2.8rem] pl-12 pr-3 text-[0.93rem] sm:text-[0.98rem] text-white rounded-lg border-2 bg-white/10 backdrop-blur-sm focus:bg-white/20
+              className={`w-full h-11 sm:h-12 pl-12 pr-3 text-[0.93rem] sm:text-[0.98rem] text-white rounded-lg border-2 bg-white/10 backdrop-blur-sm focus:bg-white/20
                duration-200 focus:ring-2 focus:outline-none focus:ring-secondary-400 focus:border-0
               font-outfit placeholder-white/50
               ${
@@ -65,12 +65,12 @@ const PersonalDetailsStep = ({ register, errors, onNext }) => {
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-1 flex items-center pl-3 pointer-events-none">
-              <TbMailFilled className="text-white/70 " size={20} />
+              <TbMailFilled className="text-primary-400 " size={20} />
             </div>
             <input
               id="email"
               type="email"
-              className={`w-full h-11 sm:h-[2.8rem] pl-12 pr-3 text-[0.93rem] sm:text-[0.98rem] text-white rounded-lg border-2 bg-white/10 backdrop-blur-sm focus:bg-white/20
+              className={`w-full h-11 sm:h-12 pl-12 pr-3 text-[0.93rem] sm:text-[0.98rem] text-white rounded-lg border-2 bg-white/10 backdrop-blur-sm focus:bg-white/20
               duration-200 focus:ring-2 focus:outline-none focus:ring-secondary-400 focus:border-0
               font-outfit placeholder-white/50
               ${
@@ -106,12 +106,12 @@ const PersonalDetailsStep = ({ register, errors, onNext }) => {
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-1 flex items-center pl-3 pointer-events-none">
-              <TbPhone className="text-white/70 " size={20} />
+              <TbPhone className="text-primary-400 " size={20} />
             </div>
             <input
               id="phone"
               type="tel"
-              className={`w-full h-11 sm:h-[2.8rem] pl-12 pr-3 text-[0.93rem] sm:text-[0.98rem] text-white rounded-lg border-2 bg-white/10 backdrop-blur-sm focus:bg-white/20
+              className={`w-full h-11 sm:h-12 pl-12 pr-3 text-[0.93rem] sm:text-[0.98rem] text-white rounded-lg border-2 bg-white/10 backdrop-blur-sm focus:bg-white/20
               duration-200 focus:ring-2 focus:outline-none focus:ring-secondary-400 focus:border-0
               font-outfit placeholder-white/50
               ${
@@ -141,14 +141,14 @@ const PersonalDetailsStep = ({ register, errors, onNext }) => {
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-1 flex items-center pl-3 pointer-events-none">
-              <TbCalendarSmile className="text-white/70 " size={20} />
+              <TbCalendarSmile className="text-primary-400 " size={20} />
             </div>
             <input
               id="age"
               type="number"
               min="60"
               max="90"
-              className={`w-full h-11 sm:h-[2.8rem] pl-12 pr-3  text-[0.93rem] sm:text-[0.98rem] text-white rounded-lg border-2 bg-white/10 backdrop-blur-sm focus:bg-white/20
+              className={`w-full h-11 sm:h-12 pl-12 pr-3 text-[0.93rem] sm:text-[0.98rem] text-white rounded-lg border-2 bg-white/10 backdrop-blur-sm focus:bg-white/20
               duration-200 focus:ring-2 focus:outline-none focus:ring-secondary-400 focus:border-0
               font-outfit placeholder-white/50
               ${

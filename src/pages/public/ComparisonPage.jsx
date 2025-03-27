@@ -195,48 +195,54 @@ const ComparisonPage = () => {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="text-[0.94rem] sm:text-base tracking-wide md:text-lg text-white/90 max-w-2xl mx-auto "
           >
-            Our intelligent matching system helps you discover insurance plans
+            Our intelligent matching system helps you discover all insurance plans
             tailored to your unique health and financial needs.
           </motion.p>
         </div>
 
-        {/* Progress Indicator */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-        >
-          <StepIndicator currentStep={step} />
-        </motion.div>
-
-        {/* Form Container with Modern Design */}
+        {/* Two-column layout with StepIndicator on left and Form content on right */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="bg-white/10 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl border border-white/30 max-w-4xl mx-auto"
+          className="bg-white/10 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl border border-white/30 max-w-6xl mx-auto"
         >
-          <div className="p-5 sm:p-8">
-            <form
-              onSubmit={handleSubmit(step === 2 ? onSubmit : nextStep)}
-              className="space-y-6 sm:space-y-8"
+          <div className="flex flex-col md:flex-row">
+            {/* StepIndicator - Left Column on Desktop, Top Row on Mobile */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+              className="w-full md:w-[280px] lg:w-[320px] bg-white/5 backdrop-blur-sm md:border-r md:border-b-0 border-b border-white/10 p-5 md:py-10 md:px-0 py-6"
             >
-              {step === 1 ? (
-                <PersonalDetailsStep
-                  register={register}
-                  errors={errors}
-                  onNext={nextStep}
-                />
-              ) : (
-                <InsurancePreferencesStep
-                  register={register}
-                  errors={errors}
-                  watchedValues={watchedValues}
-                  onPrev={prevStep}
-                  onSubmit={onSubmit}
-                />
-              )}
-            </form>
+              <div className="h-full md:min-h-[280px] min-h-[100px] flex justify-center">
+                <StepIndicator currentStep={step} />
+              </div>
+            </motion.div>
+
+            {/* Form Content - Right Column on Desktop, Bottom Section on Mobile */}
+            <div className="flex-1 p-5 sm:p-7">
+              <form
+                onSubmit={handleSubmit(step === 2 ? onSubmit : nextStep)}
+                className="space-y-6 sm:space-y-8"
+              >
+                {step === 1 ? (
+                  <PersonalDetailsStep
+                    register={register}
+                    errors={errors}
+                    onNext={nextStep}
+                  />
+                ) : (
+                  <InsurancePreferencesStep
+                    register={register}
+                    errors={errors}
+                    watchedValues={watchedValues}
+                    onPrev={prevStep}
+                    onSubmit={onSubmit}
+                  />
+                )}
+              </form>
+            </div>
           </div>
         </motion.div>
 
