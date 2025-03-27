@@ -1,182 +1,157 @@
-import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   FiDownload,
-  FiArrowLeft,
-  FiCheck,
   FiX,
-  FiStar,
-  FiShield,
-  FiDollarSign,
-  FiClock,
-  FiPhone,
-  FiMail,
-  FiChevronRight,
-  FiHeart,
-  FiTrendingUp,
   FiInfo,
+  FiArrowLeft,
+  FiArrowRight,
 } from "react-icons/fi";
-import { getReportById, downloadReportPdf } from "../../services/queryService";
+import { useSelector } from "react-redux";
+
+// Import mock service instead of real service for now
+import {
+  getMockReportById,
+  mockDownloadReportPdf,
+} from "../../services/mockReportService";
+
+// Import only the larger components
+import PlanList from "../../components/results/PlanList";
+import QueryDetails from "../../components/results/QueryDetails";
+import PlanDetails from "../../components/results/PlanDetails";
+import CallbackModal from "../../components/results/CallbackModal";
 
 const ResultsPage = () => {
-  const { id } = useParams();
+  const navigate = useNavigate();
   const { userQuery } = useSelector((state) => state.comparison);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [comparisonResults, setComparisonResults] = useState([]);
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showCallbackModal, setShowCallbackModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [downloadStatus, setDownloadStatus] = useState("idle"); // 'idle', 'loading', 'success', 'error'
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check if the screen is mobile size
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768); // 768px is the md breakpoint in Tailwind
+    };
+
+    // Initial check
+    checkIsMobile();
+
+    // Add event listener for window resize
+    window.addEventListener("resize", checkIsMobile);
+
+    // Cleanup
+    return () => window.removeEventListener("resize", checkIsMobile);
+  }, []);
 
   useEffect(() => {
-    const fetchReport = async () => {
-      if (!id) return;
+    // Set loading to true at the beginning
+    setLoading(true);
 
+    // Add a delay to simulate API call
+    const timer = setTimeout(() => {
       try {
-        setLoading(true);
-        setError(null);
+        // Use mock service with a fixed ID since this is a public page
+        const mockReportId = "mock-report-1";
+        const reportData = getMockReportById(mockReportId);
 
-        // Fetch report from API
-        const reportData = await getReportById(id);
-        setReport(reportData);
+        if (reportData) {
+          setReport(reportData);
+          setComparisonResults(reportData.comparisonResults);
 
-        // Transform data for the component
-        const results = reportData.comparisonResults.map((result) => {
-          const plan = result.plan;
-          const company = plan.company;
-
-          return {
-            id: plan.id,
-            companyName: company.name,
-            companyLogo: `/${company.name.toLowerCase().split(" ")[0]}.png`,
-            planName: plan.name,
-            planType: plan.planType,
-            premium: getPremiumForAge(plan),
-            inpatientCoverage: plan.inpatientCoverageLimit,
-            outpatientCoverage: plan.outpatientCoverageLimit,
-            lastExpenseCover: plan.lastExpenseCover,
-            score: result.score,
-            rank: result.rank,
-            benefits: plan.benefits || [],
-            exclusions: plan.exclusions || [],
-          };
-        });
-
-        setComparisonResults(results);
-
-        // Select the highest scoring plan by default
-        if (results.length > 0) {
-          setSelectedPlan(results[0].id);
+          // Auto-select first plan only on desktop
+          if (
+            !isMobile &&
+            reportData.comparisonResults &&
+            reportData.comparisonResults.length > 0
+          ) {
+            setSelectedPlan(reportData.comparisonResults[0]);
+          }
+          // Make sure no plan is selected on mobile
+          else if (isMobile) {
+            setSelectedPlan(null);
+          }
+        } else {
+          setError("No plans found that match your criteria");
         }
       } catch (err) {
-        console.error("Error fetching report:", err);
-        setError("Failed to load the report. Please try again.");
+        setError(err.message || "Failed to fetch insurance plans");
       } finally {
         setLoading(false);
       }
-    };
+    }, 1500); // Simulate 1.5s loading time
 
-    fetchReport();
-  }, [id]);
+    return () => clearTimeout(timer);
+  }, [isMobile]); // Re-run when isMobile changes
 
-  // Helper function to get premium for age
-  const getPremiumForAge = (plan) => {
-    if (!plan.premiums || plan.premiums.length === 0) return 0;
-
-    const userAge = report?.userQuery?.age || 0;
-
-    // Find matching premium for age bracket
-    const premium = plan.premiums.find((p) => {
-      const [minAge, maxAge] = p.ageBracket.split("-").map(Number);
-      return userAge >= minAge && userAge <= maxAge;
-    });
-
-    return premium ? premium.annualPremium : 0;
+  const handlePlanSelect = (plan) => {
+    setSelectedPlan(plan === selectedPlan ? null : plan);
   };
 
-  // Handle PDF download
-  const handleDownloadPdf = async () => {
-    if (!id) return;
+  const handleBackToList = () => {
+    setSelectedPlan(null);
+  };
 
+  const handleDownload = async () => {
+    if (downloadStatus === "loading") return;
+
+    setDownloadStatus("loading");
     try {
-      await downloadReportPdf(id);
-    } catch (err) {
-      console.error("Error downloading PDF:", err);
-      setError("Failed to download the PDF. Please try again.");
+      // Use mock download service with a fixed ID
+      const mockReportId = "mock-report-1";
+      await mockDownloadReportPdf(mockReportId);
+      setDownloadStatus("success");
+
+      // Reset status after 3 seconds
+      setTimeout(() => setDownloadStatus("idle"), 3000);
+    } catch (error) {
+      setDownloadStatus("error");
+      // Reset status after 3 seconds
+      setTimeout(() => setDownloadStatus("idle"), 3000);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-neutral-50">
-        <div className="text-center">
-          <div className="relative h-20 w-20 mx-auto mb-4">
-            <div className="absolute inset-0 rounded-full border-4 border-secondary-200 opacity-25"></div>
-            <div className="absolute inset-0 rounded-full border-4 border-secondary-500 border-t-transparent animate-spin"></div>
-          </div>
-          <h2 className="text-2xl font-heading font-bold mb-2 text-gray-800">
-            Analyzing Your Perfect Plans
-          </h2>
-          <p className="text-gray-600 max-w-md">
-            We're finding the best insurance plans tailored to your unique
-            needs...
-          </p>
-        </div>
-      </div>
-    );
-  }
+  const handleCallbackRequest = () => {
+    setShowModal(true);
+  };
 
-  if (error) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-neutral-50">
-        <div className="text-center max-w-md p-8 bg-white rounded-xl shadow-lg">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mb-4">
-            <FiX className="text-red-500 h-8 w-8" />
-          </div>
-          <h2 className="text-2xl font-heading font-bold mb-3 text-gray-800">
-            Something Went Wrong
-          </h2>
-          <p className="text-gray-600 mb-6">{error}</p>
-          <Link
-            to="/compare"
-            className="btn inline-flex items-center justify-center px-6 py-3 bg-secondary-500 hover:bg-secondary-600 text-white font-medium rounded-lg shadow-md transition-all"
-          >
-            <FiArrowLeft className="mr-2" /> Try Again
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
 
-  if (!report || comparisonResults.length === 0) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-neutral-50">
-        <div className="text-center max-w-md p-8 bg-white rounded-xl shadow-lg">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
-            <FiInfo className="text-primary-500 h-8 w-8" />
-          </div>
-          <h2 className="text-2xl font-heading font-bold mb-3 text-gray-800">
-            No Results Found
-          </h2>
-          <p className="text-gray-600 mb-6">
-            We couldn't find any matching plans. Please try again with different
-            criteria.
-          </p>
-          <Link
-            to="/compare"
-            className="btn inline-flex items-center justify-center px-6 py-3 bg-secondary-500 hover:bg-secondary-600 text-white font-medium rounded-lg shadow-md transition-all"
-          >
-            <FiArrowLeft className="mr-2" /> Try Again
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  const handleGoToHome = () => {
+    navigate("/");
+  };
 
-  const currentPlan = comparisonResults.find(
-    (plan) => plan.id === selectedPlan
-  );
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        duration: 0.6,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.5,
+        ease: "easeOut",
+      },
+    },
+  };
 
   // Format currency
   const formatCurrency = (amount) => {
@@ -187,448 +162,422 @@ const ResultsPage = () => {
     }).format(amount);
   };
 
-  return (
-    <div className="bg-neutral-50 py-12 min-h-screen relative">
-      {/* Background decorative elements */}
-      <div className="absolute -top-40 -right-40 w-80 h-80 bg-secondary-100 rounded-full opacity-30 blur-3xl"></div>
-      <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-primary-100 rounded-full opacity-20 blur-3xl"></div>
+  // Loading State Component
+  const LoadingState = () => (
+    <div className="flex items-center justify-center py-20 font-outfit">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="text-center"
+      >
+        <div className="relative h-20 w-20 mx-auto mb-6">
+          <div className="absolute inset-0 rounded-full border-4 border-white/20 opacity-25"></div>
+          <div className="absolute inset-0 rounded-full border-4 border-secondary-400 border-t-transparent animate-spin"></div>
+        </div>
+        <h2 className="text-2xl font-bold mb-3 text-white font-outfit">
+          Analyzing Your Perfect Plans
+        </h2>
+        <p className="text-neutral-300 max-w-md font-outfit">
+          We're finding the best insurance plans tailored to your unique
+          needs...
+        </p>
+      </motion.div>
+    </div>
+  );
 
-      <div className="container-custom relative z-10">
-        <div className="flex items-center justify-between mb-8">
-          <Link
-            to="/compare"
-            className="flex items-center text-gray-600 hover:text-secondary-500 transition-colors group"
+  // Error State Component
+  const ErrorState = ({ error, onGoHome }) => (
+    <div className="flex items-center justify-center py-20 font-outfit">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="text-center max-w-md p-8 bg-white/10 backdrop-blur-md rounded-xl shadow-lg border border-red-400/20"
+      >
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-red-500/20 rounded-full mb-6">
+          <FiX className="text-red-400 h-8 w-8" />
+        </div>
+        <h2 className="text-2xl font-bold mb-3 text-white font-outfit">
+          Something Went Wrong
+        </h2>
+        <p className="text-neutral-300 mb-6 font-outfit">
+          {error || "We couldn't process your request. Please try again."}
+        </p>
+        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <button
+            onClick={onGoHome}
+            className="inline-flex items-center justify-center px-6 py-3 bg-secondary-500 hover:bg-secondary-600 text-white font-medium rounded-lg shadow-md transition-all font-outfit"
           >
-            <div className="h-8 w-8 rounded-full bg-white shadow-md flex items-center justify-center mr-2 group-hover:bg-secondary-50 transition-colors">
-              <FiArrowLeft className="h-4 w-4" />
-            </div>
-            <span>Back to Comparison Form</span>
-          </Link>
+            <FiArrowLeft className="mr-2" /> Try Again
+          </button>
+        </motion.div>
+      </motion.div>
+    </div>
+  );
 
-          <div className="hidden md:block">
-            <div className="flex items-center px-4 py-1.5 rounded-full bg-secondary-100 text-secondary-700 text-sm font-medium">
-              <FiHeart className="mr-2" />
-              <span>Your personalized insurance matches</span>
-            </div>
+  // Empty State Component
+  const EmptyState = ({ onGoHome }) => (
+    <div className="flex items-center justify-center py-20 font-outfit">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="text-center max-w-md p-8 bg-white/10 backdrop-blur-md rounded-xl shadow-lg border border-primary-400/20 "
+      >
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-500/20 rounded-full mb-6">
+          <FiInfo className="text-primary-400 h-8 w-8" />
+        </div>
+        <h2 className="text-2xl font-bold mb-3 text-white ">
+          No Results Found
+        </h2>
+        <p className="text-neutral-300 mb-6 ">
+          We couldn't find any matching plans. Please try again with different
+          criteria.
+        </p>
+        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <button
+            onClick={onGoHome}
+            className="inline-flex items-center justify-center px-6 py-3 bg-secondary-500 hover:bg-secondary-600 text-white font-medium rounded-lg shadow-md transition-all "
+          >
+            <FiArrowLeft className="mr-2" /> Try Again
+          </button>
+        </motion.div>
+      </motion.div>
+    </div>
+  );
+
+  // Download Report Component
+  const DownloadReport = ({ status, onDownload }) => {
+    // Status indicator messages
+    const statusMessages = {
+      loading: "Downloading report...",
+      success: "Download complete!",
+      error: "Download failed! Try again.",
+    };
+
+    return (
+      <div className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20 shadow-lg font-outfit">
+        <div className="flex items-center space-x-3 mb-4">
+          <div className="h-10 w-10 rounded-full bg-secondary-500/20 flex items-center justify-center">
+            <FiDownload className="h-5 w-5 text-secondary-400" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-white font-outfit">
+              Download Report
+            </h3>
+            <p className="text-sm text-neutral-300 font-outfit">
+              Get a detailed PDF breakdown
+            </p>
           </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Left sidebar - Plan list */}
-          <div className="lg:w-1/3 space-y-6">
-            <div className="bg-white rounded-xl shadow-lg p-6 border border-neutral-200">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-heading font-bold text-gray-800">
-                  Your Results
-                </h2>
-                <div className="bg-secondary-100 text-secondary-700 px-3 py-1 rounded-full text-sm font-medium flex items-center">
-                  <FiTrendingUp className="mr-1 h-4 w-4" />
-                  Top {comparisonResults.length}
-                </div>
-              </div>
-              <p className="text-gray-600 mb-6">
-                Based on your preferences, we've matched these plans to your
-                specific needs:
-              </p>
-              <div className="space-y-3">
-                {comparisonResults.map((result) => (
-                  <div
-                    key={result.id}
-                    className={`border rounded-xl p-4 cursor-pointer transition-all duration-300 hover:shadow-md ${
-                      selectedPlan === result.id
-                        ? "border-secondary-500 bg-secondary-50 shadow-md"
-                        : "border-gray-200"
-                    }`}
-                    onClick={() => setSelectedPlan(result.id)}
-                  >
-                    <div className="flex justify-between items-start">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center overflow-hidden">
-                          <img
-                            src={result.companyLogo || "/fallback-logo.png"}
-                            alt={result.companyName}
-                            className="w-8 h-8 object-contain"
-                            onError={(e) => {
-                              e.target.src = "/fallback-logo.png";
-                            }}
-                          />
-                        </div>
-                        <div>
-                          <h3 className="font-bold text-gray-800">
-                            {result.planName}
-                          </h3>
-                          <p className="text-gray-500 text-sm">
-                            {result.companyName}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center bg-secondary-100 text-secondary-700 px-2.5 py-1 rounded-full text-sm font-medium">
-                        <FiStar className="mr-1 h-3.5 w-3.5" />
-                        {result.score}%
-                      </div>
-                    </div>
-                    <div className="mt-3 flex justify-between items-center border-t border-gray-100 pt-3">
-                      <span className="text-gray-600 text-sm">
-                        {result.planType}
-                      </span>
-                      <span className="font-medium text-gray-800">
-                        {formatCurrency(result.premium)}
-                        <span className="text-gray-500 text-xs">/yr</span>
-                      </span>
-                    </div>
-                    {selectedPlan === result.id && (
-                      <div className="mt-3 flex items-center justify-center">
-                        <span className="text-xs bg-secondary-500 text-white px-3 py-1 rounded-full">
-                          Currently viewing
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-lg p-6 border border-neutral-200 divide-y divide-gray-100">
-              <div className="mb-4">
-                <h3 className="text-lg font-bold text-gray-800 mb-1">
-                  Your Query Details
-                </h3>
-                <p className="text-sm text-gray-500">
-                  Information you provided
-                </p>
-              </div>
-
-              {report && report.userQuery && (
-                <div className="pt-4 space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600 flex items-center">
-                      <FiUser className="mr-2 h-4 w-4 text-secondary-400" />
-                      Name:
-                    </span>
-                    <span className="font-medium text-gray-800">
-                      {report.userQuery.name}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600 flex items-center">
-                      <FiCalendar className="mr-2 h-4 w-4 text-secondary-400" />
-                      Age:
-                    </span>
-                    <span className="font-medium text-gray-800">
-                      {report.userQuery.age}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600 flex items-center">
-                      <FiDollarSign className="mr-2 h-4 w-4 text-secondary-400" />
-                      Budget:
-                    </span>
-                    <span className="font-medium text-gray-800">
-                      {report.userQuery.budget
-                        ? formatCurrency(report.userQuery.budget)
-                        : "Not specified"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600 flex items-center">
-                      <FiShield className="mr-2 h-4 w-4 text-secondary-400" />
-                      Coverage:
-                    </span>
-                    <span className="font-medium text-gray-800">
-                      {report.userQuery.desiredCoverage
-                        ? report.userQuery.desiredCoverage
-                            .charAt(0)
-                            .toUpperCase() +
-                          report.userQuery.desiredCoverage.slice(1)
-                        : "Not specified"}
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className="bg-white rounded-xl shadow-lg p-6 border border-neutral-200">
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="h-10 w-10 rounded-full bg-secondary-100 flex items-center justify-center">
-                  <FiDownload className="h-5 w-5 text-secondary-600" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-gray-800">
-                    Download Report
-                  </h3>
-                  <p className="text-sm text-gray-500">
-                    Get a detailed PDF breakdown
-                  </p>
-                </div>
-              </div>
-              <button
-                className="w-full flex items-center justify-center px-4 py-3 border-2 border-secondary-500 text-secondary-700 font-medium rounded-lg hover:bg-secondary-50 transition-colors"
-                onClick={handleDownloadPdf}
+        {status !== "idle" ? (
+          <div
+            className={`rounded-lg p-3 mb-3 text-sm flex items-center justify-center
+            ${
+              status === "loading"
+                ? "bg-blue-500/20 text-blue-300"
+                : status === "success"
+                ? "bg-green-500/20 text-green-300"
+                : "bg-red-500/20 text-red-300"
+            }`}
+          >
+            {status === "loading" && (
+              <svg
+                className="animate-spin -ml-1 mr-2 h-4 w-4"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
               >
-                <FiDownload className="mr-2" />
-                Download PDF Report
-              </button>
-            </div>
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            )}
+            {statusMessages[status]}
           </div>
+        ) : null}
 
-          {/* Main content - Selected plan details */}
-          {currentPlan && (
-            <div className="lg:w-2/3 space-y-6">
-              <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-neutral-200">
-                {/* Top banner */}
-                <div className="bg-gradient-to-r from-secondary-500 to-secondary-600 p-4 relative">
-                  <div className="absolute inset-0 overflow-hidden">
-                    <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
-                    <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
-                  </div>
-                  <div className="relative flex justify-between items-center z-10">
-                    <div className="flex items-center space-x-3">
-                      <div className="h-8 w-8 bg-white rounded-full flex items-center justify-center text-secondary-600 font-bold">
-                        {currentPlan.rank}
-                      </div>
-                      <span className="text-white font-medium">
-                        Ranked #{currentPlan.rank} Match
-                      </span>
-                    </div>
-                    <div className="bg-white/20 backdrop-blur-md rounded-full px-3 py-1 text-white text-sm font-medium">
-                      {currentPlan.score}% Match Score
-                    </div>
-                  </div>
-                </div>
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className={`w-full flex items-center justify-center px-4 py-3 
+            ${
+              status === "loading"
+                ? "bg-gray-500/50 cursor-not-allowed"
+                : "bg-secondary-500 hover:bg-secondary-600"
+            } 
+            text-white font-medium rounded-lg transition-colors font-outfit shadow-md`}
+          onClick={onDownload}
+          disabled={status === "loading"}
+        >
+          <FiDownload className="mr-2" />
+          Download PDF Report
+        </motion.button>
+      </div>
+    );
+  };
 
-                <div className="p-6">
-                  <div className="flex flex-col md:flex-row justify-between md:items-center mb-8">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-16 h-16 rounded-lg bg-white border border-gray-200 flex items-center justify-center overflow-hidden">
-                        <img
-                          src={currentPlan.companyLogo || "/fallback-logo.png"}
-                          alt={currentPlan.companyName}
-                          className="w-12 h-12 object-contain"
-                          onError={(e) => {
-                            e.target.src = "/fallback-logo.png";
-                          }}
-                        />
-                      </div>
-                      <div>
-                        <h2 className="text-2xl font-heading font-bold text-gray-800">
-                          {currentPlan.planName}
-                        </h2>
-                        <p className="text-gray-600">
-                          {currentPlan.companyName} • {currentPlan.planType}
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 text-white relative overflow-hidden font-outfit">
+      {/* Decorative elements */}
+      <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-secondary-500/30 rounded-full filter blur-3xl opacity-20 animate-pulse-slow"></div>
+      <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-blue-500/30 rounded-full filter blur-3xl opacity-20 transform translate-y-1/4 translate-x-[-30%]"></div>
+      <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-secondary-400/40 rounded-full filter blur-xl opacity-30 animate-float"></div>
+
+      {/* Glass panels */}
+      <div className="absolute top-10 right-10 w-64 h-64 bg-white/5 rounded-2xl backdrop-blur-sm border border-white/10 hidden lg:block"></div>
+      <div className="absolute bottom-10 left-10 w-48 h-48 bg-white/5 rounded-2xl backdrop-blur-sm border border-white/10 hidden lg:block"></div>
+
+      <div className="md:container-custom mx-auto px-2 sm:px-4 lg:px-8 py-8 relative z-10">
+        {/* Breadcrumb Navigation */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-6"
+        >
+          <div className="flex items-center space-x-2 text-sm">
+            <Link
+              to="/"
+              className="text-secondary-400 hover:text-white transition-colors"
+            >
+              Home
+            </Link>
+            <span className="text-neutral-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </span>
+            <Link
+              to="/compare"
+              className="text-secondary-400 hover:text-white transition-colors"
+            >
+              Compare
+            </Link>
+            <span className="text-neutral-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </span>
+            <span className="text-white font-medium">Comparison Results</span>
+          </div>
+        </motion.div>
+
+        <header className="text-center mb-8">
+          <motion.h1
+            className="text-2xl sm:text-3xl md:text-4xl font-bold text-gradient bg-gradient-to-r from-white via-secondary-200 to-white bg-clip-text text-transparent font-outfit mb-2"
+            initial={{ y: -50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            Your Insurance Results
+          </motion.h1>
+          <motion.p
+            className="text-base sm:text-lg text-neutral-300 max-w-2xl mx-auto"
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            We've analyzed multiple plans to find your best match
+          </motion.p>
+        </header>
+
+        {loading ? (
+          <LoadingState />
+        ) : error ? (
+          <ErrorState error={error} onGoHome={handleGoToHome} />
+        ) : !report || comparisonResults.length === 0 ? (
+          <EmptyState onGoHome={handleGoToHome} />
+        ) : (
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4 sm:p-6 shadow-2xl">
+            {/* Main content - desktop: side by side, mobile: sequential */}
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              {/* Mobile View (Sequential) */}
+              <div className="md:hidden">
+                {selectedPlan ? (
+                  <div>
+                    <PlanDetails
+                      plan={selectedPlan}
+                      onBack={handleBackToList}
+                      formatCurrency={formatCurrency}
+                      onRequestCallback={handleCallbackRequest}
+                    />
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    <PlanList
+                      plans={report.comparisonResults}
+                      onSelectPlan={handlePlanSelect}
+                      formatCurrency={formatCurrency}
+                    />
+
+                    <QueryDetails
+                      userQuery={report.userQuery}
+                      formatCurrency={formatCurrency}
+                    />
+
+                    <DownloadReport
+                      status={downloadStatus}
+                      onDownload={handleDownload}
+                    />
+
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={handleCallbackRequest}
+                      className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg 
+                      flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition duration-200 font-medium"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                      </svg>
+                      Schedule a Call
+                    </motion.button>
+                  </div>
+                )}
+              </div>
+
+              {/* Desktop View (Side by Side) */}
+              <div className="hidden md:grid md:grid-cols-12 gap-6">
+                {/* Left Column: PlanList + Query Details + Download */}
+                <motion.div
+                  variants={itemVariants}
+                  className="md:col-span-5 lg:col-span-4 space-y-6"
+                >
+                  <PlanList
+                    plans={report.comparisonResults}
+                    onSelectPlan={handlePlanSelect}
+                    formatCurrency={formatCurrency}
+                  />
+
+                  <QueryDetails
+                    userQuery={report.userQuery}
+                    formatCurrency={formatCurrency}
+                  />
+
+                  <DownloadReport
+                    status={downloadStatus}
+                    onDownload={handleDownload}
+                  />
+
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleCallbackRequest}
+                    className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg 
+                    flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition duration-200 font-medium"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                    </svg>
+                    Schedule a Call
+                  </motion.button>
+                </motion.div>
+
+                {/* Right Column: Plan Details */}
+                <motion.div
+                  variants={itemVariants}
+                  className="md:col-span-7 lg:col-span-8"
+                >
+                  {selectedPlan ? (
+                    <PlanDetails
+                      plan={selectedPlan}
+                      onBack={handleBackToList}
+                      formatCurrency={formatCurrency}
+                      onRequestCallback={handleCallbackRequest}
+                    />
+                  ) : (
+                    <div className="h-full flex items-center justify-center bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-white/10">
+                      <div className="text-center">
+                        <div className="inline-flex items-center justify-center w-16 h-16 bg-secondary-500/20 rounded-full mb-6">
+                          <FiArrowLeft className="h-6 w-6 text-secondary-400" />
+                        </div>
+                        <h3 className="text-xl font-bold text-white mb-2 font-outfit">
+                          Select a Plan
+                        </h3>
+                        <p className="text-neutral-300 font-outfit max-w-md">
+                          Choose a plan from the list to view detailed
+                          information and benefits.
                         </p>
                       </div>
                     </div>
-                    <div className="mt-4 md:mt-0 text-center bg-secondary-50 rounded-xl px-6 py-3 border border-secondary-100">
-                      <div className="text-3xl font-bold text-secondary-700">
-                        {formatCurrency(currentPlan.premium)}
-                      </div>
-                      <p className="text-gray-500 text-sm">Annual Premium</p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
-                    <CoverageCard
-                      title="Inpatient Cover"
-                      amount={currentPlan.inpatientCoverage}
-                      formatCurrency={formatCurrency}
-                      icon={<FiShield className="text-primary-500" />}
-                      color="primary"
-                    />
-                    <CoverageCard
-                      title="Outpatient Cover"
-                      amount={currentPlan.outpatientCoverage}
-                      formatCurrency={formatCurrency}
-                      icon={<FiDollarSign className="text-secondary-500" />}
-                      color="secondary"
-                    />
-                    <CoverageCard
-                      title="Last Expense Cover"
-                      amount={currentPlan.lastExpenseCover}
-                      formatCurrency={formatCurrency}
-                      icon={<FiClock className="text-primary-500" />}
-                      color="primary"
-                    />
-                  </div>
-
-                  <div className="mb-8">
-                    <div className="flex items-center space-x-3 mb-4">
-                      <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
-                        <FiCheck className="h-4 w-4 text-green-600" />
-                      </div>
-                      <h3 className="text-xl font-bold text-gray-800">
-                        Key Benefits
-                      </h3>
-                    </div>
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      {currentPlan.benefits.map((benefit) => (
-                        <div
-                          key={benefit.id}
-                          className="flex items-start p-4 bg-neutral-50 rounded-lg border border-neutral-200"
-                        >
-                          <FiCheck className="text-green-500 mt-1 mr-3 shrink-0" />
-                          <div>
-                            <span className="font-medium text-gray-800">
-                              {benefit.category}
-                            </span>
-                            <p className="text-sm text-gray-600 mt-1">
-                              {benefit.description}
-                            </p>
-                            {benefit.coverageLimit && (
-                              <div className="text-xs text-gray-500 mt-2 flex items-center">
-                                <span className="font-medium">Limit:</span>
-                                <span className="ml-1 px-2 py-0.5 bg-green-100 text-green-700 rounded-full">
-                                  {formatCurrency(benefit.coverageLimit)}
-                                </span>
-                              </div>
-                            )}
-                            {benefit.waitingPeriod &&
-                              benefit.waitingPeriod !== "None" && (
-                                <p className="text-xs text-gray-500 mt-1 flex items-center">
-                                  <span className="font-medium">
-                                    Waiting period:
-                                  </span>
-                                  <span className="ml-1">
-                                    {benefit.waitingPeriod}
-                                  </span>
-                                </p>
-                              )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="flex items-center space-x-3 mb-4">
-                      <div className="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center">
-                        <FiX className="h-4 w-4 text-red-600" />
-                      </div>
-                      <h3 className="text-xl font-bold text-gray-800">
-                        Exclusions
-                      </h3>
-                    </div>
-                    <div className="bg-neutral-50 rounded-lg border border-neutral-200 p-4">
-                      <ul className="space-y-3">
-                        {currentPlan.exclusions.map((exclusion) => (
-                          <li key={exclusion.id} className="flex items-start">
-                            <FiX className="text-red-500 mt-1 mr-3 shrink-0" />
-                            <span className="text-gray-700">
-                              {exclusion.exclusionText}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
+                  )}
+                </motion.div>
               </div>
+            </motion.div>
+          </div>
+        )}
+      </div>
 
-              <div className="bg-secondary-50 border border-secondary-100 rounded-xl overflow-hidden">
-                <div className="p-6">
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                    <div className="mb-6 md:mb-0 md:mr-6">
-                      <h3 className="text-xl font-bold text-gray-800 mb-2">
-                        Need Help With This Plan?
-                      </h3>
-                      <p className="text-gray-600">
-                        Our insurance experts are ready to answer any questions
-                        and help you get enrolled.
-                      </p>
-                    </div>
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <a
-                        href={`tel:+254700000000`}
-                        className="btn inline-flex items-center justify-center px-6 py-3 bg-secondary-500 hover:bg-secondary-600 text-white font-medium rounded-lg shadow-md transition-all"
-                      >
-                        <FiPhone className="mr-2" /> Call Expert
-                      </a>
-                      <button
-                        className="btn inline-flex items-center justify-center px-6 py-3 border-2 border-secondary-400 text-secondary-700 hover:bg-secondary-100 font-medium rounded-lg transition-all"
-                        onClick={() => setShowCallbackModal(true)}
-                      >
-                        <FiMail className="mr-2" /> Request Callback
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+      {/* Callback Modal */}
+      <CallbackModal isOpen={showModal} onClose={handleCloseModal} />
+
+      {/* Footer with subtle pattern */}
+      <div className="mt-8 py-4 border-t border-white/10 relative z-10">
+        <div className="container mx-auto px-4 text-center text-neutral-400">
+          <p className="text-sm">
+            &copy; {new Date().getFullYear()} KOLA Insurance. All rights
+            reserved.
+          </p>
+          <p className="text-xs mt-2">
+            This is a demonstration. Not an actual insurance product.
+          </p>
         </div>
       </div>
 
-      {/* Callback Request Modal */}
-      {showCallbackModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-md w-full p-6 relative animate-fadeIn">
-            <button
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
-              onClick={() => setShowCallbackModal(false)}
-            >
-              <FiX />
-            </button>
-            <div className="text-center mb-6">
-              <div className="h-16 w-16 bg-secondary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FiPhone className="h-8 w-8 text-secondary-600" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-800">
-                Request a Callback
-              </h3>
-              <p className="text-gray-600 text-sm">
-                We'll have an expert contact you shortly
-              </p>
-            </div>
-
-            <form className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Preferred Time
-                </label>
-                <select className="w-full h-11 px-3 rounded-lg border-2 border-gray-200 focus:ring-2 focus:ring-secondary-100 focus:border-secondary-500 outline-none">
-                  <option>Morning (9am - 12pm)</option>
-                  <option>Afternoon (12pm - 4pm)</option>
-                  <option>Evening (4pm - 7pm)</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Additional Notes
-                </label>
-                <textarea
-                  className="w-full px-3 py-2 rounded-lg border-2 border-gray-200 focus:ring-2 focus:ring-secondary-100 focus:border-secondary-500 outline-none"
-                  rows={3}
-                  placeholder="Any specific questions or concerns?"
-                ></textarea>
-              </div>
-
-              <button
-                type="button"
-                className="w-full py-3 bg-secondary-500 hover:bg-secondary-600 text-white font-medium rounded-lg shadow transition-colors flex items-center justify-center"
-                onClick={() => setShowCallbackModal(false)}
-              >
-                Request Callback <FiChevronRight className="ml-1" />
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* Additional decorative elements for visual interest */}
+      <div className="absolute bottom-20 right-40 w-64 h-1 bg-gradient-to-r from-transparent via-secondary-500/50 to-transparent transform rotate-45 hidden lg:block"></div>
+      <div className="absolute top-40 left-20 w-64 h-1 bg-gradient-to-r from-transparent via-blue-500/50 to-transparent transform -rotate-45 hidden lg:block"></div>
     </div>
   );
 };
-
-// Coverage card component
-const CoverageCard = ({ title, amount, formatCurrency, icon, color }) => (
-  <div className={`bg-${color}-50 p-5 rounded-xl border border-${color}-100`}>
-    <div className="flex items-center mb-3">
-      <div
-        className={`h-10 w-10 rounded-full bg-${color}-100 flex items-center justify-center mr-3`}
-      >
-        {icon}
-      </div>
-      <h4 className="font-medium text-gray-700">{title}</h4>
-    </div>
-    <p className="text-2xl font-bold text-gray-800">{formatCurrency(amount)}</p>
-  </div>
-);
 
 export default ResultsPage;

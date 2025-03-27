@@ -46,6 +46,7 @@ const Footer = () => {
 
   return (
     <>
+    
       {/* Scroll to top button */}
       <motion.div
         className="fixed right-6 bottom-6 z-30"
@@ -53,6 +54,7 @@ const Footer = () => {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
+        
         <motion.button
           onClick={scrollToTop}
           whileHover={{ scale: 1.1 }}
@@ -68,7 +70,7 @@ const Footer = () => {
       <footer className="bg-white py-6 border-t border-neutral-200 font-outfit">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
           {/* Top section with logo and social */}
-          <div className="flex flex-col md:flex-row justify-between items-center mb-10 border-b border-neutral-200">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-6 pb-4 border-b border-neutral-200">
             <Link
               to="/"
               className="flex items-center space-x-3 group mb-4 md:mb-0"
@@ -98,14 +100,14 @@ const Footer = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {/* Company description */}
             <div className="lg:pr-10">
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-600 text-sm sm:text-base mb-6">
                 We simplify senior insurance choices by providing transparent
                 comparisons and personalized recommendations.
               </p>
 
               <Link
                 to="/compare"
-                className="inline-flex items-center text-primary-600 font-medium hover:text-primary-700 transition-colors group"
+                className="inline-flex items-center text-primary-600 text-sm sm:text-base hover:underline underline-offset-4 font-medium hover:text-primary-500 transition-colors group"
               >
                 <span>Start comparing plans</span>
                 <FiChevronRight className="ml-2 group-hover:translate-x-1 transition-transform" />
@@ -116,19 +118,19 @@ const Footer = () => {
             <div className="col-span-1 md:col-span-2 lg:col-span-2">
               <div className="grid grid-cols-2 gap-8">
                 <div>
-                  <h4 className="text-secondary-600 font-bold mb-4">Explore</h4>
+                  <h4 className="text-secondary-600 text-sm sm:text-base font-bold mb-4">Explore</h4>
                   <ul className="space-y-2">
                     {links.explore.map((link, i) => (
-                      <FooterLink key={i} to={link.to} label={link.label} />
+                      <FooterLink key={i} to={link.to} label={link.label} className="text-sm sm:text-base" />
                     ))}
                   </ul>
                 </div>
 
                 <div>
-                  <h4 className="text-secondary-600 font-bold mb-4">Resources</h4>
+                  <h4 className="text-secondary-600 text-sm sm:text-base font-bold mb-4">Resources</h4>
                   <ul className="space-y-2">
                     {links.resources.map((link, i) => (
-                      <FooterLink key={i} to={link.to} label={link.label} />
+                      <FooterLink key={i} to={link.to} label={link.label} className="text-sm sm:text-base" />
                     ))}
                   </ul>
                 </div>
@@ -137,7 +139,7 @@ const Footer = () => {
 
             {/* Contact info */}
             <div className="bg-neutral-100 px-6 pb-6 rounded-xl border border-neutral-100">
-              <h4 className="text-secondary-600 font-bold mb-4">Contact Us</h4>
+              <h4 className="text-secondary-600 text-sm sm:text-base font-bold mb-4">Contact Us</h4>
               <div className="space-y-3">
                 <a
                   href="tel:+1234567890"
@@ -166,13 +168,13 @@ const Footer = () => {
           {/* Bottom footer */}
           <div className="mt-12 pt-6 border-t border-neutral-200 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-500 text-[0.87rem]">
-              &copy; {new Date().getFullYear()} Lako Insurance. All rights reserved.
+              &copy; {new Date().getFullYear()} Lako Insurance Agency. <span className="ml-3">All rights reserved.</span>
             </p>
             <div className="mt-4 md:mt-0 text-gray-500 text-sm flex items-center">
               <span className="flex items-center">
                 <ul className="flex items-center space-x-4">
-                  <FooterLink to="/" label="Privacy Policy" />
-                  <FooterLink to="/" label="Terms of Service" />
+                  <FooterLink to="/" label="Privacy Policy" className="text-[0.85rem]" />
+                  <FooterLink to="/" label="Terms of Service" className="text-[0.85rem]" />
                 </ul>
               </span>
             </div>
@@ -183,11 +185,11 @@ const Footer = () => {
   );
 };
 
-const FooterLink = ({ to, label }) => (
+const FooterLink = ({ to, label, className }) => (
   <li>
     <Link
       to={to}
-      className="text-gray-600 hover:text-primary-600 hover:font-medium font-outfit transition-colors inline-block"
+      className={`text-gray-600  hover:text-primary-600 hover:font-medium font-outfit transition-colors inline-block ${className}`}
     >
       {label}
     </Link>

@@ -285,7 +285,7 @@ const HomePage = () => {
       </section>
 
       {/* Partnership Logos Section */}
-      <section className="pt-4 sm:pt-0 bg-gradient-to-b from-neutral-100 to-neutral-50">
+      <section className="pt-4 sm:pt-0 bg-gradient-to-b from-neutral-100 via-neutral-50 to-neutral-200">
         <div className="px-4 md:px-14">
           <div className="text-center mb-6 md:mb-8">
             <h2 className="text-xl font-semibold text-gray-600">
@@ -304,7 +304,7 @@ const HomePage = () => {
             ].map((logo, index) => (
               <div
                 key={index}
-                className="bg-white shadow-md hover:shadow-lg rounded-xl p-4 transform transition-all duration-300 hover:scale-105"
+                className="bg-neutral-50 shadow-md hover:shadow-lg rounded-lg p-4 transform transition-all duration-300 hover:scale-105"
               >
                 <img
                   src={`/${logo}`}
@@ -318,15 +318,15 @@ const HomePage = () => {
       </section>
 
       {/* How It Works section - Redesigned for premium look */}
-      <section className="py-24 bg-neutral-50 font-outfit" id="how-it-works">
+      <section className="py-24 bg-neutral-200 font-outfit" id="how-it-works">
         <div className="container-custom mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12 md:mb-14">
             <div className="inline-block rounded-full bg-secondary-50 px-5 py-1 mb-3 sm:mb-6 border border-secondary-200">
-              <span className="text-secondary-700 text-xs sm:text-sm font-medium">
+              <span className="text-neutral-700 text-xs sm:text-sm font-medium">
                 Our Process
               </span>
             </div>
-            <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-3 sm:mb-6 text-secondary-600">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-3 sm:mb-6 text-gray-500">
               Experience <span className="text-primary-500">Simplified</span>{" "}
               Insurance
             </h2>
@@ -419,7 +419,7 @@ const HomePage = () => {
       </section>
 
       {/* Benefits Section - Redesigned with cards and premium styling */}
-      <section className="py-24 bg-neutral-50 relative overflow-hidden font-outfit">
+      <section className="py-24 bg-neutral-200 relative overflow-hidden font-outfit">
         {/* Decorative elements */}
         <div className="absolute -top-40 left-1/4 w-96 h-96 bg-primary-50 rounded-full opacity-60 blur-3xl"></div>
         <div className="absolute -bottom-32 right-1/4 w-80 h-80 bg-secondary-50 rounded-full opacity-70 blur-3xl"></div>
@@ -542,7 +542,7 @@ const HomePage = () => {
       </section>
 
       {/* Bottom CTA Section */}
-      <section className="py-16 bg-neutral-50 font-outfit">
+      <section className="py-16 bg-neutral-200 font-outfit">
         <div className="container mx-auto px-2 sm:px-4 lg:px-12">
           <div className="bg-gradient-to-br from-primary-600 to-primary-800 rounded-xl overflow-hidden relative">
             {/* Decorative elements */}
