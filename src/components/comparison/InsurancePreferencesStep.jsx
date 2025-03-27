@@ -8,7 +8,12 @@ import {
   FiCheck,
 } from "react-icons/fi";
 import { motion } from "framer-motion";
-import { TbCheck, TbCoins, TbInfoTriangleFilled, TbShieldHalfFilled } from "react-icons/tb";
+import {
+  TbCheck,
+  TbCoins,
+  TbInfoTriangleFilled,
+  TbShieldHalfFilled,
+} from "react-icons/tb";
 
 // Form data
 const coverageOptions = [
@@ -65,11 +70,17 @@ const InsurancePreferencesStep = ({
   onSubmit,
 }) => {
   return (
-    <div className="space-y-6 sm:space-y-8">
-      <h2 className="text-xl sm:text-2xl font-bold text-secondary-400 mb-4 sm:mb-6 flex items-center font-outfit">
-        <TbShieldHalfFilled className="mr-3 text-secondary-500 h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0" />{" "}
-        <span>Insurance Preferences</span>
-      </h2>
+    <div className="space-y-6 sm:space-y-7">
+      <div className="mb-3 sm:mb-4">
+        <h2 className="text-xl sm:text-2xl font-bold text-secondary-400  flex items-center font-outfit">
+          <TbShieldHalfFilled className="mr-3 text-secondary-500 h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0" />{" "}
+          <span>Insurance Preferences</span>
+        </h2>
+        <p className="text-xs sm:text-sm md:text-base mt-2 text-neutral-300 font-outfit">
+          Select your desired coverage level and budget range to receive a
+          comparison of insurance plans.
+        </p>
+      </div>
 
       {/* Coverage Options with Detailed Cards */}
       <div className="space-y-3">
@@ -200,8 +211,8 @@ const InsurancePreferencesStep = ({
         <FiInfo className="h-4 w-4 sm:h-5 sm:w-5 text-primary-600 flex-shrink-0 mt-0.5" />
         <div>
           <p className="text-xs sm:text-sm font-outfit">
-            On submission of this form, you'll receive a comparison of
-            insurance plans matched to your specific criteria.
+            On submission of this form, you'll receive a comparison of insurance
+            plans matched to your specific criteria.
           </p>
         </div>
       </div>

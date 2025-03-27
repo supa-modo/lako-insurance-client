@@ -276,7 +276,7 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
       <div className="bg-secondary-50 border border-secondary-100 rounded-xl overflow-hidden">
         <div className="p-4 sm:p-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-            <div className="mb-6 md:mb-0 md:mr-6 max-w-[50%]">
+            <div className="mb-6 md:mb-0 md:mr-6 md:max-w-[50%]">
               <h3 className="text-lg sm:text-xl font-bold text-neutral-800 mb-2">
                 Need Help With This Plan?
               </h3>

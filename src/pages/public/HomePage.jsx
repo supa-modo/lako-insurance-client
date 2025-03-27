@@ -117,7 +117,7 @@ const HomePage = () => {
                   </p>
                 </div>
 
-                <div className="flex space-x-4 font-lexend">
+                <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 font-lexend">
                   <motion.div
                     whileHover={{ scale: 1.01 }}
                     whileTap={{ scale: 0.98 }}
@@ -125,14 +125,14 @@ const HomePage = () => {
                   >
                     <Link
                       to="/compare"
-                      className="btn bg-secondary-500 text-white font-medium hover:bg-primary-700 transition-all duration-300 shadow-lg hover:shadow-xl px-8 py-2 sm:py-2.5 rounded-lg text-base sm:text-lg group"
+                      className="btn w-full bg-secondary-500 text-white font-medium hover:bg-primary-700 transition-all duration-300 shadow-lg hover:shadow-xl px-8 py-2 sm:py-2.5 rounded-lg text-base sm:text-lg group"
                     >
                       <motion.span
                         className="inline-flex items-center"
                         whileHover={{ x: 2 }}
                         transition={{ type: "spring", stiffness: 200 }}
                       >
-                        Compare Plans
+                        Compare InsurancePlans
                         <motion.div
                           whileHover={{ x: 3 }}
                           transition={{ type: "spring", stiffness: 200 }}
@@ -150,7 +150,7 @@ const HomePage = () => {
                   >
                     <Link
                       to="/about"
-                      className="btn border-2 border-white/50 text-secondary-500 hover:bg-white/20 hover:text-secondary-600 transition-all duration-300 px-8 py-2 sm:py-2.5 rounded-lg text-base sm:text-lg"
+                      className="btn w-full border-2 border-white/50 text-secondary-500 hover:bg-white/20 hover:text-secondary-600 transition-all duration-300 px-8 py-2 sm:py-2.5 rounded-lg text-base sm:text-lg"
                     >
                       Learn More
                     </Link>
