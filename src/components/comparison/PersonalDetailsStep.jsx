@@ -30,7 +30,7 @@ const PersonalDetailsStep = ({ register, errors, onNext }) => {
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-1 flex items-center pl-3 pointer-events-none">
-              <PiUserDuotone className="text-primary-400  " size={20} />
+              <PiUserDuotone className="text-primary-200  " size={20} />
             </div>
             <input
               id="name"
@@ -65,7 +65,7 @@ const PersonalDetailsStep = ({ register, errors, onNext }) => {
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-1 flex items-center pl-3 pointer-events-none">
-              <TbMailFilled className="text-primary-400 " size={20} />
+              <TbMailFilled className="text-primary-200 " size={20} />
             </div>
             <input
               id="email"
@@ -106,7 +106,7 @@ const PersonalDetailsStep = ({ register, errors, onNext }) => {
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-1 flex items-center pl-3 pointer-events-none">
-              <TbPhone className="text-primary-400 " size={20} />
+              <TbPhone className="text-primary-200 " size={20} />
             </div>
             <input
               id="phone"
@@ -141,7 +141,7 @@ const PersonalDetailsStep = ({ register, errors, onNext }) => {
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-1 flex items-center pl-3 pointer-events-none">
-              <TbCalendarSmile className="text-primary-400 " size={20} />
+              <TbCalendarSmile className="text-primary-200 " size={20} />
             </div>
             <input
               id="age"
