@@ -132,7 +132,7 @@ const HomePage = () => {
                         whileHover={{ x: 2 }}
                         transition={{ type: "spring", stiffness: 200 }}
                       >
-                        Compare InsurancePlans
+                        Compare Insurance Plans
                         <motion.div
                           whileHover={{ x: 3 }}
                           transition={{ type: "spring", stiffness: 200 }}

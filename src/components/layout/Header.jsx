@@ -158,7 +158,7 @@ const Header = () => {
               onClick={() => setIsMenuOpen(false)}
             >
               <div className="flex items-center justify-center">
-                <span>Get Your Quote</span>
+                <span className="text-sm">Get Your Quote</span>
                 <TbArrowRight className="ml-2" />
               </div>
             </Link>
@@ -228,7 +228,7 @@ const MobileNavLink = ({ to, label, onClick }) => (
     className="flex items-center px-2 py-2 text-neutral-800 hover:text-primary-500 font-medium font-outfit border-b border-neutral-100"
     onClick={onClick}
   >
-    <span>{label}</span>
+    <span className="text-sm">{label}</span>
     <div className="ml-auto">
       <FiChevronDown className="h-4 w-4 rotate-[-90deg] text-neutral-700" />
     </div>
