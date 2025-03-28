@@ -70,7 +70,7 @@ const PlanList = ({ plans, onSelectPlan, formatCurrency }) => {
 
                   <div className="flex items-center  w-auto justify-end">
                     <div className="text-right mr-4">
-                      <div className="text-lg sm:text-xl font-semibold text-primary-200 font-outfit">
+                      <div className="text-base sm:text-lg md:text-xl font-semibold text-primary-300 font-outfit">
                         {formatCurrencyFn(plan.premium || 50000)}
                       </div>
                       <div className="text-neutral-400 text-xs">per year</div>

@@ -7,7 +7,7 @@ import {
   FiPhoneCall,
   FiChevronDown,
 } from "react-icons/fi";
-import { TbPhoneCall } from "react-icons/tb";
+import { TbArrowRight, TbPhoneCall } from "react-icons/tb";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -107,7 +107,7 @@ const Header = () => {
             : "opacity-0 scale-y-0 pointer-events-none"
         }`}
       >
-        <div className="container-custom py-6 space-y-6">
+        <div className="container-custom pb-4 space-y-3">
           <nav className="flex flex-col space-y-2">
             <MobileNavLink
               to="/"
@@ -144,7 +144,7 @@ const Header = () => {
           <div className="pt-4 border-t border-neutral-200">
             <a
               href="tel:+1234567890"
-              className="flex items-center text-gray-700 hover:text-primary-500 transition mb-4"
+              className="flex items-center text-gray-700 hover:text-primary-500 transition mb-3"
               onClick={() => setIsMenuOpen(false)}
             >
               <div className="w-10 h-10 rounded-full bg-primary-50 flex items-center justify-center mr-3">
@@ -154,10 +154,13 @@ const Header = () => {
             </a>
             <Link
               to="/compare"
-              className="block w-full py-3 px-4 bg-secondary-500 hover:bg-primary-600 text-white hover:text-white text-center font-semibold rounded-lg shadow-md transition-all"
+              className="block w-full  py-2 px-4 bg-secondary-500 hover:bg-primary-600 text-white hover:text-white text-center font-semibold rounded-lg shadow-md transition-all"
               onClick={() => setIsMenuOpen(false)}
             >
-              Get Started
+              <div className="flex items-center justify-center">
+                <span>Get Your Quote</span>
+                <TbArrowRight className="ml-2" />
+              </div>
             </Link>
           </div>
         </div>
@@ -222,7 +225,7 @@ const NavDropdown = ({ label, items }) => {
 const MobileNavLink = ({ to, label, onClick }) => (
   <Link
     to={to}
-    className="flex items-center px-2 py-3 text-neutral-800 hover:text-primary-500 font-medium font-outfit border-b border-neutral-100"
+    className="flex items-center px-2 py-2 text-neutral-800 hover:text-primary-500 font-medium font-outfit border-b border-neutral-100"
     onClick={onClick}
   >
     <span>{label}</span>

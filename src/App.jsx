@@ -10,11 +10,13 @@ import AdminLayout from "./components/layout/AdminLayout";
 import { Provider } from "react-redux";
 import store from "./store";
 import AuthGuard from "./components/AuthGuard";
+import ScrollToTop from "./components/utils/ScrollToTop";
 
 function App() {
   return (
     <Provider store={store}>
       <Router>
+        <ScrollToTop />
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Layout />}>
@@ -23,9 +25,11 @@ function App() {
             <Route path="results" element={<ResultsPage />} />
           </Route>
 
-          {/* Admin Routes */}
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<AdminLoginPage />} />
+          {/* Admin Login Page (Outside Admin Layout) */}
+          <Route path="/admin" exact element={<AdminLoginPage />} />
+
+          {/* Admin Routes with Layout */}
+          <Route path="/admin/*" element={<AdminLayout />}>
             <Route
               path="dashboard"
               element={
@@ -34,6 +38,7 @@ function App() {
                 </AuthGuard>
               }
             />
+            {/* other admin routes to come here */}
           </Route>
 
           {/* 404 Page Not Found - Catch All */}

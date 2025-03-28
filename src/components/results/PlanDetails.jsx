@@ -1,13 +1,6 @@
 import React from "react";
 import {
-  FiCheck,
   FiX,
-  FiShield,
-  FiDollarSign,
-  FiClock,
-  FiPhone,
-  FiMail,
-  FiChevronRight,
   FiArrowLeft,
   FiInfo,
 } from "react-icons/fi";

@@ -78,7 +78,7 @@ const PersonalDetailsStep = ({ register, errors, onNext }) => {
                   ? "border-red-400/70 focus:border-red-500 focus:ring-red-400/30"
                   : "border-white/30"
               }`}
-              placeholder="john@example.com"
+              placeholder="example@email.com"
               {...register("email", {
                 required: "Email is required",
                 pattern: {

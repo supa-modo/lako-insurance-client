@@ -1,0 +1,32 @@
+[
+  {
+    "id": "admin-001",
+    "email": "admin@lako.com",
+    "password": "admin123",
+    "name": "Admin User",
+    "role": "admin",
+    "avatar": null,
+    "lastLogin": "2023-11-15T08:30:00.000Z",
+    "permissions": ["all"]
+  },
+  {
+    "id": "manager-001",
+    "email": "manager@lako.com",
+    "password": "manager123",
+    "name": "Manager User",
+    "role": "manager",
+    "avatar": null,
+    "lastLogin": "2023-11-14T14:45:00.000Z",
+    "permissions": ["view", "edit"]
+  },
+  {
+    "id": "viewer-001",
+    "email": "viewer@lako.com",
+    "password": "viewer123",
+    "name": "Viewer User",
+    "role": "viewer",
+    "avatar": null,
+    "lastLogin": "2023-11-13T10:15:00.000Z",
+    "permissions": ["view"]
+  }
+]
