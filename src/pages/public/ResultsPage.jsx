@@ -247,88 +247,6 @@ const ResultsPage = () => {
     </div>
   );
 
-  // Download Report Component
-  const DownloadReport = ({ status, onDownload }) => {
-    // Status indicator messages
-    const statusMessages = {
-      loading: "Downloading report...",
-      success: "Download complete!",
-      error: "Download failed! Try again.",
-    };
-
-    return (
-      <div className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20 shadow-lg font-outfit">
-        <div className="flex items-center space-x-3 mb-4">
-          <div className="h-10 w-10 rounded-full bg-secondary-500/20 flex items-center justify-center">
-            <FiDownload className="h-5 w-5 text-secondary-400" />
-          </div>
-          <div>
-            <h3 className="text-lg font-bold text-white font-outfit">
-              Download Report
-            </h3>
-            <p className="text-sm text-neutral-300 font-outfit">
-              Get a detailed PDF breakdown
-            </p>
-          </div>
-        </div>
-
-        {status !== "idle" ? (
-          <div
-            className={`rounded-lg p-3 mb-3 text-sm flex items-center justify-center
-            ${
-              status === "loading"
-                ? "bg-blue-500/20 text-blue-300"
-                : status === "success"
-                ? "bg-green-500/20 text-green-300"
-                : "bg-red-500/20 text-red-300"
-            }`}
-          >
-            {status === "loading" && (
-              <svg
-                className="animate-spin -ml-1 mr-2 h-4 w-4"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
-            )}
-            {statusMessages[status]}
-          </div>
-        ) : null}
-
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className={`w-full flex items-center justify-center px-4 py-3 
-            ${
-              status === "loading"
-                ? "bg-gray-500/50 cursor-not-allowed"
-                : "bg-secondary-500 hover:bg-secondary-600"
-            } 
-            text-white font-medium rounded-lg transition-colors font-outfit shadow-md`}
-          onClick={onDownload}
-          disabled={status === "loading"}
-        >
-          <FiDownload className="mr-2" />
-          Download PDF Report
-        </motion.button>
-      </div>
-    );
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 text-white relative overflow-hidden font-outfit">
       {/* Decorative elements */}
@@ -340,7 +258,7 @@ const ResultsPage = () => {
       <div className="absolute top-10 right-10 w-64 h-64 bg-white/5 rounded-2xl backdrop-blur-sm border border-white/10 hidden lg:block"></div>
       <div className="absolute bottom-10 left-10 w-48 h-48 bg-white/5 rounded-2xl backdrop-blur-sm border border-white/10 hidden lg:block"></div>
 
-      <div className="md:container-custom mx-auto px-2 sm:px-4 lg:px-8 py-8 relative z-10">
+      <div className="md:container-custom mx-auto px-0 sm:px-4 lg:px-8 py-5 sm:py-8 relative z-10">
         {/* Breadcrumb Navigation */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
@@ -348,7 +266,7 @@ const ResultsPage = () => {
           transition={{ duration: 0.5 }}
           className="mb-6"
         >
-          <div className="flex items-center space-x-2 text-sm">
+          <div className="flex items-center space-x-2 px-3 sm:px-1 text-sm">
             <Link
               to="/"
               className="text-secondary-400 hover:text-white transition-colors"
@@ -397,7 +315,7 @@ const ResultsPage = () => {
           </div>
         </motion.div>
 
-        <header className="text-center mb-8">
+        <header className="text-center px-3 sm:px-2 mb-6 sm:mb-8">
           <motion.h1
             className="text-2xl sm:text-3xl md:text-4xl font-bold text-gradient bg-gradient-to-r from-white via-secondary-200 to-white bg-clip-text text-transparent font-outfit mb-2"
             initial={{ y: -50, opacity: 0 }}
@@ -407,7 +325,7 @@ const ResultsPage = () => {
             Your Insurance Results
           </motion.h1>
           <motion.p
-            className="text-base sm:text-lg text-neutral-300 max-w-4xl mx-auto"
+            className="text-sm sm:text-base md:text-lg text-neutral-300 max-w-4xl mx-auto"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.1 }}
@@ -424,7 +342,7 @@ const ResultsPage = () => {
         ) : !report || comparisonResults.length === 0 ? (
           <EmptyState onGoHome={handleGoToHome} />
         ) : (
-          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-2 sm:p-3 md:p-6 shadow-2xl">
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl sm:rounded-2xl px-2 py-5 sm:p-3 md:p-6 shadow-2xl">
             {/* Main content - desktop: side by side, mobile: sequential */}
             <motion.div
               variants={containerVariants}
@@ -440,10 +358,12 @@ const ResultsPage = () => {
                       onBack={handleBackToList}
                       formatCurrency={formatCurrency}
                       onRequestCallback={handleCallbackRequest}
+                      downloadStatus={downloadStatus}
+                      onDownload={handleDownload}
                     />
 
                     <QueryDetails
-                      userQuery={report.userQuery}
+                      userQuery={userQuery || report.userQuery}
                       formatCurrency={formatCurrency}
                     />
                   </div>
@@ -454,11 +374,6 @@ const ResultsPage = () => {
                       onSelectPlan={handlePlanSelect}
                       formatCurrency={formatCurrency}
                       activePlanId={selectedPlan?.id || selectedPlan?.plan?.id}
-                    />
-
-                    <DownloadReport
-                      status={downloadStatus}
-                      onDownload={handleDownload}
                     />
 
                     <motion.button
@@ -478,7 +393,7 @@ const ResultsPage = () => {
                       Schedule a Call
                     </motion.button>
                     <QueryDetails
-                      userQuery={report.userQuery}
+                      userQuery={userQuery || report.userQuery}
                       formatCurrency={formatCurrency}
                     />
                   </div>
@@ -497,11 +412,6 @@ const ResultsPage = () => {
                     onSelectPlan={handlePlanSelect}
                     formatCurrency={formatCurrency}
                     activePlanId={selectedPlan?.id || selectedPlan?.plan?.id}
-                  />
-
-                  <DownloadReport
-                    status={downloadStatus}
-                    onDownload={handleDownload}
                   />
 
                   <motion.button
@@ -533,6 +443,8 @@ const ResultsPage = () => {
                       onBack={handleBackToList}
                       formatCurrency={formatCurrency}
                       onRequestCallback={handleCallbackRequest}
+                      downloadStatus={downloadStatus}
+                      onDownload={handleDownload}
                     />
                   ) : (
                     <div className="h-full flex items-center justify-center bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-white/10">
@@ -551,7 +463,7 @@ const ResultsPage = () => {
                     </div>
                   )}
                   <QueryDetails
-                    userQuery={report.userQuery}
+                    userQuery={userQuery || report.userQuery}
                     formatCurrency={formatCurrency}
                   />
                 </motion.div>

@@ -171,12 +171,12 @@ const DesktopStepper = ({ currentStep }) => {
             >
               <motion.p
                 className={`title font-medium text-lg ${
-                  currentStep >= step.number ? "text-white" : "text-white/70"
+                  currentStep >= step.number ? "text-primary-400" : "text-primary-400/70"
                 } font-outfit`}
                 animate={{
                   color:
                     currentStep >= step.number
-                      ? "#ffffff"
+                      ? "#75c9c9"
                       : "rgba(255, 255, 255, 0.7)",
                 }}
                 transition={{ duration: 0.3 }}

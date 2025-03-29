@@ -6,7 +6,6 @@ import {
   TbCoins,
   TbInfoTriangleFilled,
   TbShieldHalfFilled,
-  TbCalendarStar,
   TbUsers,
   TbBuildingHospital,
 } from "react-icons/tb";
@@ -92,29 +91,6 @@ const budgetRanges = [
     label: "Ksh 200,000+",
     description: "Executive level health security with top-tier benefits",
     suitable: ["Diamond", "Platinum", "Plan VI"],
-  },
-];
-
-const ageRanges = [
-  {
-    value: "65-69",
-    label: "65-69 years",
-    description: "Lower premiums available in this age bracket",
-  },
-  {
-    value: "70-74",
-    label: "70-74 years",
-    description: "Moderate premium rates with comprehensive coverage",
-  },
-  {
-    value: "75-79",
-    label: "75-79 years",
-    description: "Higher premium rates with specialized care options",
-  },
-  {
-    value: "80-85",
-    label: "80-85 years",
-    description: "Premium rates with specialized senior care benefits",
   },
 ];
 
@@ -206,65 +182,6 @@ const InsurancePreferencesStep = ({
           preferences to receive a comparison of insurance plans that best match
           your needs.
         </p>
-      </div>
-
-      {/* Age Range Selection */}
-      <div className="space-y-3">
-        <label className="text-sm sm:text-base font-semibold text-primary-400 flex items-center font-outfit">
-          <TbCalendarStar className="mr-2 h-5 w-5 sm:h-6 sm:w-6" /> Age Range
-        </label>
-        <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
-          {ageRanges.map((range) => (
-            <div
-              key={range.value}
-              className={`relative border-2 rounded-lg p-3 sm:p-4 cursor-pointer transition-all duration-300 
-              ${
-                watchedValues.ageRange === range.value
-                  ? "border-secondary-500 bg-secondary-100 shadow-md transform scale-[1.01]"
-                  : "border-neutral-200 hover:border-secondary-300 bg-white/80 hover:bg-neutral-100"
-              }`}
-              onClick={() => {
-                const input = document.getElementById(
-                  `ageRange-${range.value}`
-                );
-                if (input) input.click();
-              }}
-            >
-              <div className="flex items-start">
-                <input
-                  id={`ageRange-${range.value}`}
-                  type="radio"
-                  className="sr-only"
-                  value={range.value}
-                  {...register("ageRange", {
-                    required: "Please select your age range",
-                  })}
-                />
-                <div className="w-full">
-                  <div className="flex justify-between items-center mb-1">
-                    <p className="font-bold text-sm sm:text-base text-neutral-800 font-outfit">
-                      {range.label}
-                    </p>
-                    {watchedValues.ageRange === range.value && (
-                      <div className="h-5 w-5 rounded-full bg-secondary-500 flex items-center justify-center">
-                        <TbCheck className="text-white h-3 w-3" />
-                      </div>
-                    )}
-                  </div>
-                  <p className="text-xs sm:text-sm text-neutral-600 font-outfit">
-                    {range.description}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-        {errors.ageRange && (
-          <p className="mt-1 text-red-400 text-xs sm:text-sm flex items-center">
-            <TbInfoTriangleFilled className="mr-1 h-4 w-4 text-red-500" />{" "}
-            {errors.ageRange.message}
-          </p>
-        )}
       </div>
 
       {/* Coverage Options with Detailed Cards */}

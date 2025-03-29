@@ -4,6 +4,7 @@ import {
   FiArrowLeft,
   FiChevronDown,
   FiChevronUp,
+  FiDownload,
 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -25,7 +26,14 @@ import {
 import { FaUserDoctor } from "react-icons/fa6";
 import { PiTooth } from "react-icons/pi";
 
-const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
+const PlanDetails = ({
+  plan,
+  formatCurrency,
+  onRequestCallback,
+  onBack,
+  downloadStatus,
+  onDownload,
+}) => {
   const [activeTab, setActiveTab] = useState("inpatient");
   const [expandedSections, setExpandedSections] = useState(new Set());
 
@@ -53,6 +61,13 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
     typeof planData.premium === "object"
       ? planData.premium[Object.keys(planData.premium)[0]] // Show first age bracket premium
       : planData.premium;
+
+  // Status indicator messages for download
+  const statusMessages = {
+    loading: "Downloading report...",
+    success: "Download complete!",
+    error: "Download failed! Try again.",
+  };
 
   // Define benefit categories and icons
   const benefitCategories = {
@@ -210,13 +225,13 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
 
   // Coverage Card Component for the top section
   const CoverageCard = ({ title, amount, icon, color }) => (
-    <div className="bg-neutral-200 border-primary-500/20 backdrop-blur-sm px-4 py-2 sm:p-5 rounded-xl border transition-all duration-300 hover:shadow-md">
+    <div className="bg-neutral-200 border-primary-500/20 backdrop-blur-sm px-4 py-2 sm:p-5 rounded-lg  border transition-all duration-300 hover:shadow-md">
       <div className="flex items-center">
         <div className="h-8 sm:h-10 w-8 sm:w-10 rounded-full bg-primary-500/40 flex items-center justify-center mr-3 flex-shrink-0">
           {icon}
         </div>
         <div className="">
-          <p className="text-lg sm:text-xl font-bold text-neutral-700">
+          <p className="text-base sm:text-lg md::text-xl font-bold text-neutral-700">
             {typeof amount === "number"
               ? formatCurrencyFn(amount || 0)
               : amount}
@@ -271,7 +286,7 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
         whileHover={{ x: -2 }}
         whileTap={{ scale: 0.98 }}
         onClick={onBack}
-        className="md:hidden flex items-center text-white/80 hover:text-white mb-4 transition-colors"
+        className="md:hidden flex items-center pl-3 sm:pl-0 text-white/80 hover:text-white mb-4 transition-colors"
       >
         <FiArrowLeft className="mr-2" /> Back to plan list
       </motion.button>
@@ -402,16 +417,16 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
               {benefitCategories[activeTab].map((benefit, idx) => (
                 <div
                   key={idx}
-                  className="flex items-start p-3 sm:p-4 bg-neutral-50 rounded-lg border border-neutral-200"
+                  className="flex items-start p-3 sm:px-4 bg-neutral-50 rounded-lg border border-neutral-200"
                 >
                   <div className="text-secondary-500 mt-1 mr-3 shrink-0">
                     {benefit.icon}
                   </div>
                   <div>
-                    <span className="font-semibold text-neutral-800">
+                    <span className="font-semibold text-[0.8rem] sm:text-sm  text-neutral-800">
                       {benefit.title}
                     </span>
-                    <p className="text-base sm:text-lg text-secondary-700 font-semibold mt-1">
+                    <p className="text-[0.9rem] md:text-base text-secondary-700 font-semibold mt-1">
                       {benefit.isAmount
                         ? formatCurrencyFn(benefit.value)
                         : benefit.value}
@@ -436,7 +451,9 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
                     key={ageRange}
                     className="flex justify-between border-b pb-2 text-[0.8rem] sm:text-sm md:text-base"
                   >
-                    <span className="font-medium text-neutral-600">{ageRange} years</span>
+                    <span className="font-medium text-neutral-600">
+                      {ageRange} years
+                    </span>
                     <span className="text-secondary-600 font-semibold ">
                       {formatCurrencyFn(premium)}
                     </span>
@@ -504,6 +521,84 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
           </CollapsibleSection>
         </div>
       </div>
+
+      {/* Download Report Section */}
+      {onDownload && (
+        <div className="bg-primary-50 border border-secondary-100 rounded-xl p-5 shadow-md">
+          <div className="flex flex-col md:flex-row items-center gap-3 justify-between">
+          <div className="w-full flex items-center space-x-3 ">
+            <div className="h-10 w-10 rounded-full bg-secondary-500/20 flex items-center justify-center">
+              <FiDownload className="h-5 w-5 text-secondary-500" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-neutral-800 font-outfit">
+                Download Report
+              </h3>
+              <p className="text-sm text-neutral-600 font-outfit">
+                Get a detailed PDF breakdown of this plan
+              </p>
+            </div>
+          </div>
+
+          <motion.button
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.99 }}
+            className={`w-full flex items-center justify-center px-4 py-3 
+              ${
+                downloadStatus === "loading"
+                  ? "bg-neutral-400 cursor-not-allowed"
+                  : "bg-secondary-500 hover:bg-secondary-600"
+              } 
+              text-white font-medium rounded-lg transition-colors font-outfit shadow-md`}
+            onClick={onDownload}
+            disabled={downloadStatus === "loading"}
+          >
+            <FiDownload className="mr-2" />
+            Download PDF Report
+          </motion.button>
+          </div>
+          
+
+          {downloadStatus && downloadStatus !== "idle" ? (
+            <div
+              className={`rounded-lg p-3 mb-3 text-sm flex items-center justify-center
+              ${
+                downloadStatus === "loading"
+                  ? "bg-blue-100 text-blue-700"
+                  : downloadStatus === "success"
+                  ? "bg-green-100 text-green-700"
+                  : "bg-red-100 text-red-700"
+              }`}
+            >
+              {downloadStatus === "loading" && (
+                <svg
+                  className="animate-spin -ml-1 mr-2 h-4 w-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+              )}
+              {statusMessages[downloadStatus]}
+            </div>
+          ) : null}
+
+          
+        </div>
+      )}
 
       <div className="bg-secondary-50 border border-secondary-100 rounded-xl overflow-hidden">
         <div className="p-4 sm:p-6">

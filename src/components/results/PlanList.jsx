@@ -29,7 +29,7 @@ const PlanList = ({ plans, onSelectPlan, formatCurrency, activePlanId }) => {
 
   return (
     <div className="space-y-5">
-      <h2 className="text-lg sm:text-xl font-semibold text-white mb-4 font-outfit flex items-center">
+      <h2 className="text-lg sm:text-xl pl-3  sm:pl-3 font-semibold text-white mb-4 font-outfit flex items-center">
         <FaRegThumbsUp className="mr-3 text-secondary-400" />
         Recommended Plans for You
       </h2>

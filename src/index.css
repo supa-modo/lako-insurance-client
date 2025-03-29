@@ -78,7 +78,7 @@ textarea {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-primary-400;
+  @apply bg-secondary-700;
 }
 
 @layer components {

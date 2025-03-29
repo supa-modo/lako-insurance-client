@@ -5,6 +5,8 @@ import {
   TbShieldHalfFilled,
   TbBuildingHospital,
   TbBox,
+  TbUser,
+  TbPhone,
 } from "react-icons/tb";
 import { PiUserDuotone } from "react-icons/pi";
 
@@ -58,15 +60,51 @@ const QueryDetails = ({ report, userQuery, formatCurrency }) => {
       })
     : [];
 
+  const formatPhoneNumber = (phone) => {
+    // Add +254 prefix if not already included
+    if (!phone) return "";
+    if (phone.startsWith("+")) return phone;
+    if (phone.length === 9) return `+254 ${phone}`;
+    return phone;
+  };
+
   return (
     <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 shadow-lg divide-y divide-white/10 font-outfit">
       <div className="mb-4">
-        <h3 className="text-base sm:text-lg font-bold text-white mb-1">
-          Your Query Details
-        </h3>
-        <p className="text-xs sm:text-sm text-neutral-300">
-          Your preferences used for plan recommendations
-        </p>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4">
+          <div>
+            <h3 className="text-base sm:text-lg font-bold text-white mb-1">
+              Your Query Details
+            </h3>
+            <p className="text-xs sm:text-sm text-neutral-300">
+              Your preferences used for plan recommendations
+            </p>
+          </div>
+          {(queryData.fullName ||
+            queryData.name ||
+            queryData.phoneNumber ||
+            queryData.phone) && (
+            <div className="mt-2 sm:mt-0 px-3 py-2 bg-white/5 rounded-lg">
+              <div className="flex items-center gap-3">
+                <PiUserDuotone className="h-8 w-8 text-secondary-400" />
+                <div className="flex flex-col">
+                  {(queryData.fullName || queryData.name) && (
+                    <span className="text-white text-sm sm:text-base font-medium">
+                      {queryData.fullName || queryData.name}
+                    </span>
+                  )}
+                  {(queryData.phoneNumber || queryData.phone) && (
+                    <span className="text-white text-[0.7rem] md:text-[0.8rem]">
+                      {formatPhoneNumber(
+                        queryData.phoneNumber || queryData.phone
+                      )}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="pt-4 space-y-2 sm:space-y-3">
