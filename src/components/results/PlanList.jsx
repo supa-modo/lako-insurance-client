@@ -62,7 +62,7 @@ const PlanList = ({ plans, onSelectPlan, formatCurrency, activePlanId }) => {
             >
               {isTopPlan && (
                 <div className="absolute top-0 right-0">
-                  <div className="bg-secondary-500 text-white text-[0.6rem] sm:text-[0.65rem] font-semibold px-3 py-1 tracking-wide uppercase rounded-bl-lg font-outfit flex items-center">
+                  <div className="bg-secondary-500 text-white text-[0.55rem] sm:text-[0.6rem] md:text-[0.65rem] font-semibold px-3 py-1 tracking-wide uppercase rounded-bl-lg font-outfit flex items-center">
                     <FiAward className="mr-1" size={16} /> Best Match
                   </div>
                 </div>
@@ -70,7 +70,7 @@ const PlanList = ({ plans, onSelectPlan, formatCurrency, activePlanId }) => {
 
               {isActivePlan && (
                 <div className="absolute top-0 left-0">
-                  <div className="bg-primary-400 text-white text-[0.55rem] font-semibold px-3 py-0.5 tracking-wide uppercase rounded-br-lg font-outfit">
+                  <div className="bg-primary-400 text-white text-[0.55rem]  font-semibold px-3 py-0.5 tracking-wide uppercase rounded-br-lg font-outfit">
                     Current Selection
                   </div>
                 </div>
@@ -78,7 +78,7 @@ const PlanList = ({ plans, onSelectPlan, formatCurrency, activePlanId }) => {
 
               <div className="p-4 pt-6">
                 <div className="flex items-center justify-between ">
-                  <div className="flex items-center w-full md:w-auto">
+                  <div className="flex items-center w-[65%] md:w-auto">
                     <div className="w-14 h-12 flex items-center justify-center rounded-lg bg-white overflow-hidden mr-3 md:mr-4 flex-shrink-0">
                       <img
                         src={plan.companyLogo || "/insurance-placeholder.png"}
@@ -104,7 +104,7 @@ const PlanList = ({ plans, onSelectPlan, formatCurrency, activePlanId }) => {
                     </div>
                   </div>
 
-                  <div className="flex items-center w-full md:w-auto justify-end">
+                  <div className="flex items-center w-[35%] md:w-auto justify-end">
                     <div className="text-right">
                       <div className="text-base sm:text-lg md:text-xl font-semibold text-primary-300 font-outfit">
                         {formatCurrencyFn(displayPremium || 50000)}
@@ -123,7 +123,7 @@ const PlanList = ({ plans, onSelectPlan, formatCurrency, activePlanId }) => {
                     <div className="col-span-1">
                       <div className="flex items-center mb-1 text-xs text-neutral-400">
                         <TbShieldCheck className="mr-1 text-secondary-400" />
-                        <p>Inpatient Cover</p>
+                        <p>Inpatient</p>
                       </div>
                       <p className="text-sm text-white font-medium">
                         {formatCurrencyFn(
@@ -134,7 +134,7 @@ const PlanList = ({ plans, onSelectPlan, formatCurrency, activePlanId }) => {
                     <div className="col-span-1">
                       <div className="flex items-center mb-1 text-xs text-neutral-400">
                         <TbStethoscope className="mr-1 text-secondary-400" />
-                        <p>Outpatient Cover</p>
+                        <p>Outpatient</p>
                       </div>
                       <p className="text-sm text-white font-medium">
                         {formatCurrencyFn(
@@ -153,7 +153,7 @@ const PlanList = ({ plans, onSelectPlan, formatCurrency, activePlanId }) => {
                     </div>
                   </div>
 
-                  <div className="mt-4 grid grid-cols-2 gap-2">
+                  <div className="mt-4 grid grid-cols-2 gap-1">
                     {/* Key benefits to highlight */}
                     <div className="flex items-start">
                       <TbCheck className="text-secondary-400 mr-1.5 mt-0.5 shrink-0" />
@@ -187,7 +187,7 @@ const PlanList = ({ plans, onSelectPlan, formatCurrency, activePlanId }) => {
                             }}
                           ></div>
                         </div>
-                        <span className="text-sm text-white font-medium">
+                        <span className="text-xs md:text-sm text-white font-medium">
                           {Math.round((planResult.score || 0.8) * 100)}% Match
                         </span>
                       </div>

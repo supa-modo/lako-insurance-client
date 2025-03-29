@@ -424,7 +424,7 @@ const ResultsPage = () => {
         ) : !report || comparisonResults.length === 0 ? (
           <EmptyState onGoHome={handleGoToHome} />
         ) : (
-          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4 sm:p-6 shadow-2xl">
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-2 sm:p-3 md:p-6 shadow-2xl">
             {/* Main content - desktop: side by side, mobile: sequential */}
             <motion.div
               variants={containerVariants}
@@ -434,12 +434,17 @@ const ResultsPage = () => {
               {/* Mobile View (Sequential) */}
               <div className="md:hidden">
                 {selectedPlan ? (
-                  <div>
+                  <div className="space-y-4">
                     <PlanDetails
                       plan={selectedPlan}
                       onBack={handleBackToList}
                       formatCurrency={formatCurrency}
                       onRequestCallback={handleCallbackRequest}
+                    />
+
+                    <QueryDetails
+                      userQuery={report.userQuery}
+                      formatCurrency={formatCurrency}
                     />
                   </div>
                 ) : (
@@ -515,17 +520,12 @@ const ResultsPage = () => {
                     </svg>
                     Schedule a Call
                   </motion.button>
-
-                  <QueryDetails
-                    userQuery={report.userQuery}
-                    formatCurrency={formatCurrency}
-                  />
                 </motion.div>
 
                 {/* Right Column: Plan Details */}
                 <motion.div
                   variants={itemVariants}
-                  className="md:col-span-7 lg:col-span-8"
+                  className="md:col-span-7 lg:col-span-8 space-y-6"
                 >
                   {selectedPlan ? (
                     <PlanDetails
@@ -550,6 +550,10 @@ const ResultsPage = () => {
                       </div>
                     </div>
                   )}
+                  <QueryDetails
+                    userQuery={report.userQuery}
+                    formatCurrency={formatCurrency}
+                  />
                 </motion.div>
               </div>
             </motion.div>

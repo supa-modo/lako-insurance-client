@@ -69,25 +69,25 @@ const QueryDetails = ({ report, userQuery, formatCurrency }) => {
         </p>
       </div>
 
-      <div className="pt-4 space-y-4">
+      <div className="pt-4 space-y-2 sm:space-y-3">
         {/* Age Range */}
         <div className="flex justify-between items-center">
-          <span className="text-neutral-300 text-sm sm:text-base flex items-center">
+          <span className="text-neutral-300 text-[0.8rem] sm:text-sm md:text-base flex items-center">
             <TbCalendarStar className="mr-2 h-4 w-4 text-secondary-400" />
             Age Range:
           </span>
-          <span className="font-medium text-sm sm:text-base text-white bg-white/5 px-3 py-1 rounded-md">
+          <span className="font-medium text-[0.8rem] sm:text-sm md:text-base text-white bg-white/5 px-3 py-1 rounded-md">
             {queryData.ageRange || "Not specified"}
           </span>
         </div>
 
         {/* Desired Coverage */}
         <div className="flex justify-between items-center">
-          <span className="text-neutral-300 text-sm sm:text-base flex items-center">
+          <span className="text-neutral-300 text-[0.8rem] sm:text-sm md:text-base flex items-center">
             <TbShieldHalfFilled className="mr-2 h-4 w-4 text-secondary-400" />
             Coverage Level:
           </span>
-          <span className="font-medium text-sm sm:text-base text-white bg-white/5 px-3 py-1 rounded-md">
+          <span className="font-medium text-[0.8rem] sm:text-sm md:text-base text-white bg-white/5 px-3 py-1 rounded-md">
             {queryData.desiredCoverage
               ? coverageLabels[queryData.desiredCoverage] ||
                 queryData.desiredCoverage.charAt(0).toUpperCase() +
@@ -98,11 +98,11 @@ const QueryDetails = ({ report, userQuery, formatCurrency }) => {
 
         {/* Budget */}
         <div className="flex justify-between items-center">
-          <span className="text-neutral-300 text-sm sm:text-base flex items-center">
+          <span className="text-neutral-300 text-[0.8rem] sm:text-sm md:text-base flex items-center">
             <TbCoins className="mr-2 h-4 w-4 text-secondary-400" />
             Budget Range:
           </span>
-          <span className="font-medium text-sm sm:text-base text-white bg-white/5 px-3 py-1 rounded-md">
+          <span className="font-medium text-[0.8rem] sm:text-sm md:text-base text-white bg-white/5 px-3 py-1 rounded-md">
             {queryData.budget
               ? formatCurrencyFn(queryData.budget)
               : "Not specified"}
@@ -112,11 +112,11 @@ const QueryDetails = ({ report, userQuery, formatCurrency }) => {
         {/* Room Type */}
         {queryData.roomType && (
           <div className="flex justify-between items-center">
-            <span className="text-neutral-300 text-sm sm:text-base flex items-center">
+            <span className="text-neutral-300 text-[0.8rem] sm:text-sm md:text-base flex items-center">
               <TbBuildingHospital className="mr-2 h-4 w-4 text-secondary-400" />
               Preferred Room:
             </span>
-            <span className="font-medium text-sm sm:text-base text-white bg-white/5 px-3 py-1 rounded-md">
+            <span className="font-medium text-[0.8rem] sm:text-sm md:text-base text-white bg-white/5 px-3 py-1 rounded-md">
               {roomTypeLabels[queryData.roomType] || queryData.roomType}
             </span>
           </div>
@@ -124,14 +124,14 @@ const QueryDetails = ({ report, userQuery, formatCurrency }) => {
 
         {/* Optional Covers */}
         {selectedCovers.length > 0 && (
-          <div className="pt-3">
-            <div className="flex items-center mb-2">
+          <div className="pt-2 flex items-center justify-between  ">
+            <div className="flex items-center">
               <TbBox className="mr-2 h-4 w-4 text-secondary-400" />
-              <span className="text-neutral-300 text-sm sm:text-base">
+              <span className="text-neutral-300 text-[0.8rem] sm:text-sm md:text-base">
                 Optional Covers:
               </span>
             </div>
-            <div className="flex flex-wrap gap-2 mt-1">
+            <div className="flex flex-wrap gap-1 sm:gap-2">
               {selectedCovers.map((cover, index) => (
                 <span
                   key={index}

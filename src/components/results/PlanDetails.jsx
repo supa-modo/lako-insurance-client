@@ -210,18 +210,18 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
 
   // Coverage Card Component for the top section
   const CoverageCard = ({ title, amount, icon, color }) => (
-    <div className="bg-primary-500/95 border-primary-500/20 backdrop-blur-sm px-4 py-2 sm:p-5 rounded-lg border transition-all duration-300 hover:shadow-md">
+    <div className="bg-neutral-200 border-primary-500/20 backdrop-blur-sm px-4 py-2 sm:p-5 rounded-xl border transition-all duration-300 hover:shadow-md">
       <div className="flex items-center">
-        <div className="h-8 sm:h-10 w-8 sm:w-10 rounded-full bg-neutral-400 flex items-center justify-center mr-3 flex-shrink-0">
+        <div className="h-8 sm:h-10 w-8 sm:w-10 rounded-full bg-primary-500/40 flex items-center justify-center mr-3 flex-shrink-0">
           {icon}
         </div>
         <div className="">
-          <p className="text-xl sm:text-2xl font-bold text-secondary-400">
+          <p className="text-lg sm:text-xl font-bold text-neutral-700">
             {typeof amount === "number"
               ? formatCurrencyFn(amount || 0)
               : amount}
           </p>
-          <h4 className="text-neutral-400 text-xs sm:text-[0.83rem]">
+          <h4 className="text-neutral-600 text-xs sm:text-[0.83rem]">
             {title}
           </h4>
         </div>
@@ -297,14 +297,14 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
           </div>
           <div className="relative flex justify-between items-center z-10">
             <div className="flex items-center space-x-3">
-              <div className="h-8 w-8 bg-white rounded-full flex items-center justify-center text-secondary-600 font-bold">
-                {plan.rank || 1}
+              <div className="h-6 sm:h-8 w-6 sm:w-8 bg-white rounded-full flex items-center justify-center text-secondary-600 font-bold">
+                <span className="text-xs sm:text-sm">{plan.rank || 1}</span>
               </div>
-              <span className="text-white font-medium">
+              <span className="text-white text-[0.83rem] sm:text-sm md:text-base font-medium">
                 Ranked #{plan.rank || 1} Match for Your Needs
               </span>
             </div>
-            <div className="bg-white/20 backdrop-blur-md rounded-full px-3 py-1 text-white text-sm font-medium">
+            <div className="bg-white/20 backdrop-blur-md rounded-full px-3 py-1 text-white text-[0.7rem] sm:text-sm font-medium">
               {plan.score ? Math.round(plan.score * 100) : 95}% Match Score
             </div>
           </div>
@@ -313,11 +313,11 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
         <div className="p-4 sm:p-6">
           <div className="flex flex-col md:flex-row justify-between md:items-center mb-6 sm:mb-8">
             <div className="flex items-center space-x-4">
-              <div className="w-28 h-16 sm:w-36 sm:h-20 rounded-lg bg-neutral-200/50 border border-neutral-200 flex items-center justify-center overflow-hidden flex-shrink-0">
+              <div className="w-24 h-12 sm:w-36 sm:h-20 rounded-lg bg-neutral-200/50 border border-neutral-200 flex items-center justify-center overflow-hidden flex-shrink-0">
                 <img
                   src={planData.companyLogo || "/insurance-placeholder.png"}
                   alt={planData.companyName || "Insurance Company"}
-                  className="w-28 h-12 sm:w-36 sm:h-16 object-contain"
+                  className="w-20 h-9 sm:w-36 sm:h-16 object-contain"
                   onError={(e) => {
                     e.target.src = "/insurance-placeholder.png";
                   }}
@@ -325,21 +325,21 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
               </div>
               <div>
                 <div className="flex items-center">
-                  <h2 className="text-xl sm:text-2xl font-bold text-primary-600">
+                  <h2 className="text-lg sm:text-xl  font-bold text-primary-600">
                     {planData.name || "Insurance Plan"}
                   </h2>
-                  <span className="ml-2 bg-primary-100 text-primary-600 text-xs font-medium px-2 py-0.5 rounded">
+                  <span className="ml-2 bg-primary-100 text-primary-600 text-[0.7rem] sm:text-xs font-medium px-2 py-0.5 rounded">
                     {planData.tier || planData.planType}
                   </span>
                 </div>
-                <p className="text-neutral-700">
+                <p className="text-neutral-700 text-[0.83rem] sm:text-sm md:text-base">
                   {planData.companyName || "Insurance Company"} •{" "}
                   {planData.planType || "Standard"}
                 </p>
               </div>
             </div>
             <div className="mt-4 md:mt-0 text-center bg-secondary-50 rounded-lg px-4 sm:px-6 py-3 border border-secondary-100">
-              <div className="text-xl sm:text-3xl font-bold text-secondary-700">
+              <div className="text-xl sm:text-2xl font-bold text-secondary-700">
                 {formatCurrencyFn(displayPremium || 50000)}
               </div>
               <p className="text-primary-600 font-medium text-xs sm:text-sm">
@@ -434,17 +434,17 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
                 {Object.entries(planData.premium).map(([ageRange, premium]) => (
                   <div
                     key={ageRange}
-                    className="flex justify-between border-b pb-2"
+                    className="flex justify-between border-b pb-2 text-[0.8rem] sm:text-sm md:text-base"
                   >
-                    <span className="font-medium">{ageRange} years</span>
-                    <span className="text-secondary-600 font-semibold">
+                    <span className="font-medium text-neutral-600">{ageRange} years</span>
+                    <span className="text-secondary-600 font-semibold ">
                       {formatCurrencyFn(premium)}
                     </span>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-neutral-600">
+              <p className="text-neutral-600 text-[0.8rem] sm:text-sm md:text-base">
                 This plan offers a flat rate of{" "}
                 {formatCurrencyFn(planData.premium)} regardless of age.
               </p>
@@ -452,7 +452,7 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
           </CollapsibleSection>
 
           <CollapsibleSection title="Eligibility Requirements" id="eligibility">
-            <ul className="space-y-2">
+            <ul className="space-y-2 text-neutral-600 text-[0.8rem] sm:text-sm md:text-base">
               <li className="flex items-start">
                 <TbCheck className="text-green-600 mt-1 mr-2" />
                 <span>Age: {planData.eligibilityAge || "65-85 years"}</span>
@@ -472,18 +472,18 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
           </CollapsibleSection>
 
           <CollapsibleSection title="Plan Exclusions" id="exclusions">
-            <ul className="space-y-2">
+            <ul className="space-y-2 text-neutral-600 text-[0.8rem] sm:text-sm md:text-base">
               {commonExclusions.map((exclusion, idx) => (
                 <li key={idx} className="flex items-start">
                   <FiX className="text-red-500 mt-1 mr-2" />
-                  <span className="text-neutral-700">{exclusion}</span>
+                  <span className="">{exclusion}</span>
                 </li>
               ))}
             </ul>
           </CollapsibleSection>
 
           <CollapsibleSection title="Value Added Benefits" id="valueAdded">
-            <ul className="space-y-2">
+            <ul className="space-y-2 text-neutral-600 text-[0.8rem] sm:text-sm md:text-base">
               <li className="flex items-start">
                 <TbCheck className="text-green-600 mt-1 mr-2" />
                 <span>24/7 Customer support</span>
@@ -509,10 +509,10 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
         <div className="p-4 sm:p-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div className="mb-6 md:mb-0 md:mr-6 md:max-w-[50%]">
-              <h3 className="text-lg sm:text-xl font-bold text-neutral-800 mb-2">
+              <h3 className="text-base sm:text-lg font-bold text-neutral-800 mb-2">
                 Need Help With This Plan?
               </h3>
-              <p className="text-neutral-700 text-sm sm:text-base">
+              <p className="text-neutral-700 text-[0.8rem] sm:text-sm md:text-base">
                 Our insurance experts are ready to answer any questions and help
                 you get enrolled in the {planData.name} plan.
               </p>
@@ -522,14 +522,14 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 href={`tel:+254700000000`}
-                className="btn inline-flex items-center justify-center px-4 sm:px-6 py-3 bg-secondary-500 hover:bg-secondary-600 text-white font-medium rounded-lg shadow-md transition-all text-sm sm:text-base"
+                className="btn inline-flex items-center justify-center px-4 sm:px-6 py-3 bg-secondary-500 hover:bg-secondary-600 text-white font-medium rounded-lg shadow-md transition-all text-[0.8rem] sm:text-sm md:text-base"
               >
                 <TbPhoneCall className="mr-2" size={20} /> Call Expert
               </motion.a>
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="btn inline-flex items-center justify-center px-4 sm:px-6 py-3 border-2 border-secondary-400 text-secondary-700 hover:bg-secondary-100 font-medium rounded-lg transition-all text-sm sm:text-base"
+                className="btn inline-flex items-center justify-center px-4 sm:px-6 py-3 border-2 border-secondary-400 text-secondary-700 hover:bg-secondary-100 font-medium rounded-lg transition-all text-[0.8rem] sm:text-sm md:text-base"
                 onClick={onRequestCallback}
               >
                 <TbMailFilled className="mr-2" size={20} /> Request Callback
