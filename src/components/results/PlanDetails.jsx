@@ -225,7 +225,7 @@ const PlanDetails = ({
 
   // Coverage Card Component for the top section
   const CoverageCard = ({ title, amount, icon, color }) => (
-    <div className="bg-neutral-200 border-primary-500/20 backdrop-blur-sm px-4 py-2 sm:p-5 rounded-lg  border transition-all duration-300 hover:shadow-md">
+    <div className="bg-primary-50 border-primary-500/20 backdrop-blur-sm px-4 py-2 sm:p-5 rounded-[0.7rem] sm:rounded-[0.75rem]   border transition-all duration-300 hover:shadow-md">
       <div className="flex items-center">
         <div className="h-8 sm:h-10 w-8 sm:w-10 rounded-full bg-primary-500/40 flex items-center justify-center mr-3 flex-shrink-0">
           {icon}
@@ -249,7 +249,7 @@ const PlanDetails = ({
     const isExpanded = expandedSections.has(id);
 
     return (
-      <div className="border border-neutral-200 rounded-lg overflow-hidden mb-4">
+      <div className="border border-neutral-300 rounded-lg overflow-hidden mb-4">
         <button
           className="w-full px-4 py-3 bg-neutral-100 hover:bg-neutral-200 transition-colors flex justify-between items-center"
           onClick={() => toggleSection(id)}
@@ -303,7 +303,7 @@ const PlanDetails = ({
         </motion.button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-neutral-200">
+      <div className="bg-neutral-200 rounded-xl shadow-lg overflow-hidden border border-neutral-200">
         {/* Top banner */}
         <div className="bg-gradient-to-r from-secondary-700 to-secondary-600 p-4 relative">
           <div className="absolute inset-0 overflow-hidden">
@@ -353,7 +353,7 @@ const PlanDetails = ({
                 </p>
               </div>
             </div>
-            <div className="mt-4 md:mt-0 text-center bg-secondary-50 rounded-lg px-4 sm:px-6 py-3 border border-secondary-100">
+            <div className="mt-4 md:mt-0 text-center bg-secondary-50 rounded-[0.8rem] sm:rounded-[0.95rem] px-4 sm:px-6 py-3 border border-secondary-100">
               <div className="text-xl sm:text-2xl font-bold text-secondary-700">
                 {formatCurrencyFn(displayPremium || 50000)}
               </div>
@@ -395,7 +395,7 @@ const PlanDetails = ({
 
           {/* Tabbed sections for benefits */}
           <div className="mb-6">
-            <div className="flex border-b border-neutral-200 mb-4">
+            <div className="flex border-b border-neutral-400 mb-4">
               {["inpatient", "outpatient", "additional", "waiting"].map(
                 (tab) => (
                   <button
@@ -403,7 +403,7 @@ const PlanDetails = ({
                     className={`px-4 py-2 font-medium text-sm ${
                       activeTab === tab
                         ? "text-secondary-600 border-b-2 border-secondary-600"
-                        : "text-neutral-500 hover:text-neutral-800"
+                        : "text-neutral-600 hover:text-neutral-800"
                     }`}
                     onClick={() => setActiveTab(tab)}
                   >
@@ -531,10 +531,10 @@ const PlanDetails = ({
               <FiDownload className="h-5 w-5 text-secondary-500" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-neutral-800 font-outfit">
+              <h3 className="text-base sm:text-lg font-bold text-neutral-800 font-outfit">
                 Download Report
               </h3>
-              <p className="text-sm text-neutral-600 font-outfit">
+              <p className="text-[0.8rem] sm:text-sm text-neutral-600 font-outfit">
                 Get a detailed PDF breakdown of this plan
               </p>
             </div>

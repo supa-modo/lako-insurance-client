@@ -77,9 +77,9 @@ const Header = () => {
             </a>
             <Link
               to="/compare"
-              className="relative overflow-hidden px-6 py-2.5 font-semibold rounded-lg bg-secondary-500 text-white hover:text-white hover:bg-primary-600 border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:translate-y-[-2px]"
+              className="relative overflow-hidden px-6 py-2.5 font-medium rounded-lg bg-secondary-500 text-white hover:text-white hover:bg-primary-600 border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:translate-y-[-2px]"
             >
-              <span className="relative z-10">Get Started</span>
+              <span className="relative z-10 font-outfit">Get Started</span>
               <div className="absolute inset-0 bg-gradient-to-r from-secondary-600 to-secondary-500 transform translate-y-full hover:translate-y-0 transition-transform duration-300"></div>
             </Link>
           </div>
@@ -154,11 +154,11 @@ const Header = () => {
             </a>
             <Link
               to="/compare"
-              className="block w-full  py-2 px-4 bg-secondary-500 hover:bg-primary-600 text-white hover:text-white text-center font-semibold rounded-lg shadow-md transition-all"
+              className="block w-full  py-2 px-4 bg-secondary-500 hover:bg-primary-600 text-white hover:text-white text-center font-medium rounded-lg shadow-md transition-all"
               onClick={() => setIsMenuOpen(false)}
             >
               <div className="flex items-center justify-center">
-                <span className="text-sm">Get Your Quote</span>
+                <span className="text-sm font-outfit">Get Your Quote</span>
                 <TbArrowRight className="ml-2" />
               </div>
             </Link>

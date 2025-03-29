@@ -258,7 +258,7 @@ const ResultsPage = () => {
       <div className="absolute top-10 right-10 w-64 h-64 bg-white/5 rounded-2xl backdrop-blur-sm border border-white/10 hidden lg:block"></div>
       <div className="absolute bottom-10 left-10 w-48 h-48 bg-white/5 rounded-2xl backdrop-blur-sm border border-white/10 hidden lg:block"></div>
 
-      <div className="md:container-custom mx-auto px-0 sm:px-4 lg:px-8 py-5 sm:py-8 relative z-10">
+      <div className="md:mx-28 lg:mx-32 mx-auto px-0 sm:px-4 lg:px-8 py-5 sm:py-8 relative z-10">
         {/* Breadcrumb Navigation */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
