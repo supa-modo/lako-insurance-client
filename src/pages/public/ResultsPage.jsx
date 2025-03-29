@@ -10,7 +10,7 @@ import {
 } from "react-icons/fi";
 import { useSelector } from "react-redux";
 
-// Import mock service instead of real service for now
+// Import mock service
 import {
   getMockReportById,
   mockDownloadReportPdf,
@@ -88,7 +88,7 @@ const ResultsPage = () => {
     }, 1500); // Simulate 1.5s loading time
 
     return () => clearTimeout(timer);
-  }, [isMobile]); // Re-run when isMobile changes
+  }, [isMobile, userQuery]); // Re-run when isMobile or userQuery changes
 
   const handlePlanSelect = (plan) => {
     setSelectedPlan(plan === selectedPlan ? null : plan);
@@ -412,8 +412,8 @@ const ResultsPage = () => {
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            We've analyzed multiple plans to find your best match from the
-            leading insurance providers in Kenya.
+            We've analyzed multiple plans from AAR, Jubilee, and CIC Insurance
+            to find your best match based on your preferences.
           </motion.p>
         </header>
 
@@ -448,9 +448,8 @@ const ResultsPage = () => {
                       plans={report.comparisonResults}
                       onSelectPlan={handlePlanSelect}
                       formatCurrency={formatCurrency}
+                      activePlanId={selectedPlan?.id || selectedPlan?.plan?.id}
                     />
-
-                    
 
                     <DownloadReport
                       status={downloadStatus}
@@ -492,6 +491,7 @@ const ResultsPage = () => {
                     plans={report.comparisonResults}
                     onSelectPlan={handlePlanSelect}
                     formatCurrency={formatCurrency}
+                    activePlanId={selectedPlan?.id || selectedPlan?.plan?.id}
                   />
 
                   <DownloadReport
@@ -545,7 +545,7 @@ const ResultsPage = () => {
                         </h3>
                         <p className="text-neutral-300 font-outfit max-w-md">
                           Choose a plan from the list to view detailed
-                          information and benefits.
+                          information about coverage, benefits, and exclusions.
                         </p>
                       </div>
                     </div>
@@ -563,9 +563,9 @@ const ResultsPage = () => {
       {/* Footer with subtle pattern */}
       <div className="mt-8 py-4 border-t border-white/10 relative z-10">
         <div className="container mx-auto px-4 text-center text-neutral-400">
-          
           <p className="text-xs mt-2">
-            This is a demonstration. Not the actual insurance products.
+            This is a comparison of senior health insurance plans from AAR,
+            Jubilee, and CIC Insurance.
           </p>
         </div>
       </div>

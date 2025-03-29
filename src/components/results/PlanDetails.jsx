@@ -1,15 +1,41 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   FiX,
   FiArrowLeft,
-  FiInfo,
+  FiChevronDown,
+  FiChevronUp,
 } from "react-icons/fi";
-import { motion } from "framer-motion";
-import { TbCheck, TbClockDollar, TbMailFilled, TbPhone, TbPhoneCall, TbShieldHalfFilled } from "react-icons/tb";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  TbCheck,
+  TbClockDollar,
+  TbMailFilled,
+  TbPhone,
+  TbPhoneCall,
+  TbShieldHalfFilled,
+  TbBuildingHospital,
+  TbHeartRateMonitor,
+  TbEye,
+  TbCalendarTime,
+  TbAmbulance,
+  TbPlane,
+  TbDeviceMobile,
+  TbVirus,
+} from "react-icons/tb";
 import { FaUserDoctor } from "react-icons/fa6";
+import { PiTooth } from "react-icons/pi";
 
 const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
+  const [activeTab, setActiveTab] = useState("inpatient");
+  const [expandedSections, setExpandedSections] = useState(new Set());
+
   if (!plan) return null;
+
+  // Extract the actual plan data which might be nested
+  const planData = plan.plan || plan;
+
+  // This ensures we're using the correct ID
+  const planId = planData.id || plan.id;
 
   // Default formatCurrency if not provided
   const formatCurrencyFn =
@@ -22,7 +48,167 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
       }).format(amount);
     });
 
-  // Coverage Card Component
+  // Handle different premium formats (flat rate vs age-based)
+  const displayPremium =
+    typeof planData.premium === "object"
+      ? planData.premium[Object.keys(planData.premium)[0]] // Show first age bracket premium
+      : planData.premium;
+
+  // Define benefit categories and icons
+  const benefitCategories = {
+    inpatient: [
+      {
+        title: "Overall Annual Limit",
+        value: planData.inpatientCoverageLimit,
+        icon: <TbShieldHalfFilled />,
+        isAmount: true,
+      },
+      {
+        title: "Room Accommodation",
+        value: planData.bedLimit || planData.roomRate || "General Ward",
+        icon: <TbBuildingHospital />,
+        isAmount: false,
+      },
+      {
+        title: "Pre-existing & Chronic Conditions",
+        value: planData.inpatientCoverageLimit * 0.25, // Approximate value for illustration
+        icon: <TbHeartRateMonitor />,
+        isAmount: true,
+        note: "Subject to 1 year waiting period",
+      },
+      {
+        title: "Last Expense Cover",
+        value: planData.lastExpenseCover,
+        icon: <TbClockDollar />,
+        isAmount: true,
+      },
+      {
+        title: "Covid-19 Cover",
+        value: planData.inpatientCoverageLimit * 0.3, // Approximate value for illustration
+        icon: <TbVirus />,
+        isAmount: true,
+      },
+      {
+        title: "Ambulance Services",
+        value: "Fully Covered",
+        icon: <TbAmbulance />,
+        isAmount: false,
+      },
+    ],
+    outpatient: [
+      {
+        title: "Overall Annual Limit",
+        value: planData.outpatientCoverageLimit,
+        icon: <FaUserDoctor />,
+        isAmount: true,
+      },
+      {
+        title: "Consultation Fees",
+        value: "Covered within limit",
+        icon: <TbPhone />,
+        isAmount: false,
+      },
+      {
+        title: "Diagnostic Tests",
+        value: "Covered within limit",
+        icon: <TbDeviceMobile />,
+        isAmount: false,
+      },
+      {
+        title: "Prescribed Medication",
+        value: "Covered within limit",
+        icon: <TbMailFilled />,
+        isAmount: false,
+      },
+    ],
+    additional: [
+      {
+        title: "Dental Cover (Optional)",
+        value: planData.outpatientCoverageLimit * 0.15, // Approximate value
+        icon: <PiTooth />,
+        isAmount: true,
+        note: "Annual sub-limit, if dental option is selected",
+      },
+      {
+        title: "Optical Cover (Optional)",
+        value: planData.outpatientCoverageLimit * 0.15, // Approximate value
+        icon: <TbEye />,
+        isAmount: true,
+        note: "Annual sub-limit, if optical option is selected",
+      },
+      {
+        title: "Annual Health Check-up",
+        value: 10000, // Standard amount across most plans
+        icon: <TbCalendarTime />,
+        isAmount: true,
+      },
+      {
+        title: "Overseas Treatment",
+        value:
+          planData.tier === "Diamond" ||
+          planData.tier === "Platinum" ||
+          planData.tier === "Plan VI"
+            ? "Covered with pre-approval"
+            : "Not covered",
+        icon: <TbPlane />,
+        isAmount: false,
+      },
+    ],
+    waiting: [
+      {
+        title: "General Illness",
+        value: "30 days",
+        icon: <TbCalendarTime />,
+      },
+      {
+        title: "Pre-existing Conditions",
+        value: "1 year",
+        icon: <TbCalendarTime />,
+      },
+      {
+        title: "Cancer Treatment",
+        value: "2 years",
+        icon: <TbCalendarTime />,
+      },
+      {
+        title: "Psychiatric Conditions",
+        value: "1 year",
+        icon: <TbCalendarTime />,
+      },
+      {
+        title: "Organ Transplant",
+        value: "1 year",
+        icon: <TbCalendarTime />,
+      },
+    ],
+  };
+
+  // Common exclusions for senior health plans
+  const commonExclusions = [
+    "Cosmetic or beauty treatment and/or surgery unless necessitated by an accident",
+    "Massage treatments (except where medically prescribed)",
+    "Naval, military and air force operations",
+    "Expenses recoverable under any other insurance (e.g., NHIF, GPA)",
+    "Self-inflicted injuries, suicide attempts, or treatment of alcoholism",
+    "Experimental treatments or unproven medical treatments",
+    "Weight management treatments and drugs",
+    "Participation in professional or hazardous sports",
+  ];
+
+  // Toggle a section's expanded state
+  const toggleSection = (id) => {
+    setExpandedSections((prevSections) => {
+      const newSections = new Set(prevSections);
+      if (newSections.has(id)) {
+        newSections.delete(id);
+      } else {
+        newSections.add(id);
+      }
+      return newSections;
+    });
+  };
+
+  // Coverage Card Component for the top section
   const CoverageCard = ({ title, amount, icon, color }) => (
     <div className="bg-primary-500/95 border-primary-500/20 backdrop-blur-sm px-4 py-2 sm:p-5 rounded-lg border transition-all duration-300 hover:shadow-md">
       <div className="flex items-center">
@@ -31,15 +217,52 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
         </div>
         <div className="">
           <p className="text-xl sm:text-2xl font-bold text-secondary-400">
-            {formatCurrencyFn(amount || 0)}
+            {typeof amount === "number"
+              ? formatCurrencyFn(amount || 0)
+              : amount}
           </p>
-          <h4 className=" text-neutral-400 text-xs sm:text-[0.83rem]">
+          <h4 className="text-neutral-400 text-xs sm:text-[0.83rem]">
             {title}
           </h4>
         </div>
       </div>
     </div>
   );
+
+  // Collapsible section component
+  const CollapsibleSection = ({ title, children, id }) => {
+    const isExpanded = expandedSections.has(id);
+
+    return (
+      <div className="border border-neutral-200 rounded-lg overflow-hidden mb-4">
+        <button
+          className="w-full px-4 py-3 bg-neutral-100 hover:bg-neutral-200 transition-colors flex justify-between items-center"
+          onClick={() => toggleSection(id)}
+        >
+          <span className="font-semibold text-neutral-800">{title}</span>
+          {isExpanded ? (
+            <FiChevronUp className="text-neutral-600" />
+          ) : (
+            <FiChevronDown className="text-neutral-600" />
+          )}
+        </button>
+        <AnimatePresence initial={false}>
+          {isExpanded && (
+            <motion.div
+              key={`section-${id}`}
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="overflow-hidden"
+            >
+              <div className="p-4">{children}</div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    );
+  };
 
   return (
     <div className="space-y-4">
@@ -78,7 +301,7 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
                 {plan.rank || 1}
               </div>
               <span className="text-white font-medium">
-                Ranked #{plan.rank || 1} Match
+                Ranked #{plan.rank || 1} Match for Your Needs
               </span>
             </div>
             <div className="bg-white/20 backdrop-blur-md rounded-full px-3 py-1 text-white text-sm font-medium">
@@ -92,16 +315,8 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
             <div className="flex items-center space-x-4">
               <div className="w-28 h-16 sm:w-36 sm:h-20 rounded-lg bg-neutral-200/50 border border-neutral-200 flex items-center justify-center overflow-hidden flex-shrink-0">
                 <img
-                  src={
-                    plan.plan?.companyLogo ||
-                    plan.companyLogo ||
-                    "/insurance-placeholder.png"
-                  }
-                  alt={
-                    plan.plan?.companyName ||
-                    plan.companyName ||
-                    "Insurance Company"
-                  }
+                  src={planData.companyLogo || "/insurance-placeholder.png"}
+                  alt={planData.companyName || "Insurance Company"}
                   className="w-28 h-12 sm:w-36 sm:h-16 object-contain"
                   onError={(e) => {
                     e.target.src = "/insurance-placeholder.png";
@@ -109,23 +324,28 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
                 />
               </div>
               <div>
-                <h2 className="text-xl sm:text-2xl font-bold text-primary-600">
-                  {plan.plan?.name || plan.planName || "Insurance Plan"}
-                </h2>
+                <div className="flex items-center">
+                  <h2 className="text-xl sm:text-2xl font-bold text-primary-600">
+                    {planData.name || "Insurance Plan"}
+                  </h2>
+                  <span className="ml-2 bg-primary-100 text-primary-600 text-xs font-medium px-2 py-0.5 rounded">
+                    {planData.tier || planData.planType}
+                  </span>
+                </div>
                 <p className="text-neutral-700">
-                  {plan.plan?.company?.name ||
-                    plan.companyName ||
-                    "Insurance Company"}{" "}
-                  • {plan.plan?.planType || plan.planType || "Standard"}
+                  {planData.companyName || "Insurance Company"} •{" "}
+                  {planData.planType || "Standard"}
                 </p>
               </div>
             </div>
             <div className="mt-4 md:mt-0 text-center bg-secondary-50 rounded-lg px-4 sm:px-6 py-3 border border-secondary-100">
               <div className="text-xl sm:text-3xl font-bold text-secondary-700">
-                {formatCurrencyFn(plan.plan?.premium || plan.premium || 50000)}
+                {formatCurrencyFn(displayPremium || 50000)}
               </div>
               <p className="text-primary-600 font-medium text-xs sm:text-sm">
-                Annual Premium
+                {typeof planData.premium === "object"
+                  ? "Starting Annual Premium"
+                  : "Annual Premium"}
               </p>
             </div>
           </div>
@@ -133,136 +353,155 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-5 mb-8">
             <CoverageCard
               title="Inpatient Cover"
-              amount={
-                plan.plan?.inpatientCoverage ||
-                plan.inpatientCoverage ||
-                2000000
-              }
+              amount={planData.inpatientCoverageLimit || 2000000}
               formatCurrency={formatCurrencyFn}
-              icon={<TbShieldHalfFilled className="text-primary-600" size={20}/>}
+              icon={
+                <TbShieldHalfFilled className="text-primary-600" size={20} />
+              }
               color="primary"
             />
             <CoverageCard
               title="Outpatient Cover"
-              amount={
-                plan.plan?.outpatientCoverage ||
-                plan.outpatientCoverage ||
-                200000
-              }
+              amount={planData.outpatientCoverageLimit || 200000}
               formatCurrency={formatCurrencyFn}
               icon={<FaUserDoctor className="text-primary-500" size={20} />}
               color="secondary"
             />
             <CoverageCard
-              title="Last Expense Cover"
-              amount={
-                plan.plan?.lastExpenseCover || plan.lastExpenseCover || 100000
-              }
+              title="Room Type"
+              amount={planData.bedLimit || planData.roomRate || "General Ward"}
               formatCurrency={formatCurrencyFn}
-              icon={<TbClockDollar className="text-primary-500" size={20}/>}
+              icon={
+                <TbBuildingHospital className="text-primary-500" size={20} />
+              }
               color="primary"
             />
           </div>
 
-          <div className="mb-8">
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                <TbCheck className="h-4 w-4 text-green-600" />
-              </div>
-              <h3 className="text-xl font-bold text-primary-600">
-                Key Benefits
-              </h3>
-            </div>
-            <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
-              {/* Handle cases where benefits might come from different parts of the plan object */}
-              {(plan.plan?.benefits || plan.benefits || []).map(
-                (benefit, idx) => (
-                  <div
-                    key={benefit.id || idx}
-                    className="flex items-start p-3 sm:p-4 bg-neutral-50 rounded-lg border border-neutral-200"
+          {/* Tabbed sections for benefits */}
+          <div className="mb-6">
+            <div className="flex border-b border-neutral-200 mb-4">
+              {["inpatient", "outpatient", "additional", "waiting"].map(
+                (tab) => (
+                  <button
+                    key={tab}
+                    className={`px-4 py-2 font-medium text-sm ${
+                      activeTab === tab
+                        ? "text-secondary-600 border-b-2 border-secondary-600"
+                        : "text-neutral-500 hover:text-neutral-800"
+                    }`}
+                    onClick={() => setActiveTab(tab)}
                   >
-                    <TbCheck className="text-green-600 mt-1 mr-3 shrink-0" />
-                    <div>
-                      <span className="font-semibold text-neutral-800">
-                        {benefit.category || "Benefit"}
-                      </span>
-                      <p className="text-xs sm:text-sm text-neutral-700 mt-1">
-                        {benefit.description ||
-                          "Coverage details not available"}
-                      </p>
-                      {benefit.coverageLimit && (
-                        <div className="text-xs text-neutral-500 mt-2 flex items-center">
-                          <span className="font-medium">Limit:</span>
-                          <span className="ml-1 px-2 py-0.5 bg-green-100 text-green-700 font-semibold rounded-full">
-                            {formatCurrencyFn(benefit.coverageLimit)}
-                          </span>
-                        </div>
-                      )}
-                      {benefit.waitingPeriod &&
-                        benefit.waitingPeriod !== "None" && (
-                          <p className="text-xs text-neutral-500 mt-1 flex items-center">
-                            <span className="font-medium">Waiting period:</span>
-                            <span className="ml-1 font-semibold text-neutral-800">
-                              {benefit.waitingPeriod}
-                            </span>
-                          </p>
-                        )}
-                    </div>
-                  </div>
+                    {tab.charAt(0).toUpperCase() + tab.slice(1)} Benefits
+                  </button>
                 )
               )}
-
-              {/* If no benefits available, show default message */}
-              {((!plan.plan?.benefits && !plan.benefits) ||
-                (plan.plan?.benefits || plan.benefits || []).length === 0) && (
-                <div className="flex items-start p-4 bg-neutral-50 rounded-lg border border-neutral-200 col-span-2">
-                  <FiInfo className="text-blue-500 mt-1 mr-3 shrink-0" />
-                  <p className="text-sm text-neutral-600">
-                    Detailed benefits information will be provided upon request.
-                  </p>
-                </div>
-              )}
             </div>
-          </div>
 
-          <div>
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
-                <FiX className="h-4 w-4 text-red-600" />
-              </div>
-              <h3 className="text-xl font-bold text-red-600">
-                Exclusions
-              </h3>
-            </div>
-            <div className="bg-neutral-50 rounded-lg border border-neutral-200 p-3 sm:p-4">
-              <ul className="space-y-3">
-                {(plan.plan?.exclusions || plan.exclusions || []).map(
-                  (exclusion, idx) => (
-                    <li key={exclusion.id || idx} className="flex items-start">
-                      <FiX className="text-red-500 mt-1 mr-3 shrink-0" />
-                      <span className="text-sm text-neutral-700">
-                        {exclusion.exclusionText ||
-                          "Exclusion details not available"}
-                      </span>
-                    </li>
-                  )
-                )}
-
-                {/* If no exclusions available, show default message */}
-                {((!plan.plan?.exclusions && !plan.exclusions) ||
-                  (plan.plan?.exclusions || plan.exclusions || []).length ===
-                    0) && (
-                  <li className="flex items-start">
-                    <FiInfo className="text-blue-500 mt-1 mr-3 shrink-0" />
-                    <span className="text-sm text-neutral-700">
-                      Detailed exclusion information will be provided upon
-                      request.
+            <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
+              {benefitCategories[activeTab].map((benefit, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-start p-3 sm:p-4 bg-neutral-50 rounded-lg border border-neutral-200"
+                >
+                  <div className="text-secondary-500 mt-1 mr-3 shrink-0">
+                    {benefit.icon}
+                  </div>
+                  <div>
+                    <span className="font-semibold text-neutral-800">
+                      {benefit.title}
                     </span>
-                  </li>
-                )}
-              </ul>
+                    <p className="text-base sm:text-lg text-secondary-700 font-semibold mt-1">
+                      {benefit.isAmount
+                        ? formatCurrencyFn(benefit.value)
+                        : benefit.value}
+                    </p>
+                    {benefit.note && (
+                      <p className="text-xs text-neutral-500 mt-1 italic">
+                        {benefit.note}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
+
+          {/* Collapsible sections */}
+          <CollapsibleSection title="Age-based Premiums" id="premiums">
+            {typeof planData.premium === "object" ? (
+              <div className="grid sm:grid-cols-2 gap-4">
+                {Object.entries(planData.premium).map(([ageRange, premium]) => (
+                  <div
+                    key={ageRange}
+                    className="flex justify-between border-b pb-2"
+                  >
+                    <span className="font-medium">{ageRange} years</span>
+                    <span className="text-secondary-600 font-semibold">
+                      {formatCurrencyFn(premium)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-neutral-600">
+                This plan offers a flat rate of{" "}
+                {formatCurrencyFn(planData.premium)} regardless of age.
+              </p>
+            )}
+          </CollapsibleSection>
+
+          <CollapsibleSection title="Eligibility Requirements" id="eligibility">
+            <ul className="space-y-2">
+              <li className="flex items-start">
+                <TbCheck className="text-green-600 mt-1 mr-2" />
+                <span>Age: {planData.eligibilityAge || "65-85 years"}</span>
+              </li>
+              <li className="flex items-start">
+                <TbCheck className="text-green-600 mt-1 mr-2" />
+                <span>
+                  Medical examination required for new applicants aged 70 and
+                  above
+                </span>
+              </li>
+              <li className="flex items-start">
+                <TbCheck className="text-green-600 mt-1 mr-2" />
+                <span>Existing members can renew without age restriction</span>
+              </li>
+            </ul>
+          </CollapsibleSection>
+
+          <CollapsibleSection title="Plan Exclusions" id="exclusions">
+            <ul className="space-y-2">
+              {commonExclusions.map((exclusion, idx) => (
+                <li key={idx} className="flex items-start">
+                  <FiX className="text-red-500 mt-1 mr-2" />
+                  <span className="text-neutral-700">{exclusion}</span>
+                </li>
+              ))}
+            </ul>
+          </CollapsibleSection>
+
+          <CollapsibleSection title="Value Added Benefits" id="valueAdded">
+            <ul className="space-y-2">
+              <li className="flex items-start">
+                <TbCheck className="text-green-600 mt-1 mr-2" />
+                <span>24/7 Customer support</span>
+              </li>
+              <li className="flex items-start">
+                <TbCheck className="text-green-600 mt-1 mr-2" />
+                <span>Telemedicine services</span>
+              </li>
+              <li className="flex items-start">
+                <TbCheck className="text-green-600 mt-1 mr-2" />
+                <span>Drug delivery services for chronic conditions</span>
+              </li>
+              <li className="flex items-start">
+                <TbCheck className="text-green-600 mt-1 mr-2" />
+                <span>Wellness programs and health education</span>
+              </li>
+            </ul>
+          </CollapsibleSection>
         </div>
       </div>
 
@@ -275,7 +514,7 @@ const PlanDetails = ({ plan, formatCurrency, onRequestCallback, onBack }) => {
               </h3>
               <p className="text-neutral-700 text-sm sm:text-base">
                 Our insurance experts are ready to answer any questions and help
-                you get enrolled.
+                you get enrolled in the {planData.name} plan.
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3">

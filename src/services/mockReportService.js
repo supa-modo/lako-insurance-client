@@ -1,91 +1,126 @@
 import {
-  insuranceCompanies,
   insurancePlans,
-  benefits,
-  exclusions,
-  premiums,
-  getPremiumForAge,
   getBenefitsForPlan,
-  getExclusionsForPlan,
-} from "../mockData/insuranceData";
+  getCompanyById,
+  getPremiumByAge,
+} from "../mockData/seniorInsuranceData";
 
-// Generate a mock report based on ID and using our mock data
-export const getMockReportById = (id) => {
-  // For demo purposes, generate fixed mock comparison results
-  // In a real application, this would be handled by the backend
-  // and the data would be fetched from an API
+// Helper function to get a match score based on criteria
+const getMatchScore = (plan, userQuery) => {
+  let score = 0;
 
-  const mockUserQuery = {
-    name: "John Doe",
-    email: "john@example.com",
-    phone: "+254 712 345678",
-    age: 65,
-    desiredCoverage: "comprehensive",
-    budget: 70000,
+  // Match by coverage level
+  const coverageTiers = {
+    basic: ["Copper", "Plan I", "Plan II"],
+    standard: ["Bronze", "Plan III"],
+    enhanced: ["Silver", "Plan IV"],
+    premium: ["Gold", "Plan V"],
+    executive: ["Diamond", "Plan VI"],
+    royal: ["Platinum"],
   };
 
-  // Create comparison results with plans
-  const comparisonResults = insurancePlans.slice(0, 4).map((plan, index) => {
-    const company = insuranceCompanies.find((c) => c.id === plan.companyId) || {
-      name: "Insurance Company",
-      contactEmail: "info@example.com",
-      contactPhone: "+254 700 000000",
-      headquarters: "Nairobi, Kenya",
-      logo: "/insurance-placeholder.png",
-    };
+  // If plan tier matches user's desired coverage
+  if (coverageTiers[userQuery.desiredCoverage]?.includes(plan.tier)) {
+    score += 0.4; // 40% weight for correct coverage level
+  }
 
-    const planBenefits = getBenefitsForPlan(plan.id);
-    const planExclusions = getExclusionsForPlan(plan.id);
-    const planPremiums = premiums.filter((p) => p.planId === plan.id) || [];
-    const premium = getPremiumForAge(plan.id, mockUserQuery.age);
+  // Match by budget
+  const premiumForAge =
+    typeof plan.premium === "object"
+      ? plan.premium[userQuery.ageRange || Object.keys(plan.premium)[0]]
+      : plan.premium;
 
-    // Calculate a mock score based on the plan index
-    const score = (95 - index * 5) / 100; // Converting to decimal for consistent UI
-    const rank = index + 1;
+  const budgetValues = {
+    50000: 75000,
+    100000: 125000,
+    150000: 175000,
+    200000: 225000,
+    250000: 300000,
+  };
 
-    // Enhanced plan object with relations and all required properties
-    const enhancedPlan = {
-      ...plan,
-      company: company,
-      companyName: company.name,
-      companyLogo: company.logo || "/insurance-placeholder.png",
-      planName: plan.name,
-      premium: premium || plan.premium || 50000,
-      benefits: planBenefits,
-      exclusions: planExclusions,
-      premiums: planPremiums,
-      inpatientCoverage: plan.inpatientCoverageLimit,
-      outpatientCoverage: plan.outpatientCoverageLimit,
-    };
+  const maxBudget = budgetValues[userQuery.budget] || 100000;
+
+  if (premiumForAge <= maxBudget) {
+    // The further below budget, the less perfect match it is (we want to maximize value)
+    const budgetRatio = premiumForAge / maxBudget;
+    // Score higher if closer to budget but not over
+    score += 0.3 * (budgetRatio > 0.7 ? budgetRatio : 0.7);
+  }
+
+  // Match by room type preference
+  const roomTypeMap = {
+    general: ["General Ward"],
+    private: ["Private Room", "Standard Private Room"],
+    deluxe: ["Deluxe Private Room"],
+    ensuite: ["Ensuite"],
+  };
+
+  if (
+    roomTypeMap[userQuery.roomType]?.some(
+      (type) => plan.roomRate?.includes(type) || plan.bedLimit?.includes(type)
+    )
+  ) {
+    score += 0.2; // 20% weight for room type
+  }
+
+  // Random factor (0-10%)
+  score += Math.random() * 0.1;
+
+  // Cap at 1.0
+  return Math.min(score, 0.98);
+};
+
+// Mock service to get a report for a specific ID
+export const getMockReportById = (id) => {
+  // Let's assume a default user query if one wasn't provided
+  const defaultUserQuery = {
+    ageRange: "65-69",
+    desiredCoverage: "premium",
+    budget: 150000,
+    roomType: "deluxe",
+    optionalCovers: ["outpatient", "dental", "optical"],
+  };
+
+  // Generate comparison results
+  const results = insurancePlans.map((plan) => {
+    const score = getMatchScore(plan, defaultUserQuery);
 
     return {
-      plan: enhancedPlan,
+      plan: {
+        ...plan,
+        benefits: getBenefitsForPlan(plan.id),
+        company: getCompanyById(plan.companyId),
+      },
       score: score,
-      rank: rank,
+      rank: 0, // Will be set after sorting
     };
   });
 
+  // Sort by score and assign ranks
+  results.sort((a, b) => b.score - a.score);
+  results.forEach((result, index) => {
+    result.rank = index + 1;
+  });
+
+  // Return the mock report
   return {
-    id: id || "mock-report-1",
-    userQuery: mockUserQuery,
-    comparisonResults: comparisonResults,
+    id,
     createdAt: new Date().toISOString(),
+    userQuery: defaultUserQuery,
+    comparisonResults: results.slice(0, 8), // Limit to top 8 results
   };
 };
 
-// Mock function to simulate downloading a report
-export const mockDownloadReportPdf = (id) => {
-  return new Promise((resolve, reject) => {
-    // Simulate API delay
+// Mock service to download a report PDF
+export const mockDownloadReportPdf = async (id) => {
+  // Simulate an API call delay
+  return new Promise((resolve) => {
     setTimeout(() => {
-      console.log(`Downloading report with ID: ${id}`);
-
-      // 95% success rate to simulate occasional failures
-      if (Math.random() > 0.05) {
-        resolve({ success: true, message: "Report downloaded successfully!" });
-      } else {
-        reject(new Error("Network error, please try again."));
-      }
-    }, 1500);
+      console.log(`Downloading PDF for report ${id}...`);
+      resolve({
+        success: true,
+        downloadUrl: `/mock-reports/${id}.pdf`,
+      });
+    }, 2000);
   });
 };

@@ -117,11 +117,11 @@ const ComparisonPage = () => {
   return (
     <div className="min-h-screen relative overflow-hidden font-outfit">
       {/* Background Image with Overlay */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 ">
         <img
           src="/seniors.jpg"
           alt="Senior couple"
-          className="w-full h-full object-cover"
+          className="w-screen h-screen object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 opacity-75 backdrop-blur-sm"></div>
       </div>
