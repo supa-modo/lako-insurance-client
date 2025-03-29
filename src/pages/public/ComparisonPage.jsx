@@ -176,7 +176,7 @@ const ComparisonPage = () => {
           </motion.div>
 
           {/* Header Section */}
-          <div className="text-center mb-6 space-y-4">
+          <div className="text-center mb-7 sm:mb-8 md:mb-10 space-y-4">
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -229,7 +229,7 @@ const ComparisonPage = () => {
               </motion.div>
 
               {/* Form Content - Right Column on Desktop, Bottom Section on Mobile */}
-              <div className="flex-1 p-5 sm:p-7">
+              <div className="flex-1 p-5 sm:p-6">
                 <form
                   onSubmit={handleSubmit(step === 2 ? onSubmit : nextStep)}
                   className="space-y-6 sm:space-y-8"

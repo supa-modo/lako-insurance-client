@@ -173,7 +173,7 @@ const Header = () => {
 const NavLink = ({ to, label }) => (
   <Link
     to={to}
-    className="relative px-4 py-2 text-[1.05rem] text-neutral-800 font-semibold hover:text-primary-600 transition-colors duration-300 rounded-lg hover:bg-neutral-50 overflow-hidden group"
+    className="relative px-4 py-2 text-[1.05rem] text-neutral-800 font-semibold hover:text-primary-600 transition-colors duration-300 rounded-lg hover:bg-neutral-50/5 overflow-hidden group"
   >
     <span className="relative z-10">{label}</span>
     <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
@@ -187,7 +187,7 @@ const NavDropdown = ({ label, items }) => {
   return (
     <div className="relative" onMouseLeave={() => setIsOpen(false)}>
       <button
-        className="flex items-center px-4 py-2 text-neutral-800 font-semibold hover:text-primary-600 transition-colors duration-300 rounded-lg hover:bg-neutral-50"
+        className="flex items-center px-4 py-2 text-neutral-800 font-semibold hover:text-primary-600 transition-colors duration-300 rounded-lg hover:bg-neutral-50/50"
         onMouseEnter={() => setIsOpen(true)}
         onClick={() => setIsOpen(!isOpen)}
       >
