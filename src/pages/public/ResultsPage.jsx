@@ -21,6 +21,7 @@ import PlanList from "../../components/results/PlanList";
 import QueryDetails from "../../components/results/QueryDetails";
 import PlanDetails from "../../components/results/PlanDetails";
 import CallbackModal from "../../components/results/CallbackModal";
+import Footer from "../../components/layout/Footer";
 
 const ResultsPage = () => {
   const navigate = useNavigate();
@@ -248,127 +249,168 @@ const ResultsPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 text-white relative overflow-hidden font-outfit">
-      {/* Decorative elements */}
-      <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-secondary-500/30 rounded-full filter blur-3xl opacity-20 animate-pulse-slow"></div>
-      <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-blue-500/30 rounded-full filter blur-3xl opacity-20 transform translate-y-1/4 translate-x-[-30%]"></div>
-      <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-secondary-400/40 rounded-full filter blur-xl opacity-30 animate-float"></div>
+    <>
+      <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 text-white relative overflow-hidden font-outfit">
+        {/* Decorative elements */}
+        <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-secondary-500/30 rounded-full filter blur-3xl opacity-20 animate-pulse-slow"></div>
+        <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-blue-500/30 rounded-full filter blur-3xl opacity-20 transform translate-y-1/4 translate-x-[-30%]"></div>
+        <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-secondary-400/40 rounded-full filter blur-xl opacity-30 animate-float"></div>
 
-      {/* Glass panels */}
-      <div className="absolute top-10 right-10 w-64 h-64 bg-white/5 rounded-2xl backdrop-blur-sm border border-white/10 hidden lg:block"></div>
-      <div className="absolute bottom-10 left-10 w-48 h-48 bg-white/5 rounded-2xl backdrop-blur-sm border border-white/10 hidden lg:block"></div>
+        {/* Glass panels */}
+        <div className="absolute top-10 right-10 w-64 h-64 bg-white/5 rounded-2xl backdrop-blur-sm border border-white/10 hidden lg:block"></div>
+        <div className="absolute bottom-10 left-10 w-48 h-48 bg-white/5 rounded-2xl backdrop-blur-sm border border-white/10 hidden lg:block"></div>
 
-      <div className="md:mx-28 lg:mx-32 mx-auto px-0 sm:px-4 lg:px-8 py-5 sm:py-8 relative z-10">
-        {/* Breadcrumb Navigation */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-6"
-        >
-          <div className="flex items-center space-x-2 px-3 sm:px-1 text-sm">
-            <Link
-              to="/"
-              className="text-secondary-400 hover:text-white transition-colors"
-            >
-              Home
-            </Link>
-            <span className="text-neutral-500">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </span>
-            <Link
-              to="/compare"
-              className="text-secondary-400 hover:text-white transition-colors"
-            >
-              Compare
-            </Link>
-            <span className="text-neutral-500">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </span>
-            <span className="text-white font-medium">Comparison Results</span>
-          </div>
-        </motion.div>
-
-        <header className="text-center px-3 sm:px-2 mb-6 sm:mb-8">
-          <motion.h1
-            className="text-2xl sm:text-3xl md:text-4xl font-bold text-gradient bg-gradient-to-r from-white via-secondary-200 to-white bg-clip-text text-transparent font-outfit mb-2"
-            initial={{ y: -50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
+        <div className="md:mx-28 lg:mx-32 mx-auto px-0 sm:px-4 lg:px-8 py-5 sm:py-8 relative z-10">
+          {/* Breadcrumb Navigation */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
+            className="mb-6"
           >
-            Your Insurance Results
-          </motion.h1>
-          <motion.p
-            className="text-sm sm:text-base md:text-lg text-neutral-300 max-w-4xl mx-auto"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
-            We've analyzed multiple plans from AAR, Jubilee, and CIC Insurance
-            to find your best match based on your preferences.
-          </motion.p>
-        </header>
+            <div className="flex items-center space-x-2 px-3 sm:px-1 text-sm">
+              <Link
+                to="/"
+                className="text-secondary-400 hover:text-white transition-colors"
+              >
+                Home
+              </Link>
+              <span className="text-neutral-500">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </span>
+              <Link
+                to="/compare"
+                className="text-secondary-400 hover:text-white transition-colors"
+              >
+                Compare
+              </Link>
+              <span className="text-neutral-500">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </span>
+              <span className="text-white font-medium">Comparison Results</span>
+            </div>
+          </motion.div>
 
-        {loading ? (
-          <LoadingState />
-        ) : error ? (
-          <ErrorState error={error} onGoHome={handleGoToHome} />
-        ) : !report || comparisonResults.length === 0 ? (
-          <EmptyState onGoHome={handleGoToHome} />
-        ) : (
-          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl sm:rounded-2xl px-2 py-5 sm:p-3 md:p-6 shadow-2xl">
-            {/* Main content - desktop: side by side, mobile: sequential */}
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
+          <header className="text-center px-3 sm:px-2 mb-6 sm:mb-8">
+            <motion.h1
+              className="text-2xl sm:text-3xl md:text-4xl font-bold text-gradient bg-gradient-to-r from-white via-secondary-200 to-white bg-clip-text text-transparent font-outfit mb-2"
+              initial={{ y: -50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5 }}
             >
-              {/* Mobile View (Sequential) */}
-              <div className="md:hidden">
-                {selectedPlan ? (
-                  <div className="space-y-4">
-                    <PlanDetails
-                      plan={selectedPlan}
-                      onBack={handleBackToList}
-                      formatCurrency={formatCurrency}
-                      onRequestCallback={handleCallbackRequest}
-                      downloadStatus={downloadStatus}
-                      onDownload={handleDownload}
-                    />
+              Your Insurance Results
+            </motion.h1>
+            <motion.p
+              className="text-sm sm:text-base md:text-lg text-neutral-300 max-w-4xl mx-auto"
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              We've analyzed multiple plans from AAR, Jubilee, and CIC Insurance
+              to find your best match based on your preferences.
+            </motion.p>
+          </header>
 
-                    <QueryDetails
-                      userQuery={userQuery || report.userQuery}
-                      formatCurrency={formatCurrency}
-                    />
-                  </div>
-                ) : (
-                  <div className="space-y-6">
+          {loading ? (
+            <LoadingState />
+          ) : error ? (
+            <ErrorState error={error} onGoHome={handleGoToHome} />
+          ) : !report || comparisonResults.length === 0 ? (
+            <EmptyState onGoHome={handleGoToHome} />
+          ) : (
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl sm:rounded-2xl px-2 py-5 sm:p-3 md:p-6 shadow-2xl">
+              {/* Main content - desktop: side by side, mobile: sequential */}
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+              >
+                {/* Mobile View (Sequential) */}
+                <div className="md:hidden">
+                  {selectedPlan ? (
+                    <div className="space-y-4">
+                      <PlanDetails
+                        plan={selectedPlan}
+                        onBack={handleBackToList}
+                        formatCurrency={formatCurrency}
+                        onRequestCallback={handleCallbackRequest}
+                        downloadStatus={downloadStatus}
+                        onDownload={handleDownload}
+                      />
+
+                      <QueryDetails
+                        userQuery={userQuery || report.userQuery}
+                        formatCurrency={formatCurrency}
+                      />
+                    </div>
+                  ) : (
+                    <div className="space-y-6">
+                      <PlanList
+                        plans={report.comparisonResults}
+                        onSelectPlan={handlePlanSelect}
+                        formatCurrency={formatCurrency}
+                        activePlanId={
+                          selectedPlan?.id || selectedPlan?.plan?.id
+                        }
+                      />
+
+                      <motion.button
+                        whileTap={{ scale: 0.98 }}
+                        onClick={handleCallbackRequest}
+                        className="w-full py-3 px-4 bg-primary-500 hover:bg-primary-600 text-white rounded-lg 
+                      flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition duration-200 font-medium"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                        </svg>
+                        Schedule a Call
+                      </motion.button>
+                      <QueryDetails
+                        userQuery={userQuery || report.userQuery}
+                        formatCurrency={formatCurrency}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* Desktop View (Side by Side) */}
+                <div className="hidden md:grid md:grid-cols-12 gap-6">
+                  {/* Left Column: PlanList + Query Details + Download */}
+                  <motion.div
+                    variants={itemVariants}
+                    className="md:col-span-5 lg:col-span-4 space-y-4"
+                  >
                     <PlanList
                       plans={report.comparisonResults}
                       onSelectPlan={handlePlanSelect}
@@ -380,7 +422,7 @@ const ResultsPage = () => {
                       whileTap={{ scale: 0.98 }}
                       onClick={handleCallbackRequest}
                       className="w-full py-3 px-4 bg-primary-500 hover:bg-primary-600 text-white rounded-lg 
-                      flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition duration-200 font-medium"
+                    flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition duration-200 font-medium"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -392,104 +434,70 @@ const ResultsPage = () => {
                       </svg>
                       Schedule a Call
                     </motion.button>
+                  </motion.div>
+
+                  {/* Right Column: Plan Details */}
+                  <motion.div
+                    variants={itemVariants}
+                    className="md:col-span-7 lg:col-span-8 space-y-6"
+                  >
+                    {selectedPlan ? (
+                      <PlanDetails
+                        plan={selectedPlan}
+                        onBack={handleBackToList}
+                        formatCurrency={formatCurrency}
+                        onRequestCallback={handleCallbackRequest}
+                        downloadStatus={downloadStatus}
+                        onDownload={handleDownload}
+                      />
+                    ) : (
+                      <div className="h-full flex items-center justify-center bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-white/10">
+                        <div className="text-center">
+                          <div className="inline-flex items-center justify-center w-16 h-16 bg-secondary-500/20 rounded-full mb-6">
+                            <FiArrowLeft className="h-6 w-6 text-secondary-400" />
+                          </div>
+                          <h3 className="text-xl font-bold text-white mb-2 font-outfit">
+                            Select a Plan
+                          </h3>
+                          <p className="text-neutral-300 font-outfit max-w-md">
+                            Choose a plan from the list to view detailed
+                            information about coverage, benefits, and
+                            exclusions.
+                          </p>
+                        </div>
+                      </div>
+                    )}
                     <QueryDetails
                       userQuery={userQuery || report.userQuery}
                       formatCurrency={formatCurrency}
                     />
-                  </div>
-                )}
-              </div>
-
-              {/* Desktop View (Side by Side) */}
-              <div className="hidden md:grid md:grid-cols-12 gap-6">
-                {/* Left Column: PlanList + Query Details + Download */}
-                <motion.div
-                  variants={itemVariants}
-                  className="md:col-span-5 lg:col-span-4 space-y-4"
-                >
-                  <PlanList
-                    plans={report.comparisonResults}
-                    onSelectPlan={handlePlanSelect}
-                    formatCurrency={formatCurrency}
-                    activePlanId={selectedPlan?.id || selectedPlan?.plan?.id}
-                  />
-
-                  <motion.button
-                    whileTap={{ scale: 0.98 }}
-                    onClick={handleCallbackRequest}
-                    className="w-full py-3 px-4 bg-primary-500 hover:bg-primary-600 text-white rounded-lg 
-                    flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition duration-200 font-medium"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
-                    </svg>
-                    Schedule a Call
-                  </motion.button>
-                </motion.div>
-
-                {/* Right Column: Plan Details */}
-                <motion.div
-                  variants={itemVariants}
-                  className="md:col-span-7 lg:col-span-8 space-y-6"
-                >
-                  {selectedPlan ? (
-                    <PlanDetails
-                      plan={selectedPlan}
-                      onBack={handleBackToList}
-                      formatCurrency={formatCurrency}
-                      onRequestCallback={handleCallbackRequest}
-                      downloadStatus={downloadStatus}
-                      onDownload={handleDownload}
-                    />
-                  ) : (
-                    <div className="h-full flex items-center justify-center bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-white/10">
-                      <div className="text-center">
-                        <div className="inline-flex items-center justify-center w-16 h-16 bg-secondary-500/20 rounded-full mb-6">
-                          <FiArrowLeft className="h-6 w-6 text-secondary-400" />
-                        </div>
-                        <h3 className="text-xl font-bold text-white mb-2 font-outfit">
-                          Select a Plan
-                        </h3>
-                        <p className="text-neutral-300 font-outfit max-w-md">
-                          Choose a plan from the list to view detailed
-                          information about coverage, benefits, and exclusions.
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                  <QueryDetails
-                    userQuery={userQuery || report.userQuery}
-                    formatCurrency={formatCurrency}
-                  />
-                </motion.div>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </div>
-
-      {/* Callback Modal */}
-      <CallbackModal isOpen={showModal} onClose={handleCloseModal} />
-
-      {/* Footer with subtle pattern */}
-      <div className="mt-8 py-4 border-t border-white/10 relative z-10">
-        <div className="container mx-auto px-4 text-center text-neutral-400">
-          <p className="text-xs mt-2">
-            This is a comparison of senior health insurance plans from AAR,
-            Jubilee, and CIC Insurance.
-          </p>
+                  </motion.div>
+                </div>
+              </motion.div>
+            </div>
+          )}
         </div>
+
+        {/* Callback Modal */}
+        <CallbackModal isOpen={showModal} onClose={handleCloseModal} />
+
+        {/* Footer with subtle pattern */}
+        <div className="mt-8 py-4 border-t border-white/10 relative z-10">
+          <div className="container mx-auto px-4 text-center text-neutral-400">
+            <p className="text-xs mt-2">
+              This is a comparison of senior health insurance plans from AAR,
+              Jubilee, and CIC Insurance.
+            </p>
+          </div>
+        </div>
+
+        {/* Additional decorative elements for visual interest */}
+        <div className="absolute bottom-20 right-40 w-64 h-1 bg-gradient-to-r from-transparent via-secondary-500/50 to-transparent transform rotate-45 hidden lg:block"></div>
+        <div className="absolute top-40 left-20 w-64 h-1 bg-gradient-to-r from-transparent via-blue-500/50 to-transparent transform -rotate-45 hidden lg:block"></div>
       </div>
 
-      {/* Additional decorative elements for visual interest */}
-      <div className="absolute bottom-20 right-40 w-64 h-1 bg-gradient-to-r from-transparent via-secondary-500/50 to-transparent transform rotate-45 hidden lg:block"></div>
-      <div className="absolute top-40 left-20 w-64 h-1 bg-gradient-to-r from-transparent via-blue-500/50 to-transparent transform -rotate-45 hidden lg:block"></div>
-    </div>
+      <Footer />
+    </>
   );
 };
 

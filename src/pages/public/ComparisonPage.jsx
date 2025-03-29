@@ -120,16 +120,16 @@ const ComparisonPage = () => {
 
   return (
     <>
-      {/* Background overlay - positioned fixed but not covering the footer */}
+      {/* Background overlay */}
       <div className="fixed top-0 left-0 right-0 h-screen -z-10">
         <img
           src="/seniors.jpg"
           alt="Senior couple"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 opacity-75 backdrop-blur-sm"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 opacity-80 backdrop-blur-sm"></div>
         {/* Fade-out gradient at the bottom */}
-        <div className="absolute left-0 right-0 bottom-0 h-64 bg-gradient-to-b from-transparent to-neutral-50"></div>
+        <div className="absolute left-0 right-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-neutral-50"></div>
 
         {/* Decorative elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -138,10 +138,11 @@ const ComparisonPage = () => {
         </div>
       </div>
 
-      {/* Main content */}
+      {/* Main content with footer */}
       <div className="flex flex-col min-h-screen">
-        <div className="flex-grow relative font-outfit">
-          <div className="container-custom mx-auto px-4 sm:px-6 pb-32 pt-3 sm:pb-40 sm:pt-6">
+        {/* Content area */}
+        <div className="flex-grow relative font-outfit z-10">
+          <div className="container-custom mx-auto px-4 sm:px-6 pb-16 pt-3 sm:pb-24 sm:pt-6">
             {/* Breadcrumb Navigation */}
             <motion.div
               initial={{ opacity: 0, y: -10 }}
@@ -269,10 +270,9 @@ const ComparisonPage = () => {
               </div>
             </motion.div>
           </div>
-        </div>
 
-        {/* Footer - will always stay at the bottom */}
-        <Footer />
+          <Footer />
+        </div>
       </div>
     </>
   );
