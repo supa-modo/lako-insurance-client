@@ -225,7 +225,7 @@ const PlanDetails = ({
 
   // Coverage Card Component for the top section
   const CoverageCard = ({ title, amount, icon, color }) => (
-    <div className="bg-primary-50 border-primary-500/20 backdrop-blur-sm px-4 py-2 sm:p-5 rounded-[0.7rem] sm:rounded-[0.75rem]   border transition-all duration-300 hover:shadow-md">
+    <div className="bg-primary-50 border-primary-500/20 backdrop-blur-sm px-4 py-2 sm:p-5 rounded-[0.85rem] sm:rounded-[0.75rem]   border transition-all duration-300 hover:shadow-md">
       <div className="flex items-center">
         <div className="h-8 sm:h-10 w-8 sm:w-10 rounded-full bg-primary-500/40 flex items-center justify-center mr-3 flex-shrink-0">
           {icon}
@@ -353,7 +353,7 @@ const PlanDetails = ({
                 </p>
               </div>
             </div>
-            <div className="mt-4 md:mt-0 text-center bg-secondary-50 rounded-[0.8rem] sm:rounded-[0.95rem] px-4 sm:px-6 py-3 border border-secondary-100">
+            <div className="mt-4 md:mt-0 text-center bg-white rounded-[0.75rem] sm:rounded-[0.7rem] px-4 sm:px-6 py-3 border border-secondary-100">
               <div className="text-xl sm:text-2xl font-bold text-secondary-700">
                 {formatCurrencyFn(displayPremium || 50000)}
               </div>
@@ -524,7 +524,7 @@ const PlanDetails = ({
 
       {/* Download Report Section */}
       {onDownload && (
-        <div className="bg-primary-50 border border-secondary-100 rounded-xl p-5 shadow-md">
+        <div className=" bg-primary-50 border border-secondary-100 rounded-xl p-5 shadow-md">
           <div className="flex flex-col md:flex-row items-center gap-3 justify-between">
           <div className="w-full flex items-center space-x-3 ">
             <div className="h-10 w-10 rounded-full bg-secondary-500/20 flex items-center justify-center">
@@ -561,7 +561,7 @@ const PlanDetails = ({
 
           {downloadStatus && downloadStatus !== "idle" ? (
             <div
-              className={`rounded-lg p-3 mb-3 text-sm flex items-center justify-center
+              className={`rounded-lg p-3 mt-3 text-sm flex items-center justify-center
               ${
                 downloadStatus === "loading"
                   ? "bg-blue-100 text-blue-700"
