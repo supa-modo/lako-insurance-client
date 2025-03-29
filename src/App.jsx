@@ -11,9 +11,12 @@ import { Provider } from "react-redux";
 import store from "./store";
 import AuthGuard from "./components/AuthGuard";
 import ScrollToTop from "./components/utils/ScrollToTop";
+import { Analytics } from "@vercel/analytics/react"
 
 function App() {
   return (
+    <>
+    <Analytics/>
     <Provider store={store}>
       <Router>
         <ScrollToTop />
@@ -46,6 +49,7 @@ function App() {
         </Routes>
       </Router>
     </Provider>
+    </>
   );
 }
 
