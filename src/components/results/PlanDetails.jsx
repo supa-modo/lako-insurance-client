@@ -249,16 +249,16 @@ const PlanDetails = ({
     const isExpanded = expandedSections.has(id);
 
     return (
-      <div className="border border-neutral-300 rounded-lg overflow-hidden mb-4">
+      <div className="border border-neutral-500 rounded-lg overflow-hidden mb-4">
         <button
-          className="w-full px-4 py-3 bg-neutral-100 hover:bg-neutral-200 transition-colors flex justify-between items-center"
+          className="w-full px-4 py-3 bg-neutral-500 hover:bg-neutral-600 transition-colors flex justify-between items-center"
           onClick={() => toggleSection(id)}
         >
           <span className="font-semibold text-neutral-800">{title}</span>
           {isExpanded ? (
-            <FiChevronUp className="text-neutral-600" />
+            <FiChevronUp className="text-neutral-700" />
           ) : (
-            <FiChevronDown className="text-neutral-600" />
+            <FiChevronDown className="text-neutral-700" />
           )}
         </button>
         <AnimatePresence initial={false}>
@@ -451,7 +451,7 @@ const PlanDetails = ({
                     key={ageRange}
                     className="flex justify-between border-b pb-2 text-[0.8rem] sm:text-sm md:text-base"
                   >
-                    <span className="font-medium text-neutral-600">
+                    <span className="font-medium text-neutral-700">
                       {ageRange} years
                     </span>
                     <span className="text-secondary-600 font-semibold ">
@@ -461,7 +461,7 @@ const PlanDetails = ({
                 ))}
               </div>
             ) : (
-              <p className="text-neutral-600 text-[0.8rem] sm:text-sm md:text-base">
+              <p className="text-neutral-700 text-[0.8rem] sm:text-sm md:text-base">
                 This plan offers a flat rate of{" "}
                 {formatCurrencyFn(planData.premium)} regardless of age.
               </p>
@@ -469,7 +469,7 @@ const PlanDetails = ({
           </CollapsibleSection>
 
           <CollapsibleSection title="Eligibility Requirements" id="eligibility">
-            <ul className="space-y-2 text-neutral-600 text-[0.8rem] sm:text-sm md:text-base">
+            <ul className="space-y-2 text-neutral-700 text-[0.8rem] sm:text-sm md:text-base">
               <li className="flex items-start">
                 <TbCheck className="text-green-600 mt-1 mr-2" />
                 <span>Age: {planData.eligibilityAge || "65-85 years"}</span>
@@ -489,7 +489,7 @@ const PlanDetails = ({
           </CollapsibleSection>
 
           <CollapsibleSection title="Plan Exclusions" id="exclusions">
-            <ul className="space-y-2 text-neutral-600 text-[0.8rem] sm:text-sm md:text-base">
+            <ul className="space-y-2 text-neutral-700 text-[0.8rem] sm:text-sm md:text-base">
               {commonExclusions.map((exclusion, idx) => (
                 <li key={idx} className="flex items-start">
                   <FiX className="text-red-500 mt-1 mr-2" />
@@ -500,7 +500,7 @@ const PlanDetails = ({
           </CollapsibleSection>
 
           <CollapsibleSection title="Value Added Benefits" id="valueAdded">
-            <ul className="space-y-2 text-neutral-600 text-[0.8rem] sm:text-sm md:text-base">
+            <ul className="space-y-2 text-neutral-700 text-[0.8rem] sm:text-sm md:text-base">
               <li className="flex items-start">
                 <TbCheck className="text-green-600 mt-1 mr-2" />
                 <span>24/7 Customer support</span>
