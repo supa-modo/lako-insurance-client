@@ -531,7 +531,7 @@ const PlanDetails = ({
               <FiDownload className="h-5 w-5 text-secondary-500" />
             </div>
             <div>
-              <h3 className="text-base sm:text-lg font-bold text-neutral-800 font-outfit">
+              <h3 className="text-base sm:text-lg font-bold text-primary-600 font-outfit">
                 Download Report
               </h3>
               <p className="text-[0.8rem] sm:text-sm text-neutral-600 font-outfit">
@@ -604,7 +604,7 @@ const PlanDetails = ({
         <div className="p-4 sm:p-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div className="mb-6 md:mb-0 md:mr-6 md:max-w-[50%]">
-              <h3 className="text-base sm:text-lg font-bold text-neutral-800 mb-2">
+              <h3 className="text-base sm:text-lg font-bold text-primary-600 mb-2">
                 Need Help With This Plan?
               </h3>
               <p className="text-neutral-700 text-[0.8rem] sm:text-sm md:text-base">

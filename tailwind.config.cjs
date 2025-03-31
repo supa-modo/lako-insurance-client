@@ -56,7 +56,7 @@ module.exports = {
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
         outfit: ["Outfit", "sans-serif"],
-        rubik: ["Rubik", "sans-serif"],
+        paytone: ["Paytone One", "sans-serif"],
         lexend: ["Lexend", "sans-serif"],
       },
       boxShadow: {

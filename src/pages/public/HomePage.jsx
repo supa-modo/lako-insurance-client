@@ -271,7 +271,7 @@ const HomePage = () => {
           </div>
 
           {/* Bottom wave divider */}
-          <div className="absolute bottom-0 left-0 right-0">
+          <div className="absolute -bottom-1 left-0 right-0" >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 1440 120"
@@ -295,23 +295,23 @@ const HomePage = () => {
               </h2>
             </div>
 
-            <div className="grid grid-cols-3 md:grid-cols-6 gap-4 items-center">
+            <div className="grid grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4 items-center">
               {[
                 "jubilee.png",
                 "icea.png",
                 "britam.png",
                 "cic.png",
                 "aar.png",
-                "madison.png",
+                "madison.png", 
               ].map((logo, index) => (
                 <div
                   key={index}
-                  className="bg-neutral-50 shadow-md hover:shadow-lg rounded-lg p-4 transform transition-all duration-300 hover:scale-105"
+                  className="bg-neutral-50 shadow-md hover:shadow-lg rounded-lg p-4"
                 >
                   <img
                     src={`/${logo}`}
                     alt={`Insurance provider ${index + 1}`}
-                    className="h-14 object-contain mx-auto"
+                    className="h-10 sm:h-14  object-contain mx-auto"
                   />
                 </div>
               ))}

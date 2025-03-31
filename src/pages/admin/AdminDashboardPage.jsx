@@ -18,183 +18,41 @@ import {
   TbPlus,
   TbCalendarTime,
   TbShieldCheck,
+  TbLayoutCards,
+  TbUserCircle,
+  TbUserPlus,
+  TbClock,
+  TbList,
+  TbPremiumRights,
+  TbPhonePlus,
+  TbArrowsExchange,
+  TbHeartHandshake,
+  TbCalendar,
+  TbInfoCircle,
+  TbSearch,
 } from "react-icons/tb";
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Tooltip,
+  Legend,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  ResponsiveContainer,
+} from "recharts";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { getCurrentUser } from "../../services/adminService";
 
-const statCards = [
-  {
-    title: "Active Clients",
-    value: "1,284",
-    change: "+12.5%",
-    isPositive: true,
-    icon: TbUsers,
-    color: "from-blue-500 to-blue-600",
-    textColor: "text-blue-500",
-    bgColor: "bg-blue-500/10",
-  },
-  {
-    title: "Reports Generated",
-    value: "854",
-    change: "+8.2%",
-    isPositive: true,
-    icon: TbFileText,
-    color: "from-green-500 to-green-600",
-    textColor: "text-green-500",
-    bgColor: "bg-green-500/10",
-  },
-  {
-    title: "Conversion Rate",
-    value: "65.2%",
-    change: "-2.4%",
-    isPositive: false,
-    icon: TbActivity,
-    color: "from-yellow-500 to-yellow-600",
-    textColor: "text-yellow-500",
-    bgColor: "bg-yellow-500/10",
-  },
-  {
-    title: "Plan Comparisons",
-    value: "2,572",
-    change: "+18.7%",
-    isPositive: true,
-    icon: TbClipboard,
-    color: "from-purple-500 to-purple-600",
-    textColor: "text-purple-500",
-    bgColor: "bg-purple-500/10",
-  },
-];
-
-const recentQueries = [
-  {
-    id: "1",
-    name: "John Mwangi",
-    email: "john.mwangi@example.com",
-    phone: "+254 712 345678",
-    age: 65,
-    budget: 50000,
-    status: "New",
-    statusColor: "bg-secondary-500",
-    date: "2023-10-15T09:24:00",
-  },
-  {
-    id: "2",
-    name: "Mary Kamau",
-    email: "mary.kamau@example.com",
-    phone: "+254 723 456789",
-    age: 68,
-    budget: 70000,
-    status: "Contacted",
-    statusColor: "bg-blue-500",
-    date: "2023-10-15T08:12:00",
-  },
-  {
-    id: "3",
-    name: "David Ochieng",
-    email: "david.ochieng@example.com",
-    phone: "+254 734 567890",
-    age: 72,
-    budget: 100000,
-    status: "Converted",
-    statusColor: "bg-green-500",
-    date: "2023-10-14T16:45:00",
-  },
-  {
-    id: "4",
-    name: "Sarah Njoroge",
-    email: "sarah.njoroge@example.com",
-    phone: "+254 745 678901",
-    age: 63,
-    budget: 40000,
-    status: "Pending",
-    statusColor: "bg-yellow-500",
-    date: "2023-10-14T14:30:00",
-  },
-  {
-    id: "5",
-    name: "Michael Waweru",
-    email: "michael.waweru@example.com",
-    phone: "+254 756 789012",
-    age: 70,
-    budget: 65000,
-    status: "New",
-    statusColor: "bg-secondary-500",
-    date: "2023-10-14T10:15:00",
-  },
-];
-
-const insuranceCompanies = [
-  {
-    name: "Jubilee Insurance",
-    clients: 365,
-    growth: 12.3,
-    color: "bg-blue-500",
-  },
-  { name: "ICEA Lion", clients: 287, growth: 8.7, color: "bg-green-500" },
-  { name: "Britam", clients: 256, growth: -2.1, color: "bg-yellow-500" },
-  { name: "CIC Insurance", clients: 198, growth: 15.4, color: "bg-purple-500" },
-  {
-    name: "AAR Insurance",
-    clients: 175,
-    growth: 6.8,
-    color: "bg-secondary-500",
-  },
-];
-
-const topPlans = [
-  {
-    name: "Senior Gold Plus",
-    provider: "Jubilee Insurance",
-    subscribers: 142,
-    change: 12.7,
-  },
-  {
-    name: "Premium Health 65+",
-    provider: "ICEA Lion",
-    subscribers: 128,
-    change: 8.2,
-  },
-  {
-    name: "Elder Care Complete",
-    provider: "Britam",
-    subscribers: 117,
-    change: 5.3,
-  },
-  {
-    name: "Senior Comprehensive",
-    provider: "AAR Insurance",
-    subscribers: 98,
-    change: -2.1,
-  },
-  {
-    name: "Silver Years Protection",
-    provider: "CIC Insurance",
-    subscribers: 86,
-    change: 14.6,
-  },
-];
-
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-};
-
-const formatCurrency = (amount) => {
-  return new Intl.NumberFormat("en-KE", {
-    style: "currency",
-    currency: "KES",
-    maximumFractionDigits: 0,
-  }).format(amount);
-};
-
 const AdminDashboardPage = () => {
   const [period, setPeriod] = useState("weekly");
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState("overview");
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [lastLogin, setLastLogin] = useState(new Date());
 
@@ -206,6 +64,222 @@ const AdminDashboardPage = () => {
     // Set a mock last login date
     setLastLogin(new Date());
   }, []);
+
+  const refreshData = () => {
+    setIsRefreshing(true);
+    // Simulate data refresh
+    setTimeout(() => {
+      setIsRefreshing(false);
+    }, 1000);
+  };
+
+  // Card metrics data
+  const metrics = [
+    {
+      title: "Active Clients",
+      value: "1,284",
+      change: "+12.5%",
+      isPositive: true,
+      icon: TbUsers,
+      color: "bg-blue-500",
+      textColor: "text-blue-500",
+      path: "/admin/clients",
+    },
+    {
+      title: "Leads in Pipeline",
+      value: "427",
+      change: "+8.2%",
+      isPositive: true,
+      icon: TbUserPlus,
+      color: "bg-indigo-500",
+      textColor: "text-indigo-500",
+      path: "/admin/leads",
+    },
+    
+    {
+      title: "Upcoming Renewals",
+      value: "68",
+      change: "+18.4%",
+      isPositive: false,
+      icon: TbCalendarTime,
+      color: "bg-yellow-500",
+      textColor: "text-yellow-500",
+      path: "/admin/renewals",
+    },
+    {
+      title: "New Queries",
+      value: "37",
+      change: "+22.8%",
+      isPositive: true,
+      icon: TbClipboard,
+      color: "bg-secondary-500",
+      textColor: "text-secondary-500",
+      path: "/admin/queries/new",
+    },
+  ];
+
+  // Lead Pipeline data
+  const leadPipeline = [
+    { stage: "New Lead", count: 145, color: "bg-blue-500" },
+    { stage: "Contacted", count: 92, color: "bg-indigo-500" },
+    { stage: "Qualified", count: 76, color: "bg-violet-500" },
+    { stage: "Proposal", count: 64, color: "bg-purple-500" },
+    { stage: "Negotiation", count: 31, color: "bg-pink-500" },
+    { stage: "Converted", count: 19, color: "bg-secondary-500" },
+  ];
+
+  // Recent client activity
+  const recentActivity = [
+    {
+      id: 1,
+      client: "John Mwangi",
+      activity: "Submitted a new insurance query",
+      time: "5 minutes ago",
+      type: "query",
+    },
+    {
+      id: 2,
+      client: "Mary Kamau",
+      activity: "Policy KS-243 is due for renewal",
+      time: "1 hour ago",
+      type: "renewal",
+    },
+    {
+      id: 3,
+      client: "David Otieno",
+      activity: "Upgraded to Premium Health 65+ plan",
+      time: "2 hours ago",
+      type: "conversion",
+    },
+    {
+      id: 4,
+      client: "Sarah Njoroge",
+      activity: "Added family member to policy",
+      time: "Yesterday",
+      type: "update",
+    },
+    {
+      id: 5,
+      client: "Michael Waweru",
+      activity: "Scheduled a follow-up call",
+      time: "Yesterday",
+      type: "task",
+    },
+  ];
+
+  // Insurance plans by subscriber count
+  const topPlans = [
+    {
+      name: "Senior Gold Plus",
+      provider: "Jubilee Insurance",
+      subscribers: 142,
+      revenue: "KES 4,260,000",
+      change: "+12.7%",
+    },
+    {
+      name: "Premium Health 65+",
+      provider: "ICEA Lion",
+      subscribers: 128,
+      revenue: "KES 3,840,000",
+      change: "+8.2%",
+    },
+    {
+      name: "Elder Care Complete",
+      provider: "Britam",
+      subscribers: 117,
+      revenue: "KES 2,925,000",
+      change: "+5.3%",
+    },
+    {
+      name: "Senior Comprehensive",
+      provider: "AAR Insurance",
+      subscribers: 98,
+      revenue: "KES 2,450,000",
+      change: "-2.1%",
+    },
+    {
+      name: "Silver Years Protection",
+      provider: "CIC Insurance",
+      subscribers: 86,
+      revenue: "KES 2,150,000",
+      change: "+14.6%",
+    },
+  ];
+
+  // Tasks data
+  const tasks = [
+    {
+      id: 1,
+      title: "Follow up with John Mwangi",
+      due: "Today",
+      priority: "High",
+      status: "Pending",
+    },
+    {
+      id: 2,
+      title: "Prepare renewal proposal for Mary Kamau",
+      due: "Tomorrow",
+      priority: "High",
+      status: "In Progress",
+    },
+    {
+      id: 3,
+      title: "Call David Otieno about policy updates",
+      due: "Aug 12",
+      priority: "Medium",
+      status: "Pending",
+    },
+    {
+      id: 4,
+      title: "File claim documents for Sarah Njoroge",
+      due: "Aug 13",
+      priority: "Medium",
+      status: "Pending",
+    },
+    {
+      id: 5,
+      title: "Prepare monthly sales report",
+      due: "Aug 15",
+      priority: "Low",
+      status: "Not Started",
+    },
+  ];
+
+  // Performance data for charts
+  const conversionData = [
+    { name: "Jan", rate: 28 },
+    { name: "Feb", rate: 29 },
+    { name: "Mar", rate: 33 },
+    { name: "Apr", rate: 36 },
+    { name: "May", rate: 32 },
+    { name: "Jun", rate: 32 },
+    { name: "Jul", rate: 34 },
+  ];
+
+  const revenueData = [
+    { name: "Jan", revenue: 3.2 },
+    { name: "Feb", revenue: 3.5 },
+    { name: "Mar", revenue: 3.8 },
+    { name: "Apr", revenue: 4.1 },
+    { name: "May", revenue: 4.6 },
+    { name: "Jun", revenue: 4.8 },
+    { name: "Jul", revenue: 5.2 },
+  ];
+
+  const planDistributionData = [
+    { name: "Gold Plus", value: 142 },
+    { name: "Premium 65+", value: 128 },
+    { name: "Elder Care", value: 117 },
+    { name: "Comprehensive", value: 98 },
+    { name: "Silver Years", value: 86 },
+  ];
+
+
+  // Handler for period changes
+  const handlePeriodChange = (newPeriod) => {
+    setPeriod(newPeriod);
+    // In a real app, this would fetch new data for the selected period
+  };
 
   // Function to get role badge color
   const getRoleBadgeColor = (role) => {
@@ -222,238 +296,403 @@ const AdminDashboardPage = () => {
   };
 
   return (
-    <div className="text-white/90 h-full">
-      {/* Dashboard Header with Welcome message */}
-      <div className="flex justify-between items-center mb-6">
+    <div className="text-gray-800 font-lexend px-8 py-7">
+      {/* Dashboard Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <div>
-          <div className="flex items-center gap-3 mb-1">
-            <h1 className="text-2xl sm:text-3xl font-bold text-white font-outfit">
-              Welcome{currentUser ? `, ${currentUser.name}` : ""}
-            </h1>
-            {currentUser && (
-              <span
-                className={`${getRoleBadgeColor(
-                  currentUser.role
-                )} text-white text-xs px-2.5 py-1 rounded-full font-medium flex items-center gap-1`}
-              >
-                <TbShieldCheck className="h-3 w-3" />
-                {currentUser.role.charAt(0).toUpperCase() +
-                  currentUser.role.slice(1)}
-              </span>
-            )}
-          </div>
-          <p className="text-white/60 text-sm sm:text-base flex items-center">
-            <TbCalendarTime className="mr-2" />
-            Last login: {lastLogin.toLocaleString()}
+          <h1 className="text-2xl font-bold text-secondary-700">
+            Executive Dashboard
+          </h1>
+          <p className="text-gray-500">
+            Welcome back, Administrator. Here's what's happening with your Agency today.
           </p>
         </div>
-
-        <div className="flex items-center space-x-3">
-          <button className="px-3 py-2 text-sm sm:px-4 sm:py-2.5 bg-white/10 hover:bg-white/20 rounded-lg transition-colors flex items-center gap-2">
-            <TbRefresh className="h-4 w-4" />
-            <span className="hidden sm:inline">Refresh</span>
-          </button>
-
+        <div className="flex mt-4 md:mt-0 space-x-2">
           <div className="relative">
-            <button className="px-3 py-2 text-sm sm:px-4 sm:py-2.5 bg-secondary-500 hover:bg-secondary-600 rounded-lg transition-colors flex items-center gap-2">
-              <TbPlus className="h-4 w-4" />
-              <span>New Report</span>
-            </button>
+            <select
+              value={period}
+              onChange={(e) => handlePeriodChange(e.target.value)}
+              className="appearance-none bg-white border border-gray-200 rounded-lg py-2 px-4 pr-8 text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+            >
+              <option value="daily">Today</option>
+              <option value="weekly">This Week</option>
+              <option value="monthly">This Month</option>
+              <option value="quarterly">This Quarter</option>
+              <option value="yearly">This Year</option>
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+              <TbChevronDown />
+            </div>
           </div>
+          <button
+            onClick={refreshData}
+            className="bg-white border border-gray-200 rounded-lg p-2 text-gray-500 hover:text-primary-600 hover:bg-primary-100  focus:border-primary-300 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          >
+            <TbRefresh
+              className={`h-5 w-5 ${isRefreshing ? "animate-spin" : ""}`}
+            />
+          </button>
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
-        {statCards.map((card, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: index * 0.1 }}
-            className="bg-white/10 backdrop-blur-sm rounded-xl p-5 sm:p-6 border border-white/10 hover:border-white/20 transition-colors"
+      <div>
+
+      </div>
+
+      {/* Navigation Tabs */}
+      <div className="flex overflow-x-auto bg-white rounded-lg p-1 mb-3 border border-gray-200">
+        {["overview", "clients", "sales", "performance", "tasks"].map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`flex-shrink-0 px-4 py-2 text-sm font-medium rounded-md ${
+              activeTab === tab
+                ? "bg-secondary-600 text-white"
+                : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+            } transition-colors duration-150 focus:outline-none capitalize`}
           >
-            <div className="flex justify-between items-start mb-2 sm:mb-4">
-              <div>
-                <p className="text-sm text-white/70">{card.title}</p>
-                <h3 className="text-xl sm:text-2xl font-bold text-white mt-1">
-                  {card.value}
-                </h3>
-              </div>
-              <div className={`${card.bgColor} p-3 rounded-lg`}>
-                <card.icon className={`h-5 w-5 ${card.textColor}`} />
-              </div>
-            </div>
-            <div className="flex items-center">
-              {card.isPositive ? (
-                <TbArrowUpRight className="h-4 w-4 text-green-500 mr-1" />
-              ) : (
-                <TbArrowDownRight className="h-4 w-4 text-red-500 mr-1" />
-              )}
-              <span
-                className={card.isPositive ? "text-green-500" : "text-red-500"}
-              >
-                {card.change}
-              </span>
-              <span className="text-white/50 text-sm ml-2">
-                vs. last period
-              </span>
-            </div>
-          </motion.div>
+            {tab}
+          </button>
         ))}
       </div>
 
-      {/* Main Dashboard Content - Two Column Layout */}
-      <div className="grid lg:grid-cols-3 gap-6 mb-6">
-        {/* Left Column - Queries Table */}
-        <div className="lg:col-span-2 bg-white/10 backdrop-blur-sm rounded-xl border border-white/10 overflow-hidden">
-          <div className="px-6 py-4 border-b border-white/10 flex justify-between items-center">
-            <h2 className="text-lg font-bold text-white">
-              Recent Insurance Queries
-            </h2>
-
-            {/* Filter Tabs */}
-            <div className="flex bg-white/5 rounded-lg p-1">
-              {["all", "new", "contacted", "converted"].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`px-3 py-1 text-xs rounded-md transition-colors ${
-                    activeTab === tab
-                      ? "bg-white/20 text-white"
-                      : "text-white/60 hover:text-white"
-                  }`}
+      {/* Main Dashboard Content */}
+      <div className="space-y-6">
+        {/* Metrics Cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {metrics.map((metric, index) => (
+            <div
+              key={index}
+              className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow"
+            >
+              <div className="flex justify-between items-start mb-2">
+                <div className="flex items-center">
+                  <div
+                    className={`p-2 rounded-lg ${metric.color} bg-opacity-15 mr-3`}
+                  >
+                    <metric.icon className={`h-5 w-5 ${metric.textColor}`} />
+                  </div>
+                  <h3 className="text-gray-700">{metric.title}</h3>
+                </div>
+                <Link
+                  to={metric.path}
+                  className="text-gray-400 hover:text-primary-600"
                 >
-                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                </button>
+                  <TbArrowRight className="h-5 w-5" />
+                </Link>
+              </div>
+              <div className="flex items-end justify-between">
+                <div>
+                  <span className="text-2xl font-bold text-gray-900">
+                    {metric.value}
+                  </span>
+                  <div className="flex items-center mt-1">
+                    {metric.isPositive ? (
+                      <TbArrowUpRight className="h-4 w-4 text-green-500 mr-1" />
+                    ) : (
+                      <TbArrowDownRight className="h-4 w-4 text-red-500 mr-1" />
+                    )}
+                    <span
+                      className={
+                        metric.isPositive
+                          ? "text-green-500 text-xs"
+                          : "text-red-500 text-xs"
+                      }
+                    >
+                      {metric.change} vs last period
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Quick Actions */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-gray-900">Quick Actions</h2>
+            <button className="text-primary-600 hover:text-primary-700 text-sm font-medium">
+              Customize
+            </button>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {[
+              {
+                name: "Add Client",
+                icon: TbUserPlus,
+                path: "/admin/clients/new",
+                color: "bg-blue-100 text-blue-600",
+              },
+              {
+                name: "New Policy",
+                icon: TbShieldCheck,
+                path: "/admin/policies/new",
+                color: "bg-green-100 text-green-600",
+              },
+              {
+                name: "Record Call",
+                icon: TbPhonePlus,
+                path: "/admin/calls/new",
+                color: "bg-secondary-100 text-secondary-600",
+              },
+              {
+                name: "Send Email",
+                icon: TbMail,
+                path: "/admin/mail/compose",
+                color: "bg-purple-100 text-purple-600",
+              },
+              {
+                name: "Schedule",
+                icon: TbCalendar,
+                path: "/admin/calendar",
+                color: "bg-indigo-100 text-indigo-600",
+              },
+              {
+                name: "Reports",
+                icon: TbFileText,
+                path: "/admin/reports",
+                color: "bg-yellow-100 text-yellow-600",
+              },
+            ].map((action, index) => (
+              <Link
+                key={index}
+                to={action.path}
+                className="flex flex-col items-center justify-center p-4 rounded-xl border border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-colors"
+              >
+                <div className={`p-3 rounded-full ${action.color} mb-2`}>
+                  <action.icon className="h-6 w-6" />
+                </div>
+                <span className="text-sm font-medium text-gray-700">
+                  {action.name}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Two Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Lead Pipeline - col-span-1 */}
+          <div className="bg-white rounded-xl border border-gray-200 p-4 lg:col-span-1">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-bold text-gray-900">Lead Pipeline</h2>
+              <Link
+                to="/admin/leads"
+                className="text-primary-600 hover:text-primary-700 text-sm font-medium"
+              >
+                View All
+              </Link>
+            </div>
+            <div className="space-y-4">
+              {leadPipeline.map((stage, index) => (
+                <div key={index} className="relative">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-sm text-gray-600">{stage.stage}</span>
+                    <span className="text-sm font-medium">{stage.count}</span>
+                  </div>
+                  <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full ${stage.color}`}
+                      style={{ width: `${(stage.count / 145) * 100}%` }}
+                    ></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              <div className="flex justify-between items-center">
+                <div>
+                  <div className="text-sm text-gray-500">Total Leads</div>
+                  <div className="text-xl font-bold text-gray-900">427</div>
+                </div>
+                <div>
+                  <div className="text-sm text-gray-500">
+                    Avg. Conversion Time
+                  </div>
+                  <div className="text-xl font-bold text-gray-900">18 days</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Charts Section - col-span-2 */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Conversion Rate Chart */}
+            <div className="bg-white rounded-xl border border-gray-200 p-4">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-bold text-gray-900">
+                  Conversion Rate Trends
+                </h2>
+                <div className="flex items-center">
+                  <div className="bg-purple-100 text-purple-800 text-xs font-medium px-2 py-0.5 rounded">
+                    +5.3% vs last period
+                  </div>
+                </div>
+              </div>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={conversionData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      dataKey="rate"
+                      stroke="#8884d8"
+                      fill="#8884d8"
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Revenue Chart */}
+            <div className="bg-white rounded-xl border border-gray-200 p-4">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-bold text-gray-900">Revenue</h2>
+                <div className="flex items-center">
+                  <div className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-0.5 rounded">
+                    +13.2% vs last period
+                  </div>
+                </div>
+              </div>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={revenueData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="revenue" fill="#8884d8" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Three Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Recent Activity */}
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-bold text-gray-900">
+                Recent Activity
+              </h2>
+              <Link
+                to="/admin/activities"
+                className="text-primary-600 hover:text-primary-700 text-sm font-medium"
+              >
+                View All
+              </Link>
+            </div>
+            <div className="space-y-3">
+              {recentActivity.map((activity) => (
+                <div
+                  key={activity.id}
+                  className="flex items-start p-2 hover:bg-gray-50 rounded-lg"
+                >
+                  <div className="flex-shrink-0 mr-3">
+                    <div className="h-8 w-8 rounded-full flex items-center justify-center">
+                      {activity.type === "query" && (
+                        <div className="bg-secondary-100 p-1 rounded-full">
+                          <TbClipboard className="h-6 w-6 text-secondary-600" />
+                        </div>
+                      )}
+                      {activity.type === "renewal" && (
+                        <div className="bg-yellow-100 p-1 rounded-full">
+                          <TbCalendarTime className="h-6 w-6 text-yellow-600" />
+                        </div>
+                      )}
+                      {activity.type === "conversion" && (
+                        <div className="bg-green-100 p-1 rounded-full">
+                          <TbHeartHandshake className="h-6 w-6 text-green-600" />
+                        </div>
+                      )}
+                      {activity.type === "update" && (
+                        <div className="bg-blue-100 p-1 rounded-full">
+                          <TbArrowsExchange className="h-6 w-6 text-blue-600" />
+                        </div>
+                      )}
+                      {activity.type === "task" && (
+                        <div className="bg-indigo-100 p-1 rounded-full">
+                          <TbList className="h-6 w-6 text-indigo-600" />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 truncate">
+                      {activity.client}
+                    </p>
+                    <p className="text-xs text-gray-500 truncate">
+                      {activity.activity}
+                    </p>
+                    <p className="text-xs text-gray-400">{activity.time}</p>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="text-left text-white/50 text-xs border-b border-white/10">
-                  <th className="px-6 py-3 font-medium">CLIENT</th>
-                  <th className="px-6 py-3 font-medium">AGE</th>
-                  <th className="px-6 py-3 font-medium">BUDGET</th>
-                  <th className="px-6 py-3 font-medium">STATUS</th>
-                  <th className="px-6 py-3 font-medium">DATE</th>
-                  <th className="px-6 py-3 font-medium text-right">ACTIONS</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {recentQueries.map((query) => (
-                  <motion.tr
-                    key={query.id}
-                    className="hover:bg-white/5 transition-colors"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="h-9 w-9 rounded-full bg-white/10 flex items-center justify-center text-lg font-medium text-white mr-3">
-                          {query.name.charAt(0)}
-                        </div>
-                        <div>
-                          <div className="font-medium text-white">
-                            {query.name}
-                          </div>
-                          <div className="text-xs text-white/50">
-                            {query.email}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-white/90">
-                        {query.age} years
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-white/90">
-                        {formatCurrency(query.budget)}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${query.statusColor}`}
-                      >
-                        {query.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-white/70">
-                        {formatDate(query.date)}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right">
-                      <div className="flex items-center justify-end space-x-2">
-                        <button className="p-1.5 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-colors">
-                          <TbPhone className="h-4 w-4" />
-                        </button>
-                        <button className="p-1.5 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-colors">
-                          <TbMail className="h-4 w-4" />
-                        </button>
-                        <button className="p-1.5 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-colors">
-                          <TbDots className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </motion.tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="px-6 py-4 border-t border-white/10 flex justify-between items-center">
-            <div className="text-sm text-white/60">Showing 5 of 67 entries</div>
-            <button className="text-secondary-400 hover:text-secondary-300 flex items-center text-sm">
-              View All Queries
-              <TbArrowRight className="ml-1 h-4 w-4" />
-            </button>
-          </div>
-        </div>
-
-        {/* Right Column - Two Cards */}
-        <div className="space-y-6">
-          {/* Top Insurance Companies */}
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl border border-white/10 p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-lg font-bold text-white">
-                Insurance Companies
+          {/* Top Insurance Plans */}
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-bold text-gray-900">
+                Top Insurance Plans
               </h2>
-              <div className="relative">
-                <button className="px-3 py-1.5 text-xs bg-white/5 rounded-lg flex items-center">
-                  <span>This Month</span>
-                  <TbChevronDown className="ml-1 h-4 w-4" />
-                </button>
-              </div>
+              <Link
+                to="/admin/plans"
+                className="text-primary-600 hover:text-primary-700 text-sm font-medium"
+              >
+                View All
+              </Link>
             </div>
-
-            <div className="space-y-5">
-              {insuranceCompanies.map((company, index) => (
-                <div key={index} className="flex items-center">
-                  <div
-                    className={`h-8 w-8 ${company.color} rounded-lg flex items-center justify-center text-white font-medium mr-3`}
-                  >
-                    {company.name.charAt(0)}
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex justify-between items-center mb-1">
-                      <div className="font-medium text-white text-sm">
-                        {company.name}
-                      </div>
-                      <div className="text-white/70 text-xs">
-                        {company.clients} clients
-                      </div>
+            <div className="h-64 mb-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={planDistributionData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    fill="#8884d8"
+                    label
+                  />
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="mt-4 space-y-2">
+              {topPlans.slice(0, 3).map((plan, index) => (
+                <div
+                  key={index}
+                  className="flex justify-between items-center p-2 hover:bg-gray-50 rounded-lg"
+                >
+                  <div>
+                    <div className="text-sm font-medium text-gray-900">
+                      {plan.name}
                     </div>
-                    <div className="w-full bg-white/10 rounded-full h-1.5">
-                      <div
-                        className={`${company.color} h-1.5 rounded-full`}
-                        style={{ width: `${(company.clients / 400) * 100}%` }}
-                      ></div>
+                    <div className="text-xs text-gray-500">{plan.provider}</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-medium">
+                      {plan.subscribers} clients
+                    </div>
+                    <div
+                      className={`text-xs ${
+                        plan.change.startsWith("+")
+                          ? "text-green-500"
+                          : "text-red-500"
+                      }`}
+                    >
+                      {plan.change}
                     </div>
                   </div>
                 </div>
@@ -461,140 +700,70 @@ const AdminDashboardPage = () => {
             </div>
           </div>
 
-          {/* Top Plans */}
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl border border-white/10 p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-lg font-bold text-white">
-                Top Insurance Plans
-              </h2>
-              <TbStar className="h-5 w-5 text-yellow-500" />
+          {/* Upcoming Tasks */}
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-bold text-gray-900">My Tasks</h2>
+              <Link
+                to="/admin/tasks"
+                className="text-primary-600 hover:text-primary-700 text-sm font-medium"
+              >
+                View All
+              </Link>
             </div>
-
-            <div className="space-y-4">
-              {topPlans.map((plan, index) => (
-                <div
-                  key={index}
-                  className="border-b border-white/5 pb-3 last:border-0 last:pb-0"
-                >
-                  <div className="flex justify-between items-center mb-1">
-                    <div className="font-medium text-white text-sm">
-                      {plan.name}
-                    </div>
+            <div className="space-y-3">
+              {tasks.map((task) => (
+                <div key={task.id} className="p-2 hover:bg-gray-50 rounded-lg">
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 text-primary-600 focus:ring-primary-500 rounded border-gray-300"
+                    />
+                    <span className="ml-2 text-sm font-medium text-gray-900 truncate flex-1">
+                      {task.title}
+                    </span>
                     <div
-                      className={`text-xs ${
-                        plan.change >= 0 ? "text-green-500" : "text-red-500"
-                      } flex items-center`}
+                      className={`text-xs px-2 py-0.5 rounded-full ml-2 ${
+                        task.priority === "High"
+                          ? "bg-red-100 text-red-800"
+                          : task.priority === "Medium"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-blue-100 text-blue-800"
+                      }`}
                     >
-                      {plan.change >= 0 ? (
-                        <TbArrowUpRight className="h-3 w-3 mr-0.5" />
-                      ) : (
-                        <TbArrowDownRight className="h-3 w-3 mr-0.5" />
-                      )}
-                      {Math.abs(plan.change)}%
+                      {task.priority}
                     </div>
                   </div>
-                  <div className="flex justify-between text-xs">
-                    <span className="text-white/60">{plan.provider}</span>
-                    <span className="text-white/80">
-                      {plan.subscribers} subscribers
+                  <div className="mt-1 flex items-center ml-6">
+                    <TbClock className="h-3 w-3 text-gray-400 mr-1" />
+                    <span className="text-xs text-gray-500">
+                      Due: {task.due}
+                    </span>
+                    <span
+                      className={`ml-2 text-xs px-1.5 py-0.5 rounded ${
+                        task.status === "Pending"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : task.status === "In Progress"
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      {task.status}
                     </span>
                   </div>
                 </div>
               ))}
             </div>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="bg-gradient-to-r from-secondary-600 to-secondary-700 rounded-xl p-6 relative overflow-hidden">
-            {/* Decorative element */}
-            <div className="absolute -right-10 -bottom-10 h-32 w-32 bg-white/10 rounded-full"></div>
-            <div className="absolute right-10 bottom-10 h-10 w-10 bg-white/10 rounded-full"></div>
-
-            <h2 className="text-lg font-bold text-white mb-6">Quick Actions</h2>
-
-            <div className="space-y-3 relative z-10">
-              <button className="w-full py-2.5 px-4 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors flex items-center justify-center">
-                <TbPlus className="mr-2 h-4 w-4" />
-                Add New Insurance Plan
-              </button>
-              <button className="w-full py-2.5 px-4 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors flex items-center justify-center">
-                <TbChartBar className="mr-2 h-4 w-4" />
-                Generate Analytics Report
-              </button>
-              <button className="w-full py-2.5 px-4 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors flex items-center justify-center">
-                <TbBrandWhatsapp className="mr-2 h-4 w-4" />
-                Send Bulk Messages
+            <div className="mt-4 pt-2 border-t border-gray-100">
+              <button className="w-full flex items-center justify-center py-2 bg-primary-50 hover:bg-primary-100 text-primary-600 rounded-lg text-sm font-medium transition-colors">
+                <TbPlus className="h-4 w-4 mr-1" />
+                Add New Task
               </button>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* System Status */}
-      <div className="bg-white/10 backdrop-blur-sm rounded-xl border border-white/10 p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-lg font-bold text-white">System Status</h2>
-          <span className="text-xs text-white/70">
-            Last updated: 15 minutes ago
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {[
-            {
-              name: "Database",
-              status: "Operational",
-              percent: 99.8,
-              color: "bg-green-500",
-            },
-            {
-              name: "Comparison Engine",
-              status: "Operational",
-              percent: 100,
-              color: "bg-green-500",
-            },
-            {
-              name: "PDF Generation",
-              status: "Operational",
-              percent: 98.5,
-              color: "bg-green-500",
-            },
-            {
-              name: "Email Notifications",
-              status: "Degraded",
-              percent: 72.4,
-              color: "bg-yellow-500",
-            },
-          ].map((service, index) => (
-            <div key={index} className="bg-white/5 rounded-lg p-4">
-              <div className="flex justify-between items-center mb-1">
-                <div className="text-sm font-medium text-white">
-                  {service.name}
-                </div>
-                <div
-                  className={`px-2 py-0.5 rounded-full text-xs ${
-                    service.percent > 90
-                      ? "bg-green-500/20 text-green-400"
-                      : service.percent > 80
-                      ? "bg-yellow-500/20 text-yellow-400"
-                      : "bg-red-500/20 text-red-400"
-                  }`}
-                >
-                  {service.status}
-                </div>
-              </div>
-              <div className="mb-2 w-full bg-white/10 rounded-full h-1.5 mt-2">
-                <div
-                  className={`${service.color} h-1.5 rounded-full`}
-                  style={{ width: `${service.percent}%` }}
-                ></div>
-              </div>
-              <div className="text-xs text-white/50">
-                {service.percent}% uptime
-              </div>
-            </div>
-          ))}
-        </div>
+        
       </div>
     </div>
   );

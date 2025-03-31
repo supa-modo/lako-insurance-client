@@ -37,7 +37,7 @@ const PersonalDetailsStep = ({ register, errors, onSubmit, watchedValues }) => {
   return (
     <div className="space-y-4 sm:space-y-5">
       <div className="mb-3 sm:mb-4">
-        <h2 className="text-xl sm:text-2xl font-bold text-secondary-400 flex items-center font-outfit">
+        <h2 className="text-lg sm:text-xl font-bold text-secondary-400 flex items-center font-outfit">
           <PiUserDuotone className="mr-3 text-secondary-500 h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0" />{" "}
           <span>Your Contact Info & Age</span>
         </h2>
@@ -47,20 +47,20 @@ const PersonalDetailsStep = ({ register, errors, onSubmit, watchedValues }) => {
         <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
           {/* Name Field */}
           <div className="space-y-1.5">
-          <label
-            htmlFor="fullName"
-            className="ml-3 text-[0.84rem] md:text-[0.95rem] font-medium text-white flex items-center font-outfit"
-          >
-            Full Name
-          </label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-1 flex items-center pl-3 pointer-events-none">
-              <PiUserDuotone className="text-primary-200  " size={20} />
-            </div>
-            <input
-              id="fullName"
-              type="text"
-              className={`w-full py-2 sm:py-2.5 pl-12 pr-3 text-[0.93rem] sm:text-[0.98rem] text-white rounded-lg border-2 bg-white/10 backdrop-blur-sm focus:bg-white/20
+            <label
+              htmlFor="fullName"
+              className="ml-3 text-[0.84rem] md:text-[0.95rem] font-medium text-white flex items-center font-outfit"
+            >
+              Full Name
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-1 flex items-center pl-3 pointer-events-none">
+                <PiUserDuotone className="text-primary-200  " size={20} />
+              </div>
+              <input
+                id="fullName"
+                type="text"
+                className={`w-full py-2 sm:py-2.5 pl-12 pr-3 text-[0.93rem] sm:text-[0.98rem] text-white rounded-lg border-2 bg-white/10 backdrop-blur-sm focus:bg-white/20
                 focus:ring-0 focus focus:border-secondary-400 focus:outline-none  
               font-outfit placeholder-white/50
               ${
@@ -68,27 +68,28 @@ const PersonalDetailsStep = ({ register, errors, onSubmit, watchedValues }) => {
                   ? "border-red-400/70 focus:border-red-500 focus:ring-red-400/30"
                   : "border-white/30"
               }`}
-              placeholder="Your Name"
-              {...register("fullName", {
-                required: "Name is required",
-              })}
-            />
+                placeholder="Your Name"
+                {...register("fullName", {
+                  required: "Name is required",
+                })}
+              />
+            </div>
+            {errors.fullName && (
+              <p className="mt-1 text-red-300 text-xs sm:text-sm flex items-center">
+                <TbInfoTriangleFilled className="mr-1 h-4 w-4 text-red-400" />{" "}
+                {errors.fullName.message}
+              </p>
+            )}
           </div>
-          {errors.fullName && (
-            <p className="mt-1 text-red-300 text-xs sm:text-sm flex items-center">
-              <TbInfoTriangleFilled className="mr-1 h-4 w-4 text-red-400" />{" "} {errors.fullName.message}
-            </p>
-          )}
-        </div>
 
           {/* Phone Number Field */}
           <div className="space-y-1.5">
-          <label
-            htmlFor="phone"
-            className="ml-3 text-[0.84rem] md:text-[0.95rem] font-medium text-white flex items-center font-outfit"
-          >
-            Phone Number
-          </label>
+            <label
+              htmlFor="phone"
+              className="ml-3 text-[0.84rem] md:text-[0.95rem] font-medium text-white flex items-center font-outfit"
+            >
+              Phone Number
+            </label>
             <div className="">
               <div
                 className={`flex w-full border-2 rounded-lg overflow-hidden shadow-sm

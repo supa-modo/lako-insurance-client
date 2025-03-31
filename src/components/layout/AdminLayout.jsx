@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
 const AdminLayout = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   // Check if screen is mobile size and manage sidebar state accordingly
@@ -14,9 +14,9 @@ const AdminLayout = () => {
       const isMobileView = window.innerWidth < 1024;
       setIsMobile(isMobileView);
       if (isMobileView) {
-        setSidebarOpen(false);
+        setSidebarCollapsed(true);
       } else {
-        setSidebarOpen(true);
+        setSidebarCollapsed(false);
       }
     };
 
@@ -30,42 +30,46 @@ const AdminLayout = () => {
     return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
+  const toggleSidebarCollapse = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 text-white">
+    <div className="flex flex-col h-screen bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900  text-white font-lexend">
       {/* Header */}
-      <AdminHeader toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
+      <AdminHeader
+        toggleSidebarCollapse={toggleSidebarCollapse}
+        sidebarCollapsed={sidebarCollapsed}
+      />
 
       {/* Main content area with sidebar */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar - shown/hidden based on sidebarOpen state */}
+        {/* Sidebar - Fixed position */}
         <motion.div
-          initial={{ x: isMobile ? -280 : 0 }}
-          animate={{ x: sidebarOpen ? 0 : -280 }}
+          initial={{ width: isMobile ? 80 : 280 }}
+          animate={{
+            width: sidebarCollapsed ? 80 : 280,
+          }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="fixed lg:relative z-20 h-[calc(100vh-64px)]"
+          className="z-20 h-[calc(100vh-54px)] fixed top-14"
         >
-          <AdminSidebar />
+          <AdminSidebar collapsed={sidebarCollapsed} />
         </motion.div>
 
-        {/* Mobile overlay - only visible when sidebar is open on mobile */}
-        {isMobile && sidebarOpen && (
-          <div
-            className="fixed inset-0 bg-black/50 z-10 lg:hidden"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
-
-        {/* Main content */}
+        {/* Main content - scrollable */}
         <motion.main
-          className={`flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 transition-all duration-300 ${
-            sidebarOpen && !isMobile ? "ml-0" : "ml-0"
-          }`}
+          className="flex-1 overflow-y-auto bg-gradient-to-br from-neutral-200 via-neutral-100 to-neutral-200"
+          animate={{
+            marginLeft: isMobile ? 0 : sidebarCollapsed ? "80px" : "280px",
+            width: isMobile
+              ? "100%"
+              : sidebarCollapsed
+              ? "calc(100% - 80px)"
+              : "calc(100% - 280px)",
+          }}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
         >
-          <div className="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 p-4 sm:p-6 md:p-8 shadow-2xl min-h-[calc(100vh-7rem)]">
+          <div className=" min-h-[calc(100vh-4rem)]">
             {/* Main content */}
             <Outlet />
           </div>
