@@ -1,5 +1,6 @@
 import React from "react";
 import { PiUserDuotone, PiUserListDuotone } from "react-icons/pi";
+import { RiUserShared2Line } from "react-icons/ri";
 import {
   TbUser,
   TbPhone,
@@ -21,6 +22,7 @@ import {
   TbCalendarPlus,
   TbMessage2Plus,
   TbMessage2Star,
+  TbInfoCircleFilled,
 } from "react-icons/tb";
 
 // Helper function to format date
@@ -162,89 +164,137 @@ const LeadDetail = ({ lead, onClose, onEdit, onDelete }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start justify-end z-50 p-3"
+      className="fixed inset-0 bg-black/50 backdrop-blur-[1.5px] flex items-start justify-end z-50 p-3 font-outfit"
       onClick={handleBackdropClick}
     >
       <div
-        className="w-[550px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-2xl"
+        className="w-[750px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-xl"
         style={{
           animation: "slide-in 0.3s ease-out forwards",
         }}
       >
         {/* Header */}
         <div className="bg-white px-6 py-4 flex justify-between items-center border-b border-gray-200 rounded-t-2xl">
-          <h2 className="text-lg font-semibold text-gray-800 flex items-center">
-            <span>Lead Details</span>
+          <h2 className="text-lg font-semibold text-secondary-700 flex items-center">
+            <span>Lead Details - {lead.name}</span>
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors rounded-full p-1 hover:bg-gray-100"
+            className="text-gray-500 hover:text-gray-700 transition-colors rounded-full p-1 hover:bg-gray-200"
           >
             <TbX className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="overflow-y-auto h-[calc(100vh-84px)]">
+        <div className="overflow-y-auto h-[calc(100vh-84px)] px-2">
           {/* Summary section */}
           <div className="p-5 border-b border-gray-200">
-            <div className="flex items-center mb-4">
-              <div className="h-12 w-12 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 text-xl font-semibold">
-                {lead.name.charAt(0)}
+            <div className="flex items-center justify-between pr-10">
+              <div className="flex items-center mb-4">
+                <div className="h-14 w-14 rounded-[0.7rem] uppercase bg-primary-100 flex items-center justify-center text-primary-600 text-xl font-semibold">
+                  {lead.name.charAt(0)}
+                  {lead.name.charAt(1)}
+                </div>
+                <div className="ml-4">
+                  <h4 className="text-xl font-bold text-primary-700 mb-1">
+                    {lead.name}
+                  </h4>
+                  <div className="flex items-center text-[0.83rem] text-gray-500">
+                    <span className="mr-3">Age: {lead.age}</span>
+                    <span
+                      className={`${statusInfo.bgColor} ${statusInfo.textColor} px-3 py-0.5 rounded-md text-xs font-medium`}
+                    >
+                      {statusInfo.label}
+                    </span>
+                  </div>
+                </div>
               </div>
-              <div className="ml-4">
-                <h4 className="text-xl font-semibold text-gray-800">
-                  {lead.name}
-                </h4>
-                <div className="flex items-center text-sm text-gray-500">
-                  <span className="mr-3">Age: {lead.age}</span>
-                  <span
-                    className={`${statusInfo.bgColor} ${statusInfo.textColor} px-2 py-0.5 rounded-full text-xs font-medium`}
-                  >
-                    {statusInfo.label}
+
+              <div className="bg-gray-100 rounded-md px-6 py-2">
+                <p className="text-xs text-gray-500 mb-1">Assigned To</p>
+                <div className="flex items-center text-primary-700">
+                  <RiUserShared2Line size={20} className="mr-2" />
+                  <span className="text-sm font-medium text-primary-700">
+                    {lead.assignedTo || "Not Assigned"}
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mt-4">
-              <div className="flex items-start">
-                <div className="mt-0.5 text-gray-400">
-                  <TbMail className="h-5 w-5" />
+            <div className="flex  gap-3 mt-4 text-sm">
+              <div className="border-r pr-6 w-[45%]">
+                <p className="text-primary-700 font-semibold text-sm mb-1">
+                  Contact Details
+                </p>
+                <div className="flex items-start">
+                  <div className="mt-0.5 text-gray-400">
+                    <TbMail className="h-5 w-5" />
+                  </div>
+                  <div className="ml-3">
+                    <div className="text-gray-700 text-[0.9rem]">
+                      {lead.email}
+                    </div>
+                  </div>
                 </div>
-                <div className="ml-3">
-                  <div className="text-xs text-gray-500">Email</div>
-                  <div className="text-gray-700">{lead.email}</div>
+
+                <div className="flex items-start mt-1">
+                  <div className="mt-0.5 text-gray-400">
+                    <TbPhone className="h-5 w-5" />
+                  </div>
+                  <div className="ml-2">
+                    <div className="text-gray-600 font-medium">
+                      {lead.phone}
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex items-start">
-                <div className="mt-0.5 text-gray-400">
-                  <TbPhone className="h-5 w-5" />
-                </div>
-                <div className="ml-3">
-                  <div className="text-xs text-gray-500">Phone</div>
-                  <div className="text-gray-700">{lead.phone}</div>
-                </div>
-              </div>
+              <div className="flex items-center justify-between w-[55%] pr-10">
+                <div>
+                  <div className="flex items-start">
+                    <div className={`mt-0.5 text-${priorityInfo.color}-500`}>
+                      <TbStar className="h-5 w-5" />
+                    </div>
+                    <div className="ml-3">
+                      <div className="text-xs text-gray-500">Priority</div>
+                      <div className={`${priorityInfo.textColor} font-medium`}>
+                        {priorityInfo.label}
+                      </div>
+                    </div>
+                  </div>
 
-              <div className="flex items-start">
-                <div className="mt-0.5 text-gray-400">
-                  <TbCurrencyDollar className="h-5 w-5" />
+                  <div className="flex items-start mt-1">
+                    <div className="mt-0.5 text-gray-400">
+                      <TbCurrencyDollar className="h-5 w-5" />
+                    </div>
+                    <div className="ml-3">
+                      <div className="text-xs text-gray-500">Budget</div>
+                      <div className="text-primary-700 font-medium font-outfit">
+                        {lead.budget}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="ml-3">
-                  <div className="text-xs text-gray-500">Budget</div>
-                  <div className="text-gray-700">{lead.budget}</div>
-                </div>
-              </div>
 
-              <div className="flex items-start">
-                <div className={`mt-0.5 text-${priorityInfo.color}-500`}>
-                  <TbStar className="h-5 w-5" />
-                </div>
-                <div className="ml-3">
-                  <div className="text-xs text-gray-500">Priority</div>
-                  <div className={`${priorityInfo.textColor} font-medium`}>
-                    {priorityInfo.label}
+                <div className="flex flex-col gap-2">
+                  <div>
+                    <div className="text-xs text-gray-500">Last Contact</div>
+                    <div className="text-gray-700">
+                      {lead.lastContact ? formatDate(lead.lastContact) : "—"}
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="text-xs text-gray-500">Next Follow-up</div>
+                    <div
+                      className={
+                        isOverdue(lead.nextFollowUp)
+                          ? "text-red-600 font-medium"
+                          : "text-gray-700"
+                      }
+                    >
+                      {lead.nextFollowUp ? formatDate(lead.nextFollowUp) : "—"}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -252,8 +302,8 @@ const LeadDetail = ({ lead, onClose, onEdit, onDelete }) => {
 
             {/* Tags */}
             {lead.tags && lead.tags.length > 0 && (
-              <div className="mt-4">
-                <div className="text-xs text-gray-500 mb-2">Tags</div>
+              <div className="mt-4 flex items-center space-x-4">
+                <div className="text-xs text-gray-500">Tags -</div>
                 <div className="flex flex-wrap gap-2">
                   {lead.tags.map((tag, index) => (
                     <span
@@ -268,75 +318,31 @@ const LeadDetail = ({ lead, onClose, onEdit, onDelete }) => {
             )}
           </div>
 
-          {/* Lead Status */}
-          <div className="p-5 border-b border-gray-200">
-            <h3 className="font-medium text-gray-800 mb-3">Lead Status</h3>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <div className="text-xs text-gray-500">Current Status</div>
-                <span
-                  className={`${statusInfo.bgColor} ${statusInfo.textColor} px-2 py-0.5 rounded-md text-xs font-medium mt-1 inline-block`}
-                >
-                  {statusInfo.label}
-                </span>
-              </div>
-
-              <div>
-                <div className="text-xs text-gray-500">Assigned To</div>
-                <div className="text-gray-700">
-                  {lead.assignedTo || "Not Assigned"}
-                </div>
-              </div>
-
-              <div>
-                <div className="text-xs text-gray-500">Last Contact</div>
-                <div className="text-gray-700">
-                  {lead.lastContact ? formatDate(lead.lastContact) : "—"}
-                </div>
-              </div>
-
-              <div>
-                <div className="text-xs text-gray-500">Next Follow-up</div>
-                <div
-                  className={
-                    isOverdue(lead.nextFollowUp)
-                      ? "text-red-600 font-medium"
-                      : "text-gray-700"
-                  }
-                >
-                  {lead.nextFollowUp ? formatDate(lead.nextFollowUp) : "—"}
-                </div>
-              </div>
-            </div>
-          </div>
-
           {/* Actions */}
-          <div className="p-5 border-b border-gray-200">
-            <h3 className="font-medium text-gray-800 mb-3">Actions</h3>
-            <div className="flex flex-wrap gap-2">
+          <div className="px-5 border-b border-gray-200">
+            <div className="py-3 text-sm text-gray-500">Actions</div>
+            <div className="pb-5 flex flex-wrap gap-2 font-medium">
               <button
                 onClick={() => onEdit(lead)}
-                className="bg-primary-100 hover:bg-primary-200 text-primary-600 px-3 py-1.5 rounded-md flex items-center transition-colors text-sm"
+                className="border hover:bg-primary-200 text-primary-600 px-6 py-1.5 rounded-md flex items-center transition-colors text-sm"
               >
                 <TbEdit className="mr-1.5 w-4 h-4" /> Edit
               </button>
-              <button className="bg-blue-100 hover:bg-blue-200 text-blue-600 px-3 py-1.5 rounded-md flex items-center transition-colors text-sm">
+              <button className="border hover:bg-blue-200 text-blue-600 px-6 py-1.5 rounded-md flex items-center transition-colors text-sm">
                 <TbSend className="mr-1.5 w-4 h-4" /> Email
               </button>
-              <button className="bg-green-100 hover:bg-green-200 text-green-600 px-3 py-1.5 rounded-md flex items-center transition-colors text-sm">
+              <button className="border hover:bg-green-200 text-green-600 px-5 py-1.5 rounded-md flex items-center transition-colors text-sm">
                 <TbBrandWhatsapp className="mr-1.5 w-4 h-4" /> WhatsApp
               </button>
-              <button className="bg-purple-100 hover:bg-purple-200 text-purple-600 px-3 py-1.5 rounded-md flex items-center transition-colors text-sm">
+              <button className="border hover:bg-neutral-400 text-neutral-700 px-6 py-1.5 rounded-md flex items-center transition-colors text-sm">
                 <TbPhone className="mr-1.5 w-4 h-4" /> Call
               </button>
-              <button className="bg-yellow-100 hover:bg-yellow-200 text-yellow-600 px-3 py-1.5 rounded-md flex items-center transition-colors text-sm">
+              <button className="border hover:bg-yellow-200 text-yellow-600 px-4 py-1.5 rounded-md flex items-center transition-colors text-sm">
                 <TbCalendarPlus className="mr-1.5 w-4 h-4" /> Schedule
               </button>
-            </div>
-            <div className="mt-3">
               <button
                 onClick={() => onDelete(lead.id)}
-                className="bg-red-100 hover:bg-red-200 text-red-600 px-3 py-1.5 rounded-md flex items-center transition-colors text-sm"
+                className="bg-red-100 hover:bg-red-200 text-red-600 px-6 py-1.5 rounded-md flex items-center transition-colors text-sm"
               >
                 <TbTrash className="mr-1.5 w-4 h-4" /> Delete
               </button>
@@ -345,48 +351,29 @@ const LeadDetail = ({ lead, onClose, onEdit, onDelete }) => {
 
           {/* Notes */}
           <div className="p-5 border-b border-gray-200">
-            <h3 className="font-medium text-gray-800 mb-3 flex items-center">
-              <TbMessage2Star className="mr-2 text-yellow-600" /> Lead Notes
+            <h3 className="font-semibold text-primary-700 mb-3 flex items-center">
+              <TbMessage2Star className="mr-2 " /> Client Notes
             </h3>
-            <p className="text-gray-700 text-sm whitespace-pre-line">
-              {lead.notes || "No notes available for this lead."}
-            </p>
+            <div className="bg-neutral-200 rounded-md px-4 py-2 min-h-[100px]">
+              <p className="text-gray-700 text-sm whitespace-pre-line">
+                {lead.notes || "No notes available for this lead."}
+              </p>
+            </div>
           </div>
 
           {/* Activity History */}
           <div className="p-5">
-            <h3 className="font-medium text-gray-800 mb-3 flex items-center">
-              <TbHistory className="mr-2 text-blue-600" /> Activity History
+            <h3 className="font-semibold text-primary-700 mb-3 flex items-center">
+              <TbHistory className="mr-2 " /> Activity History
             </h3>
-            <div className="space-y-3">
+            <div className="space-y-2">
               {activityHistory.map((activity) => (
                 <div
                   key={activity.id}
-                  className="flex items-start bg-white rounded-lg p-3 border border-gray-100 hover:border-gray-200 transition-colors"
+                  className="flex items-center bg-white rounded-lg p-2 border border-gray-100 hover:border-gray-200 transition-colors"
                 >
-                  <div
-                    className={`p-2 rounded-full 
-                      ${
-                        activity.type === "email"
-                          ? "bg-blue-100 text-blue-600"
-                          : activity.type === "call"
-                          ? "bg-green-100 text-green-600"
-                          : activity.type === "note"
-                          ? "bg-yellow-100 text-yellow-600"
-                          : "bg-purple-100 text-purple-600"
-                      }
-                    `}
-                  >
-                    {activity.type === "email" ? (
-                      <TbMail className="h-4 w-4" />
-                    ) : activity.type === "call" ? (
-                      <TbPhone className="h-4 w-4" />
-                    ) : activity.type === "note" ? (
-                      <TbMessageCircle className="h-4 w-4" />
-                    ) : (
-                      <TbArrowRight className="h-4 w-4" />
-                    )}
-                  </div>
+                  <TbInfoCircleFilled className="h-5 w-5 text-primary-500" />
+
                   <div className="ml-3 flex-1">
                     <div className="flex justify-between text-sm">
                       <span className="font-medium text-gray-800">

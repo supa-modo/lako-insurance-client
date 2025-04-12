@@ -12,19 +12,12 @@ import {
   TbCalendar,
   TbMail,
   TbPhone,
-  TbCheck,
-  TbClock,
-  TbInfoCircle,
-  TbChevronDown,
-  TbDownload,
   TbRefresh,
-  TbEye,
-  TbEdit,
-  TbArrowRight,
   TbBrandWhatsapp,
   TbCaretDownFilled,
+  TbChevronRight,
 } from "react-icons/tb";
-import { motion } from "framer-motion";
+import {formatDate} from "../../utils/formatDate"
 import { RiUserAddLine } from "react-icons/ri";
 
 // Import our components
@@ -538,22 +531,7 @@ const LeadManagementPage = () => {
     }
   };
 
-  // Format date
-  const formatDate = (dateString) => {
-    if (!dateString) return "—";
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    }).format(date);
-  };
 
-  // Calculate column heights based on lead counts
-  const getColumnHeight = (stageId) => {
-    const leadCount = leads[stageId]?.length || 0;
-    return Math.max(leadCount * 136 + 160, 500); // Base height + leads height
-  };
 
   return (
     <div className="text-gray-800 font-lexend flex flex-col h-[calc(100vh-64px)]">
@@ -622,7 +600,7 @@ const LeadManagementPage = () => {
                 className="flex flex-col h-full overflow-y-auto"
               >
                 <div
-                  className={`rounded-t-xl border border-b-0 border-gray-200 p-3 flex items-center justify-between sticky top-0 z-10 bg-${stage.color}-50`}
+                  className={`rounded-t-xl border border-b-0 border-neutral-500 p-3 flex items-center justify-between sticky top-0 z-10 bg-${stage.color}-50`}
                 >
                   <div className="flex items-center">
                     <div
@@ -669,7 +647,7 @@ const LeadManagementPage = () => {
                                     {getAvatar(lead)}
                                   </div>
                                   <div>
-                                    <h4 className="font-medium text-gray-900 text-sm">
+                                    <h4 className="font-semibold text-gray-900 text-sm">
                                       {lead.name}
                                     </h4>
                                     <div className="text-xs text-gray-500">
@@ -761,9 +739,9 @@ const LeadManagementPage = () => {
                                 <div>
                                   <button
                                     onClick={() => handleViewLead(lead)}
-                                    className="p-1 text-gray-400 hover:text-primary-600 rounded-md hover:bg-primary-50 transition-colors"
-                                  >
-                                    <TbEye className="h-4 w-4" />
+                                    className="flex items-center space-x-1 py-1 px-2 text-xs text-gray-400 hover:text-primary-600 rounded-md bg-gray-100/60 hover:bg-primary-100 transition-colors"
+                                  > <span>View Lead</span>
+                                    <TbChevronRight className="h-4 w-4" />
                                   </button>
                                 </div>
                               </div>
