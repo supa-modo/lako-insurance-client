@@ -8,6 +8,7 @@ import {
   TbDeviceAnalytics,
   TbChartBar,
   TbSearch,
+  TbRefresh,
 } from "react-icons/tb";
 
 // Import task components
@@ -78,7 +79,7 @@ const getMockTasks = () => {
       title: "Call Joyce Omondi about policy renewal",
       description:
         "Joyce's policy is set to expire on November 1st. Call to discuss renewal options.",
-      dueDate: "2023-10-25T15:00:00",
+      dueDate: "2025-10-25T15:00:00",
       priority: "low",
       category: "Client Follow-up",
       assignedTo: "Admin",
@@ -112,7 +113,7 @@ const getMockTasks = () => {
 const TaskManagementPage = () => {
   const [tasks, setTasks] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null);
-  const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] = useState(true);
   const [editingTask, setEditingTask] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -291,161 +292,152 @@ const TaskManagementPage = () => {
     : tasks;
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-neutral-800 mb-2">
-          Task Management
-        </h1>
-        <p className="text-neutral-500">
-          Organize and track your tasks to boost productivity
-        </p>
-      </div>
-
-      {/* Task Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white rounded-lg shadow-sm p-4 border-l-4 border-primary-500">
-          <div className="flex items-center">
-            <div className="p-3 bg-primary-100 rounded-lg mr-4">
-              <TbListCheck className="h-6 w-6 text-primary-600" />
-            </div>
-            <div>
-              <div className="text-sm font-medium text-neutral-500">
-                Total Tasks
-              </div>
-              <div className="text-2xl font-bold text-neutral-900">
-                {taskStats.total}
-              </div>
-            </div>
+    <div className="h-[calc(100vh-64px)] flex flex-col overflow-hidden">
+      {/* Page Header */}
+      <div className="bg-white px-8 py-2.5 border-b border-gray-200 flex-shrink-0">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+          <div>
+            <h1 className="text-[1.3rem] font-bold text-secondary-700">
+              Task Management
+            </h1>
+            <p className="text-gray-500 text-sm">
+              Organize and track your tasks to boost productivity
+            </p>
           </div>
-        </div>
 
-        <div className="bg-white rounded-lg shadow-sm p-4 border-l-4 border-green-500">
-          <div className="flex items-center">
-            <div className="p-3 bg-green-100 rounded-lg mr-4">
-              <TbClipboardCheck className="h-6 w-6 text-green-600" />
-            </div>
-            <div>
-              <div className="text-sm font-medium text-neutral-500">
-                Completed
-              </div>
-              <div className="text-2xl font-bold text-neutral-900">
-                {taskStats.completed}
-              </div>
-            </div>
-          </div>
-        </div>
+          <div className="flex flex-wrap mt-4 md:mt-0 space-x-2">
+            <button className="bg-white border border-gray-200 rounded-lg p-2 text-gray-500 hover:text-primary-600 hover:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-500">
+              <TbRefresh />
+            </button>
 
-        <div className="bg-white rounded-lg shadow-sm p-4 border-l-4 border-blue-500">
-          <div className="flex items-center">
-            <div className="p-3 bg-blue-100 rounded-lg mr-4">
-              <TbCalendarEvent className="h-6 w-6 text-blue-600" />
-            </div>
-            <div>
-              <div className="text-sm font-medium text-neutral-500">
-                Upcoming
-              </div>
-              <div className="text-2xl font-bold text-neutral-900">
-                {taskStats.upcoming}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-sm p-4 border-l-4 border-red-500">
-          <div className="flex items-center">
-            <div className="p-3 bg-red-100 rounded-lg mr-4">
-              <TbDeviceAnalytics className="h-6 w-6 text-red-600" />
-            </div>
-            <div>
-              <div className="text-sm font-medium text-neutral-500">
-                Overdue
-              </div>
-              <div className="text-2xl font-bold text-neutral-900">
-                {taskStats.overdue}
-              </div>
-            </div>
+            <button
+              onClick={handleCreateTask}
+              className="bg-primary-600 text-white rounded-lg px-4 py-2 text-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 flex items-center"
+            >
+              <TbPlus className="mr-2 h-5 w-5" /> Create New Task
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Task Toolbar */}
-      <div className="bg-white rounded-lg shadow-sm p-4 mb-6 flex flex-wrap gap-4 items-center justify-between">
-        <form onSubmit={handleSearch} className="flex max-w-md">
-          <div className="relative flex-1">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <TbSearch className="h-5 w-5 text-neutral-400" />
+      <div className="px-8 py-4 flex-1 overflow-hidden flex flex-col">
+        {/* Task Statistics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-5 flex-shrink-0">
+          <div className="bg-white rounded-lg shadow-md py-2.5 pl-5 border-l-4 border-primary-500">
+            <div className="flex items-center">
+              <div className="p-3 bg-primary-100 rounded-lg mr-4">
+                <TbListCheck className="h-6 w-6 text-primary-600" />
+              </div>
+              <div>
+                <div className="text-sm font-medium text-neutral-600">
+                  Total Tasks
+                </div>
+                <div className="text-2xl font-bold text-secondary-700">
+                  {taskStats.total}
+                </div>
+              </div>
             </div>
-            <input
-              type="text"
-              className="block w-full pl-10 pr-3 py-2 border border-neutral-300 rounded-l-md focus:ring-primary-500 focus:border-primary-500 text-sm"
-              placeholder="Search tasks..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
           </div>
-          <button
-            type="submit"
-            className="bg-primary-600 text-white px-4 py-2 rounded-r-md hover:bg-primary-700 text-sm"
+
+          <div className="bg-white rounded-lg shadow-md py-2.5 pl-5 border-l-4 border-green-500">
+            <div className="flex items-center">
+              <div className="p-3 bg-green-100 rounded-lg mr-4">
+                <TbClipboardCheck className="h-6 w-6 text-green-600" />
+              </div>
+              <div>
+                <div className="text-sm font-medium text-neutral-600">
+                  Completed
+                </div>
+                <div className="text-2xl font-bold text-primary-600">
+                  {taskStats.completed}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-md py-2.5 pl-5 border-l-4 border-blue-500">
+            <div className="flex items-center">
+              <div className="p-3 bg-blue-100 rounded-lg mr-4">
+                <TbCalendarEvent className="h-6 w-6 text-blue-600" />
+              </div>
+              <div>
+                <div className="text-sm font-medium text-neutral-600">
+                  Upcoming
+                </div>
+                <div className="text-2xl font-bold text-blue-600">
+                  {taskStats.upcoming}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-md py-2.5 pl-5 border-l-4 border-red-500">
+            <div className="flex items-center">
+              <div className="p-3 bg-red-100 rounded-lg mr-4">
+                <TbDeviceAnalytics className="h-6 w-6 text-red-600" />
+              </div>
+              <div>
+                <div className="text-sm font-medium text-neutral-600">
+                  Overdue
+                </div>
+                <div className="text-2xl font-bold text-red-600">
+                  {taskStats.overdue}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Task Content */}
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-6 gap-5 min-h-0 overflow-hidden">
+          {/* Task list (larger on mobile, smaller on desktop) */}
+          <div
+            className={`${
+              showForm || selectedTask
+                ? "hidden lg:block lg:col-span-3"
+                : "col-span-full"
+            } overflow-hidden flex flex-col`}
           >
-            Search
-          </button>
-        </form>
+            {loading ? (
+              <div className="flex items-center justify-center h-64">
+                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary-600"></div>
+              </div>
+            ) : (
+              <div className="overflow-auto flex-1">
+                <TaskList
+                  tasks={filteredTasks}
+                  onTaskSelect={handleViewTask}
+                  onToggleComplete={handleToggleComplete}
+                  onTogglePriority={handleTogglePriority}
+                  onDeleteTask={handleDeleteTask}
+                  onEditTask={handleEditTask}
+                />
+              </div>
+            )}
+          </div>
 
-        <button
-          onClick={handleCreateTask}
-          className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 flex items-center"
-        >
-          <TbPlus className="mr-2 h-5 w-5" /> Create Task
-        </button>
-      </div>
-
-      {/* Task Content */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-5 gap-6">
-        {/* Task list (larger on mobile, smaller on desktop) */}
-        <div
-          className={`${
-            showForm || selectedTask
-              ? "hidden lg:block lg:col-span-2"
-              : "col-span-full"
-          }`}
-        >
-          {loading ? (
-            <div className="flex items-center justify-center h-64">
-              <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary-600"></div>
+          {/* Task form or detail view */}
+          {(showForm || selectedTask) && (
+            <div className="col-span-full md:col-span-3 overflow-auto">
+              {showForm ? (
+                <TaskForm
+                  task={editingTask}
+                  onSave={handleSaveTask}
+                  onCancel={handleBackToList}
+                />
+              ) : selectedTask ? (
+                <TaskDetail
+                  task={selectedTask}
+                  onEdit={handleEditTask}
+                  onDelete={handleDeleteTask}
+                  onToggleComplete={handleToggleComplete}
+                  onTogglePriority={handleTogglePriority}
+                  onBack={handleBackToList}
+                />
+              ) : null}
             </div>
-          ) : (
-            <TaskList
-              tasks={filteredTasks}
-              onTaskSelect={handleViewTask}
-              onToggleComplete={handleToggleComplete}
-              onTogglePriority={handleTogglePriority}
-              onDeleteTask={handleDeleteTask}
-              onEditTask={handleEditTask}
-            />
           )}
         </div>
-
-        {/* Task form or detail view */}
-        {(showForm || selectedTask) && (
-          <div className="col-span-full lg:col-span-3">
-            {showForm ? (
-              <TaskForm
-                task={editingTask}
-                onSave={handleSaveTask}
-                onCancel={handleBackToList}
-              />
-            ) : selectedTask ? (
-              <TaskDetail
-                task={selectedTask}
-                onEdit={handleEditTask}
-                onDelete={handleDeleteTask}
-                onToggleComplete={handleToggleComplete}
-                onTogglePriority={handleTogglePriority}
-                onBack={handleBackToList}
-              />
-            ) : null}
-          </div>
-        )}
       </div>
     </div>
   );

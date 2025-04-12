@@ -1,8 +1,29 @@
-import api from "./api";
+import axios from "axios";
 import mockUsers from "../data/mockUsers.json";
 
+const API_URL = "http://localhost:5000/api";
+
+// Create axios instance with token included in headers
+const authAxios = axios.create({
+  baseURL: API_URL,
+});
+
+// Add token to requests if available
+authAxios.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("adminToken");
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 // Flag to determine if we should use mock data or real API
-const USE_MOCK = true;
+const USE_MOCK = false;
 
 /**
  * Login as admin - either using mock data or real API
@@ -65,16 +86,16 @@ export const loginAdmin = async (credentials) => {
     }
   } else {
     try {
-      const response = await api.post("/admin/login", credentials);
-
-      // Store token in localStorage
+      const response = await axios.post(`${API_URL}/auth/login`, credentials);
       if (response.data.token) {
-        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("adminToken", response.data.token);
+        localStorage.setItem("adminUser", JSON.stringify(response.data.user));
+        return response.data;
+      } else {
+        throw new Error("No token received from server");
       }
-
-      return response.data;
     } catch (error) {
-      console.error("Login error:", error);
+      console.error("Login error:", error.response?.data || error.message);
       throw error;
     }
   }
@@ -146,11 +167,11 @@ export const registerAdmin = async (data) => {
     };
   } else {
     try {
-      const response = await api.post("/admin/register", data);
+      const response = await axios.post(`${API_URL}/admin/register`, data);
 
       // Store token in localStorage
       if (response.data.token) {
-        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("adminToken", response.data.token);
       }
 
       return response.data;
@@ -205,10 +226,14 @@ export const getAdminProfile = async () => {
     }
   } else {
     try {
-      const response = await api.get("/admin/me");
+      const response = await authAxios.get(`${API_URL}/auth/profile`);
       return response.data;
     } catch (error) {
-      console.error("Get profile error:", error);
+      // If the error is 401 Unauthorized, clear tokens
+      if (error.response && error.response.status === 401) {
+        localStorage.removeItem("adminToken");
+        localStorage.removeItem("adminUser");
+      }
       throw error;
     }
   }
@@ -218,38 +243,18 @@ export const getAdminProfile = async () => {
  * Logout admin by removing token
  */
 export const logoutAdmin = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
+  localStorage.removeItem("adminToken");
+  localStorage.removeItem("adminUser");
+  // Call the logout endpoint
+  return authAxios.post(`${API_URL}/auth/logout`);
 };
 
 /**
  * Check if admin is authenticated
  */
 export const isAuthenticated = () => {
-  if (USE_MOCK) {
-    const token = localStorage.getItem("token");
-    if (!token) return false;
-
-    try {
-      // Decode token
-      const decoded = JSON.parse(atob(token));
-
-      // Check if token is expired
-      if (decoded.exp < new Date().getTime()) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        return false;
-      }
-
-      return true;
-    } catch (error) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      return false;
-    }
-  } else {
-    return !!localStorage.getItem("token");
-  }
+  const token = localStorage.getItem("adminToken");
+  return !!token;
 };
 
 /**
@@ -264,4 +269,26 @@ export const getCurrentUser = () => {
   } catch (error) {
     return null;
   }
+};
+
+export const changePassword = async (passwordData) => {
+  const response = await authAxios.post(
+    `${API_URL}/auth/change-password`,
+    passwordData
+  );
+  return response.data;
+};
+
+export const getCurrentAdmin = () => {
+  const adminUser = localStorage.getItem("adminUser");
+  return adminUser ? JSON.parse(adminUser) : null;
+};
+
+export default {
+  loginAdmin,
+  logoutAdmin,
+  getAdminProfile,
+  isAuthenticated,
+  changePassword,
+  getCurrentAdmin,
 };

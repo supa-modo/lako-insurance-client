@@ -6,6 +6,11 @@ import {
   TbMessage,
   TbBrandGmail,
   TbMailForward,
+  TbPlus,
+  TbInbox,
+  TbMailOpened,
+  TbSend,
+  TbTrash,
 } from "react-icons/tb";
 
 // Import email components
@@ -13,6 +18,7 @@ import EmailSidebar from "../../components/email/EmailSidebar";
 import EmailList from "../../components/email/EmailList";
 import EmailDetail from "../../components/email/EmailDetail";
 import ComposeEmail from "../../components/email/ComposeEmail";
+import { BsSendPlus } from "react-icons/bs";
 
 // Mock data service (would be replaced with actual API calls)
 const getMockEmails = (folder = "inbox") => {
@@ -172,6 +178,13 @@ const EmailCenterPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showComposeModal, setShowComposeModal] = useState(false);
   const [replyToEmail, setReplyToEmail] = useState(null);
+  const [emailCount, setEmailCount] = useState({
+    inbox: 0,
+    unread: 0,
+    starred: 0,
+    sent: 0,
+    drafts: 0,
+  });
 
   // Fetch emails based on the selected folder
   useEffect(() => {
@@ -181,6 +194,15 @@ const EmailCenterPage = () => {
     setTimeout(() => {
       const fetchedEmails = getMockEmails(folder);
       setEmails(fetchedEmails);
+
+      // Update email counts
+      setEmailCount({
+        inbox: getMockEmails("inbox").length,
+        unread: getMockEmails("inbox").filter((e) => !e.read).length,
+        starred: getMockEmails("starred").length,
+        sent: getMockEmails("sent").length,
+        drafts: getMockEmails("drafts").length,
+      });
 
       // If an email ID is provided in the URL, select that email
       if (emailId) {
@@ -269,91 +291,99 @@ const EmailCenterPage = () => {
     : emails;
 
   return (
-    <div className="h-full flex flex-col px-8 py-7">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-neutral-800 mb-2">
-          Email Center
-        </h1>
-        <p className="text-neutral-500">
-          Manage all your client and partner communications in one place
-        </p>
-      </div>
+    <div className="h-[calc(100vh-64px)] flex flex-col overflow-hidden">
+      {/* Email center header */}
+      <div className="bg-white px-8 py-2.5 border-b border-gray-200 flex-shrink-0">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+          <div>
+            <h1 className="text-[1.3rem] font-bold text-primary-600">
+              Email Center
+            </h1>
+            <p className="text-gray-500 text-sm">
+              Manage your email communications
+            </p>
+          </div>
 
-      {/* Email interface */}
-      <div className="flex-1 bg-white rounded-xl shadow-sm overflow-hidden flex flex-col">
-        {/* Search and toolbar */}
-        <div className="bg-neutral-100 border-b border-neutral-200 p-3 flex items-center justify-between">
-          <form onSubmit={handleSearch} className="flex w-full max-w-md">
-            <div className="relative flex-1">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <TbSearch className="h-5 w-5 text-neutral-400" />
-              </div>
+          <div className="flex items-center gap-3 mt-2 md:mt-0">
+            <div className="relative">
               <input
                 type="text"
-                className="block w-full pl-10 pr-3 py-2 border border-neutral-300 rounded-l-md focus:ring-primary-500 focus:border-primary-500 text-sm"
                 placeholder="Search emails..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 pr-3 py-2 w-96 border border-neutral-300 rounded-md leading-5 bg-white placeholder-neutral-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-neutral-800 text-sm"
               />
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <TbSearch className="h-5 w-5 text-neutral-400" />
+              </div>
             </div>
-            <button
-              type="submit"
-              className="bg-primary-600 text-white px-4 py-2 rounded-r-md hover:bg-primary-700 text-sm"
-            >
-              Search
-            </button>
-          </form>
 
-          <div className="flex items-center">
+            <button className="bg-white border border-gray-200 rounded-lg p-2 text-gray-500 hover:text-primary-600 hover:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-500">
+              <TbRefresh />
+            </button>
+
             <button
-              onClick={() => window.location.reload()}
-              className="p-2 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-200 rounded-md"
-              title="Refresh"
+              onClick={handleComposeClick}
+              className="bg-primary-600 text-white rounded-lg px-6 py-2 text-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 flex items-center"
             >
-              <TbRefresh className="h-5 w-5" />
+              <BsSendPlus className="mr-3 h-5 w-5 rotate-12" /> New Email
             </button>
           </div>
         </div>
+      </div>
 
-        {/* Main content */}
+      {/* Main content area */}
+      <div className="flex-1 overflow-hidden flex flex-col pl-4">
         <div className="flex-1 flex overflow-hidden">
           {/* Email sidebar */}
-          <div className="w-56 border-r border-neutral-200 flex-shrink-0 h-full overflow-hidden">
-            <EmailSidebar onComposeClick={handleComposeClick} />
+          <div className="w-64 border-r border-neutral-200 bg-neutral-100 flex-shrink-0 overflow-hidden">
+            <EmailSidebar
+              folder={folder}
+              onComposeClick={handleComposeClick}
+              counts={emailCount}
+            />
           </div>
 
-          {/* Email list or detail view */}
-          <div className="flex-1 overflow-hidden">
+          {/* Email content */}
+          <div className="flex-1 overflow-hidden flex flex-col">
             {loading ? (
-              <div className="flex items-center justify-center h-full">
-                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary-600"></div>
+              <div className="flex-1 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-neutral-300 border-t-primary-600 mb-2"></div>
+                  <p className="text-neutral-700">Loading emails...</p>
+                </div>
               </div>
             ) : selectedEmail ? (
-              <EmailDetail
-                email={selectedEmail}
-                onReply={handleReply}
-                onForward={handleForward}
-                onDelete={handleDeleteEmail}
-                onBack={handleBackToList}
-              />
+              <div className="flex-1 overflow-auto">
+                <EmailDetail
+                  email={selectedEmail}
+                  onBack={handleBackToList}
+                  onReply={handleReply}
+                  onForward={handleForward}
+                  onDelete={handleDeleteEmail}
+                />
+              </div>
             ) : (
-              <EmailList
-                emails={filteredEmails}
-                onSelectEmail={setSelectedEmail}
-                selectedFolder={folder}
-              />
+              <div className="flex-1 overflow-auto">
+                <EmailList
+                  emails={filteredEmails}
+                  selectedFolder={folder}
+                  onSelectEmail={setSelectedEmail}
+                  onDeleteEmail={handleDeleteEmail}
+                />
+              </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* Compose email modal */}
+      {/* Compose Email Modal */}
       {showComposeModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <ComposeEmail
+            email={replyToEmail}
             onClose={() => setShowComposeModal(false)}
             onSend={handleSendEmail}
-            replyTo={replyToEmail}
           />
         </div>
       )}

@@ -1,0 +1,84 @@
+{
+  "events": [
+    {
+      "id": "1",
+      "title": "Client Meeting - John Doe",
+      "start": "2024-01-15T10:00:00.000Z",
+      "end": "2024-01-15T11:00:00.000Z",
+      "type": "meeting",
+      "description": "Discuss insurance policy renewal",
+      "assignedTo": "Mary W.",
+      "priority": "high"
+    },
+    {
+      "id": "2",
+      "title": "Follow-up Call - Sarah Smith",
+      "start": "2024-01-15T14:00:00.000Z",
+      "end": "2024-01-15T15:00:00.000Z",
+      "type": "task",
+      "description": "Review policy options",
+      "assignedTo": "James O.",
+      "priority": "medium"
+    },
+    {
+      "id": "3",
+      "title": "Policy Review",
+      "start": "2024-01-16T09:00:00.000Z",
+      "end": "2024-01-16T10:00:00.000Z",
+      "type": "appointment",
+      "description": "Annual policy review meeting",
+      "assignedTo": "Mary W.",
+      "priority": "high"
+    },
+    {
+      "id": "4",
+      "title": "Senior Gold Plan Presentation",
+      "start": "2025-04-10T14:00:00.000Z",
+      "end": "2025-04-10T15:30:00.000Z",
+      "type": "meeting",
+      "description": "Present new Senior Gold Plan features to team",
+      "assignedTo": "James O.",
+      "priority": "high"
+    },
+    {
+      "id": "5",
+      "title": "Client Consultation - Mrs. Wanjiku",
+      "start": "2025-04-11T10:00:00.000Z",
+      "end": "2025-04-11T11:00:00.000Z",
+      "type": "appointment",
+      "description": "Discuss health insurance options",
+      "assignedTo": "Mary W.",
+      "priority": "medium"
+    },
+    {
+      "id": "6",
+      "title": "Team Strategy Meeting",
+      "start": "2025-04-11T14:00:00.000Z",
+      "end": "2025-04-11T15:30:00.000Z",
+      "type": "meeting",
+      "description": "Q2 strategy planning",
+      "assignedTo": "Sarah N.",
+      "priority": "high"
+    },
+    {
+      "id": "7",
+      "title": "Policy Processing - Mr. Omondi",
+      "start": "2025-04-12T09:00:00.000Z",
+      "end": "2025-04-12T10:00:00.000Z",
+      "type": "task",
+      "description": "Process new policy application",
+      "assignedTo": "James O.",
+      "priority": "medium"
+    },
+    {
+      "id": "8",
+      "title": "Training Session",
+      "start": "2025-04-12T13:00:00.000Z",
+      "end": "2025-04-12T16:00:00.000Z",
+      "type": "meeting",
+      "description": "New product training for team",
+      "assignedTo": "Sarah N.",
+      "priority": "high"
+    }
+  ]
+}

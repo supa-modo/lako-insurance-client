@@ -36,6 +36,7 @@ const Footer = () => {
     resources: [
       { label: "Insurance Guide", to: "/guide" },
       { label: "FAQs", to: "/faq" },
+      { label: "Admin Login", to: "/admin" },
     ],
     legal: [
       { label: "Terms & Conditions", to: "/terms" },
@@ -138,12 +139,12 @@ const Footer = () => {
             </div>
 
             {/* Contact info */}
-            <div className="bg-neutral-100 px-6 pb-6 rounded-xl border border-neutral-100">
+            <div className="bg-neutral-200 -my-3 pt-3 px-6 pb-6 rounded-[0.75rem] border border-neutral-100">
               <h4 className="text-secondary-600 text-sm sm:text-base font-bold mb-4">Contact Us</h4>
               <div className="space-y-3">
                 <a
                   href="tel:+1234567890"
-                  className="flex items-center text-[0.95rem] text-gray-500 font-medium hover:text-primary-600 transition-colors"
+                  className="flex items-center text-[0.87rem] text-primary-600 font-medium hover:text-secondary-600 transition-colors"
                 >
                   <TbPhone className="mr-3 text-primary-500 text-lg" />
                   <span>+254712345678</span>

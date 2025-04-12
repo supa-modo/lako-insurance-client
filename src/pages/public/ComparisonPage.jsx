@@ -223,7 +223,7 @@ const ComparisonPage = () => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6, delay: 0.5 }}
-                  className="w-full md:w-[280px] lg:w-[320px] bg-white/5 backdrop-blur-sm md:border-r md:border-b-0 border-b border-white/10 p-5 md:py-10 md:px-0 py-6"
+                  className="w-full md:w-[280px] lg:w-[320px] bg-white/5 backdrop-blur-sm md:border-r md:border-b-0 border-b border-white/10 p-5 md:py-10 md:pl-4 py-6"
                 >
                   <div className="h-full md:min-h-[280px] min-h-[100px] flex justify-center">
                     <StepIndicator currentStep={step} />

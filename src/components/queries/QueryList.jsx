@@ -19,6 +19,10 @@ import {
   TbStar,
   TbStarFilled,
   TbHeartHandshake,
+  TbTag,
+  TbBrandWhatsapp,
+  TbMail,
+  TbPhone,
 } from "react-icons/tb";
 
 const QueryList = ({
@@ -52,6 +56,9 @@ const QueryList = ({
 
   // Format currency
   const formatCurrency = (amount) => {
+    if (typeof amount === "object") {
+      return `${formatCurrency(amount.min)} - ${formatCurrency(amount.max)}`;
+    }
     return new Intl.NumberFormat("en-KE", {
       style: "currency",
       currency: "KES",
@@ -61,14 +68,27 @@ const QueryList = ({
 
   // Format date
   const formatDate = (dateString) => {
-    const options = {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    };
-    return new Date(dateString).toLocaleString("en-KE", options);
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = now - date;
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) {
+      return `Today, ${date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      })}`;
+    } else if (diffDays === 1) {
+      return "Yesterday";
+    } else if (diffDays < 7) {
+      return `${diffDays} days ago`;
+    } else {
+      return date.toLocaleDateString([], {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+    }
   };
 
   // Get status badge
@@ -115,14 +135,15 @@ const QueryList = ({
         return false;
       }
 
-      // Filter by search term (using both local and prop search terms)
+      // Filter by search term
       const term = (localSearchTerm || searchTerm || "").toLowerCase();
       if (term) {
         return (
-          query.clientName.toLowerCase().includes(term) ||
-          query.email.toLowerCase().includes(term) ||
-          query.phone.toLowerCase().includes(term) ||
-          query.summary.toLowerCase().includes(term)
+          query.clientName?.toLowerCase().includes(term) ||
+          query.email?.toLowerCase().includes(term) ||
+          query.phone?.toLowerCase().includes(term) ||
+          query.summary?.toLowerCase().includes(term) ||
+          query.coverageType?.toLowerCase().includes(term)
         );
       }
 
@@ -165,7 +186,7 @@ const QueryList = ({
             </div>
             <input
               type="text"
-              className="block w-full pl-10 pr-3 py-2 border border-neutral-300 rounded-md focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+              className="block w-full pl-10 pr-3 py-2 border border-neutral-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
               placeholder="Search queries..."
               value={localSearchTerm}
               onChange={(e) => setLocalSearchTerm(e.target.value)}
@@ -175,7 +196,7 @@ const QueryList = ({
           {/* Filters */}
           <div className="flex gap-3">
             <select
-              className="block w-full py-2 pl-3 pr-10 border border-neutral-300 rounded-md focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+              className="block w-full py-2 pl-3 pr-10 border border-neutral-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
             >
@@ -208,187 +229,123 @@ const QueryList = ({
             </p>
           </div>
         ) : (
-          <table className="min-w-full divide-y divide-neutral-200">
-            <thead className="bg-neutral-50">
-              <tr>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => handleSort("clientName")}
-                >
-                  <div className="flex items-center">
-                    <TbUserCircle className="mr-1 h-4 w-4" />
-                    Client
-                    {sortField === "clientName" &&
-                      (sortOrder === "asc" ? (
-                        <TbArrowUp className="ml-1 h-4 w-4" />
-                      ) : (
-                        <TbArrowDown className="ml-1 h-4 w-4" />
-                      ))}
-                  </div>
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => handleSort("summary")}
-                >
-                  <div className="flex items-center">
-                    Summary
-                    {sortField === "summary" &&
-                      (sortOrder === "asc" ? (
-                        <TbArrowUp className="ml-1 h-4 w-4" />
-                      ) : (
-                        <TbArrowDown className="ml-1 h-4 w-4" />
-                      ))}
-                  </div>
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => handleSort("budget")}
-                >
-                  <div className="flex items-center">
-                    <TbCurrencyDollar className="mr-1 h-4 w-4" />
-                    Budget
-                    {sortField === "budget" &&
-                      (sortOrder === "asc" ? (
-                        <TbArrowUp className="ml-1 h-4 w-4" />
-                      ) : (
-                        <TbArrowDown className="ml-1 h-4 w-4" />
-                      ))}
-                  </div>
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => handleSort("date")}
-                >
-                  <div className="flex items-center">
-                    <TbCalendarTime className="mr-1 h-4 w-4" />
-                    Date
-                    {sortField === "date" &&
-                      (sortOrder === "asc" ? (
-                        <TbArrowUp className="ml-1 h-4 w-4" />
-                      ) : (
-                        <TbArrowDown className="ml-1 h-4 w-4" />
-                      ))}
-                  </div>
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider"
-                >
-                  Status
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-center text-xs font-medium text-neutral-500 uppercase tracking-wider"
-                >
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-neutral-200">
-              {filteredQueries.map((query) => (
-                <tr key={query.id} className="hover:bg-neutral-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+            {filteredQueries.map((query) => (
+              <div
+                key={query.id}
+                className="bg-white rounded-lg border border-neutral-200 shadow-sm hover:shadow-md transition-shadow"
+              >
+                <div className="p-4">
+                  {/* Header */}
+                  <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10 bg-neutral-100 rounded-full flex items-center justify-center text-neutral-600">
-                        {query.clientName.charAt(0).toUpperCase()}
+                      <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-medium">
+                        {query.clientName?.charAt(0).toUpperCase()}
                       </div>
-                      <div className="ml-4">
+                      <div className="ml-3">
                         <div className="text-sm font-medium text-neutral-900">
                           {query.clientName}
-                          {query.isPriority && (
-                            <TbStarFilled className="ml-1 h-4 w-4 text-yellow-500 inline" />
-                          )}
                         </div>
-                        <div className="text-sm text-neutral-500">
+                        <div className="text-xs text-neutral-500">
                           {query.email}
                         </div>
-                        <div className="text-sm text-neutral-500">
-                          {query.phone}
-                        </div>
                       </div>
                     </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm text-neutral-900 max-w-xs">
+                    {query.isPriority && (
+                      <TbStarFilled className="h-5 w-5 text-yellow-500" />
+                    )}
+                  </div>
+
+                  {/* Content */}
+                  <div className="space-y-2">
+                    <div className="text-sm text-neutral-700">
                       {query.summary}
                     </div>
-                    {query.details && (
-                      <div className="text-xs text-neutral-500 mt-1 truncate max-w-xs">
-                        {query.details}
-                      </div>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-neutral-900">
-                      {query.budget &&
-                        (typeof query.budget === "object"
-                          ? `${formatCurrency(
-                              query.budget.min
-                            )} - ${formatCurrency(query.budget.max)}`
-                          : formatCurrency(query.budget))}
+                    <div className="flex flex-wrap gap-2">
+                      {query.coverageType && (
+                        <span className="px-2 py-1 rounded-md text-xs font-medium bg-neutral-100 text-neutral-700">
+                          {query.coverageType}
+                        </span>
+                      )}
+                      {query.budget && (
+                        <span className="px-2 py-1 rounded-md text-xs font-medium bg-green-100 text-green-700">
+                          {formatCurrency(query.budget)}
+                        </span>
+                      )}
                     </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">
-                    {formatDate(query.date)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {getStatusBadge(query.status)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                    <div className="flex justify-center space-x-2">
+                    <div className="flex items-center justify-between text-xs text-neutral-500">
+                      <div className="flex items-center">
+                        <TbCalendarTime className="h-4 w-4 mr-1" />
+                        {formatDate(query.date)}
+                      </div>
+                      {getStatusBadge(query.status)}
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="mt-4 pt-3 border-t border-neutral-200 flex items-center justify-between">
+                    <div className="flex space-x-2">
                       <button
                         onClick={() => onView(query)}
-                        className="text-neutral-600 hover:text-primary-600"
+                        className="p-1.5 text-neutral-600 hover:text-primary-600 hover:bg-primary-50 rounded-md"
                         title="View details"
                       >
-                        <TbEye className="h-5 w-5" />
+                        <TbEye className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => onEdit(query)}
-                        className="text-neutral-600 hover:text-primary-600"
+                        className="p-1.5 text-neutral-600 hover:text-primary-600 hover:bg-primary-50 rounded-md"
                         title="Edit query"
                       >
-                        <TbEdit className="h-5 w-5" />
+                        <TbEdit className="h-4 w-4" />
                       </button>
-
                       {query.status !== "processed" &&
                         query.status !== "converted" && (
                           <button
                             onClick={() => onProcessQuery(query)}
-                            className="text-neutral-600 hover:text-green-600"
+                            className="p-1.5 text-neutral-600 hover:text-green-600 hover:bg-green-50 rounded-md"
                             title="Mark as processed"
                           >
-                            <TbCheck className="h-5 w-5" />
+                            <TbCheck className="h-4 w-4" />
                           </button>
                         )}
-
                       {query.status !== "converted" && (
                         <button
                           onClick={() => onConvertToLead(query)}
-                          className="text-neutral-600 hover:text-secondary-600"
+                          className="p-1.5 text-neutral-600 hover:text-secondary-600 hover:bg-secondary-50 rounded-md"
                           title="Convert to lead"
                         >
-                          <TbUserPlus className="h-5 w-5" />
+                          <TbUserPlus className="h-4 w-4" />
                         </button>
                       )}
-
                       <button
                         onClick={() => onDelete(query.id)}
-                        className="text-neutral-600 hover:text-red-600"
+                        className="p-1.5 text-neutral-600 hover:text-red-600 hover:bg-red-50 rounded-md"
                         title="Delete query"
                       >
-                        <TbTrash className="h-5 w-5" />
+                        <TbTrash className="h-4 w-4" />
                       </button>
                     </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    <div className="flex space-x-2">
+                      {query.phone && (
+                        <button className="p-1.5 text-neutral-600 hover:text-primary-600 hover:bg-primary-50 rounded-md">
+                          <TbPhone className="h-4 w-4" />
+                        </button>
+                      )}
+                      {query.email && (
+                        <button className="p-1.5 text-neutral-600 hover:text-primary-600 hover:bg-primary-50 rounded-md">
+                          <TbMail className="h-4 w-4" />
+                        </button>
+                      )}
+                      <button className="p-1.5 text-neutral-600 hover:text-green-600 hover:bg-green-50 rounded-md">
+                        <TbBrandWhatsapp className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         )}
       </div>
 
@@ -401,7 +358,7 @@ const QueryList = ({
 
         <div>
           <button
-            className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 flex items-center text-sm"
+            className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 flex items-center text-sm"
             onClick={() => onEdit(null)} // Pass null to create a new query
           >
             <TbMessageCircle className="mr-2 h-4 w-4" /> Add New Query

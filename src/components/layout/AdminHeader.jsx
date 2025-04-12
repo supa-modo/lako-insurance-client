@@ -17,6 +17,7 @@ import {
   TbHelpCircle,
   TbCalendarEvent,
   TbChartLine,
+  TbChartBar,
 } from "react-icons/tb";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -117,8 +118,14 @@ const AdminHeader = ({ toggleSidebarCollapse, sidebarCollapsed }) => {
 
           {/* Logo */}
           <Link to="/admin/dashboard" className="flex items-center space-x-3">
-            <img src="/lako-logo.png" alt="Lako Insurance CRM" className="w-24 h-16" />
-            <span className="text-secondary-500  font-paytone text-[1.7rem] tracking-wide mb-3 font-bold">Admin</span>
+            <img
+              src="/lako-logo.png"
+              alt="Lako Insurance CRM"
+              className="w-24 h-16"
+            />
+            <span className="text-secondary-500  font-paytone text-[2.05rem] leading-none tracking-wide  mb-3 font-bold">
+              admin
+            </span>
           </Link>
         </div>
 
@@ -195,6 +202,13 @@ const AdminHeader = ({ toggleSidebarCollapse, sidebarCollapsed }) => {
                     >
                       <TbBrandGmail className="h-4 w-4 mr-2 text-secondary-400" />
                       <span>Compose Email</span>
+                    </Link>
+                    <Link
+                      to="/admin/analytics"
+                      className="flex items-center px-4 py-2 text-sm text-white/80 hover:bg-white/10 transition-colors font-lexend"
+                    >
+                      <TbChartBar className="h-4 w-4 mr-2 text-secondary-400" />
+                      <span>View Analytics & Reports</span>
                     </Link>
                   </div>
                 </motion.div>

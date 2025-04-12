@@ -17,6 +17,7 @@ import {
   TbMail,
   TbCalendarEvent,
   TbUser,
+  TbCheck,
 } from "react-icons/tb";
 import { BsReplyAllFill, BsReplyFill } from "react-icons/bs";
 
@@ -37,7 +38,7 @@ const EmailDetail = ({ email, onReply, onForward, onDelete, onBack }) => {
           Select an email from the list to view its contents
         </p>
         <button
-          onClick={() => navigate("/admin/mail")}
+          onClick={onBack}
           className="mt-4 px-4 py-2 bg-primary-100 text-primary-700 rounded-md hover:bg-primary-200 flex items-center"
         >
           <TbArrowLeft className="mr-2" /> Back to inbox
@@ -75,19 +76,19 @@ const EmailDetail = ({ email, onReply, onForward, onDelete, onBack }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm flex flex-col h-full">
+    <div className="bg-white flex flex-col h-full">
       {/* Email header */}
-      <div className="border-b border-neutral-200 p-4">
+      <div className="border-b border-neutral-200 p-4 flex-shrink-0">
         <div className="flex justify-between items-center mb-4">
           <button
             onClick={onBack}
-            className="p-2 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-md"
+            className="p-2 text-primary-600 hover:text-primary-700 hover:bg-primary-50 rounded-md flex items-center"
           >
-            <TbArrowLeft className="h-5 w-5" />
+            <TbArrowLeft className="h-5 w-5 mr-1" /> Back
           </button>
 
           <div className="flex items-center space-x-2">
-            <button className="p-2 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-md">
+            <button className="p-2 text-neutral-600 hover:text-yellow-500 hover:bg-neutral-100 rounded-md">
               {email.starred ? (
                 <TbStarFilled className="h-5 w-5 text-yellow-400" />
               ) : (
@@ -96,19 +97,22 @@ const EmailDetail = ({ email, onReply, onForward, onDelete, onBack }) => {
             </button>
             <button
               onClick={() => onReply(email)}
-              className="p-2 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-md"
+              className="p-2 text-neutral-600 hover:text-primary-600 hover:bg-neutral-100 rounded-md"
+              title="Reply"
             >
               <BsReplyFill className="h-5 w-5" />
             </button>
             <button
               onClick={() => onForward(email)}
-              className="p-2 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-md"
+              className="p-2 text-neutral-600 hover:text-primary-600 hover:bg-neutral-100 rounded-md"
+              title="Forward"
             >
               <TbMailForward className="h-5 w-5" />
             </button>
             <button
               onClick={() => onDelete(email.id)}
-              className="p-2 text-neutral-600 hover:text-red-700 hover:bg-neutral-100 rounded-md"
+              className="p-2 text-neutral-600 hover:text-red-600 hover:bg-neutral-100 rounded-md"
+              title="Delete"
             >
               <TbTrash className="h-5 w-5" />
             </button>
@@ -143,15 +147,15 @@ const EmailDetail = ({ email, onReply, onForward, onDelete, onBack }) => {
 
         {/* Email subject and sender info */}
         <div>
-          <h2 className="text-xl font-semibold text-neutral-900 mb-2">
+          <h2 className="text-xl font-semibold text-primary-700 mb-3">
             {email.subject}
             {email.important && (
               <TbAlertCircle className="h-5 w-5 text-red-500 inline ml-2" />
             )}
           </h2>
           <div className="flex items-start">
-            <div className="h-10 w-10 rounded-full bg-neutral-100 flex items-center justify-center mr-3 flex-shrink-0">
-              <TbUser className="h-6 w-6 text-neutral-500" />
+            <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center mr-3 flex-shrink-0">
+              <TbUser className="h-6 w-6 text-primary-500" />
             </div>
             <div className="flex-1">
               <div className="flex items-center justify-between">
@@ -174,7 +178,7 @@ const EmailDetail = ({ email, onReply, onForward, onDelete, onBack }) => {
       </div>
 
       {/* Email body */}
-      <div className="flex-1 overflow-auto p-6">
+      <div className="flex-1 overflow-auto p-6 bg-white">
         {/* If HTML content available, render safely */}
         {email.html ? (
           <div dangerouslySetInnerHTML={{ __html: email.html }}></div>
@@ -187,8 +191,9 @@ const EmailDetail = ({ email, onReply, onForward, onDelete, onBack }) => {
 
       {/* Attachments (if any) */}
       {email.attachments && email.attachments.length > 0 && (
-        <div className="border-t border-neutral-200 p-4 bg-white">
-          <h3 className="text-sm font-medium text-neutral-700 mb-3">
+        <div className="border-t border-neutral-200 p-4 bg-white flex-shrink-0">
+          <h3 className="text-sm font-medium text-neutral-700 mb-3 flex items-center">
+            <TbPaperclip className="mr-2 h-5 w-5 text-neutral-500" />
             Attachments ({email.attachments.length})
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
@@ -221,25 +226,25 @@ const EmailDetail = ({ email, onReply, onForward, onDelete, onBack }) => {
       )}
 
       {/* Reply quick buttons */}
-      <div className="border-t border-neutral-200 p-4 bg-white">
-        <div className="flex space-x-2">
+      <div className="border-t border-neutral-200 p-4 bg-white flex-shrink-0">
+        <div className="flex space-x-2 text-[0.9rem] font-medium">
           <button
             onClick={() => onReply(email)}
-            className="px-4 py-2 bg-primary-600 text-white rounded-md flex items-center hover:bg-primary-700"
+            className="px-6 py-2 bg-primary-600 text-white rounded-md flex items-center hover:bg-primary-700"
           >
-            <BsReplyFill className="mr-1" /> Reply
+            <BsReplyFill className="mr-1.5" /> Reply
           </button>
           <button
             onClick={() => onReply(email, true)}
-            className="px-4 py-2 bg-primary-50 text-primary-700 rounded-md flex items-center hover:bg-primary-100"
+            className="px-6 py-2 bg-neutral-200 border border-neutral-300 text-neutral-700 rounded-md flex items-center hover:bg-neutral-300"
           >
-            <BsReplyAllFill className="mr-1" /> Reply All
+            <BsReplyAllFill className="mr-1.5" /> Reply All
           </button>
           <button
             onClick={() => onForward(email)}
-            className="px-4 py-2 bg-primary-50 text-primary-700 rounded-md flex items-center hover:bg-primary-100"
+            className="px-6 py-2 border border-neutral-300 bg-neutral-200 text-neutral-700 rounded-md flex items-center hover:bg-neutral-300"
           >
-            <TbMailForward className="mr-1" /> Forward
+            <TbMailForward size={19} className="mr-1.5" /> Forward
           </button>
         </div>
       </div>

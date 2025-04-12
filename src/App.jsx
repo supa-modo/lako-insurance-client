@@ -4,6 +4,7 @@ import ComparisonPage from "./pages/public/ComparisonPage";
 import ResultsPage from "./pages/public/ResultsPage";
 import AdminLoginPage from "./pages/admin/AdminLoginPage";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
+import AdminDashboardPage2 from "./pages/admin/OldDashboard";
 import LeadManagementPage from "./pages/admin/LeadManagementPage";
 import ClientManagementPage from "./pages/admin/ClientManagementPage";
 import InsurancePlanPage from "./pages/admin/InsurancePlanPage";
@@ -18,6 +19,11 @@ import { Analytics } from "@vercel/analytics/react";
 import EmailCenterPage from "./pages/admin/EmailCenterPage";
 import QueryManagementPage from "./pages/admin/QueryManagementPage";
 import TaskManagementPage from "./pages/admin/TaskManagementPage";
+import SettingsPage from "./pages/admin/SettingsPage";
+import CalendarPage from "./pages/admin/CalendarPage";
+import AnalyticsAndReportsPage from "./pages/admin/AnalyticsAndReportsPage";
+import ProcessedQueriesPage from "./pages/admin/ProcessedQueriesPage";
+import RenewalsPage from "./pages/admin/RenewalsPage";
 
 function App() {
   return (
@@ -48,7 +54,15 @@ function App() {
                 }
               />
               <Route
-                path="leads"
+                path="dashboard2"
+                element={
+                  <AuthGuard>
+                    <AdminDashboardPage2 />
+                  </AuthGuard>
+                }
+              />
+              <Route
+                path="clients/leads"
                 element={
                   <AuthGuard>
                     <LeadManagementPage />
@@ -56,7 +70,7 @@ function App() {
                 }
               />
               <Route
-                path="clients"
+                path="clients/converted"
                 element={
                   <AuthGuard>
                     <ClientManagementPage />
@@ -72,6 +86,14 @@ function App() {
                 }
               />
               <Route
+                path="renewals"
+                element={
+                  <AuthGuard>
+                    <RenewalsPage />
+                  </AuthGuard>
+                }
+              />
+              <Route
                 path="mail"
                 element={
                   <AuthGuard>
@@ -80,10 +102,18 @@ function App() {
                 }
               />
               <Route
-                path="queries"
+                path="queries/all"
                 element={
                   <AuthGuard>
                     <QueryManagementPage />
+                  </AuthGuard>
+                }
+              />
+              <Route
+                path="queries/processed"
+                element={
+                  <AuthGuard>
+                    <ProcessedQueriesPage />
                   </AuthGuard>
                 }
               />
@@ -92,6 +122,38 @@ function App() {
                 element={
                   <AuthGuard>
                     <TaskManagementPage />
+                  </AuthGuard>
+                }
+              />
+              <Route
+                path="settings"
+                element={
+                  <AuthGuard>
+                    <SettingsPage />
+                  </AuthGuard>
+                }
+              />
+              <Route
+                path="calendar"
+                element={
+                  <AuthGuard>
+                    <CalendarPage />
+                  </AuthGuard>
+                }
+              />
+              <Route
+                path="analytics"
+                element={
+                  <AuthGuard>
+                    <AnalyticsAndReportsPage />
+                  </AuthGuard>
+                }
+              />
+              <Route
+                path="reports"
+                element={
+                  <AuthGuard>
+                    <AnalyticsAndReportsPage />
                   </AuthGuard>
                 }
               />

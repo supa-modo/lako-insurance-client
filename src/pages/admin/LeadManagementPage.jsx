@@ -22,10 +22,15 @@ import {
   TbEdit,
   TbArrowRight,
   TbBrandWhatsapp,
-  TbCaretDown,
+  TbCaretDownFilled,
 } from "react-icons/tb";
 import { motion } from "framer-motion";
 import { RiUserAddLine } from "react-icons/ri";
+
+// Import our components
+import LeadForm from "../../components/leads/LeadForm";
+import LeadDetail from "../../components/leads/LeadDetail";
+import LeadActions from "../../components/leads/LeadActions";
 
 const LeadManagementPage = () => {
   // Lead stages configuration
@@ -295,6 +300,12 @@ const LeadManagementPage = () => {
     tags: [],
   });
 
+  // State for modals
+  const [showLeadForm, setShowLeadForm] = useState(false);
+  const [showLeadDetail, setShowLeadDetail] = useState(false);
+  const [selectedLead, setSelectedLead] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+
   // Initialize leads by stage
   useEffect(() => {
     const leadsByStage = stages.reduce((acc, stage) => {
@@ -303,6 +314,127 @@ const LeadManagementPage = () => {
     }, {});
     setLeads(leadsByStage);
   }, []);
+
+  // Handle opening add lead form
+  const handleAddLead = (initialStatus = "new") => {
+    setSelectedLead({ status: initialStatus });
+    setIsEditMode(false);
+    setShowLeadForm(true);
+  };
+
+  // Handle opening edit lead form
+  const handleEditLead = (lead) => {
+    setSelectedLead(lead);
+    setIsEditMode(true);
+    setShowLeadForm(true);
+    setShowLeadDetail(false);
+  };
+
+  // Handle viewing lead details
+  const handleViewLead = (lead) => {
+    setSelectedLead(lead);
+    setShowLeadDetail(true);
+  };
+
+  // Handle saving a lead (add or edit)
+  const handleSaveLead = (leadData) => {
+    if (isEditMode) {
+      // Update existing lead
+      const status = leadData.status;
+      const updatedLeads = { ...leads };
+      const leadIndex = updatedLeads[status].findIndex(
+        (lead) => lead.id === leadData.id
+      );
+
+      if (leadIndex !== -1) {
+        updatedLeads[status][leadIndex] = {
+          ...updatedLeads[status][leadIndex],
+          ...leadData,
+        };
+        setLeads(updatedLeads);
+      }
+    } else {
+      // Add new lead
+      const newLead = {
+        ...leadData,
+        id: `lead-${Date.now()}`, // Generate a unique ID
+        lastContact: new Date().toISOString(),
+        starred: false,
+      };
+
+      setLeads((prev) => ({
+        ...prev,
+        [newLead.status]: [...prev[newLead.status], newLead],
+      }));
+    }
+
+    setShowLeadForm(false);
+    setSelectedLead(null);
+  };
+
+  // Handle deleting a lead
+  const handleDeleteLead = (leadId) => {
+    if (window.confirm("Are you sure you want to delete this lead?")) {
+      // Find which stage the lead is in
+      const stageId = Object.keys(leads).find((stageId) =>
+        leads[stageId].some((lead) => lead.id === leadId)
+      );
+
+      if (stageId) {
+        const updatedLeads = { ...leads };
+        updatedLeads[stageId] = updatedLeads[stageId].filter(
+          (lead) => lead.id !== leadId
+        );
+        setLeads(updatedLeads);
+
+        // Close the detail view if open
+        if (showLeadDetail && selectedLead && selectedLead.id === leadId) {
+          setShowLeadDetail(false);
+          setSelectedLead(null);
+        }
+      }
+    }
+  };
+
+  // Handle marking lead as converted
+  const handleMarkConverted = (leadId) => {
+    // Find which stage the lead is in
+    const stageId = Object.keys(leads).find((stageId) =>
+      leads[stageId].some((lead) => lead.id === leadId)
+    );
+
+    if (stageId) {
+      const leadIndex = leads[stageId].findIndex((lead) => lead.id === leadId);
+      const lead = leads[stageId][leadIndex];
+
+      // Create a new lead object with updated status
+      const updatedLead = {
+        ...lead,
+        status: "converted",
+        lastUpdated: new Date().toISOString(),
+        conversionDate: new Date().toISOString(),
+      };
+
+      // Remove from source and add to destination
+      const sourceLeads = [...leads[stageId]];
+      sourceLeads.splice(leadIndex, 1);
+
+      const destLeads = [...leads["converted"]];
+      destLeads.push(updatedLead);
+
+      // Update state
+      setLeads({
+        ...leads,
+        [stageId]: sourceLeads,
+        converted: destLeads,
+      });
+
+      // Update detail view if open
+      if (showLeadDetail && selectedLead && selectedLead.id === leadId) {
+        setSelectedLead(updatedLead);
+      }
+    }
+  };
 
   // Handle drag end
   const onDragEnd = (result) => {
@@ -426,19 +558,21 @@ const LeadManagementPage = () => {
   return (
     <div className="text-gray-800 font-lexend flex flex-col h-[calc(100vh-64px)]">
       {/* Page Header */}
-      <div className="bg-white px-6 py-4 border-b border-gray-200">
+      <div className="bg-white px-8 py-3 border-b border-gray-200">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
           <div>
-            <h1 className="text-2xl font-bold text-primary-600">Client Lead Pipeline</h1>
-            <p className="text-gray-500">
-              Track and manage your leads through the lead funnel
+            <h1 className="text-[1.3rem] font-bold text-secondary-700">
+              Client Lead Pipeline
+            </h1>
+            <p className="text-gray-500 text-sm">
+              Track, manage and convert your leads through the lead board
             </p>
           </div>
 
           <div className="flex flex-wrap mt-4 md:mt-0 space-x-2">
             <button
               onClick={refreshLeads}
-              className="bg-white border border-gray-200 rounded-lg p-2 text-gray-500 hover:text-primary-600 hover:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="bg-white border border-gray-200 rounded-lg p-2 text-gray-500 hover:text-primary-600 hover:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-500 shadow-sm transition-all"
             >
               <TbRefresh
                 className={`h-5 w-5 ${isRefreshing ? "animate-spin" : ""}`}
@@ -452,22 +586,25 @@ const LeadManagementPage = () => {
                   placeholder="Search leads..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 pr-4 py-2 bg-neutral-200 border border-gray-600/20 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 min-w-[400px]"
+                  className="pl-9 pr-4 py-2 bg-neutral-200 border border-gray-600/20 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 min-w-[400px] shadow-sm"
                 />
                 <TbSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               </div>
             </div>
 
             <div className="relative">
-              <button className="bg-white border border-gray-200 rounded-lg px-4 py-2 text-sm text-gray-700 hover:text-primary-600 focus:border-primary-300 focus:outline-none focus:ring-1 focus:ring-primary-500 flex items-center">
+              <button className="bg-white border border-gray-200 rounded-lg px-4 py-2 text-sm text-gray-700 hover:text-primary-600 hover:border-primary-300 focus:outline-none focus:ring-1 focus:ring-primary-500 flex items-center shadow-sm transition-all">
                 <TbFilter className="h-4 w-4 mr-2" />
                 Filter
-                <TbCaretDown className="h-4 w-4 ml-2" />
+                <TbCaretDownFilled className="h-4 w-4 ml-2" />
               </button>
               {/* Filter dropdown would go here */}
             </div>
 
-            <button className="bg-primary-600 text-white rounded-lg px-4 py-2 text-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 flex items-center">
+            <button
+              onClick={() => handleAddLead()}
+              className="bg-gradient-to-br from-primary-600 to-primary-700 text-white rounded-lg px-4 py-2 text-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary-500 flex items-center shadow-sm transition-all"
+            >
               <RiUserAddLine className="h-4 w-4 mr-2" />
               Add New Lead
             </button>
@@ -475,54 +612,28 @@ const LeadManagementPage = () => {
         </div>
       </div>
 
-      {/* Leads Summary */}
-      {/* <div className="bg-white rounded-lg p-4 mb-4 border border-gray-200 flex flex-wrap gap-4 md:gap-8">
-        <div>
-          <div className="text-sm text-gray-500">Total Leads</div>
-          <div className="text-2xl font-bold">{initialLeads.length}</div>
-        </div>
-        <div>
-          <div className="text-sm text-gray-500">New Leads (This Week)</div>
-          <div className="text-2xl font-bold text-blue-600">12</div>
-        </div>
-        <div>
-          <div className="text-sm text-gray-500">Conversion Rate</div>
-          <div className="text-2xl font-bold text-green-600">34.2%</div>
-        </div>
-        <div>
-          <div className="text-sm text-gray-500">Avg. Sales Cycle</div>
-          <div className="text-2xl font-bold">18 days</div>
-        </div>
-        <div className="ml-auto flex items-center">
-          <button className="text-primary-600 hover:text-primary-700 text-sm flex items-center">
-            <TbDownload className="h-4 w-4 mr-1" />
-            Export
-          </button>
-        </div>
-      </div> */}
-
       {/* Lead Pipeline - Kanban Board */}
-      <div className="flex-1 overflow-hidden mt-4">
+      <div className="flex-1 overflow-hidden mt-4 pl-4">
         <DragDropContext onDragEnd={onDragEnd}>
-          <div className="flex h-full overflow-x-auto px-4 pb-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 px-4 pb-2 h-full">
             {stages.map((stage) => (
               <div
                 key={stage.id}
-                className="flex-shrink-0 w-[24rem] mx-2 h-full flex flex-col"
+                className="flex flex-col h-full overflow-y-auto"
               >
                 <div
-                  className={`bg-white rounded-t-xl border border-b-0 border-gray-200 p-3 flex items-center justify-between sticky top-0 z-10 bg-${stage.color}-50`}
+                  className={`rounded-t-xl border border-b-0 border-gray-200 p-3 flex items-center justify-between sticky top-0 z-10 bg-${stage.color}-50`}
                 >
                   <div className="flex items-center">
                     <div
-                      className={`h-3 w-3 rounded-full bg-${stage.color}-500 mr-2`}
+                      className={`h-3 w-3 rounded-full bg-${stage.color}-500 mx-2`}
                     ></div>
                     <h3 className="font-semibold text-neutral-700">
                       {stage.name}
                     </h3>
                   </div>
                   <div
-                    className={`bg-${stage.color}-100 text-${stage.color}-800 text-xs font-medium px-2 py-0.5 rounded-full`}
+                    className={`bg-${stage.color}-100 text-${stage.color}-800 text-[0.78rem] font-semibold px-2 py-0.5 rounded-full`}
                   >
                     {leads[stage.id]?.length || 0}
                   </div>
@@ -550,7 +661,7 @@ const LeadManagementPage = () => {
                               {...provided.dragHandleProps}
                               className={`bg-white rounded-lg border border-gray-200 p-3 mb-2 ${
                                 snapshot.isDragging ? "shadow-lg" : "shadow-sm"
-                              } hover:shadow-md transition-shadow`}
+                              } hover:shadow-md transition-all duration-200`}
                             >
                               <div className="flex justify-between items-start mb-2">
                                 <div className="flex items-center">
@@ -581,12 +692,16 @@ const LeadManagementPage = () => {
                                       <TbStar className="h-4 w-4" />
                                     )}
                                   </button>
-                                  <div className="relative">
-                                    <button className="text-gray-400 hover:text-gray-600">
-                                      <TbDotsVertical className="h-4 w-4" />
-                                    </button>
-                                    {/* Dropdown menu would go here */}
-                                  </div>
+                                  <LeadActions
+                                    lead={lead}
+                                    onView={handleViewLead}
+                                    onEdit={handleEditLead}
+                                    onDelete={handleDeleteLead}
+                                    onToggleStar={(id) =>
+                                      toggleStar(id, stage.id)
+                                    }
+                                    onMarkConverted={handleMarkConverted}
+                                  />
                                 </div>
                               </div>
 
@@ -633,18 +748,21 @@ const LeadManagementPage = () => {
                               {/* Quick actions */}
                               <div className="flex mt-2 pt-2 border-t border-gray-100 justify-between">
                                 <div className="flex space-x-1">
-                                  <button className="p-1 text-gray-400 hover:text-blue-600 rounded-md hover:bg-blue-50">
+                                  <button className="p-1 text-gray-400 hover:text-blue-600 rounded-md hover:bg-blue-50 transition-colors">
                                     <TbPhone className="h-4 w-4" />
                                   </button>
-                                  <button className="p-1 text-gray-400 hover:text-purple-600 rounded-md hover:bg-purple-50">
+                                  <button className="p-1 text-gray-400 hover:text-purple-600 rounded-md hover:bg-purple-50 transition-colors">
                                     <TbMail className="h-4 w-4" />
                                   </button>
-                                  <button className="p-1 text-gray-400 hover:text-green-600 rounded-md hover:bg-green-50">
+                                  <button className="p-1 text-gray-400 hover:text-green-600 rounded-md hover:bg-green-50 transition-colors">
                                     <TbBrandWhatsapp className="h-4 w-4" />
                                   </button>
                                 </div>
                                 <div>
-                                  <button className="p-1 text-gray-400 hover:text-primary-600 rounded-md hover:bg-primary-50">
+                                  <button
+                                    onClick={() => handleViewLead(lead)}
+                                    className="p-1 text-gray-400 hover:text-primary-600 rounded-md hover:bg-primary-50 transition-colors"
+                                  >
                                     <TbEye className="h-4 w-4" />
                                   </button>
                                 </div>
@@ -656,7 +774,10 @@ const LeadManagementPage = () => {
                       {provided.placeholder}
 
                       {/* Add lead button at the bottom of each column */}
-                      <button className="w-full mt-1 p-2 bg-white border border-dashed border-gray-300 rounded-lg text-gray-500 hover:text-primary-600 hover:border-primary-300 flex items-center justify-center">
+                      <button
+                        onClick={() => handleAddLead(stage.id)}
+                        className="w-full mt-1 p-2 bg-white border border-dashed border-gray-300 rounded-lg text-gray-500 hover:text-primary-600 hover:border-primary-300 flex items-center justify-center transition-colors"
+                      >
                         <TbPlus className="h-4 w-4 mr-1" />
                         <span className="text-xs">Add Lead</span>
                       </button>
@@ -668,6 +789,30 @@ const LeadManagementPage = () => {
           </div>
         </DragDropContext>
       </div>
+
+      {/* Lead Form and Detail Modals */}
+      {showLeadForm && (
+        <LeadForm
+          initialData={selectedLead}
+          onSave={handleSaveLead}
+          onCancel={() => {
+            setShowLeadForm(false);
+            setSelectedLead(null);
+          }}
+        />
+      )}
+
+      {showLeadDetail && selectedLead && (
+        <LeadDetail
+          lead={selectedLead}
+          onClose={() => {
+            setShowLeadDetail(false);
+            setSelectedLead(null);
+          }}
+          onEdit={handleEditLead}
+          onDelete={handleDeleteLead}
+        />
+      )}
     </div>
   );
 };

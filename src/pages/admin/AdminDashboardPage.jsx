@@ -48,6 +48,8 @@ import {
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { getCurrentUser } from "../../services/adminService";
+import { PiUsersDuotone, PiUsersThreeDuotone } from "react-icons/pi";
+import { RiUserShared2Line } from "react-icons/ri";
 
 const AdminDashboardPage = () => {
   const [period, setPeriod] = useState("weekly");
@@ -80,7 +82,7 @@ const AdminDashboardPage = () => {
       value: "1,284",
       change: "+12.5%",
       isPositive: true,
-      icon: TbUsers,
+      icon: PiUsersDuotone,
       color: "bg-blue-500",
       textColor: "text-blue-500",
       path: "/admin/clients",
@@ -90,12 +92,12 @@ const AdminDashboardPage = () => {
       value: "427",
       change: "+8.2%",
       isPositive: true,
-      icon: TbUserPlus,
+      icon: RiUserShared2Line,
       color: "bg-indigo-500",
       textColor: "text-indigo-500",
       path: "/admin/leads",
     },
-    
+
     {
       title: "Upcoming Renewals",
       value: "68",
@@ -121,8 +123,6 @@ const AdminDashboardPage = () => {
   // Lead Pipeline data
   const leadPipeline = [
     { stage: "New Lead", count: 145, color: "bg-blue-500" },
-    { stage: "Contacted", count: 92, color: "bg-indigo-500" },
-    { stage: "Qualified", count: 76, color: "bg-violet-500" },
     { stage: "Proposal", count: 64, color: "bg-purple-500" },
     { stage: "Negotiation", count: 31, color: "bg-pink-500" },
     { stage: "Converted", count: 19, color: "bg-secondary-500" },
@@ -274,7 +274,6 @@ const AdminDashboardPage = () => {
     { name: "Silver Years", value: 86 },
   ];
 
-
   // Handler for period changes
   const handlePeriodChange = (newPeriod) => {
     setPeriod(newPeriod);
@@ -296,120 +295,89 @@ const AdminDashboardPage = () => {
   };
 
   return (
-    <div className="text-gray-800 font-lexend px-8 py-7">
+    <div className="text-gray-800 font-lexend h-[calc(100vh-64px)] overflow-y-auto pb-6 bg-neutral-50">
       {/* Dashboard Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-secondary-700">
-            Executive Dashboard
-          </h1>
-          <p className="text-gray-500">
-            Welcome back, Administrator. Here's what's happening with your Agency today.
-          </p>
-        </div>
-        <div className="flex mt-4 md:mt-0 space-x-2">
-          <div className="relative">
-            <select
-              value={period}
-              onChange={(e) => handlePeriodChange(e.target.value)}
-              className="appearance-none bg-white border border-gray-200 rounded-lg py-2 px-4 pr-8 text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
-            >
-              <option value="daily">Today</option>
-              <option value="weekly">This Week</option>
-              <option value="monthly">This Month</option>
-              <option value="quarterly">This Quarter</option>
-              <option value="yearly">This Year</option>
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
-              <TbChevronDown />
-            </div>
+      <div className="bg-gradient-to-r from-secondary-50 to-primary-50 px-8 py-5 border-b border-gray-200">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+          <div>
+            <h1 className="text-[1.5rem] font-bold text-secondary-700">
+              Welcome back, {currentUser?.name || "Admin"}
+            </h1>
+            <p className="text-neutral-500 text-sm">
+              Last login: {lastLogin.toLocaleString()}
+            </p>
           </div>
-          <button
-            onClick={refreshData}
-            className="bg-white border border-gray-200 rounded-lg p-2 text-gray-500 hover:text-primary-600 hover:bg-primary-100  focus:border-primary-300 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          >
-            <TbRefresh
-              className={`h-5 w-5 ${isRefreshing ? "animate-spin" : ""}`}
-            />
-          </button>
+          <div className="flex mt-4 md:mt-0 space-x-2">
+            <div className="relative">
+              <select
+                value={period}
+                onChange={(e) => handlePeriodChange(e.target.value)}
+                className="appearance-none bg-white border border-gray-200 rounded-lg py-2 px-4 pr-8 text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+              >
+                <option value="daily">Today</option>
+                <option value="weekly">This Week</option>
+                <option value="monthly">This Month</option>
+                <option value="quarterly">This Quarter</option>
+                <option value="yearly">This Year</option>
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                <TbChevronDown />
+              </div>
+            </div>
+            <button
+              onClick={refreshData}
+              className="bg-white border border-gray-200 rounded-lg p-2 text-gray-500 hover:text-primary-600 hover:bg-primary-100  focus:border-primary-300 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            >
+              <TbRefresh
+                className={`h-5 w-5 ${isRefreshing ? "animate-spin" : ""}`}
+              />
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div>
-
-      </div>
-
-      {/* Navigation Tabs */}
-      <div className="flex overflow-x-auto bg-white rounded-lg p-1 mb-3 border border-gray-200">
-        {["overview", "clients", "sales", "performance", "tasks"].map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`flex-shrink-0 px-4 py-2 text-sm font-medium rounded-md ${
-              activeTab === tab
-                ? "bg-secondary-600 text-white"
-                : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
-            } transition-colors duration-150 focus:outline-none capitalize`}
-          >
-            {tab}
-          </button>
-        ))}
+        <div></div>
+        {/* Metric Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-2">
+          {metrics.map((metric, index) => (
+            <Link
+              to={metric.path}
+              key={index}
+              className="group bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex items-center  hover:shadow-md"
+            >
+              <div
+                className={`h-12 w-12 rounded-lg ${metric.color} flex items-center justify-center flex-shrink-0 mr-4 transition-transform group-hover:scale-105`}
+              >
+                <metric.icon className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h3 className="text-gray-500 text-sm font-medium mb-1">
+                  {metric.title}
+                </h3>
+                <div className="flex items-center">
+                  <p className="text-xl font-bold text-gray-800 mr-2">
+                    {metric.value}
+                  </p>
+                  <span
+                    className={`text-xs font-semibold ${
+                      metric.isPositive ? "text-green-600" : "text-red-600"
+                    }`}
+                  >
+                    {metric.change}
+                  </span>
+                </div>
+              </div>
+              <div className="ml-auto">
+                <TbArrowRight className="h-5 w-5 text-gray-400 group-hover:text-primary-500 transition-colors" />
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
 
       {/* Main Dashboard Content */}
-      <div className="space-y-6">
-        {/* Metrics Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {metrics.map((metric, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow"
-            >
-              <div className="flex justify-between items-start mb-2">
-                <div className="flex items-center">
-                  <div
-                    className={`p-2 rounded-lg ${metric.color} bg-opacity-15 mr-3`}
-                  >
-                    <metric.icon className={`h-5 w-5 ${metric.textColor}`} />
-                  </div>
-                  <h3 className="text-gray-700">{metric.title}</h3>
-                </div>
-                <Link
-                  to={metric.path}
-                  className="text-gray-400 hover:text-primary-600"
-                >
-                  <TbArrowRight className="h-5 w-5" />
-                </Link>
-              </div>
-              <div className="flex items-end justify-between">
-                <div>
-                  <span className="text-2xl font-bold text-gray-900">
-                    {metric.value}
-                  </span>
-                  <div className="flex items-center mt-1">
-                    {metric.isPositive ? (
-                      <TbArrowUpRight className="h-4 w-4 text-green-500 mr-1" />
-                    ) : (
-                      <TbArrowDownRight className="h-4 w-4 text-red-500 mr-1" />
-                    )}
-                    <span
-                      className={
-                        metric.isPositive
-                          ? "text-green-500 text-xs"
-                          : "text-red-500 text-xs"
-                      }
-                    >
-                      {metric.change} vs last period
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
+      <div className="space-y-6 p-8">
         {/* Quick Actions */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <div className="bg-neutral-50 rounded-xl border border-gray-200 p-4">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold text-gray-900">Quick Actions</h2>
             <button className="text-primary-600 hover:text-primary-700 text-sm font-medium">
@@ -548,99 +516,13 @@ const AdminDashboardPage = () => {
                 </ResponsiveContainer>
               </div>
             </div>
-
-            {/* Revenue Chart */}
-            <div className="bg-white rounded-xl border border-gray-200 p-4">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-bold text-gray-900">Revenue</h2>
-                <div className="flex items-center">
-                  <div className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-0.5 rounded">
-                    +13.2% vs last period
-                  </div>
-                </div>
-              </div>
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={revenueData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="revenue" fill="#8884d8" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
           </div>
         </div>
 
         {/* Three Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Recent Activity */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold text-gray-900">
-                Recent Activity
-              </h2>
-              <Link
-                to="/admin/activities"
-                className="text-primary-600 hover:text-primary-700 text-sm font-medium"
-              >
-                View All
-              </Link>
-            </div>
-            <div className="space-y-3">
-              {recentActivity.map((activity) => (
-                <div
-                  key={activity.id}
-                  className="flex items-start p-2 hover:bg-gray-50 rounded-lg"
-                >
-                  <div className="flex-shrink-0 mr-3">
-                    <div className="h-8 w-8 rounded-full flex items-center justify-center">
-                      {activity.type === "query" && (
-                        <div className="bg-secondary-100 p-1 rounded-full">
-                          <TbClipboard className="h-6 w-6 text-secondary-600" />
-                        </div>
-                      )}
-                      {activity.type === "renewal" && (
-                        <div className="bg-yellow-100 p-1 rounded-full">
-                          <TbCalendarTime className="h-6 w-6 text-yellow-600" />
-                        </div>
-                      )}
-                      {activity.type === "conversion" && (
-                        <div className="bg-green-100 p-1 rounded-full">
-                          <TbHeartHandshake className="h-6 w-6 text-green-600" />
-                        </div>
-                      )}
-                      {activity.type === "update" && (
-                        <div className="bg-blue-100 p-1 rounded-full">
-                          <TbArrowsExchange className="h-6 w-6 text-blue-600" />
-                        </div>
-                      )}
-                      {activity.type === "task" && (
-                        <div className="bg-indigo-100 p-1 rounded-full">
-                          <TbList className="h-6 w-6 text-indigo-600" />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">
-                      {activity.client}
-                    </p>
-                    <p className="text-xs text-gray-500 truncate">
-                      {activity.activity}
-                    </p>
-                    <p className="text-xs text-gray-400">{activity.time}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
+        <div className="flex flex-col md:flex-row gap-6">
           {/* Top Insurance Plans */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="bg-white w-[33%] rounded-xl border border-gray-200 p-4">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-bold text-gray-900">
                 Top Insurance Plans
@@ -701,7 +583,7 @@ const AdminDashboardPage = () => {
           </div>
 
           {/* Upcoming Tasks */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="bg-white w-[67.5%] rounded-xl border border-gray-200 p-4">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-bold text-gray-900">My Tasks</h2>
               <Link
@@ -762,8 +644,6 @@ const AdminDashboardPage = () => {
             </div>
           </div>
         </div>
-
-        
       </div>
     </div>
   );

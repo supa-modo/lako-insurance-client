@@ -9,9 +9,12 @@ import {
   TbEyeOff,
   TbChevronRight,
   TbAlertTriangle,
+  TbMailFilled,
 } from "react-icons/tb";
 import { motion } from "framer-motion";
 import { loginAdmin } from "../../services/adminService";
+import { PiPasswordBold } from "react-icons/pi";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const AdminLoginPage = () => {
   const [email, setEmail] = useState("");
@@ -27,12 +30,13 @@ const AdminLoginPage = () => {
     setLoading(true);
 
     try {
-          await loginAdmin({ email, password });
-          navigate("/admin/dashboard");
+      await loginAdmin({ email, password });
+      navigate("/admin/dashboard");
     } catch (err) {
       console.error("Login failed:", err);
       setError(
-        err.response?.data?.error ||
+        err.response?.data?.message ||
+          err.response?.data?.error ||
           "Login failed. Please check your credentials."
       );
     } finally {
@@ -41,74 +45,75 @@ const AdminLoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-700 via-primary-800 to-primary-700 relative overflow-hidden">
       {/* Background decorative elements */}
-      <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-primary-500/30 rounded-full filter blur-3xl opacity-20 animate-pulse-slow"></div>
-      <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-secondary-500/30 rounded-full filter blur-3xl opacity-20 transform translate-y-1/4 translate-x-[-30%]"></div>
-      <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-secondary-400/40 rounded-full filter blur-xl opacity-30 animate-float"></div>
+      <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-secondary-500/30 rounded-full filter blur-3xl opacity-20 animate-pulse-slow"></div>
+      <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-primary-500/30 rounded-full filter blur-3xl opacity-20 transform translate-y-1/4 translate-x-[-30%]"></div>
+      <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-primary-400/40 rounded-full filter blur-xl opacity-30 animate-float"></div>
 
       {/* Glass panels */}
       <div className="absolute top-10 right-10 w-64 h-64 bg-white/5 rounded-2xl backdrop-blur-sm border border-white/10 hidden lg:block"></div>
       <div className="absolute bottom-10 left-10 w-48 h-48 bg-white/5 rounded-2xl backdrop-blur-sm border border-white/10 hidden lg:block"></div>
 
-      <div className="max-w-xl w-full px-4 relative z-10">
+      <div className="max-w-[38rem] w-full px-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-8"
+          className="text-center mb-4"
         >
-          <div className="flex items-center justify-center mb-1">
+          <div className="flex items-center justify-center">
             <img
               src="/lako-logo.png"
               alt="Lako Insurance Logo"
-              className="w-32 h-24 object-contain"
+              className="w-36 object-contain"
             />
           </div>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gradient bg-gradient-to-r from-white via-secondary-200 to-white bg-clip-text text-transparent mb-3 font-outfit">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gradient bg-gradient-to-r from-white via-primary-300 to-white bg-clip-text text-transparent -mt-1 mb-3 font-paytone">
             Admin Portal
           </h2>
           <p className="text-white/80 font-outfit">
             Sign in to access the Lako Insurance administration dashboard
           </p>
         </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 p-6 sm:p-9 shadow-2xl"
-        >
-          {error && (
+        {error && (
             <motion.div
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
-              className="mb-6 bg-red-500/40 border border-red-500/50 text-red-200 px-6 py-3 rounded-lg flex items-center gap-2"
+              className="mb-4 bg-red-500/40 border border-red-500/50 text-red-200 px-6 py-3 rounded-lg flex items-center gap-2"
             >
               <TbAlertTriangle className="h-5 w-5" />
               <span>{error}</span>
             </motion.div>
           )}
 
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 px-6 py-3 sm:px-10 sm:py-6 shadow-2xl"
+        >
+          
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label
                 htmlFor="email"
-                className="block text-white/90 mb-2 font-medium text-sm font-outfit"
+                className="block text-secondary-500 mb-2 tracking-wide text-sm font-outfit"
               >
                 Email Address
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                  <TbMail className="h-5 w-5 text-secondary-400" />
+                  <TbMailFilled className="h-5 w-5 text-primary-400" />
                 </div>
                 <input
                   id="email"
                   type="email"
-                  className="w-full h-12 pl-14 pr-4 text-white rounded-lg border-2 bg-white/10 backdrop-blur-sm focus:bg-white/20
-                  duration-200 focus:ring-2 focus:outline-none focus:ring-secondary-400 focus:border-0
-                  font-outfit placeholder-white/50 border-white/30"
-                  placeholder="admin@example.com"
+                  className="w-full h-12 pl-14 pr-4 text-sm sm:text-base text-white rounded-lg border-2 bg-white/10 backdrop-blur-sm focus:bg-white/20
+                  duration-200 focus:ring-2 focus:outline-none focus:ring-primary-400 focus:border-0
+                  font-lexend placeholder-white/50 border-white/30"
+                  placeholder="email@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -120,27 +125,27 @@ const AdminLoginPage = () => {
               <div className="flex items-center justify-between mb-2">
                 <label
                   htmlFor="password"
-                  className="block text-white/90 font-medium text-sm font-outfit"
+                  className="block text-secondary-500 tracking-wide text-sm font-outfit"
                 >
                   Password
                 </label>
                 <a
                   href="#"
-                  className="text-xs text-secondary-400 hover:text-secondary-300 transition-colors font-outfit"
+                  className="text-sm text-neutral-500 hover:text-secondary-300 transition-colors font-outfit"
                 >
                   Forgot password?
                 </a>
               </div>
               <div className="relative">
                 <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                  <TbLock className="h-5 w-5 text-secondary-400" />
+                  <PiPasswordBold className="h-5 w-5 text-primary-400" />
                 </div>
                 <input
                   id="password"
                   type={showPassword ? "text" : "password"}
-                  className="w-full h-12 pl-14 pr-12 text-white rounded-lg border-2 bg-white/10 backdrop-blur-sm focus:bg-white/20
-                  duration-200 focus:ring-2 focus:outline-none focus:ring-secondary-400 focus:border-0
-                  font-outfit placeholder-white/50 border-white/30"
+                  className="w-full h-12 pl-14 pr-12 text-sm sm:text-base text-white rounded-lg border-2 bg-white/10 backdrop-blur-sm focus:bg-white/20
+                  duration-200 focus:ring-2 focus:outline-none focus:ring-primary-400 focus:border-0
+                  font-lexend placeholder-white/50 border-white/30"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -153,33 +158,19 @@ const AdminLoginPage = () => {
                   tabIndex="-1"
                 >
                   {showPassword ? (
-                    <TbEyeOff className="h-5 w-5 text-white/60 hover:text-white/90 transition-colors" />
+                    <FaEyeSlash className="h-5 w-5 text-white/60 hover:text-white/90 transition-colors" />
                   ) : (
-                    <TbEye className="h-5 w-5 text-white/60 hover:text-white/90 transition-colors" />
+                    <FaEye className="h-5 w-5 text-white/60 hover:text-white/90 transition-colors" />
                   )}
                 </button>
               </div>
             </div>
 
-            {/* <div className="flex items-center">
-              <input
-                id="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-secondary-500 focus:ring-secondary-500 border-white/30 rounded bg-white/10"
-              />
-              <label
-                htmlFor="remember-me"
-                className="ml-2 block text-sm text-white/80 font-outfit"
-              >
-                Remember me
-              </label>
-            </div> */}
-
             <motion.button
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
               type="submit"
-              className="w-full h-12 bg-secondary-600 hover:bg-secondary-700 text-white font-semibold rounded-lg
+              className="w-full h-12 bg-secondary-600 hover:bg-secondary-500 text-white font-medium rounded-lg
               shadow-lg hover:shadow-xl transition-all duration-300 transform font-outfit
               flex items-center justify-center gap-2"
               disabled={loading}

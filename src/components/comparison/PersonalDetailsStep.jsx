@@ -6,8 +6,9 @@ import {
   TbInfoTriangleFilled,
   TbCalendarStar,
   TbCheck,
+  TbUserSquare,
 } from "react-icons/tb";
-import { PiUserDuotone } from "react-icons/pi";
+import { PiUserDuotone, PiUserListDuotone } from "react-icons/pi";
 
 // Age range options
 const ageRanges = [
@@ -38,7 +39,7 @@ const PersonalDetailsStep = ({ register, errors, onSubmit, watchedValues }) => {
     <div className="space-y-4 sm:space-y-5">
       <div className="mb-3 sm:mb-4">
         <h2 className="text-lg sm:text-xl font-bold text-secondary-400 flex items-center font-outfit">
-          <PiUserDuotone className="mr-3 text-secondary-500 h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0" />{" "}
+          <TbUserSquare className="mr-3 text-secondary-500 h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0" />{" "}
           <span>Your Contact Info & Age</span>
         </h2>
       </div>

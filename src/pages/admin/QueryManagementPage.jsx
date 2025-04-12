@@ -14,11 +14,16 @@ import {
   TbTag,
   TbDatabaseExport,
   TbRefresh,
+  TbLayoutGrid,
+  TbLayoutList,
+  TbX,
+  TbChevronDown,
 } from "react-icons/tb";
 import { BiStats } from "react-icons/bi";
 import QueryList from "../../components/queries/QueryList";
 import QueryDetail from "../../components/queries/QueryDetail";
 import QueryForm from "../../components/queries/QueryForm";
+import QueryTable from "../../components/queries/QueryTable";
 
 const QueryManagementPage = () => {
   // Generate mock query data
@@ -147,6 +152,9 @@ const QueryManagementPage = () => {
     converted: 0,
     priority: 0,
   });
+  const [viewMode, setViewMode] = useState("grid"); // "grid" or "table"
+  const [sortField, setSortField] = useState("date");
+  const [sortOrder, setSortOrder] = useState("desc");
 
   // Fetch queries on mount
   useEffect(() => {
@@ -301,194 +309,230 @@ const QueryManagementPage = () => {
     setCurrentView("list");
   };
 
+  // Handle sorting
+  const handleSort = (field) => {
+    if (field === sortField) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortOrder("desc");
+    }
+  };
+
   return (
-    <div className="flex flex-col h-full overflow-hidden bg-neutral-50">
-      {/* Header */}
-      <div className="bg-white border-b border-neutral-200 px-6 py-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="h-[calc(100vh-64px)] flex flex-col overflow-hidden">
+      {/* Page Header */}
+      <div className="bg-white px-8 py-2.5 border-b border-gray-200 flex-shrink-0">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
           <div>
-            <h1 className="text-2xl font-semibold text-neutral-900">
-              Client Queries
+            <h1 className="text-[1.3rem] font-bold text-secondary-700">
+              Insurance Queries
             </h1>
-            <p className="text-neutral-500 mt-1">
-              Manage and respond to client inquiries
+            <p className="text-gray-500 text-sm">
+              Manage and process client insurance inquiries
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <TbSearch className="h-5 w-5 text-neutral-400" />
-              </div>
-              <input
-                type="text"
-                placeholder="Search queries..."
-                value={searchTerm}
-                onChange={handleSearch}
-                className="block pl-10 pr-3 py-2 border border-neutral-300 rounded-md leading-5 bg-white placeholder-neutral-500 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-              />
-            </div>
-
+          <div className="flex flex-wrap mt-4 md:mt-0 space-x-2">
             <button
               onClick={handleRefresh}
-              className="p-2 rounded-md text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100"
-              title="Refresh queries"
+              className="bg-white border border-gray-200 rounded-lg p-2 text-gray-500 hover:text-primary-600 hover:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
-              <TbRefresh className="h-5 w-5" />
+              <TbRefresh
+                className={`h-5 w-5 ${isLoading ? "animate-spin" : ""}`}
+              />
             </button>
+
+            <div className="relative">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search queries..."
+                  value={searchTerm}
+                  onChange={handleSearch}
+                  className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 min-w-[200px]"
+                />
+                <TbSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              </div>
+            </div>
+
+            <div className="flex bg-neutral-100 rounded-lg p-1">
+              <button
+                onClick={() => setViewMode("grid")}
+                className={`p-2 rounded-md ${
+                  viewMode === "grid"
+                    ? "bg-white text-primary-600 shadow-sm"
+                    : "text-neutral-600 hover:text-primary-600"
+                }`}
+                title="Grid view"
+              >
+                <TbLayoutGrid className="h-5 w-5" />
+              </button>
+              <button
+                onClick={() => setViewMode("table")}
+                className={`p-2 rounded-md ${
+                  viewMode === "table"
+                    ? "bg-white text-primary-600 shadow-sm"
+                    : "text-neutral-600 hover:text-primary-600"
+                }`}
+                title="Table view"
+              >
+                <TbLayoutList className="h-5 w-5" />
+              </button>
+            </div>
 
             <button
-              onClick={handleAddQuery}
-              className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 flex items-center"
+              onClick={() => handleAddQuery()}
+              className="bg-primary-600 text-white rounded-lg px-4 py-2 text-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 flex items-center"
             >
-              <TbPlus className="mr-1.5 h-5 w-5" />
-              New Query
+              <TbPlus className="mr-2 h-5 w-5" /> New Query
             </button>
           </div>
         </div>
       </div>
 
-      {/* Statistics Cards */}
-      <div className="px-6 pt-5 pb-2">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          <div className="bg-white rounded-lg p-4 border border-neutral-200 shadow-sm">
+      <div className="px-8 py-4 flex-1 overflow-hidden flex flex-col">
+        {/* Query Statistics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-5 flex-shrink-0">
+          <div className="bg-white rounded-lg shadow-md py-2.5 pl-5 border-l-4 border-primary-500">
             <div className="flex items-center">
-              <div className="bg-primary-100 p-2 rounded-md text-primary-600 mr-3">
-                <TbMessageCircle className="h-6 w-6" />
+              <div className="p-3 bg-primary-100 rounded-lg mr-4">
+                <TbMessageCircle className="h-6 w-6 text-primary-600" />
               </div>
               <div>
-                <p className="text-sm text-neutral-500">Total Queries</p>
-                <p className="text-2xl font-semibold text-neutral-900">
+                <div className="text-sm font-medium text-neutral-600">
+                  Total Queries
+                </div>
+                <div className="text-2xl font-bold text-secondary-700">
                   {stats.total}
-                </p>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg p-4 border border-neutral-200 shadow-sm">
+          <div className="bg-white rounded-lg shadow-md py-2.5 pl-5 border-l-4 border-green-500">
             <div className="flex items-center">
-              <div className="bg-blue-100 p-2 rounded-md text-blue-600 mr-3">
-                <TbMessageCircle className="h-6 w-6" />
+              <div className="p-3 bg-green-100 rounded-lg mr-4">
+                <TbCheck className="h-6 w-6 text-green-600" />
               </div>
               <div>
-                <p className="text-sm text-neutral-500">New</p>
-                <p className="text-2xl font-semibold text-neutral-900">
-                  {stats.new}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg p-4 border border-neutral-200 shadow-sm">
-            <div className="flex items-center">
-              <div className="bg-yellow-100 p-2 rounded-md text-yellow-600 mr-3">
-                <TbLoader className="h-6 w-6" />
-              </div>
-              <div>
-                <p className="text-sm text-neutral-500">Processing</p>
-                <p className="text-2xl font-semibold text-neutral-900">
-                  {stats.processing}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg p-4 border border-neutral-200 shadow-sm">
-            <div className="flex items-center">
-              <div className="bg-green-100 p-2 rounded-md text-green-600 mr-3">
-                <TbCheck className="h-6 w-6" />
-              </div>
-              <div>
-                <p className="text-sm text-neutral-500">Processed</p>
-                <p className="text-2xl font-semibold text-neutral-900">
+                <div className="text-sm font-medium text-neutral-600">
+                  Processed
+                </div>
+                <div className="text-2xl font-bold text-green-600">
                   {stats.processed}
-                </p>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg p-4 border border-neutral-200 shadow-sm">
+          <div className="bg-white rounded-lg shadow-md py-2.5 pl-5 border-l-4 border-yellow-500">
             <div className="flex items-center">
-              <div className="bg-secondary-100 p-2 rounded-md text-secondary-600 mr-3">
-                <TbUserPlus className="h-6 w-6" />
+              <div className="p-3 bg-yellow-100 rounded-lg mr-4">
+                <TbLoader className="h-6 w-6 text-yellow-600" />
               </div>
               <div>
-                <p className="text-sm text-neutral-500">Converted</p>
-                <p className="text-2xl font-semibold text-neutral-900">
+                <div className="text-sm font-medium text-neutral-600">
+                  Processing
+                </div>
+                <div className="text-2xl font-bold text-yellow-600">
+                  {stats.processing}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-md py-2.5 pl-5 border-l-4 border-secondary-500">
+            <div className="flex items-center">
+              <div className="p-3 bg-secondary-100 rounded-lg mr-4">
+                <TbUserPlus className="h-6 w-6 text-secondary-600" />
+              </div>
+              <div>
+                <div className="text-sm font-medium text-neutral-600">
+                  Converted
+                </div>
+                <div className="text-2xl font-bold text-secondary-600">
                   {stats.converted}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg p-4 border border-neutral-200 shadow-sm">
-            <div className="flex items-center">
-              <div className="bg-amber-100 p-2 rounded-md text-amber-600 mr-3">
-                <TbAlertTriangle className="h-6 w-6" />
-              </div>
-              <div>
-                <p className="text-sm text-neutral-500">Priority</p>
-                <p className="text-2xl font-semibold text-neutral-900">
-                  {stats.priority}
-                </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Main Content Area */}
-      <div className="flex-1 overflow-hidden px-6 py-4">
-        {isLoading ? (
-          <div className="h-full flex items-center justify-center">
-            <div className="text-center">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-neutral-300 border-t-primary-600 mb-2"></div>
-              <p className="text-neutral-600">Loading queries...</p>
+        {/* Query Content */}
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-6 gap-5 min-h-0 overflow-hidden">
+          {/* Query list (larger on mobile, smaller on desktop) */}
+          <div
+            className={`${
+              currentView === "form" || currentView === "detail"
+                ? "hidden lg:block lg:col-span-3"
+                : "col-span-full"
+            } overflow-hidden flex flex-col`}
+          >
+            {isLoading ? (
+              <div className="flex items-center justify-center h-64">
+                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary-600"></div>
+              </div>
+            ) : (
+              <div className="overflow-auto flex-1">
+                {viewMode === "grid" ? (
+                  <QueryList
+                    queries={queries}
+                    searchTerm={searchTerm}
+                    onView={handleViewQuery}
+                    onEdit={handleEditQuery}
+                    onDelete={handleDeleteQuery}
+                    onProcessQuery={handleProcessQuery}
+                    onConvertToLead={handleConvertToLead}
+                  />
+                ) : (
+                  <QueryTable
+                    queries={queries}
+                    onView={handleViewQuery}
+                    onEdit={handleEditQuery}
+                    onDelete={handleDeleteQuery}
+                    onProcessQuery={handleProcessQuery}
+                    onConvertToLead={handleConvertToLead}
+                    sortField={sortField}
+                    sortOrder={sortOrder}
+                    onSort={handleSort}
+                  />
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Query form or detail view */}
+          {(currentView === "form" || currentView === "detail") && (
+            <div className="col-span-full lg:col-span-3 overflow-auto">
+              {currentView === "form" ? (
+                <QueryForm
+                  query={editingQuery}
+                  onSubmit={handleSaveQuery}
+                  onCancel={handleCancelForm}
+                />
+              ) : (
+                <QueryDetail
+                  query={selectedQuery}
+                  onEdit={handleEditQuery}
+                  onDelete={handleDeleteQuery}
+                  onProcessQuery={handleProcessQuery}
+                  onConvertToLead={handleConvertToLead}
+                  onBack={handleBackToList}
+                />
+              )}
             </div>
-          </div>
-        ) : (
-          <div className="h-full rounded-lg shadow-sm overflow-hidden bg-white border border-neutral-200">
-            {currentView === "list" && (
-              <QueryList
-                queries={queries}
-                searchTerm={searchTerm}
-                onView={handleViewQuery}
-                onEdit={handleEditQuery}
-                onDelete={handleDeleteQuery}
-                onProcessQuery={handleProcessQuery}
-                onConvertToLead={handleConvertToLead}
-              />
-            )}
-
-            {currentView === "detail" && (
-              <QueryDetail
-                query={selectedQuery}
-                onBack={handleBackToList}
-                onEdit={handleEditQuery}
-                onDelete={handleDeleteQuery}
-                onProcessQuery={handleProcessQuery}
-                onConvertToLead={handleConvertToLead}
-              />
-            )}
-
-            {currentView === "form" && (
-              <QueryForm
-                query={editingQuery}
-                onSubmit={handleSaveQuery}
-                onCancel={handleCancelForm}
-              />
-            )}
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Footer */}
-      <div className="bg-white border-t border-neutral-200 px-6 py-3">
-        <div className="flex flex-wrap justify-between items-center text-sm text-neutral-500">
+      <div className="bg-white border-t border-gray-200 px-6 py-3">
+        <div className="flex flex-wrap justify-between items-center text-sm text-gray-600">
           <div>Showing {queries.length} queries</div>
           <div className="flex space-x-4">
             <button className="flex items-center hover:text-primary-600">
-              <BiStats className="mr-1 h-4 w-4" />
+              <TbReport className="mr-1 h-4 w-4" />
               Generate Report
             </button>
             <button className="flex items-center hover:text-primary-600">

@@ -35,7 +35,7 @@ const AdminLayout = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900  text-white font-lexend">
+    <div className="flex flex-col h-screen bg-gradient-to-br from-primary-800 via-primary-800 to-primary-900  text-white font-lexend">
       {/* Header */}
       <AdminHeader
         toggleSidebarCollapse={toggleSidebarCollapse}

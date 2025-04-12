@@ -14,7 +14,7 @@ const AuthGuard = ({ children }) => {
       try {
         setLoading(true);
 
-        // Check if we have a token
+        // Check if we have a valid token
         if (!isAuthenticated()) {
           setAuthenticated(false);
           return;

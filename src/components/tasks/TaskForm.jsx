@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { PiUsersDuotone } from "react-icons/pi";
 import {
   TbCalendarEvent,
   TbTag,
@@ -136,13 +137,13 @@ const TaskForm = ({ task = null, onSave, onCancel }) => {
   return (
     <div className="bg-white rounded-lg shadow-sm">
       <div className="border-b border-neutral-200 px-5 py-4 flex justify-between items-center">
-        <h3 className="text-lg font-medium text-neutral-900">
-          {task ? "Edit Task" : "Create New Task"}
+        <h3 className="text-lg font-semibold text-secondary-700">
+          {task ? "Edit Task" : "Create a New Task"}
         </h3>
         <button
           type="button"
           onClick={onCancel}
-          className="text-neutral-500 hover:text-neutral-700"
+          className="text-neutral-700 hover:text-neutral-700"
         >
           <TbX className="h-5 w-5" />
         </button>
@@ -163,9 +164,9 @@ const TaskForm = ({ task = null, onSave, onCancel }) => {
             name="title"
             value={formData.title}
             onChange={handleChange}
-            className={`block w-full rounded-md border ${
-              errors.title ? "border-red-300" : "border-neutral-300"
-            } focus:border-primary-500 focus:ring-primary-500 sm:text-sm p-2.5`}
+            className={`block w-full bg-neutral-100 text-gray-600 font-medium rounded-md border placeholder:text-gray-400 placeholder:font-normal ${
+              errors.title ? "border-red-300" : ""
+            } focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm p-2.5`}
             placeholder="Enter task title"
           />
           {errors.title && (
@@ -184,7 +185,7 @@ const TaskForm = ({ task = null, onSave, onCancel }) => {
             Description
           </label>
           <div className="relative">
-            <div className="absolute top-3 left-3 text-neutral-400">
+            <div className="absolute top-3 left-3 text-neutral-600">
               <TbAlignLeft className="h-5 w-5" />
             </div>
             <textarea
@@ -193,7 +194,7 @@ const TaskForm = ({ task = null, onSave, onCancel }) => {
               value={formData.description}
               onChange={handleChange}
               rows="3"
-              className="block w-full rounded-md border border-neutral-300 pl-10 focus:border-primary-500 focus:ring-primary-500 sm:text-sm p-2.5"
+              className="block w-full bg-neutral-100 text-gray-600 font-medium rounded-md border border-neutral-300 pl-10 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm p-2.5 placeholder:text-gray-400 placeholder:font-normal"
               placeholder="Enter task description"
             ></textarea>
           </div>
@@ -209,7 +210,7 @@ const TaskForm = ({ task = null, onSave, onCancel }) => {
               Due Date
             </label>
             <div className="relative">
-              <div className="absolute top-2.5 left-3 text-neutral-400">
+              <div className="absolute top-2.5 left-3 text-neutral-600">
                 <TbCalendarEvent className="h-5 w-5" />
               </div>
               <input
@@ -218,7 +219,7 @@ const TaskForm = ({ task = null, onSave, onCancel }) => {
                 name="dueDate"
                 value={formData.dueDate}
                 onChange={handleChange}
-                className="block w-full rounded-md border border-neutral-300 pl-10 focus:border-primary-500 focus:ring-primary-500 sm:text-sm p-2.5"
+                className="block w-full bg-neutral-100 text-gray-600 font-medium rounded-md border border-neutral-300 pl-10 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm p-2.5 placeholder:text-gray-400 placeholder:font-normal"
               />
             </div>
           </div>
@@ -236,7 +237,7 @@ const TaskForm = ({ task = null, onSave, onCancel }) => {
               name="dueTime"
               value={formData.dueTime}
               onChange={handleChange}
-              className="block w-full rounded-md border border-neutral-300 focus:border-primary-500 focus:ring-primary-500 sm:text-sm p-2.5"
+              className="block w-full bg-neutral-100 text-gray-600 font-medium rounded-md border border-neutral-300 pl-5 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm p-2.5 placeholder:text-gray-400 placeholder:font-normal"
             />
           </div>
         </div>
@@ -255,7 +256,7 @@ const TaskForm = ({ task = null, onSave, onCancel }) => {
                   value={priority}
                   checked={formData.priority === priority}
                   onChange={handleChange}
-                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-neutral-300"
+                  className="h-[1.1rem] w-[1.1rem] bg-neutral-100 text-gray-600 font-medium rounded-md border border-neutral-400 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
                 />
                 <span className="ml-2 text-sm text-neutral-700 capitalize">
                   {priority}
@@ -274,7 +275,7 @@ const TaskForm = ({ task = null, onSave, onCancel }) => {
             Category
           </label>
           <div className="relative">
-            <div className="absolute top-2.5 left-3 text-neutral-400">
+            <div className="absolute top-2.5 left-3 text-neutral-600">
               <TbTag className="h-5 w-5" />
             </div>
             <input
@@ -283,8 +284,8 @@ const TaskForm = ({ task = null, onSave, onCancel }) => {
               name="category"
               value={formData.category}
               onChange={handleChange}
-              onFocus={() => setShowCategoryOptions(true)}
-              className="block w-full rounded-md border border-neutral-300 pl-10 focus:border-primary-500 focus:ring-primary-500 sm:text-sm p-2.5"
+              onClick={() => setShowCategoryOptions(!showCategoryOptions)}
+              className="block w-full bg-neutral-100 text-gray-600 font-medium rounded-md border border-neutral-300 pl-10 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm p-2.5 placeholder:text-gray-400 placeholder:font-normal"
               placeholder="Select or enter a category"
             />
             {showCategoryOptions && (
@@ -317,8 +318,8 @@ const TaskForm = ({ task = null, onSave, onCancel }) => {
             Assigned To
           </label>
           <div className="relative">
-            <div className="absolute top-2.5 left-3 text-neutral-400">
-              <TbUsers className="h-5 w-5" />
+            <div className="absolute top-2.5 left-3 text-neutral-600">
+              <PiUsersDuotone className="h-5 w-5" />
             </div>
             <input
               type="text"
@@ -326,42 +327,26 @@ const TaskForm = ({ task = null, onSave, onCancel }) => {
               name="assignedTo"
               value={formData.assignedTo}
               onChange={handleChange}
-              className="block w-full rounded-md border border-neutral-300 pl-10 focus:border-primary-500 focus:ring-primary-500 sm:text-sm p-2.5"
+              className="block w-full bg-neutral-100 text-gray-600 font-medium   rounded-md border border-neutral-300 pl-10 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm p-2.5 placeholder:text-gray-400 placeholder:font-normal"
               placeholder="Who should complete this task?"
             />
           </div>
         </div>
 
-        {/* Completed Status */}
-        <div className="flex items-center">
-          <input
-            type="checkbox"
-            id="completed"
-            name="completed"
-            checked={formData.completed}
-            onChange={handleChange}
-            className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-neutral-300 rounded"
-          />
-          <label
-            htmlFor="completed"
-            className="ml-2 block text-sm text-neutral-700"
-          >
-            Mark as completed
-          </label>
-        </div>
+        
 
         {/* Form Buttons */}
         <div className="pt-2 flex justify-end space-x-3">
           <button
             type="button"
             onClick={onCancel}
-            className="inline-flex justify-center py-2 px-4 border border-neutral-300 shadow-sm text-sm font-medium rounded-md text-neutral-700 bg-white hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+            className="inline-flex justify-center py-2 px-8 border border-neutral-300 shadow-sm text-sm font-medium rounded-md text-neutral-700 bg-white hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+            className="inline-flex justify-center py-2 px-6 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
           >
             {task ? "Update Task" : "Create Task"}
           </button>
