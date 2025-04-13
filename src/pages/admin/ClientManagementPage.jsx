@@ -4,7 +4,7 @@ import {
   PiUserCheckDuotone,
   PiUsersThreeDuotone,
 } from "react-icons/pi";
-import { RiUserFollowLine } from "react-icons/ri";
+import { RiUserAddLine, RiUserFollowLine } from "react-icons/ri";
 import {
   TbFilter,
   TbSearch,
@@ -337,13 +337,13 @@ const ClientManagementPage = () => {
   const getStatusBadgeColor = (status) => {
     switch (status) {
       case "active":
-        return "bg-green-100 text-green-800";
+        return "bg-green-200 text-green-800";
       case "inactive":
-        return "bg-red-100 text-red-800";
+        return "bg-red-200 text-red-800";
       case "pending_renewal":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-yellow-200 text-yellow-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-200/70 text-gray-800";
     }
   };
 
@@ -452,7 +452,7 @@ const ClientManagementPage = () => {
           <div className="flex flex-wrap mt-4 md:mt-0 space-x-2">
             <button
               onClick={refreshClients}
-              className="bg-white border border-gray-200 rounded-lg p-2 text-gray-500 hover:text-primary-600 hover:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="bg-white border border-gray-200 rounded-lg p-2 text-gray-500 hover:text-primary-600 hover:border-primary-300 focus:outline-none focus:border-primary-300 focus:ring-1 focus:ring-primary-500"
             >
               <TbRefresh
                 className={`h-5 w-5 ${isRefreshing ? "animate-spin" : ""}`}
@@ -466,9 +466,9 @@ const ClientManagementPage = () => {
                   placeholder="Search clients..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 min-w-[200px]"
+                  className=" bg-neutral-200 text-neutral-800 font-medium pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 min-w-[400px]"
                 />
-                <TbSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <TbSearch size={19} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery("")}
@@ -487,7 +487,7 @@ const ClientManagementPage = () => {
                   Object.values(activeFilters).some((v) => v !== null)
                     ? "border-primary-300 text-primary-600"
                     : "border-gray-200 text-gray-700"
-                } rounded-lg px-4 py-2 text-sm hover:text-primary-600 hover:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-500 flex items-center`}
+                } rounded-lg px-4 py-2 text-sm hover:text-primary-600 hover:border-primary-300 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 flex items-center`}
               >
                 <TbFilter className="h-4 w-4 mr-2" />
                 Filter
@@ -497,13 +497,13 @@ const ClientManagementPage = () => {
                   <TbChevronDown className="h-4 w-4 ml-2" />
                 )}
               </button>
-
+ 
               {/* Filter Dropdown */}
               {isFilterDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-72 bg-white border border-gray-200 rounded-lg shadow-lg z-10 overflow-hidden">
                   <div className="p-4">
                     <div className="flex justify-between items-center mb-3">
-                      <h3 className="font-medium text-gray-700">Filters</h3>
+                      <h3 className="font-medium text-primary-700">Select Filters</h3>
                       {Object.values(activeFilters).some((v) => v !== null) && (
                         <button
                           onClick={clearAllFilters}
@@ -516,7 +516,7 @@ const ClientManagementPage = () => {
 
                     {/* Status filter */}
                     <div className="mb-3">
-                      <h4 className="text-sm font-medium text-gray-700 mb-2">
+                      <h4 className="text-sm font-semibold text-neutral-700 mb-2">
                         Status
                       </h4>
                       <div className="flex flex-wrap gap-2">
@@ -525,10 +525,10 @@ const ClientManagementPage = () => {
                             <button
                               key={status}
                               onClick={() => handleStatusFilterChange(status)}
-                              className={`px-3 py-1 text-xs rounded-full ${
+                              className={`px-4 py-1 text-xs rounded-full ${
                                 activeFilters.status === status
-                                  ? getStatusBadgeColor(status)
-                                  : "bg-gray-100 text-gray-700"
+                                  ? getStatusBadgeColor(status) + " font-medium"
+                                  : "bg-gray-200/70 text-gray-700"
                               }`}
                             >
                               {status === "active"
@@ -544,7 +544,7 @@ const ClientManagementPage = () => {
 
                     {/* Policy Type filter */}
                     <div>
-                      <h4 className="text-sm font-medium text-gray-700 mb-2">
+                      <h4 className="text-sm font-semibold text-neutral-700 mb-2">
                         Policy Type
                       </h4>
                       <div className="flex flex-col gap-2">
@@ -554,8 +554,8 @@ const ClientManagementPage = () => {
                             onClick={() => handlePolicyFilterChange(policy)}
                             className={`px-3 py-1.5 text-xs rounded-md text-left ${
                               activeFilters.policyType === policy
-                                ? "bg-primary-100 text-primary-700"
-                                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                ? "bg-primary-200 text-primary-700 font-medium"
+                                : "bg-gray-200/70 text-gray-700 hover:bg-gray-200"
                             }`}
                           >
                             {policy}
@@ -570,10 +570,10 @@ const ClientManagementPage = () => {
 
             <button
               onClick={() => handleOpenClientModal(null, true)}
-              className="bg-primary-600 text-white rounded-lg px-4 py-2 text-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 flex items-center"
+              className="bg-primary-600 font-medium text-white rounded-lg px-4 py-2 text-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 flex items-center"
             >
-              <TbUserPlus className="h-4 w-4 mr-2" />
-              Add Client
+              <RiUserAddLine size={18} className=" mr-2" />
+              Add New Client
             </button>
           </div>
         </div>
@@ -648,7 +648,7 @@ const ClientManagementPage = () => {
         </div>
 
         {/* Clients Table */}
-        <div className="flex-1 bg-white rounded-lg border border-gray-200">
+        <div className="flex-1 bg-white rounded-[0.7rem] border border-gray-200">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-secondary-200/40">
@@ -783,7 +783,7 @@ const ClientManagementPage = () => {
                 {filteredAndSortedClients.map((client) => (
                   <tr
                     key={client.id}
-                    className="hover:bg-gray-50 transition-colors cursor-pointer"
+                    className="hover:bg-gray-200 transition-colors cursor-pointer"
                     onClick={(e) => {
                       // Only trigger if not clicking on checkbox or action buttons
                       if (

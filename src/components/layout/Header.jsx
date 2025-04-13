@@ -71,7 +71,7 @@ const Header = () => {
                 <div className="absolute inset-0 bg-primary-200 transform scale-0 group-hover:scale-100 transition-transform duration-300 origin-bottom-right rounded-full"></div>
               </span>
               <div>
-                <span className="font-semibold tracking-wide font-outfit text-sm">+254712345678</span>
+                <span className="font-semibold tracking-wide font-outfit text-sm">+254 720 6363638</span>
                 <div className="h-0.5 w-0 group-hover:w-full bg-primary-500 transition-all duration-300"></div>
               </div>
             </a>
@@ -150,7 +150,7 @@ const Header = () => {
               <div className="w-10 h-10 rounded-full bg-primary-50 flex items-center justify-center mr-3">
                 <TbPhoneCall className="h-5 w-5 text-primary-500" />
               </div>
-              <span className="font-semibold tracking-wide font-outfit text-sm">+254712345678</span>
+              <span className="font-semibold tracking-wide font-outfit text-sm">+254 720 636363</span>
             </a>
             <Link
               to="/compare"

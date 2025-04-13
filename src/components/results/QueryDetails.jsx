@@ -147,18 +147,7 @@ const QueryDetails = ({ report, userQuery, formatCurrency }) => {
           </span>
         </div>
 
-        {/* Room Type */}
-        {queryData.roomType && (
-          <div className="flex justify-between items-center">
-            <span className="text-neutral-300 text-[0.8rem] sm:text-sm md:text-base flex items-center">
-              <TbBuildingHospital className="mr-2 h-4 w-4 text-secondary-400" />
-              Preferred Room:
-            </span>
-            <span className="font-medium text-[0.8rem] sm:text-sm md:text-base text-white bg-white/5 px-3 py-1 rounded-md">
-              {roomTypeLabels[queryData.roomType] || queryData.roomType}
-            </span>
-          </div>
-        )}
+      
 
         {/* Optional Covers */}
         {selectedCovers.length > 0 && (

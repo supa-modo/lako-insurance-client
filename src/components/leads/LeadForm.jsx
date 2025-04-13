@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { PiCaretDownDuotone, PiUserDuotone } from "react-icons/pi";
 import {
   TbCheck,
   TbX,
@@ -14,8 +15,9 @@ import {
   TbAlertCircle,
   TbTrash,
   TbTag,
+  TbMoneybag,
 } from "react-icons/tb";
-
+import { RiUserShared2Line } from "react-icons/ri";
 const LeadForm = ({ initialData, onSave, onCancel }) => {
   // Form states
   const [formData, setFormData] = useState({
@@ -132,18 +134,18 @@ const LeadForm = ({ initialData, onSave, onCancel }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start justify-end z-50 p-3"
+      className="fixed inset-0 bg-black/50 backdrop-blur-[1.5px] flex items-start justify-end z-50 p-3 font-outfit"
       onClick={handleBackdropClick}
     >
       <div
-        className="w-[550px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-2xl"
+        className="w-[750px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-xl"
         style={{
           animation: "slide-in 0.3s ease-out forwards",
         }}
       >
         {/* Form header */}
         <div className="bg-white px-6 py-4 flex justify-between items-center border-b border-gray-200 rounded-t-2xl">
-          <h2 className="text-lg font-semibold text-gray-800">
+          <h2 className="text-lg font-semibold text-secondary-700">
             {initialData ? "Edit Lead" : "Add New Lead"}
           </h2>
           <button
@@ -156,34 +158,34 @@ const LeadForm = ({ initialData, onSave, onCancel }) => {
 
         <form
           onSubmit={handleSubmit}
-          className="h-[calc(100vh-84px)] overflow-y-auto"
+          className="h-[calc(100vh-84px)] overflow-y-auto flex flex-col"
         >
           <div className="p-5 space-y-6">
             {/* Client Information */}
             <div>
-              <h3 className="font-medium text-gray-800 mb-3 flex items-center">
-                <TbUser className="mr-2 text-primary-600" /> Personal
-                Information
+              <h3 className="font-semibold text-neutral-700 mb-3 flex items-center">
+                <PiUserDuotone size={18} className="mr-2 text-primary-600" />{" "}
+                Personal Information
               </h3>
 
               <div className="grid grid-cols-1 gap-4">
-                {/* Name Field */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Full Name <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Name Field */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Full Name <span className="text-red-500">*</span>
+                    </label>
                     <input
                       type="text"
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
-                      className={`w-full px-4 py-2 rounded-lg border ${
+                      placeholder="Enter client's full name"
+                      className={`w-full font-medium text-[0.95rem] bg-neutral-100 text-neutral-800 px-4 py-2 rounded-lg border ${
                         errors.name
                           ? "border-red-300 bg-red-50"
                           : "border-gray-300"
-                      } focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors`}
-                      placeholder="Enter client's full name"
+                      } focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors`}
                     />
                     {errors.name && (
                       <div className="text-red-500 text-xs mt-1 flex items-center">
@@ -191,40 +193,9 @@ const LeadForm = ({ initialData, onSave, onCancel }) => {
                       </div>
                     )}
                   </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  {/* Email Field */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Email <span className="text-red-500">*</span>
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <TbMail className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        className={`w-full pl-10 pr-4 py-2 rounded-lg border ${
-                          errors.email
-                            ? "border-red-300 bg-red-50"
-                            : "border-gray-300"
-                        } focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors`}
-                        placeholder="client@example.com"
-                      />
-                      {errors.email && (
-                        <div className="text-red-500 text-xs mt-1 flex items-center">
-                          <TbAlertCircle className="mr-1" /> {errors.email}
-                        </div>
-                      )}
-                    </div>
-                  </div>
 
                   {/* Phone Field */}
-                  <div>
+                  <div className="">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Phone <span className="text-red-500">*</span>
                     </label>
@@ -237,12 +208,12 @@ const LeadForm = ({ initialData, onSave, onCancel }) => {
                         name="phone"
                         value={formData.phone}
                         onChange={handleChange}
-                        className={`w-full pl-10 pr-4 py-2 rounded-lg border ${
+                        placeholder="+254 XXX XXX XXX"
+                        className={`w-full font-medium text-[0.93rem] bg-neutral-100 text-neutral-800 pl-10 pr-4 py-2 rounded-lg border ${
                           errors.phone
                             ? "border-red-300 bg-red-50"
                             : "border-gray-300"
-                        } focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors`}
-                        placeholder="+254 712 345678"
+                        } focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors`}
                       />
                       {errors.phone && (
                         <div className="text-red-500 text-xs mt-1 flex items-center">
@@ -251,54 +222,56 @@ const LeadForm = ({ initialData, onSave, onCancel }) => {
                       )}
                     </div>
                   </div>
-
-                  {/* Age Field */}
-                  <div>
+                </div>
+                <div className="flex flex-row gap-4">
+                  {/* Email Field */}
+                  <div className="w-[50%]">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Age <span className="text-red-500">*</span>
+                      Lead Email <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <TbMail className="h-5 w-5 text-gray-400" />
+                      </div>
                       <input
-                        type="number"
-                        name="age"
-                        value={formData.age}
+                        type="email"
+                        name="email"
+                        value={formData.email}
                         onChange={handleChange}
-                        min="18"
-                        max="120"
-                        className={`w-full px-4 py-2 rounded-lg border ${
-                          errors.age
+                        placeholder="email@example.com"
+                        className={`w-full font-medium text-[0.96rem] bg-neutral-100 text-neutral-800 pl-10 pr-4 py-2 rounded-lg border ${
+                          errors.email
                             ? "border-red-300 bg-red-50"
                             : "border-gray-300"
-                        } focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors`}
-                        placeholder="Age in years"
+                        } focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors`}
                       />
-                      {errors.age && (
+                      {errors.email && (
                         <div className="text-red-500 text-xs mt-1 flex items-center">
-                          <TbAlertCircle className="mr-1" /> {errors.age}
+                          <TbAlertCircle className="mr-1" /> {errors.email}
                         </div>
                       )}
                     </div>
                   </div>
 
                   {/* Budget Field */}
-                  <div>
+                  <div className="w-[30%]">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Budget <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <TbCurrencyDollar className="h-5 w-5 text-gray-400" />
+                        <TbMoneybag className="h-5 w-5 text-gray-400" />
                       </div>
                       <input
                         type="text"
                         name="budget"
                         value={formData.budget}
                         onChange={handleChange}
-                        className={`w-full pl-10 pr-4 py-2 rounded-lg border ${
+                        className={`w-full font-medium text-[0.93rem] bg-neutral-100 text-neutral-800 pl-10 pr-4 py-2 rounded-lg border ${
                           errors.budget
                             ? "border-red-300 bg-red-50"
                             : "border-gray-300"
-                        } focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors`}
+                        } focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors`}
                         placeholder="KES 50,000"
                       />
                       {errors.budget && (
@@ -307,6 +280,31 @@ const LeadForm = ({ initialData, onSave, onCancel }) => {
                         </div>
                       )}
                     </div>
+                  </div>  
+
+                  {/* Age Field */}
+                  <div className="w-[20%]">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Age <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="age"
+                      value={formData.age}
+                      onChange={handleChange}
+                      placeholder="i.e. 65"
+                      min="18"
+                      className={`w-full font-medium text-[0.93rem] bg-neutral-100 text-neutral-800 px-4 py-2 rounded-lg border ${
+                        errors.age
+                          ? "border-red-300 bg-red-50"
+                          : "border-gray-300"
+                      } focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors`}
+                    />
+                    {errors.age && (
+                      <div className="text-red-500 text-xs mt-1 flex items-center">
+                        <TbAlertCircle className="mr-1" /> {errors.age}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -314,8 +312,8 @@ const LeadForm = ({ initialData, onSave, onCancel }) => {
 
             {/* Lead Details */}
             <div className="border-t border-gray-200 pt-5">
-              <h3 className="font-medium text-gray-800 mb-3 flex items-center">
-                <TbInfoCircle className="mr-2 text-primary-600" /> Lead Details
+            <h3 className="font-semibold text-neutral-700 mb-3 flex items-center">
+            <TbInfoCircle size={20} className="mr-2 text-primary-600" /> Lead Details
               </h3>
 
               <div className="grid grid-cols-2 gap-4">
@@ -324,17 +322,21 @@ const LeadForm = ({ initialData, onSave, onCancel }) => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Status
                   </label>
+                  <div className="relative">
                   <select
                     name="status"
                     value={formData.status}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                    className={`w-full font-medium text-[0.93rem] bg-neutral-100 text-neutral-800 px-4 py-2 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors`}
                   >
                     <option value="new">New Lead</option>
                     <option value="proposal">Proposal</option>
                     <option value="negotiation">Negotiation</option>
                     <option value="converted">Converted</option>
                   </select>
+
+                  <PiCaretDownDuotone className="absolute right-4 top-0 bottom-0 my-auto h-5 w-5 text-gray-400 pointer-events-none" />
+                </div>
                 </div>
 
                 {/* Assigned To Field */}
@@ -342,11 +344,15 @@ const LeadForm = ({ initialData, onSave, onCancel }) => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Assigned To
                   </label>
+                  <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <RiUserShared2Line className="h-5 w-5 text-gray-400" />
+                  </div>
                   <select
                     name="assignedTo"
                     value={formData.assignedTo}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                    className={`w-full font-medium text-[0.93rem] bg-neutral-100 text-neutral-800 pl-10 px-4 py-2 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors`}
                   >
                     <option value="">Not Assigned</option>
                     <option value="Mary W.">Mary W.</option>
@@ -354,6 +360,8 @@ const LeadForm = ({ initialData, onSave, onCancel }) => {
                     <option value="Sarah N.">Sarah N.</option>
                     <option value="David K.">David K.</option>
                   </select>
+                  <PiCaretDownDuotone className="absolute right-4 top-0 bottom-0 my-auto h-5 w-5 text-gray-400 pointer-events-none" />
+                  </div>
                 </div>
 
                 {/* Priority Field */}
@@ -369,10 +377,10 @@ const LeadForm = ({ initialData, onSave, onCancel }) => {
                         className={`flex-1 py-1.5 px-2 rounded-lg border text-sm ${
                           formData.priority === priority
                             ? priority === "high"
-                              ? "bg-red-100 border-red-300 text-red-800"
+                              ? "bg-red-200 border-red-300 text-red-800"
                               : priority === "medium"
-                              ? "bg-yellow-100 border-yellow-300 text-yellow-800"
-                              : "bg-blue-100 border-blue-300 text-blue-800"
+                              ? "bg-yellow-200 border-yellow-300 text-yellow-800"
+                              : "bg-blue-200 border-blue-300 text-blue-800"
                             : "bg-white border-gray-300 text-gray-700"
                         } transition-colors`}
                         onClick={() =>
@@ -392,14 +400,14 @@ const LeadForm = ({ initialData, onSave, onCancel }) => {
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <TbCalendar className="h-5 w-5 text-gray-400" />
+                      <TbCalendar size={22} className=" text-gray-400" />
                     </div>
                     <input
                       type="date"
                       name="nextFollowUp"
                       value={formData.nextFollowUp}
                       onChange={handleChange}
-                      className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                      className={`w-full font-medium text-[0.93rem] bg-neutral-100 text-neutral-800 pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors`}
                     />
                   </div>
                 </div>
@@ -420,7 +428,7 @@ const LeadForm = ({ initialData, onSave, onCancel }) => {
                     type="text"
                     value={newTag}
                     onChange={(e) => setNewTag(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                    className={`w-full font-medium placeholder:font-normal text-[0.93rem] bg-neutral-100 text-neutral-800 pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors`}
                     placeholder="Add a tag"
                     onKeyPress={(e) =>
                       e.key === "Enter" && (e.preventDefault(), handleAddTag())
@@ -430,7 +438,7 @@ const LeadForm = ({ initialData, onSave, onCancel }) => {
                 <button
                   type="button"
                   onClick={handleAddTag}
-                  className="bg-primary-500 text-white p-2 rounded-lg hover:bg-primary-600 transition-colors"
+                  className="bg-primary-500 text-white p-2 rounded-lg focus:outline-none hover:bg-primary-600 transition-colors"
                 >
                   <TbPlus className="h-5 w-5" />
                 </button>
@@ -469,28 +477,30 @@ const LeadForm = ({ initialData, onSave, onCancel }) => {
                 value={formData.notes}
                 onChange={handleChange}
                 rows="4"
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                className="w-full text-[0.95rem] bg-neutral-100 text-neutral-800 placeholder:font-normal px-4 py-2 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors"
                 placeholder="Add any additional notes or information about the lead"
               ></textarea>
             </div>
 
-            {/* Form actions */}
-            <div className="border-t border-gray-200 pt-5 pb-3 flex justify-end space-x-3">
-              <button
-                type="button"
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors"
-                onClick={onCancel}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors flex items-center"
-              >
-                <TbCheck className="mr-2" />
+             {/* Form actions */}
+      <div className="border-t border-gray-200 py-4 text-[0.93rem] font-medium flex justify-end space-x-3 px-5">
+        <button
+          type="button"
+          className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-200 transition-colors"
+          onClick={onCancel}
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors flex items-center"
+        >
+          <TbCheck className="mr-2" />
                 {initialData ? "Update Lead" : "Add Lead"}
               </button>
             </div>
+
+           
           </div>
         </form>
       </div>

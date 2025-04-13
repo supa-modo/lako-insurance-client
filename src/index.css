@@ -81,6 +81,15 @@ textarea {
   @apply bg-secondary-700;
 }
 
+.hide-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
 @layer components {
   .shadow-3xl {
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);

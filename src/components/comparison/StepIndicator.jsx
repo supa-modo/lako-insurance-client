@@ -10,13 +10,13 @@ const steps = [
     number: 1,
     label: "Personal Details",
     icon: PiUserDuotone,
-    description: "Your information & contacts",
+    description: "Your information & budget",
   },
   {
     number: 2,
     label: "Insurance Preferences",
     icon: TbShieldCheckFilled,
-    description: "Coverage options & budget",
+    description: "Coverage preferences",
   },
 ];
 

@@ -7,30 +7,34 @@ import {
   TbCalendarStar,
   TbCheck,
   TbUserSquare,
+  TbMoneybag,
 } from "react-icons/tb";
 import { PiUserDuotone, PiUserListDuotone } from "react-icons/pi";
 
-// Age range options
-const ageRanges = [
+const budgetRanges = [
   {
-    value: "65-69",
-    label: "65-69 years",
-    description: "Lower premiums available in this age bracket",
+    value: 25000,
+    label: "Ksh 0 - 25,000",
   },
   {
-    value: "70-74",
-    label: "70-74 years",
-    description: "Moderate premium rates with comprehensive coverage",
+    value: 50000,
+    label: "Ksh 25,000 - 50,000",
   },
   {
-    value: "75-79",
-    label: "75-79 years",
-    description: "Higher premium rates with specialized care options",
+    value: 75000,
+    label: "Ksh 50,000 - 75,000",
   },
   {
-    value: "80-85",
-    label: "80-85 years",
-    description: "Premium rates with specialized senior care benefits",
+    value: 100000,
+    label: "Ksh 75,000 - 100,000",
+  },
+  {
+    value: 150000,
+    label: "Ksh 100,000 - 150,000",
+  },
+  {
+    value: 250000,
+    label: "Ksh 150,000 +",
   },
 ];
 
@@ -40,19 +44,19 @@ const PersonalDetailsStep = ({ register, errors, onSubmit, watchedValues }) => {
       <div className="mb-3 sm:mb-4">
         <h2 className="text-lg sm:text-xl font-bold text-secondary-400 flex items-center font-outfit">
           <TbUserSquare className="mr-3 text-secondary-500 h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0" />{" "}
-          <span>Your Contact Info & Age</span>
+          <span>Your Contact Info & Budget</span>
         </h2>
       </div>
 
-      <div className="space-y-3 sm:space-y-4">
-        <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
+      <div className="space-y-3 sm:space-y-5">
+        <div className="grid md:grid-cols-2 gap-4 sm:gap-5">
           {/* Name Field */}
           <div className="space-y-1.5">
             <label
               htmlFor="fullName"
               className="ml-3 text-[0.84rem] md:text-[0.95rem] font-medium text-white flex items-center font-outfit"
             >
-              Full Name
+              Your Name
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-1 flex items-center pl-3 pointer-events-none">
@@ -83,13 +87,60 @@ const PersonalDetailsStep = ({ register, errors, onSubmit, watchedValues }) => {
             )}
           </div>
 
+          
+
+          {/* Age Field */}
+          <div className="space-y-1.5">
+            <label
+              htmlFor="age"
+              className="ml-3 text-[0.84rem] md:text-[0.95rem] font-medium text-white flex items-center font-outfit"
+            >
+              Age
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-1 flex items-center pl-3 pointer-events-none">
+                <PiUserListDuotone className="text-primary-200" size={20} />  
+              </div>
+              <input
+                id="age"
+                type="number"
+                className={`w-full py-2 sm:py-2.5 pl-12 pr-3 text-[0.93rem] sm:text-[0.98rem] text-white rounded-lg border-2 bg-white/10 backdrop-blur-sm focus:bg-white/20
+                  focus:ring-0 focus focus:border-secondary-400 focus:outline-none  
+                font-outfit placeholder-white/50
+                ${
+                  errors.age
+                    ? "border-red-400/70 focus:border-red-500 focus:ring-red-400/30"
+                    : "border-white/30"
+                }`}
+                placeholder="Your Age"
+                {...register("age", {
+                  required: "Age is required",
+                  min: {
+                    value: 18,
+                    message: "You must be at least 18 years old",
+                  },
+                  max: {
+                    value: 100,
+                    message: "You must be less than 100 years old",
+                  },
+                })}
+              />
+            </div>
+            {errors.age && (
+              <p className="mt-1 text-red-300 text-xs sm:text-sm flex items-center">
+                <TbInfoTriangleFilled className="mr-1 h-4 w-4 text-red-400" />{" "}
+                {errors.age.message}
+              </p>
+            )}
+          </div>
+
           {/* Phone Number Field */}
           <div className="space-y-1.5">
             <label
               htmlFor="phone"
               className="ml-3 text-[0.84rem] md:text-[0.95rem] font-medium text-white flex items-center font-outfit"
             >
-              Phone Number
+              Phone Number <span className="pl-4 text-xs sm:text-sm text-neutral-400">(for an agent to reach out for assistance)</span>
             </label>
             <div className="">
               <div
@@ -132,64 +183,63 @@ const PersonalDetailsStep = ({ register, errors, onSubmit, watchedValues }) => {
           </div>
         </div>
 
-        {/* Age Range Selection */}
-        <div className="space-y-3">
-          <label className="text-[0.84rem] md:text-[0.95rem] font-medium text-primary-400 flex items-center font-outfit">
-            <TbCalendarStar className="mr-2 h-5 w-5 sm:h-6 sm:w-6" /> Age Range
-          </label>
-          <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
-            {ageRanges.map((range) => (
-              <div
-                key={range.value}
-                className={`relative border-2 rounded-lg p-3 sm:p-4 cursor-pointer transition-all duration-300 
-                ${
-                  watchedValues.ageRange === range.value
-                    ? "border-secondary-500 bg-secondary-100 shadow-md transform scale-[1.01]"
-                    : "border-neutral-200 hover:border-secondary-300 bg-white/80 hover:bg-neutral-100"
-                }`}
-                onClick={() => {
-                  const input = document.getElementById(
-                    `ageRange-${range.value}`
-                  );
-                  if (input) input.click();
-                }}
-              >
-                <div className="flex items-start">
-                  <input
-                    id={`ageRange-${range.value}`}
-                    type="radio"
-                    className="sr-only"
-                    value={range.value}
-                    {...register("ageRange", {
-                      required: "Please select your age range",
-                    })}
-                  />
-                  <div className="w-full">
-                    <div className="flex justify-between items-center mb-1">
-                      <p className="font-bold text-sm sm:text-base text-neutral-800 font-outfit">
-                        {range.label}
-                      </p>
-                      {watchedValues.ageRange === range.value && (
-                        <div className="h-5 w-5 rounded-full bg-secondary-500 flex items-center justify-center">
-                          <TbCheck className="text-white h-3 w-3" />
-                        </div>
-                      )}
-                    </div>
-                    <p className="text-xs sm:text-sm text-neutral-600 font-outfit">
-                      {range.description}
+        {/* Budget Ranges with Detailed Cards */}
+      <div className="space-y-3 mt-2">
+        <label className="text-sm sm:text-base font-semibold text-primary-400 flex items-center font-outfit">
+          <TbMoneybag className="mr-2 h-5 w-5 sm:h-6 sm:w-6" /> Choose Your Budget Range
+          (Annual Premium)
+        </label>
+        <div className="grid sm:grid-cols-3 gap-3 sm:gap-4">
+          {budgetRanges.map((range) => (
+            <div
+              key={range.value}
+              className={`relative border-2 rounded-lg px-3 py-2  cursor-pointer transition-all duration-300 
+              ${
+                Number(watchedValues.budget) === range.value
+                  ? "border-secondary-500 bg-secondary-100 shadow-md transform scale-[1.01]"
+                  : "border-neutral-200 hover:border-secondary-300 bg-white/80 hover:bg-neutral-100"
+              }`}
+              onClick={() => {
+                const input = document.getElementById(`budget-${range.value}`);
+                if (input) input.click();
+              }}
+            >
+              <div className="flex items-start">
+                <input
+                  id={`budget-${range.value}`}
+                  type="radio"
+                  className="sr-only"
+                  value={range.value}
+                  {...register("budget", {
+                    required: "Please select a budget range",
+                  })}
+                />
+                <div className="w-full">
+                  <div className="flex justify-between items-center mb-1">
+                    <p className="font-bold text-sm sm:text-base text-neutral-800 font-outfit">
+                      {range.label}
                     </p>
+                    {Number(watchedValues.budget) === range.value && (
+                      <div className="h-5 w-5 rounded-full bg-secondary-500 flex items-center justify-center">
+                        <TbCheck className="text-white h-3 w-3" />
+                      </div>
+                    )}
                   </div>
+                  
                 </div>
               </div>
-            ))}
-          </div>
-          {errors.ageRange && (
-            <p className="mt-1 text-red-300 text-xs sm:text-sm flex items-center">
-              <TbInfoTriangleFilled className="mr-1 h-4 w-4 text-red-400" />{" "}
-              {errors.ageRange.message}
-            </p>
-          )}
+            </div>
+          ))}
         </div>
+        {errors.budget && (
+          <p className="mt-1 text-red-400 text-xs sm:text-sm flex items-center">
+            <TbInfoTriangleFilled className="mr-1 h-4 w-4 text-red-500" />{" "}
+            {errors.budget.message}
+          </p>
+        )}
+      </div>
+
+        
       </div>
 
       {/* Navigation Button */}

@@ -15,52 +15,6 @@ import InsurancePreferencesStep from "../../components/comparison/InsurancePrefe
 import { TbCloudLock } from "react-icons/tb";
 import Footer from "../../components/layout/Footer";
 
-// Form data
-const coverageOptions = [
-  {
-    value: "basic",
-    label: "Basic Coverage",
-    description: "Essential protection for fundamental health needs",
-  },
-  {
-    value: "standard",
-    label: "Standard Coverage",
-    description: "Balanced protection with broader health benefits",
-  },
-  {
-    value: "comprehensive",
-    label: "Comprehensive Coverage",
-    description: "Extensive coverage with additional wellness features",
-  },
-  {
-    value: "premium",
-    label: "Premium Coverage",
-    description: "Top-tier protection with premium healthcare services",
-  },
-];
-
-const budgetRanges = [
-  {
-    value: 30000,
-    label: "Ksh 30,000 - 50,000",
-    description: "Budget-friendly option",
-  },
-  {
-    value: 50000,
-    label: "Ksh 50,000 - 70,000",
-    description: "Moderate coverage",
-  },
-  {
-    value: 70000,
-    label: "Ksh 70,000 - 100,000",
-    description: "Comprehensive protection",
-  },
-  {
-    value: 100000,
-    label: "Ksh 100,000+",
-    description: "Premium health security",
-  },
-];
 
 const ComparisonPage = () => {
   const [step, setStep] = useState(1);
@@ -127,9 +81,9 @@ const ComparisonPage = () => {
           alt="Senior couple"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 opacity-80 backdrop-blur-sm"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-900 via-primary-800 to-primary-900 opacity-80 backdrop-blur-sm"></div>
         {/* Fade-out gradient at the bottom */}
-        <div className="absolute left-0 right-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-neutral-50"></div>
+        <div className="absolute left-0 right-0 bottom-0 h-4 bg-gradient-to-b from-transparent to-neutral-50"></div>
 
         {/* Decorative elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -148,7 +102,7 @@ const ComparisonPage = () => {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="mb-6"
+              className="mb-4"
             >
               <div className="flex items-center space-x-2 text-sm">
                 <Link
@@ -178,7 +132,7 @@ const ComparisonPage = () => {
             </motion.div>
 
             {/* Header Section */}
-            <div className="text-center mb-7 sm:mb-8 md:mb-10 space-y-4">
+            <div className="text-center mb-7 sm:mb-8 space-y-4">
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -205,7 +159,7 @@ const ComparisonPage = () => {
                 transition={{ duration: 0.8, delay: 0.6 }}
                 className="text-[0.94rem] sm:text-base tracking-wide md:text-lg text-white/90 max-w-2xl mx-auto "
               >
-                Our intelligent matching system helps you discover all insurance
+                Our comparison tool helps you discover all insurance
                 plans tailored to your unique health and financial needs.
               </motion.p>
             </div>
@@ -266,7 +220,7 @@ const ComparisonPage = () => {
             >
               <div className="flex items-center justify-center">
                 <TbCloudLock className="text-secondary-400 h-6 w-6 mr-2" />
-                <p>Secure and confidential. Your information is protected.</p>
+                <p>Safeguarding what's truly yours. Lako Insurance</p>
               </div>
             </motion.div>
           </div>

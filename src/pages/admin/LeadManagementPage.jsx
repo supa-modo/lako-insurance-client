@@ -600,7 +600,7 @@ const LeadManagementPage = () => {
                 className="flex flex-col h-full overflow-y-auto"
               >
                 <div
-                  className={`rounded-t-xl border border-b-0 border-neutral-500 p-3 flex items-center justify-between sticky top-0 z-10 bg-${stage.color}-50`}
+                  className={`rounded-t-xl border border-b-0 border-neutral-400 p-3 flex items-center justify-between sticky top-0 z-10 bg-${stage.color}-50`}
                 >
                   <div className="flex items-center">
                     <div
@@ -622,7 +622,7 @@ const LeadManagementPage = () => {
                     <div
                       {...provided.droppableProps}
                       ref={provided.innerRef}
-                      className={`bg-gray-50 rounded-b-lg border border-t-0 border-gray-200 p-2 flex-1 overflow-y-auto ${
+                      className={`bg-gray-50 rounded-b-lg border border-t-0 border-neutral-400 p-2 flex-1 overflow-y-auto hide-scrollbar ${
                         snapshot.isDraggingOver ? "bg-gray-100" : ""
                       }`}
                     >

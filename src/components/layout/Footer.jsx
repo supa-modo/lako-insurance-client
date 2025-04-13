@@ -69,7 +69,7 @@ const Footer = () => {
 
       {/* Main Footer */}
       <footer className="bg-white py-6 border-t border-neutral-200 font-outfit">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[80rem]">
           {/* Top section with logo and social */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-6 pb-4 border-b border-neutral-200">
             <Link
@@ -98,7 +98,7 @@ const Footer = () => {
           </div>
 
           {/* Main footer content */}
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {/* Company description */}
             <div className="lg:pr-10">
               <p className="text-gray-600 text-sm sm:text-base mb-6">
@@ -139,7 +139,7 @@ const Footer = () => {
             </div>
 
             {/* Contact info */}
-            <div className="bg-neutral-200 -my-3 pt-3 px-6 pb-6 rounded-[0.75rem] border border-neutral-100">
+            <div className="bg-neutral-200 -my-3 pt-3 px-5 pb-6 rounded-[0.75rem] border border-neutral-100">
               <h4 className="text-secondary-600 text-sm sm:text-base font-bold mb-4">Contact Us</h4>
               <div className="space-y-3">
                 <a
@@ -147,7 +147,7 @@ const Footer = () => {
                   className="flex items-center text-[0.87rem] text-primary-600 font-medium hover:text-secondary-600 transition-colors"
                 >
                   <TbPhone className="mr-3 text-primary-500 text-lg" />
-                  <span>+254712345678</span>
+                  <span>+254 726 581487 / +254 720 636363</span>
                 </a>
 
                 <a

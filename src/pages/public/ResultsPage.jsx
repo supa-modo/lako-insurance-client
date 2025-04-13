@@ -181,7 +181,7 @@ const ResultsPage = () => {
         </h2>
         <p className="text-neutral-300 max-w-md font-outfit">
           We're finding the best insurance plans tailored to your unique
-          needs...
+          needs and preferences...
         </p>
       </motion.div>
     </div>
@@ -324,7 +324,7 @@ const ResultsPage = () => {
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.5 }}
             >
-              Your Insurance Results
+              Your Insurance Comparison Results
             </motion.h1>
             <motion.p
               className="text-sm sm:text-base md:text-lg text-neutral-300 max-w-4xl mx-auto"
@@ -332,8 +332,7 @@ const ResultsPage = () => {
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              We've analyzed multiple plans from AAR, Jubilee, and CIC Insurance
-              to find your best match based on your preferences.
+             
             </motion.p>
           </header>
 
