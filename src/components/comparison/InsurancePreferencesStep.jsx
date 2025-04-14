@@ -61,8 +61,6 @@ const coverageOptions = [
   },
 ];
 
-
-
 const optionalCovers = [
   {
     value: "outpatient",
@@ -106,7 +104,7 @@ const InsurancePreferencesStep = ({
   onSubmit,
 }) => {
   return (
-    <div className="space-y-6 sm:space-y-7">
+    <div className="space-y-6">
       {/* <div className="mb-3 sm:mb-4">
         <h2 className="text-xl sm:text-2xl font-bold text-secondary-400 flex items-center font-outfit">
           <TbShieldHalfFilled className="mr-3 text-secondary-500 h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0" />{" "}
@@ -122,7 +120,7 @@ const InsurancePreferencesStep = ({
       <div className="space-y-3">
         <label className="text-sm sm:text-[1.1rem] font-semibold text-primary-400 flex items-center font-outfit">
           <TbShieldHalfFilled className="mr-2 h-5 w-5 sm:h-6 sm:w-6" /> Desired
-          Coverage Level - Inpatient Limit
+          Coverage Level
         </label>
         <div className="grid sm:grid-cols-3 gap-3 sm:gap-4">
           {coverageOptions.map((option) => (
@@ -132,7 +130,7 @@ const InsurancePreferencesStep = ({
               ${
                 watchedValues.desiredCoverage === option.value
                   ? "border-secondary-500 bg-secondary-100 shadow-md transform scale-[1.01]"
-                  : "border-neutral-200 hover:border-secondary-300 bg-white/80 hover:bg-neutral-100"
+                  : "border-neutral-200 hover:border-secondary-300 bg-white/80 hover:bg-neutral-300"
               }`}
               onClick={() => {
                 const input = document.getElementById(
@@ -153,18 +151,24 @@ const InsurancePreferencesStep = ({
                 />
                 <div className="w-full">
                   <div className="flex justify-between items-center">
-                  <div className=" px-2 inline-block">
-                    <p className="text-[0.9rem] text-neutral-800 font-semibold">
-                      Kshs. {option.inpatientRange} 
-                    </p>
-                  </div>
+                    <div className=" px-1 inline-block">
+                      <p className="text-[0.99rem] text-neutral-800 font-bold">
+                        Kshs. {option.inpatientRange}
+                      </p>
+                      <div className="">
+                        <p className="text-[0.75rem] font-light text-neutral-800">
+                          <span className="font-medium">
+                            Inpatient Coverage Limit
+                          </span>
+                        </p>
+                      </div>
+                    </div>
                     {watchedValues.desiredCoverage === option.value && (
                       <div className="h-5 w-5 rounded-full bg-secondary-500 flex items-center justify-center">
                         <TbCheck className="text-white h-3 w-3" />
                       </div>
                     )}
                   </div>
-                 
                 </div>
               </div>
             </div>
@@ -178,11 +182,11 @@ const InsurancePreferencesStep = ({
         )}
       </div>
 
-
       {/* Optional Covers */}
       <div className="space-y-3">
         <label className="text-sm sm:text-[1.1rem] font-semibold text-primary-400 flex items-center font-outfit">
-          <TbBuildingHospital className="mr-2 h-5 w-5 sm:h-6 sm:w-6" /> Optional Covers
+          <TbBuildingHospital className="mr-2 h-5 w-5 sm:h-6 sm:w-6" /> Optional
+          Covers
         </label>
         <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
           {optionalCovers.map((option) => (
@@ -227,7 +231,7 @@ const InsurancePreferencesStep = ({
                         </div>
                       )}
                   </div>
-                  <p className="text-xs sm:text-sm text-neutral-600 font-outfit">
+                  <p className="text-xs sm:text-sm text-neutral-700 font-outfit">
                     {option.description}
                   </p>
                   {option.disabled && (

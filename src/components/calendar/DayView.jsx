@@ -61,7 +61,7 @@ const DayView = ({ currentDate, events, onSlotClick }) => {
   return (
     <div className="flex flex-col h-full">
       {/* Day header */}
-      <div className="bg-neutral-50 border-b border-neutral-200 py-3 px-4">
+      <div className="bg-neutral-200 border-b border-neutral-300 py-3 px-4">
         <div className="text-lg font-medium text-neutral-900">
           {currentDate.toLocaleDateString([], {
             weekday: "long",
@@ -74,9 +74,9 @@ const DayView = ({ currentDate, events, onSlotClick }) => {
 
       {/* Time grid */}
       <div className="flex-1 overflow-y-auto">
-        <div className="grid grid-cols-[100px_1fr] divide-x divide-neutral-200">
+        <div className="grid grid-cols-[100px_1fr] divide-x divide-neutral-300">
           {/* Time column */}
-          <div className="divide-y divide-neutral-200">
+          <div className="divide-y divide-neutral-300">
             {hours.map((hour) => (
               <div
                 key={hour}
@@ -88,7 +88,7 @@ const DayView = ({ currentDate, events, onSlotClick }) => {
           </div>
 
           {/* Events column */}
-          <div className="divide-y divide-neutral-200">
+          <div className="divide-y divide-neutral-300">
             {hours.map((hour) => (
               <Droppable
                 key={`${currentDate.toISOString()}-${hour}`}

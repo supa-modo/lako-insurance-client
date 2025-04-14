@@ -202,9 +202,8 @@ const HomePage = () => {
 
                       {/* Call to action button */}
                       <motion.div
-                        whileHover={{ scale: 1.03 }}
-                        whileTap={{ scale: 0.97 }}
-                        transition={{ type: "spring", stiffness: 300 }}
+                        whileHover={{ scale: 1.01 }}
+                        whileTap={{ scale: 0.98 }}
                       >
                         <Link
                           to="/compare"
@@ -612,9 +611,8 @@ const HomePage = () => {
 
                   <div className="lg:col-span-4">
                     <motion.div
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
-                      transition={{ type: "spring", stiffness: 300 }}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                     >
                       <Link
                         to="/compare"

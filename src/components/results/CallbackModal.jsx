@@ -1,7 +1,7 @@
 import React from "react";
-import { FiPhone, FiX, FiChevronRight } from "react-icons/fi";
+import { FiPhone, FiX, FiChevronRight, FiArrowRight } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
-import { TbPhoneCall } from "react-icons/tb";
+import { TbCalendarTime, TbMessageCircle, TbPhoneCall } from "react-icons/tb";
 
 const CallbackModal = ({ isOpen, onClose }) => {
   const modalVariants = {
@@ -41,7 +41,7 @@ const CallbackModal = ({ isOpen, onClose }) => {
           animate="visible"
           exit="exit"
           variants={modalVariants}
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/60 backdrop-blur-[3px] flex items-center justify-center z-50 p-4"
           onClick={onClose}
         >
           <motion.div
@@ -50,20 +50,21 @@ const CallbackModal = ({ isOpen, onClose }) => {
             onClick={(e) => e.stopPropagation()}
           >
             <button
-              className="absolute top-4 right-4 text-neutral-600 hover:text-neutral-700 transition-colors"
+              className="absolute top-4 right-4 text-neutral-600 hover:text-red-600 transition-colors"
               onClick={onClose}
             >
               <FiX className="h-5 w-5" />
             </button>
-            <div className="text-center mb-6">
-              <div className="h-16 w-16 bg-secondary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <TbPhoneCall className="h-9 w-9 text-secondary-600" />
+
+            <div className="text-center mb-6 relative z-10">
+              <div className="h-16 w-16 bg-gradient-to-br from-primary-200 to-primary-300 rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
+                <TbPhoneCall className="h-9 w-9 text-primary-700" />
               </div>
-              <h3 className="text-xl font-bold text-secondary-600 font-outfit">
+              <h3 className="text-xl font-bold text-primary-700 font-outfit mb-1">
                 Request a Callback
               </h3>
-              <p className="text-neutral-700 text-sm font-outfit">
-                We'll have an expert contact you shortly
+              <p className="text-neutral-600 text-sm font-outfit">
+                We'll have an insurance expert contact you shortly
               </p>
             </div>
 
@@ -72,18 +73,19 @@ const CallbackModal = ({ isOpen, onClose }) => {
                 <label className="block text-sm font-semibold text-primary-600 mb-1 font-outfit">
                   Preferred Time
                 </label>
-                <select className="w-full h-11 px-3 rounded-lg border-2 bg-white text-gray-600 font-medium border-gray-300 focus:ring-1 focus:ring-primary-100 focus:border-primary-500 outline-none font-outfit">
+                <select className="w-full h-11 px-3 rounded-lg border-2 bg-white text-gray-700 border-gray-200 focus:ring-1 focus:ring-primary-100 focus:border-primary-500 outline-none font-outfit  shadow-sm hover:border-primary-300">
                   <option>Morning (9am - 12pm)</option>
                   <option>Afternoon (12pm - 4pm)</option>
                   <option>Evening (4pm - 7pm)</option>
                 </select>
               </div>
+
               <div>
                 <label className="block text-sm font-semibold text-primary-600 mb-1 font-outfit">
                   Additional Notes
                 </label>
                 <textarea
-                  className="w-full px-3 py-2 rounded-lg border-2 bg-white text-gray-600 font-medium border-gray-300 focus:ring-1 focus:ring-primary-100 focus:border-primary-500 outline-none font-outfit"
+                  className="w-full px-3 py-2 rounded-lg border-2 bg-white text-gray-700 border-gray-200 focus:ring-2 focus:ring-primary-100 focus:border-primary-500 outline-none font-outfit shadow-sm hover:border-primary-300"
                   rows={3}
                   placeholder="Any specific questions or concerns?"
                 ></textarea>
@@ -93,11 +95,19 @@ const CallbackModal = ({ isOpen, onClose }) => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 type="button"
-                className="w-full py-3 bg-secondary-600 hover:bg-secondary-600 text-white font-medium rounded-lg shadow transition-colors flex items-center justify-center font-outfit"
+                className="w-full py-3 bg-gradient-to-r from-secondary-600 to-secondary-700 hover:from-secondary-700 hover:to-secondary-800 text-white font-medium rounded-lg shadow-md transition-colors flex items-center justify-center font-outfit mt-2"
                 onClick={onClose}
               >
-                Request Callback <FiChevronRight className="ml-1" />
+                <span className="inline-flex items-center font-semibold">
+                  Request Callback
+                  <FiArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                </span>
               </motion.button>
+
+              <p className="text-xs text-center text-gray-500 mt-2 font-outfit">
+                By requesting a callback, you agree to our privacy policy and
+                terms of service.
+              </p>
             </form>
           </motion.div>
         </motion.div>

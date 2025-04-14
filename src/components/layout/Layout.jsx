@@ -35,8 +35,9 @@ const Layout = () => {
         <div className="absolute bottom-[20%] right-[20%] w-80 h-80 bg-secondary-100 rounded-full opacity-20 blur-3xl"></div>
       </div>
 
-      <Header />
+      
       <main className="flex-grow relative z-10">
+      <Header />
         <Outlet />
       </main>
       {/* <Footer /> */}

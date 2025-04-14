@@ -185,7 +185,7 @@ const ComparisonPage = () => {
                 </motion.div>
 
                 {/* Form Content - Right Column on Desktop, Bottom Section on Mobile */}
-                <div className="flex-1 p-5 sm:p-6">
+                <div className="flex-1 p-5 sm:py-5 px-7">
                   <form
                     onSubmit={handleSubmit(step === 2 ? onSubmit : nextStep)}
                     className="space-y-6 sm:space-y-8"
@@ -201,7 +201,7 @@ const ComparisonPage = () => {
                       <InsurancePreferencesStep
                         register={register}
                         errors={errors}
-                        watchedValues={watchedValues}
+                        watchedValues={watchedValues} 
                         onPrev={prevStep}
                         onSubmit={onSubmit}
                       />

@@ -76,14 +76,14 @@ const WeekView = ({ currentDate, events, onSlotClick }) => {
   return (
     <div className="flex flex-col h-full">
       {/* Time column header */}
-      <div className="grid grid-cols-8 bg-neutral-50 border-b border-neutral-200">
-        <div className="py-2 px-4 text-sm font-medium text-neutral-600">
+      <div className="grid grid-cols-8 bg-neutral-200 border-b border-neutral-300">
+        <div className="py-2 px-4 text-sm font-medium text-neutral-700">
           Time
         </div>
         {weekDates.map((date) => (
           <div
             key={date.toISOString()}
-            className="py-2 text-center text-sm font-medium text-neutral-600"
+            className="py-3 text-center text-sm font-semibold text-neutral-700"
           >
             {formatDate(date)}
           </div>
@@ -94,7 +94,7 @@ const WeekView = ({ currentDate, events, onSlotClick }) => {
       <div className="flex-1 overflow-y-auto">
         <div className="grid grid-cols-8 divide-x divide-neutral-200">
           {/* Time column */}
-          <div className="divide-y divide-neutral-200">
+          <div className="divide-y divide-neutral-300">
             {hours.map((hour) => (
               <div
                 key={hour}
@@ -109,7 +109,7 @@ const WeekView = ({ currentDate, events, onSlotClick }) => {
           {weekDates.map((date) => (
             <div
               key={date.toISOString()}
-              className="divide-y divide-neutral-200"
+              className="divide-y divide-neutral-300"
             >
               {hours.map((hour) => (
                 <Droppable

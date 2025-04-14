@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -7,6 +7,7 @@ import {
   FiInfo,
   FiArrowLeft,
   FiArrowRight,
+  FiHelpCircle,
 } from "react-icons/fi";
 import { useSelector } from "react-redux";
 
@@ -16,10 +17,11 @@ import {
   mockDownloadReportPdf,
 } from "../../services/mockReportService";
 
-// Import only the larger components
-import PlanList from "../../components/results/PlanList";
-import QueryDetails from "../../components/results/QueryDetails";
-import PlanDetails from "../../components/results/PlanDetails";
+// Import components
+import PlanList from "../../components/results/PlanLists";
+import ComparisonTable from "../../components/results/ComparisonTable";
+import PlanDetailsModal from "../../components/results/PlanDetailsModal";
+import DownloadReport from "../../components/results/DownloadReport";
 import CallbackModal from "../../components/results/CallbackModal";
 import Footer from "../../components/layout/Footer";
 
@@ -27,18 +29,19 @@ const ResultsPage = () => {
   const navigate = useNavigate();
   const { userQuery } = useSelector((state) => state.comparison);
   const [selectedPlan, setSelectedPlan] = useState(null);
+  const [showPlanDetailsModal, setShowPlanDetailsModal] = useState(false);
   const [comparisonResults, setComparisonResults] = useState([]);
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [downloadStatus, setDownloadStatus] = useState("idle"); // 'idle', 'loading', 'success', 'error'
+  const [showCallbackModal, setShowCallbackModal] = useState(false);
+  const [downloadStatus, setDownloadStatus] = useState(null); // null, 'pdf-loading', 'pdf-success', etc.
   const [isMobile, setIsMobile] = useState(false);
 
   // Check if the screen is mobile size
   useEffect(() => {
     const checkIsMobile = () => {
-      setIsMobile(window.innerWidth < 768); // 768px is the md breakpoint in Tailwind
+      setIsMobile(window.innerWidth < 1024); // 1024px is the lg breakpoint in Tailwind
     };
 
     // Initial check
@@ -66,18 +69,8 @@ const ResultsPage = () => {
           setReport(reportData);
           setComparisonResults(reportData.comparisonResults);
 
-          // Auto-select first plan only on desktop
-          if (
-            !isMobile &&
-            reportData.comparisonResults &&
-            reportData.comparisonResults.length > 0
-          ) {
-            setSelectedPlan(reportData.comparisonResults[0]);
-          }
-          // Make sure no plan is selected on mobile
-          else if (isMobile) {
-            setSelectedPlan(null);
-          }
+          // Don't auto-select any plan initially
+          setSelectedPlan(null);
         } else {
           setError("No plans found that match your criteria");
         }
@@ -89,69 +82,81 @@ const ResultsPage = () => {
     }, 1500); // Simulate 1.5s loading time
 
     return () => clearTimeout(timer);
-  }, [isMobile, userQuery]); // Re-run when isMobile or userQuery changes
+  }, [userQuery]); // Re-run when userQuery changes
 
   const handlePlanSelect = (plan) => {
-    setSelectedPlan(plan === selectedPlan ? null : plan);
+    setSelectedPlan(plan);
+    setShowPlanDetailsModal(true);
   };
 
-  const handleBackToList = () => {
-    setSelectedPlan(null);
+  const handleBuyPlan = (plan) => {
+    // This would normally navigate to a checkout flow
+    // For now, we'll just show a notice and open the plan details
+    alert("The purchase functionality will be implemented in the future.");
+    setSelectedPlan(plan);
+    setShowPlanDetailsModal(true);
   };
 
-  const handleDownload = async () => {
-    if (downloadStatus === "loading") return;
+  const handleClosePlanDetails = () => {
+    setShowPlanDetailsModal(false);
+  };
 
-    setDownloadStatus("loading");
+  const handleDownloadPdf = async () => {
+    setDownloadStatus("pdf-loading");
     try {
-      // Use mock download service with a fixed ID
-      const mockReportId = "mock-report-1";
-      await mockDownloadReportPdf(mockReportId);
-      setDownloadStatus("success");
+      // Use mock download service
+      await mockDownloadReportPdf("mock-report-1");
+      setDownloadStatus("pdf-success");
 
       // Reset status after 3 seconds
-      setTimeout(() => setDownloadStatus("idle"), 3000);
+      setTimeout(() => setDownloadStatus(null), 3000);
     } catch (error) {
-      setDownloadStatus("error");
+      setDownloadStatus("pdf-error");
       // Reset status after 3 seconds
-      setTimeout(() => setDownloadStatus("idle"), 3000);
+      setTimeout(() => setDownloadStatus(null), 3000);
     }
   };
 
-  const handleCallbackRequest = () => {
-    setShowModal(true);
+  const handleDownloadCsv = async () => {
+    setDownloadStatus("csv-loading");
+    try {
+      // Simulate download
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      setDownloadStatus("csv-success");
+
+      // Reset status after 3 seconds
+      setTimeout(() => setDownloadStatus(null), 3000);
+    } catch (error) {
+      setDownloadStatus("csv-error");
+      setTimeout(() => setDownloadStatus(null), 3000);
+    }
   };
 
-  const handleCloseModal = () => {
-    setShowModal(false);
+  const handleDownloadText = async () => {
+    setDownloadStatus("text-loading");
+    try {
+      // Simulate download
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setDownloadStatus("text-success");
+
+      // Reset status after 3 seconds
+      setTimeout(() => setDownloadStatus(null), 3000);
+    } catch (error) {
+      setDownloadStatus("text-error");
+      setTimeout(() => setDownloadStatus(null), 3000);
+    }
+  };
+
+  const handleRequestCallback = () => {
+    setShowCallbackModal(true);
+  };
+
+  const handleCloseCallbackModal = () => {
+    setShowCallbackModal(false);
   };
 
   const handleGoToHome = () => {
     navigate("/");
-  };
-
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        duration: 0.6,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-        ease: "easeOut",
-      },
-    },
   };
 
   // Format currency
@@ -163,9 +168,34 @@ const ResultsPage = () => {
     }).format(amount);
   };
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.12,
+        duration: 0.6,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 24,
+      },
+    },
+  };
+
   // Loading State Component
   const LoadingState = () => (
-    <div className="flex items-center justify-center py-20 font-outfit">
+    <div className="flex items-center justify-center py-20">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -180,8 +210,8 @@ const ResultsPage = () => {
           Analyzing Your Perfect Plans
         </h2>
         <p className="text-neutral-300 max-w-md font-outfit">
-          We're finding the best insurance plans tailored to your unique
-          needs and preferences...
+          We're finding the best insurance plans tailored to your unique needs
+          and preferences...
         </p>
       </motion.div>
     </div>
@@ -189,7 +219,7 @@ const ResultsPage = () => {
 
   // Error State Component
   const ErrorState = ({ error, onGoHome }) => (
-    <div className="flex items-center justify-center py-20 font-outfit">
+    <div className="flex items-center justify-center py-20">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -208,7 +238,7 @@ const ResultsPage = () => {
         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
           <button
             onClick={onGoHome}
-            className="inline-flex items-center justify-center px-6 py-3 bg-secondary-500 hover:bg-secondary-600 text-white font-medium rounded-lg shadow-md transition-all font-outfit"
+            className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-secondary-500 to-secondary-600 hover:from-secondary-600 hover:to-secondary-700 text-white font-medium rounded-lg shadow-md transition-all group"
           >
             <FiArrowLeft className="mr-2" /> Try Again
           </button>
@@ -219,29 +249,30 @@ const ResultsPage = () => {
 
   // Empty State Component
   const EmptyState = ({ onGoHome }) => (
-    <div className="flex items-center justify-center py-20 font-outfit">
+    <div className="flex items-center justify-center py-20">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="text-center max-w-md p-8 bg-white/10 backdrop-blur-md rounded-xl shadow-lg border border-primary-400/20 "
+        className="text-center max-w-md p-8 bg-white/10 backdrop-blur-md rounded-xl shadow-lg border border-primary-400/20"
       >
         <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-500/20 rounded-full mb-6">
           <FiInfo className="text-primary-400 h-8 w-8" />
         </div>
-        <h2 className="text-2xl font-bold mb-3 text-white ">
+        <h2 className="text-2xl font-bold mb-3 text-white font-outfit">
           No Results Found
         </h2>
-        <p className="text-neutral-300 mb-6 ">
+        <p className="text-neutral-300 mb-6 font-outfit">
           We couldn't find any matching plans. Please try again with different
           criteria.
         </p>
         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
           <button
             onClick={onGoHome}
-            className="inline-flex items-center justify-center px-6 py-3 bg-secondary-500 hover:bg-secondary-600 text-white font-medium rounded-lg shadow-md transition-all "
+            className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-secondary-500 to-secondary-600 hover:from-secondary-600 hover:to-secondary-700 text-white font-medium rounded-lg shadow-md transition-all group"
           >
-            <FiArrowLeft className="mr-2" /> Try Again
+            <FiArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />{" "}
+            Try Again
           </button>
         </motion.div>
       </motion.div>
@@ -250,32 +281,29 @@ const ResultsPage = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 text-white relative overflow-hidden font-outfit">
+      <div className="min-h-screen bg-gradient-to-br from-primary-900 via-neutral-800 to-primary-900 text-white relative overflow-hidden">
         {/* Decorative elements */}
-        <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-secondary-500/30 rounded-full filter blur-3xl opacity-20 animate-pulse-slow"></div>
+        <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-primary-500/40 rounded-full filter blur-3xl opacity-20 animate-pulse-slow"></div>
         <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-blue-500/30 rounded-full filter blur-3xl opacity-20 transform translate-y-1/4 translate-x-[-30%]"></div>
-        <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-secondary-400/40 rounded-full filter blur-xl opacity-30 animate-float"></div>
+        <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-primary-400/60 rounded-full filter blur-xl opacity-30 animate-float"></div>
 
-        {/* Glass panels */}
-        <div className="absolute top-10 right-10 w-64 h-64 bg-white/5 rounded-2xl backdrop-blur-sm border border-white/10 hidden lg:block"></div>
-        <div className="absolute bottom-10 left-10 w-48 h-48 bg-white/5 rounded-2xl backdrop-blur-sm border border-white/10 hidden lg:block"></div>
-
-        <div className="md:mx-28 lg:mx-32 mx-auto px-0 sm:px-4 lg:px-8 py-5 sm:py-8 relative z-10">
+        {/* Main content */}
+        <div className="mx-auto px-0 sm:px-3 md:px-6 lg:px-10 py-4 sm:py-6 relative z-10 font-outfit">
           {/* Breadcrumb Navigation */}
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="mb-6"
+            className="mb-10 sm:mb-8 md:mb-2 pl-3 md:pl-10"
           >
-            <div className="flex items-center space-x-2 px-3 sm:px-1 text-sm">
+            <div className="flex items-center space-x-2 text-sm">
               <Link
                 to="/"
                 className="text-secondary-400 hover:text-white transition-colors"
               >
                 Home
               </Link>
-              <span className="text-neutral-500">
+              <span className="text-white/50">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-4 w-4"
@@ -297,7 +325,7 @@ const ResultsPage = () => {
               >
                 Compare
               </Link>
-              <span className="text-neutral-500">
+              <span className="text-white/50">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-4 w-4"
@@ -317,9 +345,9 @@ const ResultsPage = () => {
             </div>
           </motion.div>
 
-          <header className="text-center px-3 sm:px-2 mb-6 sm:mb-8">
+          <header className="text-center mb-8">
             <motion.h1
-              className="text-2xl sm:text-3xl md:text-4xl font-bold text-gradient bg-gradient-to-r from-white via-secondary-200 to-white bg-clip-text text-transparent font-outfit mb-2"
+              className="text-xl sm:text-3xl md:text-4xl font-bold text-gradient bg-gradient-to-r from-white via-secondary-200 to-white bg-clip-text text-transparent mb-2 font-lexend"
               initial={{ y: -50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.5 }}
@@ -327,12 +355,13 @@ const ResultsPage = () => {
               Your Insurance Comparison Results
             </motion.h1>
             <motion.p
-              className="text-sm sm:text-base md:text-lg text-neutral-300 max-w-4xl mx-auto"
+              className="text-sm sm:text-base md:text-lg text-neutral-300 max-w-3xl mx-auto font-outfit"
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-             
+              We've analyzed {comparisonResults.length || "several"} insurance
+              plans based on your preferences and budget to find the best plan
             </motion.p>
           </header>
 
@@ -343,156 +372,144 @@ const ResultsPage = () => {
           ) : !report || comparisonResults.length === 0 ? (
             <EmptyState onGoHome={handleGoToHome} />
           ) : (
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl sm:rounded-2xl px-2 py-5 sm:p-3 md:p-6 shadow-2xl">
-              {/* Main content - desktop: side by side, mobile: sequential */}
-              <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-              >
-                {/* Mobile View (Sequential) */}
-                <div className="md:hidden">
-                  {selectedPlan ? (
-                    <div className="space-y-4">
-                      <PlanDetails
-                        plan={selectedPlan}
-                        onBack={handleBackToList}
-                        formatCurrency={formatCurrency}
-                        onRequestCallback={handleCallbackRequest}
-                        downloadStatus={downloadStatus}
-                        onDownload={handleDownload}
-                      />
-
-                      <QueryDetails
-                        userQuery={userQuery || report.userQuery}
-                        formatCurrency={formatCurrency}
-                      />
-                    </div>
-                  ) : (
-                    <div className="space-y-6">
-                      <PlanList
-                        plans={report.comparisonResults}
-                        onSelectPlan={handlePlanSelect}
-                        formatCurrency={formatCurrency}
-                        activePlanId={
-                          selectedPlan?.id || selectedPlan?.plan?.id
-                        }
-                      />
-
-                      <motion.button
-                        whileTap={{ scale: 0.98 }}
-                        onClick={handleCallbackRequest}
-                        className="w-full py-3 px-4 bg-primary-500 hover:bg-primary-600 text-white rounded-lg 
-                      flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition duration-200 font-medium"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
-                        </svg>
-                        Schedule a Call
-                      </motion.button>
-                      <QueryDetails
-                        userQuery={userQuery || report.userQuery}
-                        formatCurrency={formatCurrency}
-                      />
-                    </div>
-                  )}
-                </div>
-
-                {/* Desktop View (Side by Side) */}
-                <div className="hidden md:grid md:grid-cols-12 gap-6">
-                  {/* Left Column: PlanList + Query Details + Download */}
-                  <motion.div
-                    variants={itemVariants}
-                    className="md:col-span-5 lg:col-span-4 space-y-4"
-                  >
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="space-y-6 lg:space-y-8"
+            >
+              {/* Two Column Layout - Desktop */}
+              <div className="hidden lg:flex lg:flex-row gap-6">
+                {/* Left Column - Plan List */}
+                <motion.div variants={itemVariants} className="w-[33%]">
+                  <div className="">
                     <PlanList
                       plans={report.comparisonResults}
+                      formatCurrency={formatCurrency}
                       onSelectPlan={handlePlanSelect}
-                      formatCurrency={formatCurrency}
+                      onBuyPlan={handleBuyPlan}
                       activePlanId={selectedPlan?.id || selectedPlan?.plan?.id}
+                      userAge={report.userQuery?.age || 69}
                     />
 
-                    <motion.button
-                      whileTap={{ scale: 0.98 }}
-                      onClick={handleCallbackRequest}
-                      className="w-full py-3 px-4 bg-primary-500 hover:bg-primary-600 text-white rounded-lg 
-                    flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition duration-200 font-medium"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
+                    <div className="mt-5 text-center">
+                      <motion.button
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.97 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                        onClick={handleRequestCallback}
+                        className="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white rounded-lg shadow-md transition-all text-sm font-medium group"
                       >
-                        <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
-                      </svg>
-                      Schedule a Call
-                    </motion.button>
-                  </motion.div>
+                        <FiHelpCircle className="mr-2" />
+                        Need Help? Schedule a Call
+                        <FiArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                      </motion.button>
+                    </div>
+                  </div>
+                </motion.div>
 
-                  {/* Right Column: Plan Details */}
-                  <motion.div
-                    variants={itemVariants}
-                    className="md:col-span-7 lg:col-span-8 space-y-6"
-                  >
-                    {selectedPlan ? (
-                      <PlanDetails
-                        plan={selectedPlan}
-                        onBack={handleBackToList}
-                        formatCurrency={formatCurrency}
-                        onRequestCallback={handleCallbackRequest}
-                        downloadStatus={downloadStatus}
-                        onDownload={handleDownload}
-                      />
-                    ) : (
-                      <div className="h-full flex items-center justify-center bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-white/10">
-                        <div className="text-center">
-                          <div className="inline-flex items-center justify-center w-16 h-16 bg-secondary-500/20 rounded-full mb-6">
-                            <FiArrowLeft className="h-6 w-6 text-secondary-400" />
-                          </div>
-                          <h3 className="text-xl font-bold text-white mb-2 font-outfit">
-                            Select a Plan
-                          </h3>
-                          <p className="text-neutral-300 font-outfit max-w-md">
-                            Choose a plan from the list to view detailed
-                            information about coverage, benefits, and
-                            exclusions.
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                    <QueryDetails
-                      userQuery={userQuery || report.userQuery}
+                {/* Right Column - Comparison Table & Download */}
+                <motion.div
+                  variants={itemVariants}
+                  className="w-[67%] space-y-6"
+                >
+                  <ComparisonTable
+                    plans={report.comparisonResults}
+                    formatCurrency={formatCurrency}
+                    onDownload={handleDownloadPdf}
+                  />
+
+                  <DownloadReport
+                    onDownloadPdf={handleDownloadPdf}
+                    onDownloadCsv={handleDownloadCsv}
+                    onDownloadText={handleDownloadText}
+                    downloadStatus={downloadStatus}
+                  />
+                </motion.div>
+              </div>
+
+              {/* Mobile Layout - Stacked */}
+              <div className="lg:hidden space-y-6">
+                {/* Plan List */}
+                <motion.div variants={itemVariants}>
+                  <div className="px-2">
+                    <PlanList
+                      plans={report.comparisonResults}
                       formatCurrency={formatCurrency}
+                      onSelectPlan={handlePlanSelect}
+                      onBuyPlan={handleBuyPlan}
+                      activePlanId={selectedPlan?.id || selectedPlan?.plan?.id}
+                      userAge={report.userQuery?.age || 69}
                     />
-                  </motion.div>
-                </div>
-              </motion.div>
-            </div>
+
+                    <div className="mt-5 text-center">
+                      <motion.button
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.97 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                        onClick={handleRequestCallback}
+                        className="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white rounded-lg shadow-md transition-all text-sm font-medium group"
+                      >
+                        <FiHelpCircle className="mr-2" />
+                        Need Help? Schedule a Call
+                        <FiArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                      </motion.button>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Comparison Table */}
+                <motion.div variants={itemVariants}>
+                  <ComparisonTable
+                    plans={report.comparisonResults}
+                    formatCurrency={formatCurrency}
+                    onDownload={handleDownloadPdf}
+                  />
+                </motion.div>
+
+                {/* Download Report */}
+                <motion.div variants={itemVariants}>
+                  <DownloadReport
+                    onDownloadPdf={handleDownloadPdf}
+                    onDownloadCsv={handleDownloadCsv}
+                    onDownloadText={handleDownloadText}
+                    downloadStatus={downloadStatus}
+                  />
+                </motion.div>
+              </div>
+            </motion.div>
           )}
         </div>
 
-        {/* Callback Modal */}
-        <CallbackModal isOpen={showModal} onClose={handleCloseModal} />
-
-        {/* Footer with subtle pattern */}
+        {/* Footer */}
         <div className="mt-8 py-4 border-t border-white/10 relative z-10">
           <div className="container mx-auto px-4 text-center text-neutral-400">
-            <p className="text-xs mt-2">
-              This is a comparison of senior health insurance plans from AAR,
-              Jubilee, and CIC Insurance.
+            <p className="text-xs mt-2 font-outfit">
+              This is a comparison of senior health insurance plans based on
+              your preferences.
             </p>
           </div>
         </div>
 
-        {/* Additional decorative elements for visual interest */}
-        <div className="absolute bottom-20 right-40 w-64 h-1 bg-gradient-to-r from-transparent via-secondary-500/50 to-transparent transform rotate-45 hidden lg:block"></div>
-        <div className="absolute top-40 left-20 w-64 h-1 bg-gradient-to-r from-transparent via-blue-500/50 to-transparent transform -rotate-45 hidden lg:block"></div>
+        {/* Modals */}
+        <AnimatePresence>
+          {showPlanDetailsModal && selectedPlan && (
+            <PlanDetailsModal
+              plan={selectedPlan}
+              formatCurrency={formatCurrency}
+              onClose={handleClosePlanDetails}
+              onRequestCallback={handleRequestCallback}
+              onBuyPlan={handleBuyPlan}
+            />
+          )}
+
+          {showCallbackModal && (
+            <CallbackModal
+              isOpen={showCallbackModal}
+              onClose={handleCloseCallbackModal}
+            />
+          )}
+        </AnimatePresence>
       </div>
 
       <Footer />

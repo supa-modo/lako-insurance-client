@@ -262,8 +262,8 @@ const ClientModal = ({
         </div>
       </div>
 
-       {/* Actions */}
-       <div className="px-2 border-b border-gray-200">
+      {/* Actions */}
+      <div className="px-2 border-b border-gray-200">
         <div className="py-3 text-sm text-gray-500">Actions</div>
         <div className="pb-5 flex flex-wrap gap-2 font-medium">
           <button
@@ -304,8 +304,6 @@ const ClientModal = ({
           </p>
         </div>
       </div>
-
-     
     </div>
   );
 

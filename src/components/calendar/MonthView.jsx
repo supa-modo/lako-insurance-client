@@ -133,11 +133,11 @@ const MonthView = ({ currentDate, events, onSlotClick }) => {
   return (
     <div className="flex flex-col h-full">
       {/* Week day headers */}
-      <div className="grid grid-cols-7 bg-neutral-50 border-b border-neutral-200">
+      <div className="grid grid-cols-7 bg-neutral-200 border-b border-neutral-300">
         {weekDays.map((day) => (
           <div
             key={day}
-            className="py-2 text-center text-sm font-medium text-neutral-600"
+            className="py-3 text-center text-sm font-semibold text-neutral-700"
           >
             {day}
           </div>
@@ -145,7 +145,7 @@ const MonthView = ({ currentDate, events, onSlotClick }) => {
       </div>
 
       {/* Calendar grid */}
-      <div className="flex-1 grid grid-cols-7 grid-rows-6 divide-x divide-y divide-neutral-200">
+      <div className="flex-1 grid grid-cols-7 grid-rows-6 divide-x divide-y divide-neutral-300">
         {calendarGrid.map((day, index) => (
           <Droppable
             key={`${day.date.toISOString()}-${index}`}
