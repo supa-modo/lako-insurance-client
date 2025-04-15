@@ -23,7 +23,7 @@ const steps = [
 // Desktop vertical stepper (for md screens and up)
 const DesktopStepper = ({ currentStep }) => {
   return (
-    <div className="h-full w-full flex flex-col justify-start items-start pl-4 pt-1 hidden md:flex">
+    <div className="h-full w-full flex-col justify-start items-start pl-4 pt-1 hidden md:flex">
       {steps.map((step, index) => (
         <div
           key={step.number}

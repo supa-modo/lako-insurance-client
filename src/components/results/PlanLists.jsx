@@ -284,7 +284,7 @@ const PlanList = ({
                 {/* Action buttons */}
                 <div className="flex justify-between items-center">
                   <button
-                    onClick={() => onBuyPlan && onBuyPlan(planResult)}
+                    // onClick={() => onBuyPlan && onBuyPlan(planResult)}
                     className="px-3 py-1.5 bg-secondary-600 font-medium text-white text-sm rounded-lg hover:bg-secondary-700 transition-colors flex items-center"
                   >
                     <BsFillCreditCardFill className="mr-1" size={14} />
