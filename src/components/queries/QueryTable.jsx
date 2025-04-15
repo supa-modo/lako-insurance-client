@@ -11,7 +11,12 @@ import {
   TbArrowUp,
   TbArrowDown,
   TbStarFilled,
+  TbInfoCircle,
+  TbMessageCircle,
+  TbClock,
+  TbMessage,
 } from "react-icons/tb";
+import { RiUserFollowLine } from "react-icons/ri";
 
 const QueryTable = ({
   queries,
@@ -66,45 +71,50 @@ const QueryTable = ({
     switch (status) {
       case "new":
         return (
-          <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-            New
-          </span>
+          <div className="px-4 py-1 w-fit flex items-center rounded-full text-xs font-medium bg-blue-100 border border-blue-300 text-blue-800">
+            <TbMessage className="h-4 w-4 mr-1" />
+            <span className="">New</span>
+          </div>
         );
       case "processing":
         return (
-          <span className="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-            Processing
-          </span>
+          <div className="px-4 py-1 w-fit flex items-center rounded-full text-xs font-medium bg-yellow-100 border border-yellow-300 text-yellow-800">
+            <TbClock className="h-4 w-4 mr-1" />
+            <span className="">Processing</span>
+          </div>
         );
       case "processed":
         return (
-          <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-            Processed
-          </span>
+          <div className="px-4 py-1 w-fit flex items-center rounded-full text-xs font-medium bg-green-100 border border-green-300 text-green-800">
+            <TbCheck className="h-4 w-4 mr-1" />
+            <span className="">Processed</span>
+          </div>
         );
       case "converted":
         return (
-          <span className="px-2 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
-            Converted to Lead
-          </span>
+              <div className="px-3 py-1 w-fit flex items-center rounded-full text-xs font-medium bg-primary-100 border border-primary-300 text-primary-800">
+            <RiUserFollowLine className="h-4 w-4 mr-1" />
+            <span className="">Converted to Lead</span>
+          </div>
         );
       default:
         return (
-          <span className="px-2 py-1 rounded-full text-xs font-medium bg-neutral-100 text-neutral-800">
-            {status}
-          </span>
+          <div className="px-4 py-1 w-fit flex items-center rounded-full text-xs font-medium bg-neutral-100 border border-neutral-300 text-neutral-800">
+            <TbInfoCircle className="h-4 w-4 mr-1" />
+            <span className="">{status}</span>
+          </div>
         );
     }
   };
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
+    <div className="overflow-x-auto rounded-t-lg">
+      <table className="min-w-full divide-y divide-gray-200 rounded-t-lg">
+        <thead className="bg-gray-200">
           <tr>
             <th
               scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+              className="px-6 py-5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
               onClick={() => onSort("clientName")}
             >
               <div className="flex items-center">
@@ -122,7 +132,7 @@ const QueryTable = ({
             </th>
             <th
               scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+              className="px-6 py-5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
               onClick={() => onSort("coverageType")}
             >
               <div className="flex items-center">
@@ -140,7 +150,7 @@ const QueryTable = ({
             </th>
             <th
               scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+              className="px-6 py-5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
               onClick={() => onSort("budget")}
             >
               <div className="flex items-center">
@@ -158,7 +168,7 @@ const QueryTable = ({
             </th>
             <th
               scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+              className="px-6 py-5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
               onClick={() => onSort("date")}
             >
               <div className="flex items-center">
@@ -176,7 +186,7 @@ const QueryTable = ({
             </th>
             <th
               scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+              className="px-6 py-5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
               onClick={() => onSort("status")}
             >
               <div className="flex items-center">
@@ -194,7 +204,7 @@ const QueryTable = ({
             </th>
             <th
               scope="col"
-              className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+              className="px-6 py-5 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
             >
               Actions
             </th>

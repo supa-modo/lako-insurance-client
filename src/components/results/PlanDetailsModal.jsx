@@ -243,7 +243,7 @@ const PlanDetailsModal = ({
                   <div>
                     <h3 className="text-base sm:text-lg font-semibold text-gray-800 flex items-center">
                       {planData.name || "Insurance Plan"}
-                      <span className="ml-2 bg-primary-200 text-primary-700 text-xs px-2 py-0.5 rounded">
+                      <span className="ml-2 hidden sm:block bg-primary-200 text-primary-700 text-xs px-2 py-0.5 rounded">
                         {planData.tier || planData.planType || "Standard"}
                       </span>
                     </h3>

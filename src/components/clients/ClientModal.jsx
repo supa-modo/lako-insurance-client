@@ -124,13 +124,13 @@ const ClientModal = ({
   const getStatusBadgeColor = (status) => {
     switch (status) {
       case "active":
-        return "bg-green-100 text-green-800";
+        return "bg-green-100 border border-green-300 text-green-800";
       case "inactive":
-        return "bg-red-100 text-red-800";
+        return "bg-red-100 border border-red-300 text-red-800";
       case "pending_renewal":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-yellow-100 border border-yellow-300 text-yellow-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 border border-gray-300 text-gray-800";
     }
   };
 
@@ -159,11 +159,11 @@ const ClientModal = ({
                 {client.name}
               </h4>
               <div className="flex items-center text-[0.83rem] text-gray-500">
-                <span className="mr-3">Age: {client.age}</span>
+                <span className="mr-3">Age: {client.age} years</span>
                 <span
                   className={`${getStatusBadgeColor(
                     client.status
-                  )} px-3 py-0.5 rounded-md text-xs font-medium`}
+                  )} px-4 py-0.5 rounded-full text-xs font-medium`}
                 >
                   {client.status === "active"
                     ? "Active"

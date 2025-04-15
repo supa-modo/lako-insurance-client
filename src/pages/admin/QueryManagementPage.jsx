@@ -18,14 +18,21 @@ import {
   TbLayoutList,
   TbX,
   TbChevronDown,
+  TbListDetails,
+  TbMessageDots,
+  TbMessagePlus,
+  TbClock,
 } from "react-icons/tb";
 import { BiStats } from "react-icons/bi";
 import QueryList from "../../components/queries/QueryList";
 import QueryDetail from "../../components/queries/QueryDetail";
 import QueryForm from "../../components/queries/QueryForm";
 import QueryTable from "../../components/queries/QueryTable";
+import { RiUserAddLine } from "react-icons/ri";
+import { PiCaretDownDuotone } from "react-icons/pi";
 
 const QueryManagementPage = () => {
+  const [selectedStatus, setSelectedStatus] = useState("all");
   // Generate mock query data
   const getMockQueries = () => {
     const statuses = ["new", "processing", "processed", "converted"];
@@ -138,19 +145,19 @@ const QueryManagementPage = () => {
 
   // State
   const [queries, setQueries] = useState([]);
-  const [selectedQuery, setSelectedQuery] = useState(null);
-  const [isFormVisible, setIsFormVisible] = useState(false);
-  const [editingQuery, setEditingQuery] = useState(null);
+  const [allQueries, setAllQueries] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [currentView, setCurrentView] = useState("list"); // 'list', 'detail', 'form'
+  const [selectedQuery, setSelectedQuery] = useState(null);
+  const [editingQuery, setEditingQuery] = useState(null);
+  const [showQueryForm, setShowQueryForm] = useState(false);
+  const [showQueryDetail, setShowQueryDetail] = useState(false);
   const [stats, setStats] = useState({
     total: 0,
     new: 0,
     processing: 0,
     processed: 0,
     converted: 0,
-    priority: 0,
   });
   const [viewMode, setViewMode] = useState("grid"); // "grid" or "table"
   const [sortField, setSortField] = useState("date");
@@ -175,7 +182,6 @@ const QueryManagementPage = () => {
       processing: queriesData.filter((q) => q.status === "processing").length,
       processed: queriesData.filter((q) => q.status === "processed").length,
       converted: queriesData.filter((q) => q.status === "converted").length,
-      priority: queriesData.filter((q) => q.isPriority).length,
     };
     setStats(newStats);
   };
@@ -183,21 +189,20 @@ const QueryManagementPage = () => {
   // Handle adding a new query
   const handleAddQuery = () => {
     setEditingQuery(null);
-    setIsFormVisible(true);
-    setCurrentView("form");
+    setShowQueryForm(true);
   };
 
   // Handle editing a query
   const handleEditQuery = (query) => {
     setEditingQuery(query);
-    setIsFormVisible(true);
-    setCurrentView("form");
+    setShowQueryForm(true);
   };
 
   // Handle viewing a query
   const handleViewQuery = (query) => {
     setSelectedQuery(query);
-    setCurrentView("detail");
+
+    setShowQueryDetail(true);
   };
 
   // Handle submitting the query form
@@ -227,16 +232,14 @@ const QueryManagementPage = () => {
       updateStats(updatedQueries);
     }
 
-    setIsFormVisible(false);
+    setShowQueryForm(false);
     setEditingQuery(null);
-    setCurrentView("list");
   };
 
   // Handle canceling the form
   const handleCancelForm = () => {
-    setIsFormVisible(false);
+    setShowQueryForm(false);
     setEditingQuery(null);
-    setCurrentView(selectedQuery ? "detail" : "list");
   };
 
   // Handle processing a query
@@ -279,17 +282,17 @@ const QueryManagementPage = () => {
       setQueries(updatedQueries);
       updateStats(updatedQueries);
 
-      // If we were viewing this query, go back to the list
+      // If the deleted query is the selected one, close the detail view
       if (selectedQuery && selectedQuery.id === queryId) {
+        setShowQueryDetail(false);
         setSelectedQuery(null);
-        setCurrentView("list");
       }
     }
   };
 
   // Handle search
   const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
+    setSearchQuery(e.target.value);
   };
 
   // Handle refreshing queries
@@ -305,8 +308,8 @@ const QueryManagementPage = () => {
 
   // Handle back button in detail view
   const handleBackToList = () => {
+    setShowQueryDetail(false);
     setSelectedQuery(null);
-    setCurrentView("list");
   };
 
   // Handle sorting
@@ -325,18 +328,18 @@ const QueryManagementPage = () => {
       <div className="bg-white px-8 py-2.5 border-b border-gray-200 flex-shrink-0">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
           <div>
-            <h1 className="text-[1.3rem] font-bold text-secondary-700">
-              Insurance Queries
+            <h1 className="text-[1.3rem] font-bold text-neutral-700">
+              Insurance Query Management
             </h1>
             <p className="text-gray-500 text-sm">
-              Manage and process client insurance inquiries
+              Manage and process insurance query requests from clients
             </p>
           </div>
 
           <div className="flex flex-wrap mt-4 md:mt-0 space-x-2">
             <button
               onClick={handleRefresh}
-              className="bg-white border border-gray-200 rounded-lg p-2 text-gray-500 hover:text-primary-600 hover:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="bg-white border border-gray-200 rounded-lg p-2 text-gray-500 hover:text-primary-600 hover:border-primary-300 focus:outline-none focus:ring-1 focus:ring-primary-500"
             >
               <TbRefresh
                 className={`h-5 w-5 ${isLoading ? "animate-spin" : ""}`}
@@ -348,21 +351,21 @@ const QueryManagementPage = () => {
                 <input
                   type="text"
                   placeholder="Search queries..."
-                  value={searchTerm}
+                  value={searchQuery}
                   onChange={handleSearch}
-                  className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 min-w-[200px]"
+                  className="w-96 bg-neutral-100 text-neutral-800 pl-9 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 min-w-[200px]"
                 />
                 <TbSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               </div>
             </div>
 
-            <div className="flex bg-neutral-100 rounded-lg p-1">
+            <div className="flex bg-neutral-300 rounded-lg p-[0.2rem]">
               <button
                 onClick={() => setViewMode("grid")}
                 className={`p-2 rounded-md ${
                   viewMode === "grid"
                     ? "bg-white text-primary-600 shadow-sm"
-                    : "text-neutral-600 hover:text-primary-600"
+                    : "text-neutral-700 hover:text-primary-600"
                 }`}
                 title="Grid view"
               >
@@ -373,175 +376,197 @@ const QueryManagementPage = () => {
                 className={`p-2 rounded-md ${
                   viewMode === "table"
                     ? "bg-white text-primary-600 shadow-sm"
-                    : "text-neutral-600 hover:text-primary-600"
+                    : "text-neutral-700 hover:text-primary-600"
                 }`}
                 title="Table view"
               >
-                <TbLayoutList className="h-5 w-5" />
+                <TbListDetails className="h-5 w-5" />
               </button>
+            </div>
+
+            {/* Filters */}
+            <div className="flex relative gap-3">
+              <select
+                className="block w-full bg-neutral-100 text-neutral-800 py-2 pl-3 pr-10 border border-neutral-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+              >
+                <option value="all">All Statuses</option>
+                <option value="new">New</option>
+                <option value="processing">Processing</option>
+                <option value="processed">Processed</option>
+                <option value="converted">Converted to Lead</option>
+              </select>
+
+              <PiCaretDownDuotone className="absolute right-3.5 top-1/2 transform -translate-y-1/2 h-5 w-5 text-neutral-700" />
             </div>
 
             <button
               onClick={() => handleAddQuery()}
-              className="bg-primary-600 text-white rounded-lg px-4 py-2 text-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 flex items-center"
+              className="bg-primary-600 text-white rounded-lg px-6 py-2 text-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 flex items-center"
             >
-              <TbPlus className="mr-2 h-5 w-5" /> New Query
+              <TbPlus className="mr-2 h-5 w-5" />
+              Add New Query
             </button>
           </div>
         </div>
       </div>
 
-      <div className="px-8 py-4 flex-1 overflow-hidden flex flex-col">
-        {/* Query Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-5 flex-shrink-0">
-          <div className="bg-white rounded-lg shadow-md py-2.5 pl-5 border-l-4 border-primary-500">
-            <div className="flex items-center">
-              <div className="p-3 bg-primary-100 rounded-lg mr-4">
-                <TbMessageCircle className="h-6 w-6 text-primary-600" />
-              </div>
-              <div>
-                <div className="text-sm font-medium text-neutral-600">
-                  Total Queries
+      <div className="flex-1 overflow-hidden">
+        <div className="mx-auto px-4 sm:px-6 lg:px-8 py-6 h-full">
+          {/* Stats Cards Row */}
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+            {/* Total Queries */}
+            <div className="bg-white rounded-lg shadow-md p-3 border-l-4 border-primary-500">
+              <div className="flex items-center">
+                <div className="p-3 bg-primary-100 rounded-lg mr-3">
+                  <TbMessageDots className="h-6 w-6 text-primary-600" />
                 </div>
-                <div className="text-2xl font-bold text-secondary-700">
-                  {stats.total}
+                <div>
+                  <div className="text-sm font-medium text-neutral-700">
+                    Total Queries
+                  </div>
+                  <div className="text-2xl font-bold text-neutral-800">
+                    {stats.total}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* New Queries */}
+            <div className="bg-white rounded-lg shadow-md p-3 border-l-4 border-blue-500">
+              <div className="flex items-center">
+                <div className="p-3 bg-blue-100 rounded-lg mr-3">
+                  <TbMessagePlus className="h-6 w-6 text-blue-600" />
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-neutral-700">
+                    New Queries
+                  </div>
+                  <div className="text-2xl font-bold text-blue-600">
+                    {stats.new}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Processing Queries */}
+            <div className="bg-white rounded-lg shadow-md p-3 border-l-4 border-yellow-500">
+              <div className="flex items-center">
+                <div className="p-3 bg-yellow-200 rounded-lg mr-3">
+                  <TbClock className="h-6 w-6 text-yellow-600" />
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-neutral-700">
+                    Processing
+                  </div>
+                  <div className="text-2xl font-bold text-yellow-600">
+                    {stats.processing}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Processed Queries */}
+            <div className="bg-white rounded-lg shadow-md p-3 border-l-4 border-green-500">
+              <div className="flex items-center">
+                <div className="p-3 bg-green-200 rounded-lg mr-3">
+                  <TbCheck className="h-6 w-6 text-green-600" />
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-neutral-700">
+                    Processed
+                  </div>
+                  <div className="text-2xl font-bold text-green-600">
+                    {stats.processed}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Converted Queries */}
+            <div className="bg-white rounded-lg shadow-md p-3 border-l-4 border-secondary-500">
+              <div className="flex items-center">
+                <div className="p-3 bg-secondary-200 rounded-lg mr-3">
+                  <RiUserAddLine className="h-6 w-6 text-secondary-600" />
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-neutral-700">
+                    Converted
+                  </div>
+                  <div className="text-2xl font-bold text-secondary-600">
+                    {stats.converted}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md py-2.5 pl-5 border-l-4 border-green-500">
-            <div className="flex items-center">
-              <div className="p-3 bg-green-100 rounded-lg mr-4">
-                <TbCheck className="h-6 w-6 text-green-600" />
-              </div>
-              <div>
-                <div className="text-sm font-medium text-neutral-600">
-                  Processed
+          {/* Main Content */}
+          <div className="overflow-hidden">
+            {/* Queries List */}
+            <div className="overflow-auto h-[calc(100vh-263px)]">
+              {isLoading ? (
+                <div className="p-6 text-center text-gray-500">
+                  Loading queries...
                 </div>
-                <div className="text-2xl font-bold text-green-600">
-                  {stats.processed}
+              ) : queries.length === 0 ? (
+                <div className="p-6 text-center text-gray-500">
+                  No queries found. Create a new one to get started.
                 </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-md py-2.5 pl-5 border-l-4 border-yellow-500">
-            <div className="flex items-center">
-              <div className="p-3 bg-yellow-100 rounded-lg mr-4">
-                <TbLoader className="h-6 w-6 text-yellow-600" />
-              </div>
-              <div>
-                <div className="text-sm font-medium text-neutral-600">
-                  Processing
-                </div>
-                <div className="text-2xl font-bold text-yellow-600">
-                  {stats.processing}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-md py-2.5 pl-5 border-l-4 border-secondary-500">
-            <div className="flex items-center">
-              <div className="p-3 bg-secondary-100 rounded-lg mr-4">
-                <TbUserPlus className="h-6 w-6 text-secondary-600" />
-              </div>
-              <div>
-                <div className="text-sm font-medium text-neutral-600">
-                  Converted
-                </div>
-                <div className="text-2xl font-bold text-secondary-600">
-                  {stats.converted}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Query Content */}
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-6 gap-5 min-h-0 overflow-hidden">
-          {/* Query list (larger on mobile, smaller on desktop) */}
-          <div
-            className={`${
-              currentView === "form" || currentView === "detail"
-                ? "hidden lg:block lg:col-span-3"
-                : "col-span-full"
-            } overflow-hidden flex flex-col`}
-          >
-            {isLoading ? (
-              <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary-600"></div>
-              </div>
-            ) : (
-              <div className="overflow-auto flex-1">
-                {viewMode === "grid" ? (
-                  <QueryList
-                    queries={queries}
-                    searchTerm={searchTerm}
-                    onView={handleViewQuery}
-                    onEdit={handleEditQuery}
-                    onDelete={handleDeleteQuery}
-                    onProcessQuery={handleProcessQuery}
-                    onConvertToLead={handleConvertToLead}
-                  />
-                ) : (
-                  <QueryTable
-                    queries={queries}
-                    onView={handleViewQuery}
-                    onEdit={handleEditQuery}
-                    onDelete={handleDeleteQuery}
-                    onProcessQuery={handleProcessQuery}
-                    onConvertToLead={handleConvertToLead}
-                    sortField={sortField}
-                    sortOrder={sortOrder}
-                    onSort={handleSort}
-                  />
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Query form or detail view */}
-          {(currentView === "form" || currentView === "detail") && (
-            <div className="col-span-full lg:col-span-3 overflow-auto">
-              {currentView === "form" ? (
-                <QueryForm
-                  query={editingQuery}
-                  onSubmit={handleSaveQuery}
-                  onCancel={handleCancelForm}
-                />
               ) : (
-                <QueryDetail
-                  query={selectedQuery}
-                  onEdit={handleEditQuery}
-                  onDelete={handleDeleteQuery}
-                  onProcessQuery={handleProcessQuery}
-                  onConvertToLead={handleConvertToLead}
-                  onBack={handleBackToList}
-                />
+                <div className="overflow-auto flex-1">
+                  {viewMode === "grid" ? (
+                    <QueryList
+                      queries={queries}
+                      searchTerm={searchQuery}
+                      selectedStatus={selectedStatus}
+                      onView={handleViewQuery}
+                      onEdit={handleEditQuery}
+                      onDelete={handleDeleteQuery}
+                      onProcessQuery={handleProcessQuery}
+                      onConvertToLead={handleConvertToLead}
+                    />
+                  ) : (
+                    <QueryTable
+                      queries={queries}
+                      onView={handleViewQuery}
+                      onEdit={handleEditQuery}
+                      onDelete={handleDeleteQuery}
+                      onProcessQuery={handleProcessQuery}
+                      onConvertToLead={handleConvertToLead}
+                      sortField={sortField}
+                      sortOrder={sortOrder}
+                      onSort={handleSort}
+                    />
+                  )}
+                </div>
               )}
             </div>
-          )}
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div className="bg-white border-t border-gray-200 px-6 py-3">
-        <div className="flex flex-wrap justify-between items-center text-sm text-gray-600">
-          <div>Showing {queries.length} queries</div>
-          <div className="flex space-x-4">
-            <button className="flex items-center hover:text-primary-600">
-              <TbReport className="mr-1 h-4 w-4" />
-              Generate Report
-            </button>
-            <button className="flex items-center hover:text-primary-600">
-              <TbDatabaseExport className="mr-1 h-4 w-4" />
-              Export Data
-            </button>
           </div>
         </div>
       </div>
+
+      {/* Query Form Modal */}
+      {showQueryForm && (
+        <QueryForm
+          query={editingQuery}
+          onSubmit={handleSaveQuery}
+          onCancel={handleCancelForm}
+        />
+      )}
+
+      {/* Query Detail Modal */}
+      {showQueryDetail && (
+        <QueryDetail
+          query={selectedQuery}
+          onClose={handleBackToList}
+          onEdit={handleEditQuery}
+          onDelete={handleDeleteQuery}
+          onProcessQuery={handleProcessQuery}
+          onConvertToLead={handleConvertToLead}
+        />
+      )}
     </div>
   );
 };

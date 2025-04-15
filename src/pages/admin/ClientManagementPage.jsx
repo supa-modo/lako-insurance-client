@@ -337,13 +337,13 @@ const ClientManagementPage = () => {
   const getStatusBadgeColor = (status) => {
     switch (status) {
       case "active":
-        return "bg-green-200 text-green-800";
+        return "bg-green-100 border border-green-300 text-green-800";
       case "inactive":
-        return "bg-red-200 text-red-800";
+        return "bg-red-100 border border-red-300 text-red-800";
       case "pending_renewal":
-        return "bg-yellow-200 text-yellow-800";
+        return "bg-yellow-100 border border-yellow-300 text-yellow-800";
       default:
-        return "bg-gray-200/70 text-gray-800";
+        return "bg-gray-100 border border-gray-300 text-gray-800";
     }
   };
 
@@ -528,7 +528,7 @@ const ClientManagementPage = () => {
                               className={`px-4 py-1 text-xs rounded-full ${
                                 activeFilters.status === status
                                   ? getStatusBadgeColor(status) + " font-medium"
-                                  : "bg-gray-200/70 text-gray-700"
+                                  : "bg-gray-200/70 border border-gray-300 text-gray-700"
                               }`}
                             >
                               {status === "active"
@@ -554,8 +554,8 @@ const ClientManagementPage = () => {
                             onClick={() => handlePolicyFilterChange(policy)}
                             className={`px-3 py-1.5 text-xs rounded-md text-left ${
                               activeFilters.policyType === policy
-                                ? "bg-primary-200 text-primary-700 font-medium"
-                                : "bg-gray-200/70 text-gray-700 hover:bg-gray-200"
+                                ? "bg-primary-200 border border-primary-300 text-primary-700 font-medium"
+                                : "bg-gray-200/70 border border-gray-300 text-gray-700 hover:bg-gray-200"
                             }`}
                           >
                             {policy}

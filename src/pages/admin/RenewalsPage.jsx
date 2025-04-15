@@ -16,7 +16,12 @@ import {
   TbUserCheck,
   TbArrowUp,
   TbArrowDown,
+  TbEdit,
+  TbEye,
+  TbPlus,
 } from "react-icons/tb";
+
+import RenewalModal from "../../components/renewals/RenewalModal";
 
 const RenewalsPage = () => {
   // State management
@@ -33,6 +38,8 @@ const RenewalsPage = () => {
     overdue: 0,
     processed: 0,
   });
+  const [selectedRenewal, setSelectedRenewal] = useState(null);
+  const [showRenewalModal, setShowRenewalModal] = useState(false);
 
   // Mock data
   useEffect(() => {
@@ -174,6 +181,80 @@ const RenewalsPage = () => {
     }, 1000);
   };
 
+  // Handle view renewal
+  const handleViewRenewal = (renewal) => {
+    setSelectedRenewal(renewal);
+    setShowRenewalModal(true);
+  };
+
+  // Handle create renewal
+  const handleCreateRenewal = () => {
+    setSelectedRenewal({
+      id: `RNW-${Date.now()}`,
+      clientName: "",
+      policyNumber: "",
+      policyType: "",
+      currentPremium: "",
+      dueDate: new Date().toISOString(),
+      status: "upcoming",
+      contactInfo: {
+        phone: "",
+        email: "",
+      },
+      lastContact: "",
+      notes: "",
+    });
+    setShowRenewalModal(true);
+  };
+
+  // Handle save renewal
+  const handleSaveRenewal = (renewalData) => {
+    const isNewRenewal = !renewals.some((r) => r.id === renewalData.id);
+
+    if (isNewRenewal) {
+      // Add new renewal
+      setRenewals((prev) => [...prev, renewalData]);
+    } else {
+      // Update existing renewal
+      setRenewals((prev) =>
+        prev.map((r) => (r.id === renewalData.id ? renewalData : r))
+      );
+    }
+
+    // Update stats
+    updateStats([
+      ...renewals.filter((r) => r.id !== renewalData.id),
+      renewalData,
+    ]);
+    setShowRenewalModal(false);
+    setSelectedRenewal(null);
+  };
+
+  // Handle process renewal
+  const handleProcessRenewal = (renewalData) => {
+    handleSaveRenewal({
+      ...renewalData,
+      status: "processed",
+    });
+  };
+
+  // Handle delete renewal
+  const handleDeleteRenewal = (renewalId) => {
+    if (window.confirm("Are you sure you want to delete this renewal?")) {
+      const updatedRenewals = renewals.filter((r) => r.id !== renewalId);
+      setRenewals(updatedRenewals);
+      updateStats(updatedRenewals);
+      setShowRenewalModal(false);
+      setSelectedRenewal(null);
+    }
+  };
+
+  // Handle close modal
+  const handleCloseModal = () => {
+    setShowRenewalModal(false);
+    setSelectedRenewal(null);
+  };
+
   return (
     <div className="h-[calc(100vh-64px)] flex flex-col overflow-hidden">
       {/* Page Header */}
@@ -218,6 +299,14 @@ const RenewalsPage = () => {
                 <TbChevronDown className="h-4 w-4 ml-2" />
               </button>
             </div>
+
+            <button
+              onClick={handleCreateRenewal}
+              className="bg-primary-600 text-white rounded-lg px-4 py-2 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 flex items-center text-sm"
+            >
+              <TbPlus className="h-5 w-5 mr-2" />
+              Add Renewal
+            </button>
           </div>
         </div>
       </div>
@@ -444,14 +533,25 @@ const RenewalsPage = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <div className="flex space-x-2">
+                        <button
+                          className="text-gray-400 hover:text-blue-600"
+                          onClick={() => handleViewRenewal(renewal)}
+                          title="View renewal"
+                        >
+                          <TbEye className="h-5 w-5" />
+                        </button>
+                        <button
+                          className="text-gray-400 hover:text-primary-600"
+                          onClick={() => handleViewRenewal(renewal)}
+                          title="Edit renewal"
+                        >
+                          <TbEdit className="h-5 w-5" />
+                        </button>
                         <button className="text-gray-400 hover:text-blue-600">
                           <TbMail className="h-5 w-5" />
                         </button>
                         <button className="text-gray-400 hover:text-green-600">
                           <TbPhone className="h-5 w-5" />
-                        </button>
-                        <button className="text-gray-400 hover:text-primary-600">
-                          <TbUserCheck className="h-5 w-5" />
                         </button>
                       </div>
                     </td>
@@ -479,6 +579,17 @@ const RenewalsPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Renewal Modal */}
+      {showRenewalModal && (
+        <RenewalModal
+          renewal={selectedRenewal}
+          onClose={handleCloseModal}
+          onSave={handleSaveRenewal}
+          onDelete={handleDeleteRenewal}
+          onProcess={handleProcessRenewal}
+        />
+      )}
     </div>
   );
 };

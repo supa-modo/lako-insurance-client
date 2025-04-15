@@ -88,30 +88,35 @@ const getStatusInfo = (status) => {
         bgColor: "bg-blue-100",
         textColor: "text-blue-800",
         label: "New Lead",
+        borderColor: "border-blue-300",
       };
     case "proposal":
       return {
         bgColor: "bg-purple-100",
         textColor: "text-purple-800",
         label: "Proposal",
+        borderColor: "border-purple-300",
       };
     case "negotiation":
       return {
         bgColor: "bg-pink-100",
         textColor: "text-pink-800",
         label: "Negotiation",
+        borderColor: "border-pink-300",
       };
     case "converted":
       return {
         bgColor: "bg-green-100",
         textColor: "text-green-800",
         label: "Converted",
+        borderColor: "border-green-300",
       };
     default:
       return {
         bgColor: "bg-gray-100",
         textColor: "text-gray-800",
         label: "Unknown",
+        borderColor: "border-gray-300",
       };
   }
 };
@@ -200,9 +205,9 @@ const LeadDetail = ({ lead, onClose, onEdit, onDelete }) => {
                     {lead.name}
                   </h4>
                   <div className="flex items-center text-[0.83rem] text-gray-500">
-                    <span className="mr-3">Age: {lead.age}</span>
+                    <span className="mr-3">Age: {lead.age} years</span>
                     <span
-                      className={`${statusInfo.bgColor} ${statusInfo.textColor} px-3 py-0.5 rounded-md text-xs font-medium`}
+                      className={`${statusInfo.bgColor} ${statusInfo.textColor} ${statusInfo.borderColor} border px-3 py-0.5 rounded-full text-xs font-medium`}
                     >
                       {statusInfo.label}
                     </span>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { RiUserFollowLine } from "react-icons/ri";
 import {
   TbEye,
   TbEdit,
@@ -23,6 +24,7 @@ import {
   TbBrandWhatsapp,
   TbMail,
   TbPhone,
+  TbMessage,
 } from "react-icons/tb";
 
 const QueryList = ({
@@ -33,10 +35,10 @@ const QueryList = ({
   onDelete,
   onConvertToLead,
   onProcessQuery,
+  selectedStatus,
 }) => {
   const [sortField, setSortField] = useState("date");
   const [sortOrder, setSortOrder] = useState("desc");
-  const [selectedStatus, setSelectedStatus] = useState("all");
   const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm || "");
 
   // Update local search when prop changes
@@ -96,31 +98,36 @@ const QueryList = ({
     switch (status) {
       case "new":
         return (
-          <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+          <span className="px-4 py-1 flex items-center rounded-full text-xs font-medium bg-blue-100 border border-blue-300 text-blue-800">
+            <TbMessage className="h-4 w-4 mr-1" />
             New
           </span>
         );
       case "processing":
         return (
-          <span className="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+          <span className="px-4 py-1 flex items-center rounded-full text-xs font-medium bg-yellow-100 border border-yellow-300 text-yellow-800">
+            <TbClock className="h-4 w-4 mr-1" />
             Processing
           </span>
         );
       case "processed":
         return (
-          <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+          <span className="px-4 py-1 flex items-center rounded-full text-xs font-medium bg-green-100 border border-green-300 text-green-800">
+            <TbCheck className="h-4 w-4 mr-1" />
             Processed
           </span>
         );
       case "converted":
         return (
-          <span className="px-2 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
+          <span className="px-4 py-1 flex items-center rounded-full text-xs font-medium bg-primary-100 border border-primary-300 text-primary-800">
+            <RiUserFollowLine className="h-4 w-4 mr-1" />
             Converted to Lead
           </span>
         );
       default:
         return (
-          <span className="px-2 py-1 rounded-full text-xs font-medium bg-neutral-100 text-neutral-800">
+          <span className="px-4 py-1 flex items-center rounded-full text-xs font-medium bg-neutral-100 border border-neutral-300 text-neutral-800">
+            <TbInfoCircle className="h-4 w-4 mr-1" />
             {status}
           </span>
         );
@@ -175,41 +182,7 @@ const QueryList = ({
     });
 
   return (
-    <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-      {/* Toolbar */}
-      <div className="bg-neutral-50 p-4 border-b border-neutral-200">
-        <div className="flex flex-col sm:flex-row gap-3 justify-between">
-          {/* Search */}
-          <div className="relative w-full sm:max-w-xs">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <TbSearch className="h-5 w-5 text-neutral-400" />
-            </div>
-            <input
-              type="text"
-              className="block w-full pl-10 pr-3 py-2 border border-neutral-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-              placeholder="Search queries..."
-              value={localSearchTerm}
-              onChange={(e) => setLocalSearchTerm(e.target.value)}
-            />
-          </div>
-
-          {/* Filters */}
-          <div className="flex gap-3">
-            <select
-              className="block w-full py-2 pl-3 pr-10 border border-neutral-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-            >
-              <option value="all">All Statuses</option>
-              <option value="new">New</option>
-              <option value="processing">Processing</option>
-              <option value="processed">Processed</option>
-              <option value="converted">Converted to Lead</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
+    <div className=" overflow-hidden">
       {/* Queries List */}
       <div className="overflow-x-auto">
         {filteredQueries.length === 0 ? (
@@ -229,7 +202,7 @@ const QueryList = ({
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-1">
             {filteredQueries.map((query) => (
               <div
                 key={query.id}
@@ -239,14 +212,14 @@ const QueryList = ({
                   {/* Header */}
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center">
-                      <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-medium">
+                      <div className="h-10 w-10 rounded-full bg-gradient-to-r from-primary-300 to-primary-400 flex items-center justify-center text-primary-600 font-medium">
                         {query.clientName?.charAt(0).toUpperCase()}
                       </div>
                       <div className="ml-3">
-                        <div className="text-sm font-medium text-neutral-900">
+                        <div className="text-sm font-semibold text-neutral-900">
                           {query.clientName}
                         </div>
-                        <div className="text-xs text-neutral-500">
+                        <div className="text-xs text-neutral-700">
                           {query.email}
                         </div>
                       </div>
@@ -258,23 +231,23 @@ const QueryList = ({
 
                   {/* Content */}
                   <div className="space-y-2">
-                    <div className="text-sm text-neutral-700">
+                    <div className="text-sm font-medium text-neutral-800">
                       {query.summary}
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {query.coverageType && (
-                        <span className="px-2 py-1 rounded-md text-xs font-medium bg-neutral-100 text-neutral-700">
+                        <span className="px-2 py-1 rounded-md text-xs font-medium bg-neutral-300 text-neutral-700">
                           {query.coverageType}
                         </span>
                       )}
                       {query.budget && (
-                        <span className="px-2 py-1 rounded-md text-xs font-medium bg-green-100 text-green-700">
+                        <span className="px-2 py-1 rounded-md text-xs font-medium bg-green-200 text-green-700">
                           {formatCurrency(query.budget)}
                         </span>
                       )}
                     </div>
-                    <div className="flex items-center justify-between text-xs text-neutral-500">
-                      <div className="flex items-center">
+                    <div className="flex items-center justify-between text-[0.78rem] font-medium text-neutral-700">
+                      <div className="flex items-center text-primary-600">
                         <TbCalendarTime className="h-4 w-4 mr-1" />
                         {formatDate(query.date)}
                       </div>
@@ -283,21 +256,37 @@ const QueryList = ({
                   </div>
 
                   {/* Actions */}
-                  <div className="mt-4 pt-3 border-t border-neutral-200 flex items-center justify-between">
+                  <div className="mt-4 pt-1 border-t border-neutral-200 flex items-center justify-between">
+                  <div className="flex space-x-2">
+                      {query.phone && (
+                        <button className="p-1.5 text-neutral-600 hover:text-primary-600 hover:bg-primary-50 rounded-md">
+                          <TbPhone className="h-[1.3rem] w-[1.3rem]" />
+                        </button>
+                      )}
+                      {query.email && (
+                        <button className="p-1.5 text-neutral-600 hover:text-primary-600 hover:bg-primary-50 rounded-md">
+                          <TbMail className="h-[1.3rem] w-[1.3rem]" />
+                        </button>
+                      )}
+                      <button className="p-1.5 text-neutral-600 hover:text-green-600 hover:bg-green-50 rounded-md">
+                        <TbBrandWhatsapp className="h-[1.3rem] w-[1.3rem]" />
+                      </button>
+                    </div>
+
                     <div className="flex space-x-2">
                       <button
                         onClick={() => onView(query)}
                         className="p-1.5 text-neutral-600 hover:text-primary-600 hover:bg-primary-50 rounded-md"
                         title="View details"
                       >
-                        <TbEye className="h-4 w-4" />
+                        <TbEye className="h-[1.3rem] w-[1.3rem]" />
                       </button>
                       <button
                         onClick={() => onEdit(query)}
                         className="p-1.5 text-neutral-600 hover:text-primary-600 hover:bg-primary-50 rounded-md"
                         title="Edit query"
                       >
-                        <TbEdit className="h-4 w-4" />
+                        <TbEdit className="h-[1.3rem] w-[1.3rem]" />
                       </button>
                       {query.status !== "processed" &&
                         query.status !== "converted" && (
@@ -306,7 +295,7 @@ const QueryList = ({
                             className="p-1.5 text-neutral-600 hover:text-green-600 hover:bg-green-50 rounded-md"
                             title="Mark as processed"
                           >
-                            <TbCheck className="h-4 w-4" />
+                            <TbCheck className="h-[1.3rem] w-[1.3rem]" />
                           </button>
                         )}
                       {query.status !== "converted" && (
@@ -315,7 +304,7 @@ const QueryList = ({
                           className="p-1.5 text-neutral-600 hover:text-secondary-600 hover:bg-secondary-50 rounded-md"
                           title="Convert to lead"
                         >
-                          <TbUserPlus className="h-4 w-4" />
+                          <TbUserPlus className="h-[1.3rem] w-[1.3rem]" />
                         </button>
                       )}
                       <button
@@ -323,24 +312,10 @@ const QueryList = ({
                         className="p-1.5 text-neutral-600 hover:text-red-600 hover:bg-red-50 rounded-md"
                         title="Delete query"
                       >
-                        <TbTrash className="h-4 w-4" />
+                        <TbTrash className="h-[1.3rem] w-[1.3rem]" />
                       </button>
                     </div>
-                    <div className="flex space-x-2">
-                      {query.phone && (
-                        <button className="p-1.5 text-neutral-600 hover:text-primary-600 hover:bg-primary-50 rounded-md">
-                          <TbPhone className="h-4 w-4" />
-                        </button>
-                      )}
-                      {query.email && (
-                        <button className="p-1.5 text-neutral-600 hover:text-primary-600 hover:bg-primary-50 rounded-md">
-                          <TbMail className="h-4 w-4" />
-                        </button>
-                      )}
-                      <button className="p-1.5 text-neutral-600 hover:text-green-600 hover:bg-green-50 rounded-md">
-                        <TbBrandWhatsapp className="h-4 w-4" />
-                      </button>
-                    </div>
+                    
                   </div>
                 </div>
               </div>
@@ -350,10 +325,10 @@ const QueryList = ({
       </div>
 
       {/* Footer */}
-      <div className="bg-neutral-50 px-4 py-3 border-t border-neutral-200 sm:px-6 flex items-center justify-between">
-        <div className="text-sm text-neutral-500">
-          Showing <span className="font-medium">{filteredQueries.length}</span>{" "}
-          of <span className="font-medium">{queries.length}</span> queries
+      <div className="bg-neutral-50 rounded-lg mx-1 py-3 mt-3 border-t border-neutral-200 sm:px-6 flex items-center justify-between">
+        <div className="text-sm text-neutral-600">
+          Showing <span className="">{filteredQueries.length}</span>{" "}
+          of <span className="">{queries.length}</span> queries
         </div>
 
         <div>

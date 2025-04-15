@@ -49,7 +49,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { getCurrentUser } from "../../services/adminService";
 import { PiUsersDuotone, PiUsersThreeDuotone } from "react-icons/pi";
-import { RiUserShared2Line } from "react-icons/ri";
+import { RiUserAddLine, RiUserShared2Line } from "react-icons/ri";
 
 const AdminDashboardPage = () => {
   const [period, setPeriod] = useState("weekly");
@@ -295,15 +295,15 @@ const AdminDashboardPage = () => {
   };
 
   return (
-    <div className="text-gray-800 font-lexend h-[calc(100vh-64px)] overflow-y-auto pb-6 bg-neutral-50">
+    <div className="text-gray-800 font-lexend h-[calc(100vh-64px)] overflow-y-auto pb-6 bg-neutral-100">
       {/* Dashboard Header */}
-      <div className="bg-gradient-to-r from-secondary-50 to-primary-50 px-8 py-5 border-b border-gray-200">
+      <div className="bg-gradient-to-r from-secondary-50 via-white to-secondary-50 px-8 py-5 border-b border-gray-200">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
           <div>
             <h1 className="text-[1.5rem] font-bold text-secondary-700">
               Welcome back, {currentUser?.name || "Admin"}
             </h1>
-            <p className="text-neutral-500 text-sm">
+            <p className="text-neutral-600 font-lexend text-[0.83rem]">
               Last login: {lastLogin.toLocaleString()}
             </p>
           </div>
@@ -345,7 +345,7 @@ const AdminDashboardPage = () => {
               className="group bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex items-center  hover:shadow-md"
             >
               <div
-                className={`h-12 w-12 rounded-lg ${metric.color} flex items-center justify-center flex-shrink-0 mr-4 transition-transform group-hover:scale-105`}
+                className={`h-12 w-12 rounded-lg ${metric.color} flex items-center justify-center flex-shrink-0 mr-4 `}
               >
                 <metric.icon className="h-6 w-6 text-white" />
               </div>
@@ -354,7 +354,7 @@ const AdminDashboardPage = () => {
                   {metric.title}
                 </h3>
                 <div className="flex items-center">
-                  <p className="text-xl font-bold text-gray-800 mr-2">
+                  <p className="text-xl font-bold text-neutral-800 mr-2">
                     {metric.value}
                   </p>
                   <span
@@ -379,7 +379,7 @@ const AdminDashboardPage = () => {
         {/* Quick Actions */}
         <div className="bg-neutral-50 rounded-xl border border-gray-200 p-4">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-gray-900">Quick Actions</h2>
+            <h2 className="text-lg font-bold text-primary-600">Quick Actions</h2>
             <button className="text-primary-600 hover:text-primary-700 text-sm font-medium">
               Customize
             </button>
@@ -388,7 +388,7 @@ const AdminDashboardPage = () => {
             {[
               {
                 name: "Add Client",
-                icon: TbUserPlus,
+                icon: RiUserAddLine,
                 path: "/admin/clients/new",
                 color: "bg-blue-100 text-blue-600",
               },
@@ -444,7 +444,7 @@ const AdminDashboardPage = () => {
           {/* Lead Pipeline - col-span-1 */}
           <div className="bg-white rounded-xl border border-gray-200 p-4 lg:col-span-1">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold text-gray-900">Lead Pipeline</h2>
+              <h2 className="text-lg font-bold text-primary-600">Lead Pipeline</h2>
               <Link
                 to="/admin/leads"
                 className="text-primary-600 hover:text-primary-700 text-sm font-medium"
@@ -471,14 +471,14 @@ const AdminDashboardPage = () => {
             <div className="mt-4 pt-4 border-t border-gray-100">
               <div className="flex justify-between items-center">
                 <div>
-                  <div className="text-sm text-gray-500">Total Leads</div>
-                  <div className="text-xl font-bold text-gray-900">427</div>
+                  <div className="text-sm text-neutral-600">Total Leads</div>
+                  <div className="text-xl font-bold text-secondary-700">427</div>
                 </div>
                 <div>
-                  <div className="text-sm text-gray-500">
+                  <div className="text-sm text-neutral-600">
                     Avg. Conversion Time
                   </div>
-                  <div className="text-xl font-bold text-gray-900">18 days</div>
+                  <div className="text-xl font-bold text-secondary-700">18 days</div>
                 </div>
               </div>
             </div>
@@ -489,7 +489,7 @@ const AdminDashboardPage = () => {
             {/* Conversion Rate Chart */}
             <div className="bg-white rounded-xl border border-gray-200 p-4">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-bold text-gray-900">
+                <h2 className="text-lg font-bold text-primary-600">
                   Conversion Rate Trends
                 </h2>
                 <div className="flex items-center">
@@ -524,7 +524,7 @@ const AdminDashboardPage = () => {
           {/* Top Insurance Plans */}
           <div className="bg-white w-[33%] rounded-xl border border-gray-200 p-4">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold text-gray-900">
+              <h2 className="text-lg font-bold text-primary-600">
                 Top Insurance Plans
               </h2>
               <Link
@@ -585,7 +585,7 @@ const AdminDashboardPage = () => {
           {/* Upcoming Tasks */}
           <div className="bg-white w-[67.5%] rounded-xl border border-gray-200 p-4">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold text-gray-900">My Tasks</h2>
+              <h2 className="text-lg font-bold text-primary-600">My Tasks</h2>
               <Link
                 to="/admin/tasks"
                 className="text-primary-600 hover:text-primary-700 text-sm font-medium"
@@ -595,7 +595,7 @@ const AdminDashboardPage = () => {
             </div>
             <div className="space-y-3">
               {tasks.map((task) => (
-                <div key={task.id} className="p-2 hover:bg-gray-50 rounded-lg">
+                <div key={task.id} className="p-2 hover:bg-neutral-200 rounded-lg">
                   <div className="flex items-center">
                     <input
                       type="checkbox"
@@ -607,10 +607,10 @@ const AdminDashboardPage = () => {
                     <div
                       className={`text-xs px-2 py-0.5 rounded-full ml-2 ${
                         task.priority === "High"
-                          ? "bg-red-100 text-red-800"
+                          ? "bg-red-100 border border-red-300 text-red-800"
                           : task.priority === "Medium"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-blue-100 text-blue-800"
+                          ? "bg-yellow-100 border border-yellow-300 text-yellow-800"
+                          : "bg-blue-100 border border-blue-300 text-blue-800"
                       }`}
                     >
                       {task.priority}
@@ -622,12 +622,12 @@ const AdminDashboardPage = () => {
                       Due: {task.due}
                     </span>
                     <span
-                      className={`ml-2 text-xs px-1.5 py-0.5 rounded ${
+                      className={`ml-2 text-[0.7rem] px-2 py-0.5 rounded ${
                         task.status === "Pending"
-                          ? "bg-yellow-100 text-yellow-800"
+                          ? "bg-yellow-100 border border-yellow-300 text-yellow-800"
                           : task.status === "In Progress"
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-gray-100 text-gray-800"
+                          ? "bg-blue-100 border border-blue-300 text-blue-800"
+                          : "bg-gray-100 border border-gray-300 text-gray-800"
                       }`}
                     >
                       {task.status}
@@ -636,8 +636,8 @@ const AdminDashboardPage = () => {
                 </div>
               ))}
             </div>
-            <div className="mt-4 pt-2 border-t border-gray-100">
-              <button className="w-full flex items-center justify-center py-2 bg-primary-50 hover:bg-primary-100 text-primary-600 rounded-lg text-sm font-medium transition-colors">
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <button className="w-full flex items-center justify-center py-2 bg-gradient-to-r from-primary-500 via-primary-600 to-primary-500 hover:bg-primary-700 text-white rounded-lg text-sm font-medium transition-colors">
                 <TbPlus className="h-4 w-4 mr-1" />
                 Add New Task
               </button>
