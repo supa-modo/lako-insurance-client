@@ -24,6 +24,7 @@ import PlanDetailsModal from "../../components/results/PlanDetailsModal";
 import DownloadReport from "../../components/results/DownloadReport";
 import CallbackModal from "../../components/results/CallbackModal";
 import Footer from "../../components/layout/Footer";
+import { TbMailFilled, TbPhoneCall } from "react-icons/tb";
 
 const ResultsPage = () => {
   const navigate = useNavigate();
@@ -372,12 +373,7 @@ const ResultsPage = () => {
           ) : !report || comparisonResults.length === 0 ? (
             <EmptyState onGoHome={handleGoToHome} />
           ) : (
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              className="space-y-6 lg:space-y-8"
-            >
+            <div className="space-y-6 lg:space-y-8">
               {/* Two Column Layout - Desktop */}
               <div className="hidden lg:flex lg:flex-row gap-6">
                 {/* Left Column - Plan List */}
@@ -425,6 +421,48 @@ const ResultsPage = () => {
                     onDownloadText={handleDownloadText}
                     downloadStatus={downloadStatus}
                   />
+
+                  <motion.div
+                    variants={itemVariants}
+                    className="bg-secondary-50 border border-secondary-100 rounded-xl overflow-hidden"
+                  >
+                    <div className="p-4 sm:p-6">
+                      <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                        <div className="mb-6 md:mb-0 md:mr-6 md:max-w-[50%]">
+                          <h3 className="text-base sm:text-lg font-bold text-primary-600 mb-2">
+                            Need Help Choosing a Plan?
+                          </h3>
+                          <p className="text-neutral-700 text-[0.8rem] sm:text-sm md:text-base">
+                            Our insurance experts are ready to answer any
+                            questions and help you get enrolled into the best
+                            option.
+                          </p>
+                        </div>
+                        <div className="flex flex-col sm:flex-row gap-3">
+                          <motion.a
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            href={`tel:+254700000000`}
+                            className="btn inline-flex items-center justify-center px-4 sm:px-6 py-3 bg-secondary-500 hover:bg-secondary-600 text-white font-medium rounded-lg shadow-md transition-all text-[0.8rem] sm:text-sm md:text-base"
+                          >
+                            <TbPhoneCall className="mr-2" size={20} /> Call
+                            Expert
+                          </motion.a>
+                          <motion.button
+                            whileHover={{ scale: 1.01 }}
+                            whileTap={{ scale: 0.99 }}
+                            className="btn inline-flex items-center justify-center px-4 sm:px-6 py-3 border-2 border-secondary-400 text-secondary-700 hover:bg-secondary-100 font-medium rounded-lg transition-all text-[0.8rem] sm:text-sm md:text-base"
+                            onClick={() => {
+                              setShowCallbackModal(true);
+                            }}
+                          >
+                            <TbMailFilled className="mr-2" size={20} /> Request
+                            Callback
+                          </motion.button>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
                 </motion.div>
               </div>
 
@@ -476,8 +514,47 @@ const ResultsPage = () => {
                     downloadStatus={downloadStatus}
                   />
                 </motion.div>
+
+                <motion.div
+                  variants={itemVariants}
+                  className="bg-secondary-50 border border-secondary-100 rounded-xl overflow-hidden"
+                >
+                  <div className="p-4 sm:p-6">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                      <div className="mb-6 md:mb-0 md:mr-6 md:max-w-[50%]">
+                        <h3 className="text-base sm:text-lg font-bold text-primary-600 mb-2">
+                          Need Help With choosing a Plan?
+                        </h3>
+                        <p className="text-neutral-700 text-[0.8rem] sm:text-sm md:text-base">
+                          Our insurance experts are ready to answer any
+                          questions and help you get enrolled into the best
+                          option.
+                        </p>
+                      </div>
+                      <div className="flex flex-col sm:flex-row gap-3">
+                        <motion.a
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          href={`tel:+254700000000`}
+                          className="btn inline-flex items-center justify-center px-4 sm:px-6 py-3 bg-secondary-500 hover:bg-secondary-600 text-white font-medium rounded-lg shadow-md transition-all text-[0.8rem] sm:text-sm md:text-base"
+                        >
+                          <TbPhoneCall className="mr-2" size={20} /> Call Expert
+                        </motion.a>
+                        <motion.button
+                          whileHover={{ scale: 1.01 }}
+                          whileTap={{ scale: 0.99 }}
+                          className="btn inline-flex items-center justify-center px-4 sm:px-6 py-3 border-2 border-secondary-400 text-secondary-700 hover:bg-secondary-100 font-medium rounded-lg transition-all text-[0.8rem] sm:text-sm md:text-base"
+                          // onClick={onRequestCallback}
+                        >
+                          <TbMailFilled className="mr-2" size={20} /> Request
+                          Callback
+                        </motion.button>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
               </div>
-            </motion.div>
+            </div>
           )}
         </div>
 

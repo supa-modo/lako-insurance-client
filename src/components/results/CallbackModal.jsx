@@ -60,7 +60,7 @@ const CallbackModal = ({ isOpen, onClose }) => {
               <div className="h-16 w-16 bg-gradient-to-br from-primary-200 to-primary-300 rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
                 <TbPhoneCall className="h-9 w-9 text-primary-700" />
               </div>
-              <h3 className="text-xl font-bold text-primary-700 font-outfit mb-1">
+              <h3 className="text-xl font-bold text-primary-600 font-outfit mb-1">
                 Request a Callback
               </h3>
               <p className="text-neutral-600 text-sm font-outfit">
@@ -105,8 +105,7 @@ const CallbackModal = ({ isOpen, onClose }) => {
               </motion.button>
 
               <p className="text-xs text-center text-gray-500 mt-2 font-outfit">
-                By requesting a callback, you agree to our privacy policy and
-                terms of service.
+                We will call you on the phone number you entered while selecting your prefences.
               </p>
             </form>
           </motion.div>

@@ -203,10 +203,8 @@ const ComparisonTable = ({ plans, formatCurrency, onDownload }) => {
   ];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.2 }}
+    <div
+      
       className="bg-white rounded-xl shadow-xl bord overflow-hidden relative"
     >
       <div className="bg-gradient-to-r from-primary-600 to-primary-700 px-6 py-4 relative z-10">
@@ -342,6 +340,8 @@ const ComparisonTable = ({ plans, formatCurrency, onDownload }) => {
             ))}
           </tbody>
         </table>
+
+        
       </div>
 
       {onDownload && (
@@ -358,7 +358,7 @@ const ComparisonTable = ({ plans, formatCurrency, onDownload }) => {
           </motion.button>
         </div>
       )}
-    </motion.div>
+    </div>
   );
 };
 

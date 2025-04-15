@@ -140,11 +140,9 @@ const PlanList = ({
           };
 
           return (
-            <motion.div
+            <div
               key={planId || index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
+             
               className={`relative bg-white rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl border-l-4 ${
                 isActivePlan
                   ? "border-l-primary-500"
@@ -170,7 +168,7 @@ const PlanList = ({
                     <div>
                       <h3 className="font-semibold text-gray-800 text-base flex items-center">
                         {plan.name || "Insurance Plan"}
-                        <span className="ml-2 bg-primary-100 text-primary-700 text-xs px-2 py-0.5 rounded">
+                        <span className="hidden sm:block ml-2 bg-primary-100 text-primary-700 text-xs px-2 py-0.5 rounded">
                           {plan.tier || plan.planType || "Standard"}
                         </span>
                       </h3>
@@ -192,7 +190,7 @@ const PlanList = ({
                 <div className="grid grid-cols-3 gap-4 bg-gray-50 p-3 rounded-lg mb-4">
                   <div>
                     <div className="flex items-center text-xs text-gray-500 mb-1">
-                      <TbShieldHalfFilled className="mr-1 text-primary-500" />
+                      <TbShieldHalfFilled className="mr-1 text-primary-500 h-4 w-4" />
                       <span>Inpatient</span>
                     </div>
                     <p className="text-sm font-semibold font-lexend text-gray-800">
@@ -202,7 +200,7 @@ const PlanList = ({
 
                   <div>
                     <div className="flex items-center text-xs text-gray-500 mb-1">
-                      <TbStethoscope className="mr-1 text-primary-500" />
+                      <TbStethoscope className="mr-1 text-primary-500 h-4 w-4" />
                       <span>Outpatient</span>
                     </div>
                     <p className="text-sm font-semibold font-lexend text-gray-800">
@@ -212,7 +210,7 @@ const PlanList = ({
 
                   <div>
                     <div className="flex items-center text-xs text-gray-500 mb-1">
-                      <TbBuildingHospital className="mr-1 text-primary-500" />
+                      <TbBuildingHospital className="mr-1 text-primary-500 h-4 w-4" />
                       <span>Room Type</span>
                     </div>
                     <p className="text-sm font-semibold text-gray-800">
@@ -224,7 +222,7 @@ const PlanList = ({
                 {/* Optional covers */}
                 <div className="mb-4">
                   <div className="flex items-center mb-2">
-                    <TbCoins className="text-primary-500 mr-1" />
+                    <TbCoins className="text-primary-500 mr-1 h-4 w-4" />
                     <span className="text-sm font-medium text-gray-700">
                       Optional Covers
                     </span>
@@ -302,7 +300,7 @@ const PlanList = ({
                   </button>
                 </div>
               </div>
-            </motion.div>
+            </div>
           );
         })}
       </div>

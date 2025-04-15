@@ -47,10 +47,8 @@ const DownloadReport = ({
   };
 
   return (
-    <motion.div
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
+    <div
+     
       className="bg-white rounded-xl overflow-hidden shadow-lg border border-gray-200 relative"
     >
   
@@ -131,7 +129,7 @@ const DownloadReport = ({
           </motion.div>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 };
 

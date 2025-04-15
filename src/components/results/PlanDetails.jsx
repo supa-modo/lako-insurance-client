@@ -1,17 +1,10 @@
 import React, { useState } from "react";
-import {
-  FiX,
-  FiArrowLeft,
-  FiChevronDown,
-  FiChevronUp,
-  FiDownload,
-} from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   TbCheck,
+  TbX,
   TbClockDollar,
   TbMailFilled,
-  TbPhone,
   TbPhoneCall,
   TbShieldHalfFilled,
   TbBuildingHospital,
@@ -22,6 +15,15 @@ import {
   TbPlane,
   TbDeviceMobile,
   TbVirus,
+  TbChevronDown,
+  TbChevronUp,
+  TbDownload,
+  TbArrowLeft,
+  TbInfoCircle,
+  TbCoins,
+  TbEyeglass2,
+  TbCoffin,
+  TbStethoscope,
 } from "react-icons/tb";
 import { FaUserDoctor } from "react-icons/fa6";
 import { PiTooth } from "react-icons/pi";
@@ -225,18 +227,18 @@ const PlanDetails = ({
 
   // Coverage Card Component for the top section
   const CoverageCard = ({ title, amount, icon, color }) => (
-    <div className="bg-primary-50 border-primary-500/20 backdrop-blur-sm px-4 py-2 sm:p-5 rounded-[0.85rem] sm:rounded-[0.75rem]   border transition-all duration-300 hover:shadow-md">
+    <div className="bg-white border border-gray-200 shadow-sm px-4 py-3 sm:p-5 rounded-xl transition-all duration-300 hover:shadow-md hover:border-primary-200 group">
       <div className="flex items-center">
-        <div className="h-8 sm:h-10 w-8 sm:w-10 rounded-full bg-primary-500/40 flex items-center justify-center mr-3 flex-shrink-0">
+        <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center mr-3 flex-shrink-0 text-primary-600 group-hover:bg-primary-200 transition-colors">
           {icon}
         </div>
-        <div className="">
-          <p className="text-base sm:text-lg md::text-xl font-bold text-neutral-700">
+        <div>
+          <p className="text-base sm:text-lg md:text-xl font-bold text-secondary-700 font-lexend">
             {typeof amount === "number"
               ? formatCurrencyFn(amount || 0)
               : amount}
           </p>
-          <h4 className="text-neutral-600 text-xs sm:text-[0.83rem]">
+          <h4 className="text-gray-600 text-xs sm:text-sm font-medium">
             {title}
           </h4>
         </div>
@@ -249,16 +251,19 @@ const PlanDetails = ({
     const isExpanded = expandedSections.has(id);
 
     return (
-      <div className="border border-neutral-500 rounded-lg overflow-hidden mb-4">
+      <div className="border border-gray-200 rounded-xl overflow-hidden mb-4 shadow-sm hover:shadow-md transition-all duration-300">
         <button
-          className="w-full px-4 py-3 bg-neutral-500 hover:bg-neutral-600 transition-colors flex justify-between items-center"
+          className="w-full px-5 py-3.5 bg-gradient-to-r from-primary-50 to-primary-100/50 hover:from-primary-100 hover:to-primary-200/50 transition-colors flex justify-between items-center"
           onClick={() => toggleSection(id)}
         >
-          <span className="font-semibold text-neutral-800">{title}</span>
+          <span className="font-medium text-primary-700 font-lexend flex items-center">
+            <TbInfoCircle className="mr-2 text-primary-500" size={18} />
+            {title}
+          </span>
           {isExpanded ? (
-            <FiChevronUp className="text-neutral-700" />
+            <TbChevronUp className="text-primary-600" size={20} />
           ) : (
-            <FiChevronDown className="text-neutral-700" />
+            <TbChevronDown className="text-primary-600" size={20} />
           )}
         </button>
         <AnimatePresence initial={false}>
@@ -271,7 +276,7 @@ const PlanDetails = ({
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="overflow-hidden"
             >
-              <div className="p-4">{children}</div>
+              <div className="p-5 bg-white">{children}</div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -280,59 +285,66 @@ const PlanDetails = ({
   };
 
   return (
-    <div className="space-y-4">
-      {/* Back button for mobile */}
+    <div className="space-y-5">
+      {/* Back button for all devices */}
       <motion.button
         whileHover={{ x: -2 }}
         whileTap={{ scale: 0.98 }}
         onClick={onBack}
-        className="md:hidden flex items-center pl-3 sm:pl-0 text-white/80 hover:text-white mb-4 transition-colors"
+        className="flex items-center text-primary-600 hover:text-primary-700 transition-colors font-medium text-sm"
       >
-        <FiArrowLeft className="mr-2" /> Back to plan list
+        <TbArrowLeft className="mr-2" size={18} /> Back to plan list
       </motion.button>
 
-      {/* Back button for desktop */}
-      <div className="hidden md:block">
-        <motion.button
-          whileHover={{ x: -2 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={onBack}
-          className="flex items-center text-neutral-400 hover:text-secondary-500 transition-colors"
-        >
-          <FiArrowLeft className="mr-2" /> Back to plan list
-        </motion.button>
-      </div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="bg-white rounded-xl shadow-xl overflow-hidden border border-gray-200">
 
-      <div className="bg-neutral-200 rounded-xl shadow-lg overflow-hidden border border-neutral-200">
         {/* Top banner */}
-        <div className="bg-gradient-to-r from-secondary-700 to-secondary-600 p-4 relative">
+        <div className="bg-gradient-to-r from-primary-600 to-primary-700 px-6 py-4 relative">
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
             <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
           </div>
           <div className="relative flex justify-between items-center z-10">
+            <h3 className="text-white font-medium text-lg flex items-center font-lexend">
+              <TbShieldHalfFilled className="mr-2" /> Insurance Plan Details
+            </h3>
+            <div className="flex items-center space-x-1.5">
+              <div className="h-2 w-2 rounded-full bg-white/20"></div>
+              <div className="h-2 w-2 rounded-full bg-white/20"></div>
+              <div className="h-2 w-2 rounded-full bg-white/30"></div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Rank banner */}
+        <div className="bg-gradient-to-r from-secondary-600 to-secondary-500 px-6 py-3 relative border-b border-secondary-700/20">
+          <div className="relative flex justify-between items-center z-10">
             <div className="flex items-center space-x-3">
-              <div className="h-6 sm:h-8 w-6 sm:w-8 bg-white rounded-full flex items-center justify-center text-secondary-600 font-bold">
-                <span className="text-xs sm:text-sm">{plan.rank || 1}</span>
+              <div className="h-7 w-7 bg-white rounded-full flex items-center justify-center text-secondary-600 font-bold shadow-sm">
+                <span className="text-sm">{plan.rank || 1}</span>
               </div>
-              <span className="text-white text-[0.83rem] sm:text-sm md:text-base font-medium">
+              <span className="text-white text-sm font-medium font-lexend">
                 Ranked #{plan.rank || 1} Match for Your Needs
               </span>
             </div>
-            <div className="bg-white/20 backdrop-blur-md rounded-full px-3 py-1 text-white text-[0.7rem] sm:text-sm font-medium">
+            <div className="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-white text-xs font-medium">
               {plan.score ? Math.round(plan.score * 100) : 95}% Match Score
             </div>
           </div>
         </div>
 
-        <div className="p-4 sm:p-6">
-          <div className="flex flex-col md:flex-row justify-between md:items-center mb-6 sm:mb-8">
+        <div className="p-6">
+          <div className="flex flex-col md:flex-row justify-between md:items-center mb-6">
             <div className="flex items-center space-x-4">
-              <div className="w-24 h-12 sm:w-36 sm:h-20 rounded-lg bg-neutral-200/50 border border-neutral-200 flex items-center justify-center overflow-hidden flex-shrink-0">
+              <div className="w-20 h-14 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center overflow-hidden flex-shrink-0 shadow-sm">
                 <img
                   src={planData.companyLogo || "/insurance-placeholder.png"}
                   alt={planData.companyName || "Insurance Company"}
-                  className="w-20 h-9 sm:w-36 sm:h-16 object-contain"
+                  className="max-h-8 max-w-16 object-contain"
                   onError={(e) => {
                     e.target.src = "/insurance-placeholder.png";
                   }}
@@ -340,57 +352,61 @@ const PlanDetails = ({
               </div>
               <div>
                 <div className="flex items-center">
-                  <h2 className="text-lg sm:text-xl  font-bold text-primary-600">
+                  <h2 className="text-base sm:text-lg font-semibold text-gray-800">
                     {planData.name || "Insurance Plan"}
                   </h2>
-                  <span className="ml-2 bg-primary-100 text-primary-600 text-[0.7rem] sm:text-xs font-medium px-2 py-0.5 rounded">
+                  <span className="ml-2 bg-primary-100 text-primary-700 text-xs px-2 py-0.5 rounded">
                     {planData.tier || planData.planType}
                   </span>
                 </div>
-                <p className="text-neutral-700 text-[0.83rem] sm:text-sm md:text-base">
+                <p className="text-gray-600 text-xs sm:text-sm font-lexend">
                   {planData.companyName || "Insurance Company"} •{" "}
                   {planData.planType || "Standard"}
                 </p>
               </div>
             </div>
-            <div className="mt-4 md:mt-0 text-center bg-white rounded-[0.75rem] sm:rounded-[0.7rem] px-4 sm:px-6 py-3 border border-secondary-100">
-              <div className="text-xl sm:text-2xl font-bold text-secondary-700">
+            <div className="mt-4 md:mt-0 text-right">
+              <div className="text-xl font-lexend font-bold text-secondary-600">
                 {formatCurrencyFn(displayPremium || 50000)}
               </div>
-              <p className="text-primary-600 font-medium text-xs sm:text-sm">
+              <div className="text-xs text-gray-500">
                 {typeof planData.premium === "object"
-                  ? "Starting Annual Premium"
-                  : "Annual Premium"}
-              </p>
+                  ? "starting annual premium"
+                  : "annual premium"}
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-5 mb-8">
-            <CoverageCard
-              title="Inpatient Cover"
-              amount={planData.inpatientCoverageLimit || 2000000}
-              formatCurrency={formatCurrencyFn}
-              icon={
-                <TbShieldHalfFilled className="text-primary-600" size={20} />
-              }
-              color="primary"
-            />
-            <CoverageCard
-              title="Outpatient Cover"
-              amount={planData.outpatientCoverageLimit || 200000}
-              formatCurrency={formatCurrencyFn}
-              icon={<FaUserDoctor className="text-primary-500" size={20} />}
-              color="secondary"
-            />
-            <CoverageCard
-              title="Room Type"
-              amount={planData.bedLimit || planData.roomRate || "General Ward"}
-              formatCurrency={formatCurrencyFn}
-              icon={
-                <TbBuildingHospital className="text-primary-500" size={20} />
-              }
-              color="primary"
-            />
+          <div className="grid grid-cols-3 gap-4 bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200">
+            <div>
+              <div className="flex items-center text-xs text-gray-500 mb-1">
+                <TbShieldHalfFilled className="mr-1 text-primary-500 h-4 w-4" />
+                <span>Inpatient</span>
+              </div>
+              <p className="text-sm font-semibold font-lexend text-gray-800">
+                {formatCurrencyFn(planData.inpatientCoverageLimit || 2000000)}
+              </p>
+            </div>
+
+            <div>
+              <div className="flex items-center text-xs text-gray-500 mb-1">
+                <TbStethoscope className="mr-1 text-primary-500 h-4 w-4" />
+                <span>Outpatient</span>
+              </div>
+              <p className="text-sm font-semibold font-lexend text-gray-800">
+                {formatCurrencyFn(planData.outpatientCoverageLimit || 200000)}
+              </p>
+            </div>
+
+            <div>
+              <div className="flex items-center text-xs text-gray-500 mb-1">
+                <TbBuildingHospital className="mr-1 text-primary-500 h-4 w-4" />
+                <span>Room Type</span>
+              </div>
+              <p className="text-sm font-semibold text-gray-800">
+                {planData.bedLimit || planData.roomRate || "General Ward"}
+              </p>
+            </div>
           </div>
 
           {/* Tabbed sections for benefits */}
@@ -553,7 +569,7 @@ const PlanDetails = ({
             onClick={onDownload}
             disabled={downloadStatus === "loading"}
           >
-            <FiDownload className="mr-2" />
+            <TbDownload className="mr-2" />
             Download PDF Report
           </motion.button>
           </div>
