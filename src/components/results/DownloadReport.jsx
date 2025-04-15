@@ -42,28 +42,18 @@ const DownloadReport = ({
     visible: {
       opacity: 1,
       y: 0,
-      
     },
   };
 
   return (
-    <div
-     
-      className="bg-white rounded-xl overflow-hidden shadow-lg border border-gray-200 relative"
-    >
-  
-      <div className="bg-gradient-to-r from-primary-600 to-primary-800 px-5 py-4 relative z-10">
+    <div className=" overflow-hidden relative">
+      <div className=" px-2 sm:px-3 pt-4 relative z-10">
         <h3 className="text-white font-semibold text-lg flex items-center">
           <TbDownload className="mr-2" /> Download Comparison Report
         </h3>
       </div>
 
-      <div className="p-5 relative z-10">
-        <p className="text-gray-700 text-sm mb-5 font-outfit">
-          Download this comparison in your preferred format for future reference
-          or to share with others.
-        </p>
-
+      <div className="p-2.5 sm:p-4 relative z-10">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <DownloadButton
             icon={<FaFilePdf size={20} />}

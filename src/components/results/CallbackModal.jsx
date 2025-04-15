@@ -105,7 +105,7 @@ const CallbackModal = ({ isOpen, onClose }) => {
               </motion.button>
 
               <p className="text-xs text-center text-gray-500 mt-2 font-outfit">
-                We will call you on the phone number you entered while selecting your prefences.
+                We will call you on the phone number you entered while selecting your preferences.
               </p>
             </form>
           </motion.div>

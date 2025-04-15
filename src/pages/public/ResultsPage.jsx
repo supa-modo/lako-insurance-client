@@ -415,13 +415,6 @@ const ResultsPage = () => {
                     onDownload={handleDownloadPdf}
                   />
 
-                  <DownloadReport
-                    onDownloadPdf={handleDownloadPdf}
-                    onDownloadCsv={handleDownloadCsv}
-                    onDownloadText={handleDownloadText}
-                    downloadStatus={downloadStatus}
-                  />
-
                   <motion.div
                     variants={itemVariants}
                     className="bg-secondary-50 border border-secondary-100 rounded-xl overflow-hidden"
@@ -442,7 +435,7 @@ const ResultsPage = () => {
                           <motion.a
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            href={`tel:+254700000000`}
+                            href={`tel:+2547206363638`}
                             className="btn inline-flex items-center justify-center px-4 sm:px-6 py-3 bg-secondary-500 hover:bg-secondary-600 text-white font-medium rounded-lg shadow-md transition-all text-[0.8rem] sm:text-sm md:text-base"
                           >
                             <TbPhoneCall className="mr-2" size={20} /> Call
@@ -452,9 +445,7 @@ const ResultsPage = () => {
                             whileHover={{ scale: 1.01 }}
                             whileTap={{ scale: 0.99 }}
                             className="btn inline-flex items-center justify-center px-4 sm:px-6 py-3 border-2 border-secondary-400 text-secondary-700 hover:bg-secondary-100 font-medium rounded-lg transition-all text-[0.8rem] sm:text-sm md:text-base"
-                            onClick={() => {
-                              setShowCallbackModal(true);
-                            }}
+                            onClick={handleRequestCallback}
                           >
                             <TbMailFilled className="mr-2" size={20} /> Request
                             Callback
@@ -463,6 +454,13 @@ const ResultsPage = () => {
                       </div>
                     </div>
                   </motion.div>
+
+                  {/* <DownloadReport
+                    onDownloadPdf={handleDownloadPdf}
+                    onDownloadCsv={handleDownloadCsv}
+                    onDownloadText={handleDownloadText}
+                    downloadStatus={downloadStatus}
+                  /> */}
                 </motion.div>
               </div>
 
@@ -505,7 +503,7 @@ const ResultsPage = () => {
                   />
                 </motion.div>
 
-                {/* Download Report */}
+                {/* Download Report
                 <motion.div variants={itemVariants}>
                   <DownloadReport
                     onDownloadPdf={handleDownloadPdf}
@@ -513,11 +511,11 @@ const ResultsPage = () => {
                     onDownloadText={handleDownloadText}
                     downloadStatus={downloadStatus}
                   />
-                </motion.div>
+                </motion.div> */}
 
                 <motion.div
                   variants={itemVariants}
-                  className="bg-secondary-50 border border-secondary-100 rounded-xl overflow-hidden"
+                  className="bg-secondary-50 mx-2 border border-secondary-100 rounded-xl overflow-hidden"
                 >
                   <div className="p-4 sm:p-6">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between">
@@ -535,7 +533,7 @@ const ResultsPage = () => {
                         <motion.a
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          href={`tel:+254700000000`}
+                          href={`tel:+2547206363638`}
                           className="btn inline-flex items-center justify-center px-4 sm:px-6 py-3 bg-secondary-500 hover:bg-secondary-600 text-white font-medium rounded-lg shadow-md transition-all text-[0.8rem] sm:text-sm md:text-base"
                         >
                           <TbPhoneCall className="mr-2" size={20} /> Call Expert
@@ -544,7 +542,7 @@ const ResultsPage = () => {
                           whileHover={{ scale: 1.01 }}
                           whileTap={{ scale: 0.99 }}
                           className="btn inline-flex items-center justify-center px-4 sm:px-6 py-3 border-2 border-secondary-400 text-secondary-700 hover:bg-secondary-100 font-medium rounded-lg transition-all text-[0.8rem] sm:text-sm md:text-base"
-                          // onClick={onRequestCallback}
+                          onClick={handleRequestCallback}
                         >
                           <TbMailFilled className="mr-2" size={20} /> Request
                           Callback

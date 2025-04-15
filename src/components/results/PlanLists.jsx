@@ -143,7 +143,7 @@ const PlanList = ({
             <div
               key={planId || index}
              
-              className={`relative bg-white rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl border-l-4 ${
+              className={`relative bg-white rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl ${
                 isActivePlan
                   ? "border-l-primary-500"
                   : isTopPlan

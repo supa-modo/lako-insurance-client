@@ -12,7 +12,6 @@ import {
   TbAmbulance,
   TbMailFilled,
   TbPhoneCall,
-  TbEye,
   TbCalendarTime,
   TbPlus,
   TbMinus,
@@ -22,12 +21,14 @@ import {
   TbChevronRight,
   TbInfoCircle,
   TbCoins,
-  TbEyeglass2,
   TbCoffin,
   TbDownload,
+  TbEyeglass2,
+  TbPlaneDeparture,
 } from "react-icons/tb";
 import { FaUserDoctor } from "react-icons/fa6";
 import { PiTooth } from "react-icons/pi";
+import { BsFillCreditCardFill } from "react-icons/bs";
 
 const PlanDetailsModal = ({
   plan,
@@ -72,38 +73,38 @@ const PlanDetailsModal = ({
       {
         title: "Overall Annual Limit",
         value: planData.inpatientCoverageLimit || 2000000,
-        icon: <TbShieldHalfFilled className="text-primary-600" />,
+        icon: <TbShieldHalfFilled className=" h-5 w-5" />,
         isAmount: true,
       },
       {
         title: "Room Accommodation",
         value: planData.bedLimit || planData.roomRate || "General Ward",
-        icon: <TbBuildingHospital className="text-primary-600" />,
+        icon: <TbBuildingHospital className=" h-5 w-5" />,
         isAmount: false,
       },
       {
         title: "Pre-existing & Chronic Conditions",
         value: (planData.inpatientCoverageLimit || 2000000) * 0.25, // Approximate value for illustration
-        icon: <TbHeartRateMonitor className="text-primary-600" />,
+        icon: <TbHeartRateMonitor className=" h-5 w-5" />,
         isAmount: true,
         note: "Subject to 1 year waiting period",
       },
       {
         title: "Last Expense Cover",
         value: planData.lastExpenseCover || 50000,
-        icon: <TbClockDollar className="text-primary-600" />,
+        icon: <TbCoffin className=" h-5 w-5" />,
         isAmount: true,
       },
       {
         title: "Covid-19 Cover",
         value: (planData.inpatientCoverageLimit || 2000000) * 0.3, // Approximate value for illustration
-        icon: <TbVirus className="text-primary-600" />,
+        icon: <TbVirus className=" h-5 w-5" />,
         isAmount: true,
       },
       {
         title: "Ambulance Services",
         value: "Fully Covered",
-        icon: <TbAmbulance className="text-primary-600" />,
+        icon: <TbAmbulance className=" h-5 w-5" />,
         isAmount: false,
       },
     ],
@@ -111,25 +112,25 @@ const PlanDetailsModal = ({
       {
         title: "Overall Annual Limit",
         value: planData.outpatientCoverageLimit || 100000,
-        icon: <FaUserDoctor className="text-primary-600" />,
+        icon: <FaUserDoctor className=" h-5 w-5" />,
         isAmount: true,
       },
       {
         title: "Consultation Fees",
         value: "Covered within limit",
-        icon: <TbPhoneCall className="text-primary-600" />,
+        icon: <TbPhoneCall className=" h-5 w-5" />,
         isAmount: false,
       },
       {
         title: "Diagnostic Tests",
         value: "Covered within limit",
-        icon: <TbDeviceMobile className="text-primary-600" />,
+        icon: <TbDeviceMobile className=" h-5 w-5" />,
         isAmount: false,
       },
       {
         title: "Prescribed Medication",
         value: "Covered within limit",
-        icon: <TbMailFilled className="text-primary-600" />,
+        icon: <TbMailFilled className=" h-5 w-5" />,
         isAmount: false,
       },
     ],
@@ -137,7 +138,7 @@ const PlanDetailsModal = ({
       {
         title: "Dental Cover",
         value: (planData.outpatientCoverageLimit || 100000) * 0.15, // Approximate value
-        icon: <PiTooth className="text-primary-600" />,
+        icon: <PiTooth className=" h-5 w-5" />,
         isAmount: true,
         note: "Optional add-on with additional premium",
         isOptional: true,
@@ -145,7 +146,7 @@ const PlanDetailsModal = ({
       {
         title: "Optical Cover",
         value: (planData.outpatientCoverageLimit || 100000) * 0.15, // Approximate value
-        icon: <TbEye className="text-primary-600" />,
+        icon: <TbEyeglass2 className=" h-5 w-5" />,
         isAmount: true,
         note: "Optional add-on with additional premium",
         isOptional: true,
@@ -153,7 +154,7 @@ const PlanDetailsModal = ({
       {
         title: "Annual Health Check-up",
         value: 10000, // Standard amount across most plans
-        icon: <TbCalendarTime className="text-primary-600" />,
+        icon: <TbCalendarTime className=" h-5 w-5" />,
         isAmount: true,
       },
       {
@@ -164,7 +165,7 @@ const PlanDetailsModal = ({
           planData.tier === "Plan VI"
             ? "Covered with pre-approval"
             : "Not covered",
-        icon: <TbPlane className="text-primary-600" />,
+        icon: <TbPlaneDeparture className=" h-5 w-5" />,
         isAmount: false,
       },
     ],
@@ -348,8 +349,7 @@ const PlanDetailsModal = ({
                     transition={{ duration: 0.2 }}
                   >
                     <div className="space-y-4">
-                      <h4 className="font-medium text-primary-700 flex items-center font-lexend">
-                        <TbShieldHalfFilled className="mr-2 text-primary-600" />{" "}
+                      <h4 className="font-bold font-lexend text-primary-600">
                         Inpatient Benefits
                       </h4>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -359,11 +359,11 @@ const PlanDetailsModal = ({
                             className="bg-gray-50 p-3 rounded-lg border border-gray-200 hover:border-primary-200 hover:shadow-sm transition-all duration-300 group"
                           >
                             <div className="flex items-start">
-                              <div className="mt-0.5 mr-2.5 text-primary-600 group-hover:text-secondary-500 transition-colors">
+                              <div className="mt-0.5 mr-2.5 text-neutral-600 group-hover:text-secondary-600 transition-colors">
                                 {benefit.icon}
                               </div>
                               <div>
-                                <div className="text-sm font-medium text-gray-800">
+                                <div className="text-sm font-medium  text-neutral-800">
                                   {benefit.title}
                                 </div>
                                 <div className="text-base font-semibold text-secondary-700 font-lexend">
@@ -382,8 +382,7 @@ const PlanDetailsModal = ({
                         ))}
                       </div>
 
-                      <h4 className="font-medium text-primary-700 flex items-center mt-6 font-lexend">
-                        <TbStethoscope className="mr-2 text-primary-600" />{" "}
+                      <h4 className="font-bold text-primary-600 mt-6 font-lexend">
                         Outpatient Benefits
                       </h4>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -393,11 +392,11 @@ const PlanDetailsModal = ({
                             className="bg-gray-50 p-3 rounded-lg border border-gray-200 hover:border-primary-200 hover:shadow-sm transition-all duration-300 group"
                           >
                             <div className="flex items-start">
-                              <div className="mt-0.5 mr-2.5 text-primary-600 group-hover:text-secondary-500 transition-colors">
+                              <div className="mt-0.5 mr-2.5 text-neutral-600 group-hover:text-secondary-600 transition-colors">
                                 {benefit.icon}
                               </div>
                               <div>
-                                <div className="text-sm font-medium text-gray-800">
+                                <div className="text-sm font-medium text-neutral-800">
                                   {benefit.title}
                                 </div>
                                 <div className="text-base font-semibold text-secondary-700 font-lexend">
@@ -416,9 +415,8 @@ const PlanDetailsModal = ({
                         ))}
                       </div>
 
-                      <h4 className="font-medium text-primary-700 flex items-center mt-6 font-lexend">
-                        <TbPlus className="mr-2 text-primary-600" /> Optional
-                        Covers & Additional Benefits
+                      <h4 className="font-bold text-primary-600 mt-6 font-lexend">
+                        Optional Covers & Additional Benefits
                       </h4>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {benefitCategories.optional.map((benefit, index) => (
@@ -427,11 +425,11 @@ const PlanDetailsModal = ({
                             className="bg-gray-50 p-3 rounded-lg border border-gray-200 hover:border-primary-200 hover:shadow-sm transition-all duration-300 group"
                           >
                             <div className="flex items-start">
-                              <div className="mt-0.5 mr-2.5 text-primary-600 group-hover:text-secondary-500 transition-colors">
+                              <div className="mt-0.5 mr-2.5 text-neutral-600 group-hover:text-secondary-600 transition-colors">
                                 {benefit.icon}
                               </div>
                               <div>
-                                <div className="text-sm font-medium text-gray-800 flex items-center">
+                                <div className="text-sm font-medium text-neutral-800 flex items-center">
                                   {benefit.title}
                                   {benefit.isOptional && (
                                     <span className="ml-2 text-xs font-normal bg-green-100 text-green-700 px-1.5 py-0.5 rounded">
@@ -617,7 +615,7 @@ const PlanDetailsModal = ({
                   onClick={() => onBuyPlan && onBuyPlan(planData)}
                   className="flex-1 flex items-center justify-center px-4 py-3 bg-gradient-to-r from-secondary-500 to-secondary-600 hover:from-secondary-600 hover:to-secondary-700 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 font-medium group"
                 >
-                  <TbShoppingBag className="mr-2" size={18} /> Buy This Plan
+                  <BsFillCreditCardFill className="mr-2" size={18} /> Buy This Plan
                   <TbChevronRight className="ml-2 group-hover:translate-x-1 transition-transform" />
                 </motion.button>
               </div>

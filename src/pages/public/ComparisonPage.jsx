@@ -96,7 +96,7 @@ const ComparisonPage = () => {
       <div className="flex flex-col min-h-screen">
         {/* Content area */}
         <div className="flex-grow relative font-outfit z-10">
-          <div className="container-custom mx-auto px-4 sm:px-6 pb-16 pt-3 sm:pb-24 sm:pt-6">
+          <div className="container-custom mx-auto px-3 sm:px-6 pb-16 pt-3 sm:pb-24 sm:pt-6">
             {/* Breadcrumb Navigation */}
             <motion.div
               initial={{ opacity: 0, y: -10 }}
@@ -169,11 +169,11 @@ const ComparisonPage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="bg-white/10 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl border border-white/30 max-w-7xl mx-auto"
+              className="bg-white/10 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl border border-white/30 max-w-6xl mx-auto"
             >
               <div className="flex flex-col md:flex-row">
                 {/* StepIndicator - Left Column on Desktop, Top Row on Mobile */}
-                <motion.div
+                {/* <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6, delay: 0.5 }}
@@ -182,7 +182,7 @@ const ComparisonPage = () => {
                   <div className="h-full md:min-h-[280px] min-h-[100px] flex justify-center">
                     <StepIndicator currentStep={step} />
                   </div>
-                </motion.div>
+                </motion.div> */}
 
                 {/* Form Content - Right Column on Desktop, Bottom Section on Mobile */}
                 <div className="flex-1 p-5 sm:py-5 px-7">
