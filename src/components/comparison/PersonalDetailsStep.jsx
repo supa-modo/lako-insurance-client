@@ -14,11 +14,11 @@ const budgetRanges = [
 const PersonalDetailsStep = ({ register, errors, onSubmit, watchedValues }) => {
   return (
     <div className="mx-auto">
-      <div className="space-y-5">
-        <h3 className="text-white">Fill in your details below and preferences to compare plans</h3>
-        <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-4">
+        <h3 className="text-white text-[0.9rem] sm:text-base">Fill in your details and preferences below to compare plans</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 ">
           {/* Phone Number Field */}
-          <div className="mb-4">
+          <div className="">
             <label
               htmlFor="phoneNumber"
               className="text-sm sm:text-base font-medium text-primary-300"
@@ -54,7 +54,7 @@ const PersonalDetailsStep = ({ register, errors, onSubmit, watchedValues }) => {
           </div>
 
           {/* Age Field */}
-          <div className="mb-4">
+          <div className="">
             <label
               htmlFor="age"
               className="text-sm sm:text-base font-medium text-primary-300"
