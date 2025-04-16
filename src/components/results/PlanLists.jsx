@@ -190,7 +190,7 @@ const PlanList = ({
                 <div className="grid grid-cols-3 gap-4 bg-gray-50 p-3 rounded-lg mb-4">
                   <div>
                     <div className="flex items-center text-xs text-gray-500 mb-1">
-                      <TbShieldHalfFilled className="mr-1 text-primary-500 h-4 w-4" />
+                      {/* <TbShieldHalfFilled className="mr-1 text-primary-500 h-4 w-4" /> */}
                       <span>Inpatient</span>
                     </div>
                     <p className="text-sm font-semibold font-lexend text-gray-800">
@@ -200,7 +200,7 @@ const PlanList = ({
 
                   <div>
                     <div className="flex items-center text-xs text-gray-500 mb-1">
-                      <TbStethoscope className="mr-1 text-primary-500 h-4 w-4" />
+                      {/* <TbStethoscope className="mr-1 text-primary-500 h-4 w-4" /> */}
                       <span>Outpatient</span>
                     </div>
                     <p className="text-sm font-semibold font-lexend text-gray-800">
@@ -210,7 +210,7 @@ const PlanList = ({
 
                   <div>
                     <div className="flex items-center text-xs text-gray-500 mb-1">
-                      <TbBuildingHospital className="mr-1 text-primary-500 h-4 w-4" />
+                      {/* <TbBuildingHospital className="mr-1 text-primary-500 h-4 w-4" /> */}
                       <span>Room Type</span>
                     </div>
                     <p className="text-sm font-semibold text-gray-800">

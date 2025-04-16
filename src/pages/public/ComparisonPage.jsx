@@ -9,12 +9,10 @@ import { setUserQuery, setLoading } from "../../store/slices/comparisonSlice";
 import { submitQuery } from "../../services/queryService";
 
 // Component imports
-import StepIndicator from "../../components/comparison/StepIndicator";
 import PersonalDetailsStep from "../../components/comparison/PersonalDetailsStep";
 import InsurancePreferencesStep from "../../components/comparison/InsurancePreferencesStep";
-import { TbCloudLock } from "react-icons/tb";
+import { TbCloudLock, TbShieldCheck, TbUser } from "react-icons/tb";
 import Footer from "../../components/layout/Footer";
-
 
 const ComparisonPage = () => {
   const [step, setStep] = useState(1);
@@ -84,7 +82,7 @@ const ComparisonPage = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-primary-900 via-primary-800 to-primary-900 opacity-80 backdrop-blur-sm"></div>
         {/* Fade-out gradient at the bottom */}
         <div className="absolute left-0 right-0 bottom-0 h-4 bg-gradient-to-b from-transparent to-neutral-50"></div>
-
+        
         {/* Decorative elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-1/4 -left-10 w-40 h-40 rounded-full bg-secondary-500/30 blur-3xl"></div>
@@ -96,18 +94,18 @@ const ComparisonPage = () => {
       <div className="flex flex-col min-h-screen">
         {/* Content area */}
         <div className="flex-grow relative font-outfit z-10">
-          <div className="container-custom mx-auto px-3 sm:px-6 pb-16 pt-3 sm:pb-24 sm:pt-6">
+          <div className="container-custom mx-auto px-0 sm:px-6 pb-16 pt-3 sm:pb-24 sm:pt-6">
             {/* Breadcrumb Navigation */}
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="mb-4"
+              className="mb-4 px-3 sm:px-6"
             >
               <div className="flex items-center space-x-2 text-sm">
                 <Link
                   to="/"
-                  className="text-secondary-400 hover:text-white transition-colors"
+                  className="text-white/70 hover:text-white transition-colors"
                 >
                   Home
                 </Link>
@@ -132,7 +130,7 @@ const ComparisonPage = () => {
             </motion.div>
 
             {/* Header Section */}
-            <div className="text-center mb-7 sm:mb-8 space-y-4">
+            <div className="text-center px-3 sm:px-6 mb-7 sm:mb-8 space-y-4">
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -141,7 +139,7 @@ const ComparisonPage = () => {
               >
                 <div className="flex items-center">
                   <span className="flex h-2 w-2 rounded-full bg-secondary-400 mr-2"></span>
-                  <span>Personalized Insurance Matching</span>
+                  <span>Insurance Comparison</span>
                 </div>
               </motion.div>
               <motion.h1
@@ -164,63 +162,43 @@ const ComparisonPage = () => {
               </motion.p>
             </div>
 
-            {/* Two-column layout with StepIndicator on left and Form content on right */}
+            
+
+            {/* Form Container */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="bg-white/10 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl border border-white/30 max-w-6xl mx-auto"
+              className="bg-white/10 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl border border-white/30 md:max-w-5xl mx-auto"
             >
-              <div className="flex flex-col md:flex-row">
-                {/* StepIndicator - Left Column on Desktop, Top Row on Mobile */}
-                {/* <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: 0.5 }}
-                  className="w-full md:w-[280px] lg:w-[320px] bg-white/5 backdrop-blur-sm md:border-r md:border-b-0 border-b border-white/10 p-5 md:py-10 md:pl-4 py-6"
+             <div className="py-6 px-3 sm:p-6 md:p-8">
+                <form
+                  onSubmit={handleSubmit(step === 2 ? onSubmit : nextStep)}
+                  className="space-y-6"
                 >
-                  <div className="h-full md:min-h-[280px] min-h-[100px] flex justify-center">
-                    <StepIndicator currentStep={step} />
+                  {step === 1 ? (
+                    <PersonalDetailsStep
+                      register={register}
+                      errors={errors}
+                      watchedValues={watchedValues}
+                      onSubmit={handleSubmit(nextStep)}
+                    />
+                  ) : (
+                    <InsurancePreferencesStep
+                      register={register}
+                      errors={errors}
+                      watchedValues={watchedValues}
+                      onPrev={prevStep}
+                      onSubmit={handleSubmit(onSubmit)}
+                    />
+                  )}
+
+                  {/* Security note */}
+                  <div className="text-center text-white/60 text-xs flex items-center justify-center mt-4">
+                    <TbCloudLock size={22} className="mr-1.5 text-secondary-400" />
+                    Safeguarding what's truly yours. Lako Insurance
                   </div>
-                </motion.div> */}
-
-                {/* Form Content - Right Column on Desktop, Bottom Section on Mobile */}
-                <div className="flex-1 p-5 sm:py-5 px-7">
-                  <form
-                    onSubmit={handleSubmit(step === 2 ? onSubmit : nextStep)}
-                    className="space-y-6 sm:space-y-8"
-                  >
-                    {step === 1 ? (
-                      <PersonalDetailsStep
-                        register={register}
-                        errors={errors}
-                        watchedValues={watchedValues}
-                        onSubmit={handleSubmit(nextStep)}
-                      />
-                    ) : (
-                      <InsurancePreferencesStep
-                        register={register}
-                        errors={errors}
-                        watchedValues={watchedValues} 
-                        onPrev={prevStep}
-                        onSubmit={onSubmit}
-                      />
-                    )}
-                  </form>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Mobile-friendly footer note */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.6 }}
-              className="mt-6 text-center text-[0.8rem] text-white/80 font-outfit"
-            >
-              <div className="flex items-center justify-center">
-                <TbCloudLock className="text-secondary-400 h-6 w-6 mr-2" />
-                <p>Safeguarding what's truly yours. Lako Insurance</p>
+                </form>
               </div>
             </motion.div>
           </div>
