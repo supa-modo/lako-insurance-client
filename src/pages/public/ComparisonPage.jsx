@@ -194,8 +194,8 @@ const ComparisonPage = () => {
                   )}
 
                   {/* Security note */}
-                  <div className="text-center text-white/60 text-xs flex items-center justify-center mt-4">
-                    <TbCloudLock size={22} className="mr-1.5 text-secondary-400" />
+                  <div className="text-center text-xs sm:text-[0.8rem] text-white/50 flex items-center justify-center mt-4">
+                    <TbCloudLock size={22} className="mr-1.5 text-white/50" />
                     Safeguarding what's truly yours. Lako Insurance
                   </div>
                 </form>

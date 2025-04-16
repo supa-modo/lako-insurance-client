@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { TbInfoCircle, TbPhone, TbCalendar, TbCoin } from "react-icons/tb";
+import { TbInfoCircle, TbPhone, TbCalendar, TbCoin, TbArrowRight } from "react-icons/tb";
 
 const budgetRanges = [
   { value: 25000, label: "Ksh. 0 - 25,000" },
@@ -15,6 +15,7 @@ const PersonalDetailsStep = ({ register, errors, onSubmit, watchedValues }) => {
   return (
     <div className="mx-auto">
       <div className="space-y-5">
+        <h3 className="text-white">Fill in your details below and preferences to compare plans</h3>
         <div className="grid grid-cols-2 gap-4">
           {/* Phone Number Field */}
           <div className="mb-4">
@@ -95,11 +96,11 @@ const PersonalDetailsStep = ({ register, errors, onSubmit, watchedValues }) => {
             Annual Budget Range
           </label>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-2 mt-2">
             {budgetRanges.map((range) => (
               <label
                 key={range.value}
-                className={`px-3 py-4 rounded-md cursor-pointer text-center text-sm sm:text-base transition-all duration-200 
+                className={`px-3 py-4 rounded-lg cursor-pointer text-center text-sm sm:text-base transition-all duration-200 
                 ${
                   Number(watchedValues.budget) === range.value
                     ? "bg-gradient-to-r from-secondary-500/90 to-secondary-600 text-white shadow-sm"
@@ -141,7 +142,8 @@ const PersonalDetailsStep = ({ register, errors, onSubmit, watchedValues }) => {
         className="w-full py-3 mt-6 bg-gradient-to-r from-primary-500 to-primary-600 hover:bg-gradient-to-r hover:from-primary-600 hover:to-primary-600 text-white font-medium rounded-md
         shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center"
       >
-        Continue
+        <span>Continue</span>
+        <TbArrowRight className="ml-2 h-4 w-4"/>
       </motion.button>
     </div>
   );
