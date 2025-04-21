@@ -625,7 +625,7 @@ const AboutPage = () => {
       </section>
 
       {/* Location Section with Google Maps */}
-      <section className="py-16 md:py-24 bg-gradient-to-b from-neutral-50 to-white">
+      <section className="py-16 md:py-24 bg-gradient-to-b from-neutral-50 to-neutral-100">
         <div className="lg:container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-8 lg:mb-16">
             <motion.span

@@ -101,7 +101,7 @@ const CoverageLimitStep = ({
           >
             {limit.recommended && (
               <div className="absolute top-0 right-0">
-                <div className="bg-secondary-500 text-white text-xs px-3 py-1 rounded-bl-lg font-medium">
+                <div className="bg-secondary-500 text-white text-xs px-3 py-0.5 rounded-bl-lg font-medium">
                   Recommended
                 </div>
               </div>
@@ -110,8 +110,8 @@ const CoverageLimitStep = ({
             <div className="p-5">
               <div className="flex justify-between items-center mb-2">
                 <h4 className="text-white text-xl font-medium">{limit.name}</h4>
-                <span className="text-white font-bold">
-                  {limit.inpatientRange}
+                <span className="text-secondary-300 text-xl font-bold">
+                  Kshs. {limit.inpatientRange}
                 </span>
               </div>
 
