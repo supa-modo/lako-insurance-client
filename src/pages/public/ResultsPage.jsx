@@ -291,7 +291,7 @@ const ResultsPage = () => {
         <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-primary-400/60 rounded-full filter blur-xl opacity-30 animate-float"></div>
 
         {/* Main content */}
-        <div className="mx-auto px-0 sm:px-3 md:px-6 lg:px-10 lg:pt-32 py-4 sm:py-6 relative z-10 font-outfit">
+        <div className="mx-auto px-0 sm:px-3 md:px-6 lg:px-10  pt-24 lg:pt-32 py-4 sm:py-6 relative z-10 font-outfit">
           {/* Breadcrumb Navigation */}
           {/* <motion.div
             initial={{ opacity: 0, y: -10 }}
