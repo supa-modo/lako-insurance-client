@@ -14,9 +14,21 @@ import {
   FiMessageSquare,
 } from "react-icons/fi";
 import { GrInstagram } from "react-icons/gr";
-import { FaFacebook, FaInstagram, FaLinkedin, FaXTwitter } from "react-icons/fa6";
+import {
+  FaFacebook,
+  FaInstagram,
+  FaLinkedin,
+  FaXTwitter,
+} from "react-icons/fa6";
 import { motion } from "framer-motion";
-import { TbMail, TbMailFilled, TbMapPin, TbMapPinShare, TbPhone } from "react-icons/tb";
+import {
+  TbChevronRight,
+  TbMail,
+  TbMailFilled,
+  TbMapPin,
+  TbMapPinShare,
+  TbPhone,
+} from "react-icons/tb";
 import { PiMapPinAreaBold } from "react-icons/pi";
 
 const Footer = () => {
@@ -32,22 +44,20 @@ const Footer = () => {
       { label: "Home", to: "/" },
       { label: "Compare Plans", to: "/compare" },
       { label: "About Us", to: "/about" },
-    ],
-    resources: [
-      { label: "Insurance Guide", to: "/guide" },
+      { label: "Contact Us", to: "/contact" },
       { label: "FAQs", to: "/faq" },
-      { label: "Admin Login", to: "/admin" },
     ],
-    legal: [
-      { label: "Terms & Conditions", to: "/terms" },
-      { label: "Privacy Policy", to: "/privacy" },
-      { label: "Cookie Policy", to: "/cookies" },
+    services: [
+      { label: "Motor Insurance", to: "/motor-insurance" },
+      { label: "Property Insurance", to: "/property-insurance" },
+      { label: "Health Insurance", to: "/health-insurance" },
+      { label: "Seniors Cover", to: "/seniors-cover" },
+      { label: "Admin Login", to: "/admin" },
     ],
   };
 
   return (
     <>
-    
       {/* Scroll to top button */}
       <motion.div
         className="fixed right-6 bottom-6 z-30"
@@ -55,7 +65,6 @@ const Footer = () => {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        
         <motion.button
           onClick={scrollToTop}
           whileHover={{ scale: 1.1 }}
@@ -85,14 +94,22 @@ const Footer = () => {
 
             <div className="flex items-center space-x-6">
               <div className="hidden md:flex items-center mr-4">
-                <span className="text-sm font-outfit text-gray-500 mr-4">Follow us</span>
+                <span className="text-sm font-outfit text-gray-500 mr-4">
+                  Follow us
+                </span>
                 <span className="w-10 h-px bg-gray-300"></span>
               </div>
               <div className="flex space-x-3">
-                <SocialLink icon={FaFacebook} href="#" />
+                <SocialLink icon={FaFacebook} href="https://web.facebook.com/lakoinsuranceagency?_rdc=1&_rdr" />
                 <SocialLink icon={FaXTwitter} href="#" />
-                <SocialLink icon={FaInstagram} href="#" />
-                <SocialLink icon={FaLinkedin} href="#" />
+                <SocialLink
+                  icon={FaInstagram}
+                  href="https://www.instagram.com/lakoinsurance"
+                />
+                <SocialLink
+                  icon={FaLinkedin}
+                  href="https://www.linkedin.com/company/lako-insurance/"
+                />
               </div>
             </div>
           </div>
@@ -102,8 +119,8 @@ const Footer = () => {
             {/* Company description */}
             <div className="lg:pr-10">
               <p className="text-gray-600 text-sm sm:text-base mb-6">
-                We simplify senior insurance choices by providing transparent
-                comparisons and personalized recommendations.
+                We safeguard what matters to you most by providing comprehensive
+                tailored solutions fitting your unique needs.
               </p>
 
               <Link
@@ -119,19 +136,33 @@ const Footer = () => {
             <div className="col-span-1 md:col-span-2 lg:col-span-2">
               <div className="grid grid-cols-2 gap-8">
                 <div>
-                  <h4 className="text-secondary-600 text-sm sm:text-base font-bold mb-4">Explore</h4>
+                  <h4 className="text-secondary-600 text-sm sm:text-base font-bold mb-4">
+                    Explore
+                  </h4>
                   <ul className="space-y-2">
                     {links.explore.map((link, i) => (
-                      <FooterLink key={i} to={link.to} label={link.label} className="text-sm sm:text-base" />
+                      <FooterLink
+                        key={i}
+                        to={link.to}
+                        label={link.label}
+                        className="text-sm sm:text-base"
+                      />
                     ))}
                   </ul>
                 </div>
 
                 <div>
-                  <h4 className="text-secondary-600 text-sm sm:text-base font-bold mb-4">Resources</h4>
+                  <h4 className="text-secondary-600 text-sm sm:text-base font-bold mb-4">
+                    Services
+                  </h4>
                   <ul className="space-y-2">
-                    {links.resources.map((link, i) => (
-                      <FooterLink key={i} to={link.to} label={link.label} className="text-sm sm:text-base" />
+                    {links.services.map((link, i) => (
+                      <FooterLink
+                        key={i}
+                        to={link.to}
+                        label={link.label}
+                        className="text-sm sm:text-base"
+                      />
                     ))}
                   </ul>
                 </div>
@@ -139,8 +170,10 @@ const Footer = () => {
             </div>
 
             {/* Contact info */}
-            <div className="bg-neutral-200 -my-3 pt-3 px-5 pb-6 rounded-[0.75rem] border border-neutral-100">
-              <h4 className="text-secondary-600 text-sm sm:text-base font-bold mb-4">Contact Us</h4>
+            <div className="bg-neutral-200 md:-my-3 pt-3 px-5 pb-6 rounded-[0.75rem] border border-neutral-100">
+              <h4 className="text-secondary-600 text-sm sm:text-base font-bold mb-4">
+                Contact Us
+              </h4>
               <div className="space-y-3">
                 <a
                   href="tel:+1234567890"
@@ -162,6 +195,13 @@ const Footer = () => {
                   <PiMapPinAreaBold className="mr-3 text-primary-500 text-2xl" />
                   <span>Real Towers, Upperhill, Nairobi, Kenya</span>
                 </div>
+
+                <button className=" text-[0.85rem] lg:text-[0.9rem] text-white px-4 py-2 bg-primary-600 rounded-lg w-full">
+                  <div className="flex items-center justify-center">
+                    <span className="">Request a Callback!</span>
+                    <TbChevronRight className="ml-2" />
+                  </div>
+                </button>
               </div>
             </div>
           </div>
@@ -169,13 +209,22 @@ const Footer = () => {
           {/* Bottom footer */}
           <div className="mt-12 pt-6 border-t border-neutral-200 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-500 text-[0.87rem]">
-              &copy; {new Date().getFullYear()} Lako Insurance Agency. <span className="ml-3">All rights reserved.</span>
+              &copy; {new Date().getFullYear()} Lako Insurance Agency.{" "}
+              <span className="ml-3">All rights reserved.</span>
             </p>
             <div className="mt-4 md:mt-0 text-gray-500 text-sm flex items-center">
               <span className="flex items-center">
                 <ul className="flex items-center space-x-4">
-                  <FooterLink to="/" label="Privacy Policy" className="text-[0.85rem]" />
-                  <FooterLink to="/" label="Terms of Service" className="text-[0.85rem]" />
+                  <FooterLink
+                    to="/"
+                    label="Privacy Policy"
+                    className="text-[0.85rem]"
+                  />
+                  <FooterLink
+                    to="/"
+                    label="Terms of Service"
+                    className="text-[0.85rem]"
+                  />
                 </ul>
               </span>
             </div>

@@ -8,7 +8,7 @@ import { TbAlertTriangle, TbHomeDot } from "react-icons/tb";
 const PageNotFound = () => {
   return (
     <>
-      <div className=" bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 text-white relative overflow-hidden font-outfit">
+      <div className=" bg-gradient-to-br from-primary-900 via-primary-800 to-primary-900 text-white relative overflow-hidden font-outfit">
         {/* Decorative elements */}
         <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-red-500/30 rounded-full filter blur-3xl opacity-20 animate-pulse-slow"></div>
         <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-primary-500/30 rounded-full filter blur-3xl opacity-20 transform translate-y-1/4 translate-x-[-30%]"></div>
@@ -76,7 +76,7 @@ const PageNotFound = () => {
               >
                 <Link
                   to="/"
-                  className="inline-flex items-center justify-center px-6 py-3 bg-secondary-500 hover:bg-secondary-600 text-white  text-sm sm:text-base font-medium rounded-lg shadow-md transition-all font-outfit"
+                  className="inline-flex items-center justify-center px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white  text-sm sm:text-base font-medium rounded-lg shadow-md transition-all font-outfit"
                 >
                   <TbHomeDot className="mr-2" size={20} /> Return Home
                 </Link>
@@ -86,7 +86,7 @@ const PageNotFound = () => {
         </div>
 
         {/* Additional decorative elements for visual interest */}
-        <div className="absolute bottom-20 right-40 w-64 h-1 bg-gradient-to-r from-transparent via-secondary-500/50 to-transparent transform rotate-45 hidden lg:block"></div>
+        <div className="absolute bottom-20 right-40 w-64 h-1 bg-gradient-to-r from-transparent via-primary-500/50 to-transparent transform rotate-45 hidden lg:block"></div>
         <div className="absolute top-40 left-20 w-64 h-1 bg-gradient-to-r from-transparent via-blue-500/50 to-transparent transform -rotate-45 hidden lg:block"></div>
       </div>
 

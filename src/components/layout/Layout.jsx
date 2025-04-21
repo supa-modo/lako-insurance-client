@@ -37,10 +37,9 @@ const Layout = () => {
 
       
       <main className="flex-grow relative z-10">
-      <Header />
+      
         <Outlet />
       </main>
-      {/* <Footer /> */}
     </div>
   );
 };

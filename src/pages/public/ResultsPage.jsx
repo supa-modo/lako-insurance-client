@@ -25,6 +25,7 @@ import DownloadReport from "../../components/results/DownloadReport";
 import CallbackModal from "../../components/results/CallbackModal";
 import Footer from "../../components/layout/Footer";
 import { TbMailFilled, TbPhoneCall } from "react-icons/tb";
+import Header from "../../components/layout/Header";
 
 const ResultsPage = () => {
   const navigate = useNavigate();
@@ -283,15 +284,16 @@ const ResultsPage = () => {
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-primary-900 via-neutral-800 to-primary-900 text-white relative overflow-hidden">
+        <Header/>
         {/* Decorative elements */}
         <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-primary-500/40 rounded-full filter blur-3xl opacity-20 animate-pulse-slow"></div>
         <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-blue-500/30 rounded-full filter blur-3xl opacity-20 transform translate-y-1/4 translate-x-[-30%]"></div>
         <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-primary-400/60 rounded-full filter blur-xl opacity-30 animate-float"></div>
 
         {/* Main content */}
-        <div className="mx-auto px-0 sm:px-3 md:px-6 lg:px-10 py-4 sm:py-6 relative z-10 font-outfit">
+        <div className="mx-auto px-0 sm:px-3 md:px-6 lg:px-10 lg:pt-32 py-4 sm:py-6 relative z-10 font-outfit">
           {/* Breadcrumb Navigation */}
-          <motion.div
+          {/* <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -344,7 +346,7 @@ const ResultsPage = () => {
               </span>
               <span className="text-white font-medium">Comparison Results</span>
             </div>
-          </motion.div>
+          </motion.div> */}
 
           <header className="text-center mb-8">
             <motion.h1

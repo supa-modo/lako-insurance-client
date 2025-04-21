@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/public/HomePage";
 import ComparisonPage from "./pages/public/ComparisonPage";
+import NewComparisonPage from "./pages/public/NewComparisonPage";
 import ResultsPage from "./pages/public/ResultsPage";
 import AdminLoginPage from "./pages/admin/AdminLoginPage";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
@@ -25,6 +26,13 @@ import AnalyticsAndReportsPage from "./pages/admin/AnalyticsAndReportsPage";
 import ProcessedQueriesPage from "./pages/admin/ProcessedQueriesPage";
 import RenewalsPage from "./pages/admin/RenewalsPage";
 
+import {
+  HomePage as WebsiteHomePage,
+  AboutPage,
+  ContactPage,
+} from "./pages/website";
+import WebsiteLayout from "./components/website/Layout";
+
 function App() {
   return (
     <>
@@ -36,8 +44,15 @@ function App() {
             {/* Public Routes */}
             <Route path="/" element={<Layout />}>
               <Route index element={<HomePage />} />
-              <Route path="compare" element={<ComparisonPage />} />
+              {/* <Route path="compare" element={<ComparisonPage />} /> */}
+              <Route path="compare" element={<NewComparisonPage />} />
               <Route path="results" element={<ResultsPage />} />
+              <Route path="about" element={<AboutPage />} />
+              <Route path="contact" element={<ContactPage />} />
+            </Route>
+
+            <Route path="/website" element={<WebsiteLayout />}>
+              <Route index element={<WebsiteHomePage />} />
             </Route>
 
             {/* Admin Login Page (Outside Admin Layout) */}

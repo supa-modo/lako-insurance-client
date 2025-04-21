@@ -13,7 +13,7 @@ import {
 } from "react-icons/tb";
 import { motion } from "framer-motion";
 import { loginAdmin } from "../../services/adminService";
-import { PiPasswordBold } from "react-icons/pi";
+import { PiPasswordBold, PiPasswordDuotone } from "react-icons/pi";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const AdminLoginPage = () => {
@@ -80,7 +80,7 @@ const AdminLoginPage = () => {
             <motion.div
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
-              className="mb-4 bg-red-500/40 border border-red-500/50 text-red-200 px-6 py-3 rounded-lg flex items-center gap-2"
+              className="mb-4 bg-red-500/40 border border-red-500/50 text-red-200 text-sm lg:text-base mx-2 lg:mx-10 px-6 py-3 rounded-lg flex items-center gap-2"
             >
               <TbAlertTriangle className="h-5 w-5" />
               <span>{error}</span>
@@ -91,11 +91,11 @@ const AdminLoginPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 px-6 py-3 sm:px-10 sm:py-6 shadow-2xl"
+          className="px-2 lg:px-10"
         >
           
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4 lg:space-y-6">
             <div>
               <label
                 htmlFor="email"
@@ -104,13 +104,13 @@ const AdminLoginPage = () => {
                 Email Address
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                  <TbMailFilled className="h-5 w-5 text-primary-400" />
+                <div className="absolute inset-y-0 z-10 left-4 flex items-center pointer-events-none">
+                  <TbMailFilled className="h-6 w-6 text-primary-400" />
                 </div>
                 <input
                   id="email"
                   type="email"
-                  className="w-full h-12 pl-14 pr-4 text-sm sm:text-base text-white rounded-lg border-2 bg-white/10 backdrop-blur-sm focus:bg-white/20
+                  className="w-full h-12 pl-12 lg:pl-14 pr-4 text-sm sm:text-base text-white rounded-lg border-2 bg-white/10 backdrop-blur-sm focus:bg-white/20
                   duration-200 focus:ring-2 focus:outline-none focus:ring-primary-400 focus:border-0
                   font-lexend placeholder-white/50 border-white/30"
                   placeholder="email@example.com"
@@ -137,13 +137,13 @@ const AdminLoginPage = () => {
                 </a>
               </div>
               <div className="relative">
-                <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                  <PiPasswordBold className="h-5 w-5 text-primary-400" />
+                <div className="absolute inset-y-0 z-10 left-4 flex items-center pointer-events-none">
+                  <PiPasswordDuotone className="h-6 w-6 text-primary-400" />
                 </div>
                 <input
                   id="password"
                   type={showPassword ? "text" : "password"}
-                  className="w-full h-12 pl-14 pr-12 text-sm sm:text-base text-white rounded-lg border-2 bg-white/10 backdrop-blur-sm focus:bg-white/20
+                  className="w-full h-12 pl-12 lg:pl-14 pr-12 text-sm sm:text-base text-white rounded-lg border-2 bg-white/10 backdrop-blur-sm focus:bg-white/20
                   duration-200 focus:ring-2 focus:outline-none focus:ring-primary-400 focus:border-0
                   font-lexend placeholder-white/50 border-white/30"
                   placeholder="••••••••"
