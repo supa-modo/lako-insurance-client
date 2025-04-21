@@ -84,13 +84,12 @@ const ServicesSection = () => {
   ];
 
   return (
-    <section className="py-24 bg-neutral-50 font-outfit" id="services">
+    <section className="py-10 lg:py-24 bg-neutral-50 font-outfit" id="services">
       <div className="lg:container mx-auto px-1.5 sm:px-4 lg:px-12">
-        <div className="text-center mb-14">
+        <div className="text-center mb-10 lg:mb-14">
           <motion.span
             initial={{ opacity: 0, y: -10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="inline-flex items-center px-4 py-1 lg:py-1.5 rounded-full text-[0.78rem] lg:text-sm font-medium font-outfit bg-primary-50 text-primary-600 border border-primary-100"
           >
@@ -99,8 +98,7 @@ const ServicesSection = () => {
           </motion.span>
           <motion.h2
             initial={{ opacity: 0, y: -10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-3xl lg:text-4xl font-bold font-outfit text-primary-600 mt-3"
           >
@@ -109,8 +107,7 @@ const ServicesSection = () => {
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: -10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
             className="max-w-2xl mx-auto mt-4 text-base lg:text-lg text-neutral-800 font-outfit"
           >

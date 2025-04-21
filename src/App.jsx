@@ -25,6 +25,7 @@ import CalendarPage from "./pages/admin/CalendarPage";
 import AnalyticsAndReportsPage from "./pages/admin/AnalyticsAndReportsPage";
 import ProcessedQueriesPage from "./pages/admin/ProcessedQueriesPage";
 import RenewalsPage from "./pages/admin/RenewalsPage";
+import { ModalProvider } from "./context/ModalContext";
 
 import {
   HomePage as WebsiteHomePage,
@@ -38,8 +39,9 @@ function App() {
     <>
       <Analytics />
       <Provider store={store}>
-        <Router>
-          <ScrollToTop />
+        <ModalProvider>
+          <Router>
+            <ScrollToTop />
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Layout />}>
@@ -177,7 +179,8 @@ function App() {
             {/* 404 Page Not Found - Catch All */}
             <Route path="*" element={<PageNotFound />} />
           </Routes>
-        </Router>
+          </Router>
+        </ModalProvider>
       </Provider>
     </>
   );

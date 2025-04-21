@@ -30,7 +30,7 @@ const PartnershipLogos = () => {
   }, [controls]);
 
   return (
-    <section className="pt-4 lg:pt-0 bg-gradient-to-b from-neutral-100 to-neutral-50">
+    <section className="pt-12 lg:pt-0 bg-gradient-to-b from-neutral-100 to-neutral-50">
       <div className="max-w-screen-2xl mx-auto ">
         <div className="text-center mb-4">
           <h2 className="text-xl font-semibold text-gray-600">

@@ -2,8 +2,12 @@ import { Outlet } from "react-router-dom";
 import { useEffect } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
+import CallbackModal from "../results/CallbackModal";
+import { ModalProvider, useModal } from "../../context/ModalContext";
 
 const Layout = () => {
+  const { isCallbackModalOpen, closeCallbackModal } = useModal();
+  
   // Add smooth scrolling for anchor links
   useEffect(() => {
     const handleAnchorClick = (e) => {
@@ -37,9 +41,12 @@ const Layout = () => {
 
       
       <main className="flex-grow relative z-10">
-      
         <Outlet />
       </main>
+      
+      
+      {/* Callback Modal */}
+      <CallbackModal isOpen={isCallbackModalOpen} onClose={closeCallbackModal} />
     </div>
   );
 };

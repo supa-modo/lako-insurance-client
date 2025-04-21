@@ -30,8 +30,11 @@ import {
   TbPhone,
 } from "react-icons/tb";
 import { PiMapPinAreaBold } from "react-icons/pi";
+import { useModal } from "../../context/ModalContext";
 
 const Footer = () => {
+  const { openCallbackModal } = useModal();
+  
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -196,12 +199,17 @@ const Footer = () => {
                   <span>Real Towers, Upperhill, Nairobi, Kenya</span>
                 </div>
 
-                <button className=" text-[0.85rem] lg:text-[0.9rem] text-white px-4 py-2 bg-primary-600 rounded-lg w-full">
+                <motion.button 
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={openCallbackModal}
+                  className="text-[0.85rem] lg:text-[0.9rem] text-white px-4 py-2 bg-primary-600 hover:bg-primary-700 rounded-lg w-full transition-colors duration-200"
+                >
                   <div className="flex items-center justify-center">
-                    <span className="">Request a Callback!</span>
+                    <span>Request a Callback!</span>
                     <TbChevronRight className="ml-2" />
                   </div>
-                </button>
+                </motion.button>
               </div>
             </div>
           </div>
