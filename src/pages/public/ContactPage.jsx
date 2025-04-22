@@ -21,6 +21,7 @@ import {
 import Header from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
 import { PiMapPinAreaDuotone } from "react-icons/pi";
+import { FaFacebookF, FaInstagram, FaLinkedinIn, FaXTwitter } from "react-icons/fa6";
 
 const ContactPage = () => {
   const [formState, setFormState] = useState({
@@ -240,28 +241,28 @@ const ContactPage = () => {
                         </h3>
                         <div className="flex space-x-3">
                           <a
-                            href="#"
-                            className="h-10 w-10 rounded-full bg-gray-600/10 flex items-center justify-center text-gray-600 hover:bg-gray-600/20 transition-colors"
+                            href="https://web.facebook.com/lakoinsuranceagency?_rdc=1&_rdr"
+                            className="h-10 w-10 rounded-full flex items-center justify-center bg-blue-600 hover:bg-gray-600/20 transition-colors"
                           >
-                            <TbBrandFacebook className="h-5 w-5" />
+                            <FaFacebookF className="h-5 w-5 text-white" />
                           </a>
                           <a
                             href="#"
-                            className="h-10 w-10 rounded-full bg-gray-600/10 flex items-center justify-center text-gray-600 hover:bg-gray-600/20 transition-colors"
+                            className="h-10 w-10 rounded-full bg-black flex items-center justify-center text-white hover:bg-gray-600/20 transition-colors"
                           >
-                            <TbBrandTwitter className="h-5 w-5" />
+                            <FaXTwitter className="h-5 w-5" />
                           </a>
                           <a
-                            href="#"
-                            className="h-10 w-10 rounded-full bg-gray-600/10 flex items-center justify-center text-gray-600 hover:bg-gray-600/20 transition-colors"
+                            href="https://www.instagram.com/lakoinsurance"
+                            className="h-10 w-10 rounded-full bg-gradient-to-r from-purple-500 to-red-500 flex items-center justify-center text-white hover:bg-gray-600/20 transition-colors"
                           >
-                            <TbBrandInstagram className="h-5 w-5" />
+                            <FaInstagram className="h-5 w-5" />
                           </a>
                           <a
-                            href="#"
-                            className="h-10 w-10 rounded-full bg-gray-600/10 flex items-center justify-center text-gray-600 hover:bg-gray-600/20 transition-colors"
+                            href="https://www.linkedin.com/company/lako-insurance/"
+                            className="h-10 w-10 rounded-full bg-sky-600 flex items-center justify-center text-white hover:bg-gray-600/20 transition-colors"
                           >
-                            <TbBrandLinkedin className="h-5 w-5" />
+                            <FaLinkedinIn className="h-5 w-5" />
                           </a>
                         </div>
                       </div>

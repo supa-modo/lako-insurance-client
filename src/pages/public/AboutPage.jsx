@@ -340,7 +340,7 @@ const AboutPage = () => {
                       transition={{ duration: 0.2 }}
                       href="https://www.linkedin.com/in/yvonne-kola-mba-83b50611a/"
                       target="_blank"
-                      className="h-10 w-10 rounded-lg bg-blue-600 flex items-center justify-center text-white hover:bg-blue-500   transition-colors"
+                      className="h-9 w-9 rounded-lg bg-sky-600 flex items-center justify-center text-white hover:bg-blue-500   transition-colors"
                     >
                       <FaLinkedinIn className="h-5 w-5" />
                     </motion.a>
@@ -350,7 +350,7 @@ const AboutPage = () => {
                       transition={{ duration: 0.2 }}
                       target="_blank"
                       href="mailto:ykola@lako.co.ke"
-                      className="h-10 w-10 z-30  rounded-lg bg-secondary-500 flex items-center justify-center text-white hover:bg-secondary-600   transition-colors"
+                      className="h-9 w-9 rounded-lg bg-secondary-500 flex items-center justify-center text-white hover:bg-secondary-600   transition-colors"
                     >
                       <TbMailFilled className="h-6 w-6" />
                     </motion.a>

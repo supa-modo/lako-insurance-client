@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/public/HomePage";
-import ComparisonPage from "./pages/public/ComparisonPage";
+import AboutPage from "./pages/public/AboutPage";
+import ContactPage from "./pages/public/ContactPage";
 import NewComparisonPage from "./pages/public/NewComparisonPage";
 import ResultsPage from "./pages/public/ResultsPage";
 import AdminLoginPage from "./pages/admin/AdminLoginPage";
@@ -27,13 +28,6 @@ import ProcessedQueriesPage from "./pages/admin/ProcessedQueriesPage";
 import RenewalsPage from "./pages/admin/RenewalsPage";
 import { ModalProvider } from "./context/ModalContext";
 
-import {
-  HomePage as WebsiteHomePage,
-  AboutPage,
-  ContactPage,
-} from "./pages/website";
-import WebsiteLayout from "./components/website/Layout";
-
 function App() {
   return (
     <>
@@ -42,143 +36,139 @@ function App() {
         <ModalProvider>
           <Router>
             <ScrollToTop />
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<Layout />}>
-              <Route index element={<HomePage />} />
-              {/* <Route path="compare" element={<ComparisonPage />} /> */}
-              <Route path="compare" element={<NewComparisonPage />} />
-              <Route path="results" element={<ResultsPage />} />
-              <Route path="about" element={<AboutPage />} />
-              <Route path="contact" element={<ContactPage />} />
-            </Route>
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<Layout />}>
+                <Route index element={<HomePage />} />
+                {/* <Route path="compare" element={<ComparisonPage />} /> */}
+                <Route path="compare" element={<NewComparisonPage />} />
+                <Route path="results" element={<ResultsPage />} />
+                <Route path="about" element={<AboutPage />} />
+                <Route path="contact" element={<ContactPage />} />
+              </Route>
 
-            <Route path="/website" element={<WebsiteLayout />}>
-              <Route index element={<WebsiteHomePage />} />
-            </Route>
+              {/* Admin Login Page (Outside Admin Layout) */}
+              <Route path="/admin" exact element={<AdminLoginPage />} />
 
-            {/* Admin Login Page (Outside Admin Layout) */}
-            <Route path="/admin" exact element={<AdminLoginPage />} />
+              {/* Admin Routes with Layout */}
+              <Route path="/admin/*" element={<AdminLayout />}>
+                <Route
+                  path="dashboard"
+                  element={
+                    <AuthGuard>
+                      <AdminDashboardPage />
+                    </AuthGuard>
+                  }
+                />
+                <Route
+                  path="dashboard2"
+                  element={
+                    <AuthGuard>
+                      <AdminDashboardPage2 />
+                    </AuthGuard>
+                  }
+                />
+                <Route
+                  path="clients/leads"
+                  element={
+                    <AuthGuard>
+                      <LeadManagementPage />
+                    </AuthGuard>
+                  }
+                />
+                <Route
+                  path="clients/converted"
+                  element={
+                    <AuthGuard>
+                      <ClientManagementPage />
+                    </AuthGuard>
+                  }
+                />
+                <Route
+                  path="plans"
+                  element={
+                    <AuthGuard>
+                      <InsurancePlanPage />
+                    </AuthGuard>
+                  }
+                />
+                <Route
+                  path="renewals"
+                  element={
+                    <AuthGuard>
+                      <RenewalsPage />
+                    </AuthGuard>
+                  }
+                />
+                <Route
+                  path="mail"
+                  element={
+                    <AuthGuard>
+                      <EmailCenterPage />
+                    </AuthGuard>
+                  }
+                />
+                <Route
+                  path="queries/all"
+                  element={
+                    <AuthGuard>
+                      <QueryManagementPage />
+                    </AuthGuard>
+                  }
+                />
+                <Route
+                  path="queries/processed"
+                  element={
+                    <AuthGuard>
+                      <ProcessedQueriesPage />
+                    </AuthGuard>
+                  }
+                />
+                <Route
+                  path="tasks"
+                  element={
+                    <AuthGuard>
+                      <TaskManagementPage />
+                    </AuthGuard>
+                  }
+                />
+                <Route
+                  path="settings"
+                  element={
+                    <AuthGuard>
+                      <SettingsPage />
+                    </AuthGuard>
+                  }
+                />
+                <Route
+                  path="calendar"
+                  element={
+                    <AuthGuard>
+                      <CalendarPage />
+                    </AuthGuard>
+                  }
+                />
+                <Route
+                  path="analytics"
+                  element={
+                    <AuthGuard>
+                      <AnalyticsAndReportsPage />
+                    </AuthGuard>
+                  }
+                />
+                <Route
+                  path="reports"
+                  element={
+                    <AuthGuard>
+                      <AnalyticsAndReportsPage />
+                    </AuthGuard>
+                  }
+                />
+              </Route>
 
-            {/* Admin Routes with Layout */}
-            <Route path="/admin/*" element={<AdminLayout />}>
-              <Route
-                path="dashboard"
-                element={
-                  <AuthGuard>
-                    <AdminDashboardPage />
-                  </AuthGuard>
-                }
-              />
-              <Route
-                path="dashboard2"
-                element={
-                  <AuthGuard>
-                    <AdminDashboardPage2 />
-                  </AuthGuard>
-                }
-              />
-              <Route
-                path="clients/leads"
-                element={
-                  <AuthGuard>
-                    <LeadManagementPage />
-                  </AuthGuard>
-                }
-              />
-              <Route
-                path="clients/converted"
-                element={
-                  <AuthGuard>
-                    <ClientManagementPage />
-                  </AuthGuard>
-                }
-              />
-              <Route
-                path="plans"
-                element={
-                  <AuthGuard>
-                    <InsurancePlanPage />
-                  </AuthGuard>
-                }
-              />
-              <Route
-                path="renewals"
-                element={
-                  <AuthGuard>
-                    <RenewalsPage />
-                  </AuthGuard>
-                }
-              />
-              <Route
-                path="mail"
-                element={
-                  <AuthGuard>
-                    <EmailCenterPage />
-                  </AuthGuard>
-                }
-              />
-              <Route
-                path="queries/all"
-                element={
-                  <AuthGuard>
-                    <QueryManagementPage />
-                  </AuthGuard>
-                }
-              />
-              <Route
-                path="queries/processed"
-                element={
-                  <AuthGuard>
-                    <ProcessedQueriesPage />
-                  </AuthGuard>
-                }
-              />
-              <Route
-                path="tasks"
-                element={
-                  <AuthGuard>
-                    <TaskManagementPage />
-                  </AuthGuard>
-                }
-              />
-              <Route
-                path="settings"
-                element={
-                  <AuthGuard>
-                    <SettingsPage />
-                  </AuthGuard>
-                }
-              />
-              <Route
-                path="calendar"
-                element={
-                  <AuthGuard>
-                    <CalendarPage />
-                  </AuthGuard>
-                }
-              />
-              <Route
-                path="analytics"
-                element={
-                  <AuthGuard>
-                    <AnalyticsAndReportsPage />
-                  </AuthGuard>
-                }
-              />
-              <Route
-                path="reports"
-                element={
-                  <AuthGuard>
-                    <AnalyticsAndReportsPage />
-                  </AuthGuard>
-                }
-              />
-            </Route>
-
-            {/* 404 Page Not Found - Catch All */}
-            <Route path="*" element={<PageNotFound />} />
-          </Routes>
+              {/* 404 Page Not Found - Catch All */}
+              <Route path="*" element={<PageNotFound />} />
+            </Routes>
           </Router>
         </ModalProvider>
       </Provider>
