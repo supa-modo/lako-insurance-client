@@ -12,9 +12,9 @@ import {
   TbMailFilled,
 } from "react-icons/tb";
 import { motion } from "framer-motion";
-import { loginAdmin } from "../../services/adminService";
 import { PiPasswordBold, PiPasswordDuotone } from "react-icons/pi";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useAuth } from "../../context/AuthContext";
 
 const AdminLoginPage = () => {
   const [email, setEmail] = useState("");
@@ -23,6 +23,7 @@ const AdminLoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,7 +31,7 @@ const AdminLoginPage = () => {
     setLoading(true);
 
     try {
-      await loginAdmin({ email, password });
+      await login({ email, password });
       navigate("/admin/dashboard");
     } catch (err) {
       console.error("Login failed:", err);
@@ -77,15 +78,15 @@ const AdminLoginPage = () => {
           </p>
         </motion.div>
         {error && (
-            <motion.div
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="mb-4 bg-red-500/40 border border-red-500/50 text-red-200 text-sm lg:text-base mx-2 lg:mx-10 px-6 py-3 rounded-lg flex items-center gap-2"
-            >
-              <TbAlertTriangle className="h-5 w-5" />
-              <span>{error}</span>
-            </motion.div>
-          )}
+          <motion.div
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="mb-4 bg-red-500/40 border border-red-500/50 text-red-200 text-sm lg:text-base mx-2 lg:mx-10 px-6 py-3 rounded-lg flex items-center gap-2"
+          >
+            <TbAlertTriangle className="h-5 w-5" />
+            <span>{error}</span>
+          </motion.div>
+        )}
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -93,8 +94,6 @@ const AdminLoginPage = () => {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="px-2 lg:px-10"
         >
-          
-
           <form onSubmit={handleSubmit} className="space-y-4 lg:space-y-6">
             <div>
               <label

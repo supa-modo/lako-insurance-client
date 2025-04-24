@@ -71,20 +71,20 @@ const SummaryStep = ({ formData, submitForm, prevStep }) => {
       icon: <TbCoin className="h-5 w-5" />,
       color: "bg-yellow-500/20 text-yellow-300",
     },
-    {
-      field: "coverageLimit",
-      label: "Coverage Limit",
-      value: formData.coverageLimit,
-      icon: <TbShieldCheck className="h-5 w-5" />,
-      color: "bg-purple-500/20 text-purple-300",
-    },
     // {
-    //   field: "optionalCovers",
-    //   label: "Optional Covers",
-    //   value: formData.optionalCovers,
-    //   icon: <TbPlus className="h-5 w-5" />,
-    //   color: "bg-pink-500/20 text-pink-300",
+    //   field: "coverageLimit",
+    //   label: "Coverage Limit",
+    //   value: formData.coverageLimit,
+    //   icon: <TbShieldCheck className="h-5 w-5" />,
+    //   color: "bg-purple-500/20 text-purple-300",
     // },
+    {
+      field: "optionalCovers",
+      label: "Optional Covers",
+      value: formData.optionalCovers,
+      icon: <TbPlus className="h-5 w-5" />,
+      color: "bg-pink-500/20 text-pink-300",
+    },
   ];
 
   return (

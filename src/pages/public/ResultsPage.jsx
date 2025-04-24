@@ -11,11 +11,8 @@ import {
 } from "react-icons/fi";
 import { useSelector } from "react-redux";
 
-// Import mock service
-import {
-  getMockReportById,
-  mockDownloadReportPdf,
-} from "../../services/mockReportService";
+// Import services
+import { mockDownloadReportPdf } from "../../services/mockReportService";
 
 // Import components
 import PlanList from "../../components/results/PlanLists";
@@ -29,7 +26,6 @@ import Header from "../../components/layout/Header";
 
 const ResultsPage = () => {
   const navigate = useNavigate();
-  const { userQuery } = useSelector((state) => state.comparison);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [showPlanDetailsModal, setShowPlanDetailsModal] = useState(false);
   const [comparisonResults, setComparisonResults] = useState([]);
@@ -60,35 +56,79 @@ const ResultsPage = () => {
     // Set loading to true at the beginning
     setLoading(true);
 
-    // Add a delay to simulate API call
-    const timer = setTimeout(() => {
+    const fetchComparisonResults = async () => {
       try {
-        // Use mock service with a fixed ID since this is a public page
-        const mockReportId = "mock-report-1";
-        const reportData = getMockReportById(mockReportId);
-
-        if (reportData) {
-          setReport(reportData);
-          setComparisonResults(reportData.comparisonResults);
-
-          // Don't auto-select any plan initially
-          setSelectedPlan(null);
+        // Validate userQuery before making the API call
+        if (!userQuery) {
+          console.warn("No user query data available, using default query");
+          // Create a default query for seniors insurance
+          const defaultQuery = {
+            insuranceType: "seniors",
+            ageMin: 65,
+            ageMax: 75,
+            budget: 50000,
+            coverageLimit: 1000000,
+            optionalCovers: ["outpatient", "dental", "optical"]
+          };
+          
+          // Use the real API service with default parameters
+          const reportData = await insuranceService.getComparisonResults(defaultQuery);
+          
+          if (reportData && reportData.comparisonResults && reportData.comparisonResults.length > 0) {
+            setReport(reportData);
+            setComparisonResults(reportData.comparisonResults);
+            setError("Using default search parameters. Please try again with your preferences.");
+          } else {
+            throw new Error("No results found with default parameters");
+          }
         } else {
-          setError("No plans found that match your criteria");
+          // Use the real API service with user query parameters
+          console.log("Using user query:", userQuery);
+          const reportData = await insuranceService.getComparisonResults(userQuery);
+
+          if (reportData && reportData.comparisonResults && reportData.comparisonResults.length > 0) {
+            setReport(reportData);
+            setComparisonResults(reportData.comparisonResults);
+            setError(null); // Clear any previous errors
+          } else {
+            setError("No plans found that match your criteria. Showing sample plans instead.");
+          }
         }
       } catch (err) {
-        setError(err.message || "Failed to fetch insurance plans");
+        console.error("Error fetching comparison results:", err);
+        
       } finally {
         setLoading(false);
       }
-    }, 1500); // Simulate 1.5s loading time
+    };
 
-    return () => clearTimeout(timer);
+    // Execute the fetch function
+    fetchComparisonResults();
   }, [userQuery]); // Re-run when userQuery changes
 
-  const handlePlanSelect = (plan) => {
-    setSelectedPlan(plan);
-    setShowPlanDetailsModal(true);
+  const handlePlanSelect = async (plan) => {
+    try {
+      // If we have a real plan ID, fetch detailed information
+      if (plan && plan.plan && plan.plan.id) {
+        const planDetails = await insuranceService.getPlanDetails(plan.plan.id);
+        if (planDetails) {
+          // Create a result object with the same structure expected by the modal
+          const detailedPlan = {
+            plan: planDetails,
+            score: plan.score,
+            rank: plan.rank
+          };
+          setSelectedPlan(detailedPlan);
+        } else {
+          setSelectedPlan(plan);
+        }
+      } else {
+        setSelectedPlan(plan);
+      }
+      // setShowPlanDetailsModal(true);
+    } catch (error) {
+      console.error("Error fetching plan details:", error);
+    }
   };
 
   const handleBuyPlan = (plan) => {
@@ -170,18 +210,6 @@ const ResultsPage = () => {
     }).format(amount);
   };
 
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.12,
-        duration: 0.6,
-      },
-    },
-  };
-
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
     visible: {
@@ -221,7 +249,7 @@ const ResultsPage = () => {
 
   // Error State Component
   const ErrorState = ({ error, onGoHome }) => (
-    <div className="flex items-center justify-center py-20">
+    <div className="flex items-center justify-center py-20 px-2">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -292,61 +320,6 @@ const ResultsPage = () => {
 
         {/* Main content */}
         <div className="mx-auto px-0 sm:px-3 md:px-6 lg:px-10  pt-24 lg:pt-32 py-4 sm:py-6 relative z-10 font-outfit">
-          {/* Breadcrumb Navigation */}
-          {/* <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mb-10 sm:mb-8 md:mb-2 pl-3 md:pl-10"
-          >
-            <div className="flex items-center space-x-2 text-sm">
-              <Link
-                to="/"
-                className="text-secondary-400 hover:text-white transition-colors"
-              >
-                Home
-              </Link>
-              <span className="text-white/50">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </span>
-              <Link
-                to="/compare"
-                className="text-secondary-400 hover:text-white transition-colors"
-              >
-                Compare
-              </Link>
-              <span className="text-white/50">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </span>
-              <span className="text-white font-medium">Comparison Results</span>
-            </div>
-          </motion.div> */}
 
           <header className="text-center mb-8">
             <motion.h1
@@ -384,7 +357,7 @@ const ResultsPage = () => {
                     <PlanList
                       plans={report.comparisonResults}
                       formatCurrency={formatCurrency}
-                      onSelectPlan={handlePlanSelect}
+                      // onSelectPlan={handlePlanSelect}
                       onBuyPlan={handleBuyPlan}
                       activePlanId={selectedPlan?.id || selectedPlan?.plan?.id}
                       userAge={report.userQuery?.age || 69}
@@ -570,7 +543,7 @@ const ResultsPage = () => {
 
         {/* Modals */}
         <AnimatePresence>
-          {showPlanDetailsModal && selectedPlan && (
+           {/*{showPlanDetailsModal && selectedPlan && (
             <PlanDetailsModal
               plan={selectedPlan}
               formatCurrency={formatCurrency}
@@ -578,7 +551,7 @@ const ResultsPage = () => {
               onRequestCallback={handleRequestCallback}
               onBuyPlan={handleBuyPlan}
             />
-          )}
+          )} */}
 
           {showCallbackModal && (
             <CallbackModal

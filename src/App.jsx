@@ -6,15 +6,11 @@ import NewComparisonPage from "./pages/public/NewComparisonPage";
 import ResultsPage from "./pages/public/ResultsPage";
 import AdminLoginPage from "./pages/admin/AdminLoginPage";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
-import AdminDashboardPage2 from "./pages/admin/OldDashboard";
 import LeadManagementPage from "./pages/admin/LeadManagementPage";
 import ClientManagementPage from "./pages/admin/ClientManagementPage";
-import InsurancePlanPage from "./pages/admin/InsurancePlanPage";
 import PageNotFound from "./pages/public/PageNotFound";
 import Layout from "./components/layout/Layout";
 import AdminLayout from "./components/layout/AdminLayout";
-import { Provider } from "react-redux";
-import store from "./store";
 import AuthGuard from "./components/AuthGuard";
 import ScrollToTop from "./components/utils/ScrollToTop";
 import { Analytics } from "@vercel/analytics/react";
@@ -27,12 +23,15 @@ import AnalyticsAndReportsPage from "./pages/admin/AnalyticsAndReportsPage";
 import ProcessedQueriesPage from "./pages/admin/ProcessedQueriesPage";
 import RenewalsPage from "./pages/admin/RenewalsPage";
 import { ModalProvider } from "./context/ModalContext";
+import { AuthProvider } from "./context/AuthContext";
+import InsurancePlanPage from "./pages/admin/InsurancePlanPage";
+import ServiceDetailsPage from "./pages/public/ServiceDetailsPage";
 
 function App() {
   return (
     <>
       <Analytics />
-      <Provider store={store}>
+      <AuthProvider>
         <ModalProvider>
           <Router>
             <ScrollToTop />
@@ -45,6 +44,12 @@ function App() {
                 <Route path="results" element={<ResultsPage />} />
                 <Route path="about" element={<AboutPage />} />
                 <Route path="contact" element={<ContactPage />} />
+
+                {/* Service Details Route - Using a dynamic parameter */}
+                <Route
+                  path="services/:serviceId"
+                  element={<ServiceDetailsPage />}
+                />
               </Route>
 
               {/* Admin Login Page (Outside Admin Layout) */}
@@ -61,10 +66,10 @@ function App() {
                   }
                 />
                 <Route
-                  path="dashboard2"
+                  path="plans"
                   element={
                     <AuthGuard>
-                      <AdminDashboardPage2 />
+                      <InsurancePlanPage />
                     </AuthGuard>
                   }
                 />
@@ -84,14 +89,7 @@ function App() {
                     </AuthGuard>
                   }
                 />
-                <Route
-                  path="plans"
-                  element={
-                    <AuthGuard>
-                      <InsurancePlanPage />
-                    </AuthGuard>
-                  }
-                />
+                <Route path="plans" element={<AuthGuard></AuthGuard>} />
                 <Route
                   path="renewals"
                   element={
@@ -171,7 +169,7 @@ function App() {
             </Routes>
           </Router>
         </ModalProvider>
-      </Provider>
+      </AuthProvider>
     </>
   );
 }

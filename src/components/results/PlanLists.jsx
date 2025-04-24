@@ -20,7 +20,7 @@ import { BsFillCreditCardFill } from "react-icons/bs";
 const PlanList = ({
   plans,
   formatCurrency,
-  onSelectPlan,
+  // onSelectPlan,
   onBuyPlan,
   activePlanId,
   userAge,
@@ -30,6 +30,7 @@ const PlanList = ({
 
   // Sort plans by rank or match score
   const sortedPlans = [...plans].sort((a, b) => {
+    console.log(plans);
     const aRank = a.rank || 0;
     const bRank = b.rank || 0;
     return aRank - bRank;
@@ -142,7 +143,6 @@ const PlanList = ({
           return (
             <div
               key={planId || index}
-             
               className={`relative bg-white rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl ${
                 isActivePlan
                   ? "border-l-primary-500"
@@ -157,7 +157,9 @@ const PlanList = ({
                   <div className="flex items-center">
                     <div className="w-20 h-14 flex items-center justify-center rounded-lg bg-gray-100 border border-gray-200 overflow-hidden mr-3 flex-shrink-0">
                       <img
-                        src={plan.companyLogo || "/insurance-placeholder.png"}
+                        src={
+                          `${plan.companyLogo}` || "/insurance-placeholder.png"
+                        }
                         alt={plan.companyName || "Insurance Company"}
                         className="max-h-8 max-w-10 object-contain"
                         onError={(e) => {
@@ -190,7 +192,6 @@ const PlanList = ({
                 <div className="grid grid-cols-3 gap-4 bg-gray-50 p-3 rounded-lg mb-4">
                   <div>
                     <div className="flex items-center text-xs text-gray-500 mb-1">
-                      {/* <TbShieldHalfFilled className="mr-1 text-primary-500 h-4 w-4" /> */}
                       <span>Inpatient</span>
                     </div>
                     <p className="text-sm font-semibold font-lexend text-gray-800">
@@ -200,7 +201,6 @@ const PlanList = ({
 
                   <div>
                     <div className="flex items-center text-xs text-gray-500 mb-1">
-                      {/* <TbStethoscope className="mr-1 text-primary-500 h-4 w-4" /> */}
                       <span>Outpatient</span>
                     </div>
                     <p className="text-sm font-semibold font-lexend text-gray-800">
@@ -210,7 +210,6 @@ const PlanList = ({
 
                   <div>
                     <div className="flex items-center text-xs text-gray-500 mb-1">
-                      {/* <TbBuildingHospital className="mr-1 text-primary-500 h-4 w-4" /> */}
                       <span>Room Type</span>
                     </div>
                     <p className="text-sm font-semibold text-gray-800">
@@ -293,7 +292,7 @@ const PlanList = ({
                   </button>
 
                   <button
-                    onClick={() => onSelectPlan(planResult)}
+                    // onClick={() => onSelectPlan(planResult)}
                     className="px-3 py-1.5 border border-primary-500 bg-white font-medium text-primary-600 text-sm rounded-lg hover:bg-primary-50 transition-colors"
                   >
                     View Plan Details

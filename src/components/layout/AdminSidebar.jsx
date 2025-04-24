@@ -18,6 +18,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PiUsersDuotone } from "react-icons/pi";
 import { RiUserFollowLine, RiUserShared2Line } from "react-icons/ri";
+import { useAuth } from "../../context/AuthContext";
 
 // Navigation items with categories for better organization
 const navItems = [
@@ -76,23 +77,10 @@ const navItems = [
     category: "Insurance",
     items: [
       {
-        name: "Insurance",
+        name: "Insurance Plans",
         icon: TbShieldHalfFilled,
         path: "/admin/plans",
-        submenu: [
-          {
-            name: "Insurance Plans",
-            path: "/admin/plans",
-            icon: TbStack2,
-            badge: "New",
-            badgeColor: "bg-green-500",
-          },
-          {
-            name: "Active Policies",
-            path: "/admin/policies",
-            icon: TbShieldCheckFilled,
-          },
-        ],
+        
       },
       {
         name: "Renewals",
@@ -146,6 +134,14 @@ const navItems = [
 ];
 
 const AdminSidebar = ({ collapsed }) => {
+  const { user, logout } = useAuth();
+
+  const userData = user?.user || {};
+  const firstName = userData.firstName || "";
+  const lastName = userData.lastName || "";
+  const username = firstName && lastName ? `${firstName} ${lastName}` : "Admin";
+  const email = userData.email;
+
   // Initialize only the "Clients & Leads" submenu as open by default
   const [openSubmenus, setOpenSubmenus] = useState(() => {
     const initialOpen = {};
@@ -347,15 +343,13 @@ const AdminSidebar = ({ collapsed }) => {
           } p-2 rounded-lg hover:bg-white/5 cursor-pointer group transition-colors`}
         >
           <div className="flex items-center">
-            <div className="h-8 w-8 rounded-full bg-secondary-700 flex items-center justify-center text-white font-medium">
-              A
+            <div className="h-8 w-8 rounded-full text-[0.9rem] bg-secondary-700 flex items-center justify-center text-white font-medium">
+              {firstName.charAt(0).toUpperCase()}{lastName.charAt(0).toUpperCase()}
             </div>
             {!collapsed && (
               <div className="ml-2">
-                <div className="text-sm text-white font-medium">Admin User</div>
-                <div className="text-xs text-white/50">
-                  admin@lakoinsurance.com
-                </div>
+                <div className="text-sm text-white font-medium">{username}</div>
+                <div className="text-xs text-white/50">{email}</div>
               </div>
             )}
           </div>

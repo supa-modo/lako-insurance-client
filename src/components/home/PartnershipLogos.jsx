@@ -67,7 +67,7 @@ const PartnershipLogos = () => {
               {partners.map((logo, index) => (
                 <div
                   key={`second-${index}`}
-                  className="mx-8 flex-shrink-0 group"
+                  className="lg:mx-8 flex-shrink-0 group"
                 >
                   <div className="w-36 h-24 sm:w-44 sm:h-28 bg-neutral-50 rounded-lg flex items-center justify-center p-5 ">
                     <img

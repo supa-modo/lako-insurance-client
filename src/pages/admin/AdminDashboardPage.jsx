@@ -47,25 +47,22 @@ import {
 } from "recharts";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { getCurrentUser } from "../../services/adminService";
-import { PiUsersDuotone, PiUsersThreeDuotone } from "react-icons/pi";
+import { PiUsersDuotone } from "react-icons/pi";
 import { RiUserAddLine, RiUserShared2Line } from "react-icons/ri";
+import { useAuth } from "../../context/AuthContext";
+import { formatDate2 } from "../../utils/formatDate";
 
 const AdminDashboardPage = () => {
   const [period, setPeriod] = useState("weekly");
-  const [activeTab, setActiveTab] = useState("overview");
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [lastLogin, setLastLogin] = useState(new Date());
+  const { user } = useAuth();
 
-  useEffect(() => {
-    // Get the current user info
-    const user = getCurrentUser();
-    setCurrentUser(user);
-
-    // Set a mock last login date
-    setLastLogin(new Date());
-  }, []);
+  // Extract user details safely
+  const userData = user?.user || {};
+  const firstName = userData.firstName || "";
+  const lastName = userData.lastName || "";
+  const username = firstName && lastName ? `${firstName} ${lastName}` : "Admin";
+  const lastLogin = userData.lastLogin;
 
   const refreshData = () => {
     setIsRefreshing(true);
@@ -301,10 +298,10 @@ const AdminDashboardPage = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
           <div>
             <h1 className="text-[1.5rem] font-bold text-secondary-700">
-              Welcome back, {currentUser?.name || "Admin"}
+              Welcome back, {username || "Admin"}
             </h1>
             <p className="text-neutral-600 font-lexend text-[0.83rem]">
-              Last login: {lastLogin.toLocaleString()}
+              Last login: {formatDate2(lastLogin, true)}
             </p>
           </div>
           <div className="flex mt-4 md:mt-0 space-x-2">
@@ -335,7 +332,6 @@ const AdminDashboardPage = () => {
           </div>
         </div>
 
-        <div></div>
         {/* Metric Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-2">
           {metrics.map((metric, index) => (
@@ -379,7 +375,9 @@ const AdminDashboardPage = () => {
         {/* Quick Actions */}
         <div className="bg-neutral-50 rounded-xl border border-gray-200 p-4">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-primary-600">Quick Actions</h2>
+            <h2 className="text-lg font-bold text-primary-600">
+              Quick Actions
+            </h2>
             <button className="text-primary-600 hover:text-primary-700 text-sm font-medium">
               Customize
             </button>
@@ -444,7 +442,9 @@ const AdminDashboardPage = () => {
           {/* Lead Pipeline - col-span-1 */}
           <div className="bg-white rounded-xl border border-gray-200 p-4 lg:col-span-1">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold text-primary-600">Lead Pipeline</h2>
+              <h2 className="text-lg font-bold text-primary-600">
+                Lead Pipeline
+              </h2>
               <Link
                 to="/admin/leads"
                 className="text-primary-600 hover:text-primary-700 text-sm font-medium"
@@ -472,13 +472,17 @@ const AdminDashboardPage = () => {
               <div className="flex justify-between items-center">
                 <div>
                   <div className="text-sm text-neutral-600">Total Leads</div>
-                  <div className="text-xl font-bold text-secondary-700">427</div>
+                  <div className="text-xl font-bold text-secondary-700">
+                    427
+                  </div>
                 </div>
                 <div>
                   <div className="text-sm text-neutral-600">
                     Avg. Conversion Time
                   </div>
-                  <div className="text-xl font-bold text-secondary-700">18 days</div>
+                  <div className="text-xl font-bold text-secondary-700">
+                    18 days
+                  </div>
                 </div>
               </div>
             </div>
@@ -595,7 +599,10 @@ const AdminDashboardPage = () => {
             </div>
             <div className="space-y-3">
               {tasks.map((task) => (
-                <div key={task.id} className="p-2 hover:bg-neutral-200 rounded-lg">
+                <div
+                  key={task.id}
+                  className="p-2 hover:bg-neutral-200 rounded-lg"
+                >
                   <div className="flex items-center">
                     <input
                       type="checkbox"

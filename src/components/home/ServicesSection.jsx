@@ -7,78 +7,70 @@ const ServicesSection = () => {
   // Define all services in an array to map through
   const services = [
     {
-      id: 1,
+      id: "seniors-cover",
       title: "Seniors Cover",
       image: "/seniors.jpg",
       description:
         "Specialized health insurance designed for seniors. Comprehensive coverage, age-appropriate benefits, and tailored solutions for your unique healthcare needs in your golden years.",
-      link: "/seniors-compare",
       delay: 0.1,
       isNew: true,
       featured: true,
     },
     {
-      id: 2,
+      id: "motor-insurance",
       title: "Motor Insurance",
       image: "/motor-insurance.jpg",
       description:
         "Drive confidently with comprehensive coverage. Financial protection, third-party liability, personal accident coverage and expert support for hassle-free claims.",
-      link: "/motor-insurance",
       delay: 0.2,
     },
     {
-      id: 3,
+      id: "property-insurance",
       title: "Property Insurance",
       image: "/property-insurance.jpg",
       description:
         "Comprehensive protection, covering a wide range of risks, including damage, theft, or unforeseen disasters. We tailor our insurance solutions to meet your specific needs.",
-      link: "/property-insurance",
       delay: 0.3,
     },
+    {id: "health-insurance",
+    title: "Health Insurance",
+    image: "/health-insurance.jpg",
+    description:
+      "Rest easy, knowing that we safeguard your health and financial security. Wide-ranging coverage, access to premier healthcare, affordable premiums and flexible plans.",
+    
+    delay: 0.4,
+  },
+  {
+    id: "life-insurance",
+    title: "Life Insurance",
+    image: "/life-insurance.jpg",
+    description:
+      "Income replacement, debt protection, estate planning for wealth transfer, peace of mind for your loved ones' financial security, and flexible coverage plans.",
+    
+    delay: 0.5,
+  },
     {
-      id: 4,
-      title: "Health Insurance",
-      image: "/health-insurance.jpg",
-      description:
-        "Rest easy, knowing that we safeguard your health and financial security. Wide-ranging coverage, access to premier healthcare, affordable premiums and flexible plans.",
-      link: "/health-insurance",
-      delay: 0.4,
-    },
-    {
-      id: 5,
-      title: "Life Insurance",
-      image: "/life-insurance.jpg",
-      description:
-        "Income replacement, debt protection, estate planning for wealth transfer, peace of mind for your loved ones' financial security, and flexible coverage plans.",
-      link: "/life-insurance",
-      delay: 0.5,
-    },
-    {
-      id: 6,
+      id: "education-policy",
       title: "Education Policy",
       image: "/education-policy.png",
       description:
         "Empowering your education journey. Coverage for all educational levels, customizable options, peace of mind for parents, and expert guidance for your educational success.",
-      link: "/education-policy",
       delay: 0.6,
     },
-   
     {
-      id: 7,
+      id: "wiba",
       title: "WIBA",
       image: "/wiba.png",
       description:
         "Legal compliance under Workers Injury Benefits Act, comprehensive financial protection, dedicated claims management, proactive risk assessment, and tailored coverage for your organization.",
-      link: "/wiba",
       delay: 0.6,
     },
     {
-      id: 8,
+      id: "travel-insurance",
       title: "Travel Insurance",
       image: "/travel-insurance.png",
       description:
         "Comprehensive coverage for your adventures, be they for business or leisure. We're here to safeguard your trips against unforeseen challenges, from trip cancellations to medical emergencies.",
-      link: "/travel-insurance",
       delay: 0.6,
     },
   ];
@@ -148,7 +140,11 @@ const ServiceCard = ({ service }) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: service.delay }}
-      className={`${service.featured ? 'bg-gradient-to-br from-white to-secondary-50 ring-2 ring-secondary-200' : 'bg-white'} rounded-xl overflow-hidden shadow-md hover:shadow-xl border border-gray-100 group relative`}
+      className={`${
+        service.featured
+          ? "bg-gradient-to-br from-white to-secondary-50 ring-2 ring-secondary-200"
+          : "bg-white"
+      } rounded-xl overflow-hidden shadow-md hover:shadow-xl border border-gray-100 group relative`}
     >
       {service.isNew && (
         <div className="absolute top-3 right-3 z-10">
@@ -157,7 +153,7 @@ const ServiceCard = ({ service }) => {
           </div>
         </div>
       )}
-      
+
       <div className="h-40 overflow-hidden">
         <img
           src={service.image}
@@ -166,18 +162,28 @@ const ServiceCard = ({ service }) => {
         />
       </div>
       <div className="p-5">
-        <h3 className={`text-lg md:text-xl font-bold ${service.featured ? 'text-secondary-700' : 'text-primary-700'} mb-2 flex items-center`}>
+        <h3
+          className={`text-lg md:text-xl font-bold ${
+            service.featured ? "text-secondary-700" : "text-primary-700"
+          } mb-2 flex items-center`}
+        >
           {service.title}
           {service.featured && (
-            <span className="ml-2 text-xs bg-secondary-100 text-secondary-700 px-2 py-0.5 rounded-full">Featured</span>
+            <span className="ml-2 text-xs bg-secondary-100 text-secondary-700 px-2 py-0.5 rounded-full">
+              Featured
+            </span>
           )}
         </h3>
         <p className="text-neutral-800 text-[0.95rem] lg:text-base mb-4">
           {service.description}
         </p>
         <Link
-          to={service.link}
-          className={`inline-flex items-center ${service.featured ? 'text-secondary-700 font-bold' : 'text-secondary-600 font-semibold'} text-sm lg:text-[0.95rem] hover:text-primary-600 transition-colors`}
+          to={`/services/${service.id}`}
+          className={`inline-flex items-center ${
+            service.featured
+              ? "text-secondary-700 font-bold"
+              : "text-secondary-600 font-semibold"
+          } text-sm lg:text-[0.95rem] hover:text-primary-600 transition-colors`}
         >
           Learn More
           <TbArrowRight className="ml-1 group-hover:translate-x-1 transition-transform" />

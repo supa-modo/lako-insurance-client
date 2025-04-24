@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { useDispatch } from "react-redux";
-import { setUserQuery, setLoading } from "../../store/slices/comparisonSlice";
 import Header from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
 
@@ -16,7 +14,6 @@ import SummaryStep from "../../components/comparison/steps/SummaryStep";
 
 const NewComparisonPage = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     insuranceType: "",
@@ -97,30 +94,30 @@ const NewComparisonPage = () => {
       title: "Budget Range",
       description: "What's your budget for insurance coverage?",
     },
-    {
-      component: (
-        <CoverageLimitStep
-          formData={formData}
-          updateFormData={updateFormData}
-          nextStep={nextStep}
-          prevStep={prevStep}
-        />
-      ),
-      title: "Coverage Limit",
-      description: "Select your preferred inpatient coverage limit",
-    },
     // {
     //   component: (
-    //     <OptionalCoversStep
+    //     <CoverageLimitStep
     //       formData={formData}
     //       updateFormData={updateFormData}
     //       nextStep={nextStep}
     //       prevStep={prevStep}
     //     />
     //   ),
-    //   title: "Optional Covers",
-    //   description: "Enhance your coverage with additional benefits",
+    //   title: "Coverage Limit",
+    //   description: "Select your preferred inpatient coverage limit",
     // },
+    {
+      component: (
+        <OptionalCoversStep
+          formData={formData}
+          updateFormData={updateFormData}
+          nextStep={nextStep}
+          prevStep={prevStep}
+        />
+      ),
+      title: "Optional Covers",
+      description: "Enhance your coverage with additional benefits",
+    },
     {
       component: (
         <SummaryStep

@@ -56,11 +56,11 @@ const CallbackModal = ({ isOpen, onClose }) => {
               <FiX className="h-5 w-5" />
             </button>
 
-            <div className="text-center mb-6 relative z-10">
-              <div className="h-16 w-16 bg-gradient-to-br from-primary-200 to-primary-300 rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
-                <TbPhoneCall className="h-9 w-9 text-primary-700" />
+            <div className="text-center mb-4 relative z-10">
+              <div className="h-16 w-16 bg-gradient-to-br from-secondary-400 to-secondary-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
+                <TbPhoneCall className="h-9 w-9 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-primary-600 font-outfit mb-1">
+              <h3 className="text-xl font-bold text-neutral-700 font-outfit mb-1">
                 Request a Callback
               </h3>
               <p className="text-neutral-600 text-sm font-outfit">
@@ -73,10 +73,16 @@ const CallbackModal = ({ isOpen, onClose }) => {
                 <label className="block text-sm font-semibold text-primary-600 mb-1 font-outfit">
                   Preferred Time
                 </label>
-                <select className="w-full h-11 px-3 rounded-lg border-2 bg-white text-gray-700 border-gray-200 focus:ring-1 focus:ring-primary-100 focus:border-primary-500 outline-none font-outfit  shadow-sm hover:border-primary-300">
-                  <option>Morning (9am - 12pm)</option>
-                  <option>Afternoon (12pm - 4pm)</option>
-                  <option>Evening (4pm - 7pm)</option>
+                <select className="w-full h-11 px-3 rounded-lg border-2 focus:border bg-white text-gray-700 border-gray-200 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 outline-none font-outfit  shadow-sm hover:border-primary-300">
+                  <option value="Morning (9am - 12pm)">
+                    Morning (9am - 12pm)
+                  </option>
+                  <option value="Afternoon (12pm - 4pm)">
+                    Afternoon (12pm - 4pm)
+                  </option>
+                  <option value="Evening (4pm - 7pm)">
+                    Evening (4pm - 7pm)
+                  </option>
                 </select>
               </div>
 
@@ -85,10 +91,21 @@ const CallbackModal = ({ isOpen, onClose }) => {
                   Additional Notes
                 </label>
                 <textarea
-                  className="w-full px-3 py-2 rounded-lg border-2 bg-white text-gray-700 border-gray-200 focus:ring-2 focus:ring-primary-100 focus:border-primary-500 outline-none font-outfit shadow-sm hover:border-primary-300"
+                  className="w-full px-3 py-2 rounded-lg border-2 focus:border bg-white text-gray-700 border-gray-200 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 focus:outline-none font-outfit shadow-sm hover:border-primary-300"
                   rows={3}
                   placeholder="Any specific questions or concerns?"
                 ></textarea>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-primary-600 mb-1 font-outfit">
+                  Phone Number
+                </label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 rounded-lg border-2 focus:border bg-white text-gray-700 border-gray-200 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 focus:outline-none font-outfit shadow-sm hover:border-primary-300"
+                  placeholder="Enter your phone number"
+                />
               </div>
 
               <motion.button
@@ -105,7 +122,8 @@ const CallbackModal = ({ isOpen, onClose }) => {
               </motion.button>
 
               <p className="text-xs text-center text-gray-500 mt-2 font-outfit">
-                We will call you on the phone number you entered while selecting your preferences.
+                We will call you on the phone number you entered while selecting
+                your preferences.
               </p>
             </form>
           </motion.div>
