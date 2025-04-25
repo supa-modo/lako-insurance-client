@@ -42,6 +42,15 @@ const NewComparisonPage = () => {
   const submitForm = () => {
     setLoading(true);
 
+    // Process the query data for submission
+    const processedQuery = {
+      ...userQuery,
+      // If we have budgetValue, use it instead of the string budget ranges
+      budget: userQuery.budgetValue || userQuery.budget,
+    };
+
+    console.log("Submitting processed query:", processedQuery);
+
     // Navigate to results page
     setTimeout(() => {
       setLoading(false);

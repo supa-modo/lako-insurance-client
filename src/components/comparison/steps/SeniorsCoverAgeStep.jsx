@@ -4,12 +4,11 @@ import { TbChevronLeft, TbChevronRight } from "react-icons/tb";
 import { FaUserClock } from "react-icons/fa";
 
 const ageRanges = [
-  { id: "50-55", label: "50-55 years", description: "Early senior coverage" },
-  { id: "56-60", label: "56-60 years", description: "Mid-range senior coverage" },
-  { id: "61-65", label: "61-65 years", description: "Standard senior coverage" },
-  { id: "66-70", label: "66-70 years", description: "Advanced senior coverage" },
-  { id: "71-75", label: "71-75 years", description: "Premium senior coverage" },
-  { id: "76-plus", label: "76+ years", description: "Elite senior coverage" },
+  { id: "60-64", label: "60-64 years", description: "Early senior coverage" },
+  { id: "65-69", label: "65-69 years", description: "Mid-range senior coverage" },
+  { id: "70-74", label: "70-74 years", description: "Standard senior coverage" },
+  { id: "75-79", label: "75-79 years", description: "Advanced senior coverage" },
+  { id: "80-plus", label: "80+ years", description: "Elite senior coverage" },
 ];
 
 const SeniorsCoverAgeStep = ({ formData, updateFormData, nextStep, prevStep }) => {

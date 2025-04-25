@@ -1,58 +1,105 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { TbChevronLeft, TbChevronRight, TbCoin, TbCoins, TbInfoCircle } from "react-icons/tb";
+import {
+  TbChevronLeft,
+  TbChevronRight,
+  TbCoin,
+  TbCoins,
+  TbInfoCircle,
+} from "react-icons/tb";
 
 // Budget ranges with descriptions and a recommended option
 const budgetRanges = [
-  { 
-    id: "0-25000", 
-    label: "Ksh. 0 - 25,000", 
-    description: "premium per year"
-  },
-  { 
-    id: "25000-50000", 
-    label: "Ksh. 25,000 - 50,000", 
-    description: "premium per year"
-  },
-  { 
-    id: "50000-75000", 
-    label: "Ksh. 50,000 - 75,000", 
+  {
+    id: "0-25000",
+    label: "Ksh. 0 - 25,000",
     description: "premium per year",
-    recommended: true
+    value: 25000,
   },
-  { 
-    id: "75000-100000", 
-    label: "Ksh. 75,000 - 100,000", 
-    description: "premium per year"
+  {
+    id: "25000-50000",
+    label: "Ksh. 25,000 - 50,000",
+    description: "premium per year",
+    value: 50000,
   },
-  { 
-    id: "100000-150000", 
-    label: "Ksh. 100,000 - 150,000", 
-    description: "premium per year"
+  {
+    id: "50000-75000",
+    label: "Ksh. 50,000 - 75,000",
+    description: "premium per year",
+    recommended: true,
+    value: 75000,
   },
-  { 
-    id: "150000-plus", 
-    label: "Ksh. 150,000+", 
-    description: "premium per year"
+  {
+    id: "75000-100000",
+    label: "Ksh. 75,000 - 100,000",
+    description: "premium per year",
+    value: 100000,
+  },
+  {
+    id: "100000-150000",
+    label: "Ksh. 100,000 - 150,000",
+    description: "premium per year",
+    value: 150000,
+  },
+  {
+    id: "150000-plus",
+    label: "Ksh. 150,000+",
+    description: "premium per year",
+    value: 200000, // Use a reasonable max value for "plus" ranges
   },
 ];
 
 const BudgetRangeStep = ({ formData, updateFormData, nextStep, prevStep }) => {
-  const [selectedBudget, setSelectedBudget] = useState(
-    formData.budget || (budgetRanges.find(range => range.recommended)?.id || budgetRanges[2].id)
-  );
+  // Find selected budget range from formData
+  const getSelectedBudgetId = () => {
+    if (!formData.budget) {
+      return (
+        budgetRanges.find((range) => range.recommended)?.id ||
+        budgetRanges[2].id
+      );
+    }
+
+    // If formData.budget is a number, find the matching range
+    if (typeof formData.budget === "number") {
+      const matchingRange = budgetRanges.find((range) => {
+        if (range.id === "150000-plus") {
+          return formData.budget >= 150000;
+        }
+
+        const [min, max] = range.id.split("-").map(Number);
+        return formData.budget >= min && formData.budget <= max;
+      });
+
+      return matchingRange?.id || budgetRanges[2].id;
+    }
+
+    // If formData.budget is already in range id format, use it
+    return formData.budget;
+  };
+
+  const [selectedBudget, setSelectedBudget] = useState(getSelectedBudgetId());
 
   // Set the initial budget if not already set
   useEffect(() => {
     if (!formData.budget) {
+      // Find the selected range
+      const selectedRange = budgetRanges.find(
+        (range) => range.id === selectedBudget
+      );
+      // Store both the range ID (for UI) and the numeric value (for API)
       updateFormData("budget", selectedBudget);
+      updateFormData("budgetValue", selectedRange?.value || 75000);
     }
   }, []);
 
   // Handle clicking on a budget range card
   const handleSelectBudget = (budgetId) => {
     setSelectedBudget(budgetId);
+    // Find the selected range
+    const selectedRange = budgetRanges.find((range) => range.id === budgetId);
+    // Store both the range ID (for UI) and the numeric value (for API)
     updateFormData("budget", budgetId);
+    updateFormData("budgetValue", selectedRange?.value || 75000);
     nextStep();
   };
 
@@ -79,16 +126,21 @@ const BudgetRangeStep = ({ formData, updateFormData, nextStep, prevStep }) => {
             key={range.id}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            className={`p-4  rounded-xl cursor-pointer transition-all duration-300 ${selectedBudget === range.id
-              ? "bg-gradient-to-r from-secondary-500/80 to-secondary-600 text-white shadow-lg"
-              : "bg-white/10 text-white hover:bg-white/20"
-              }`}
+            className={`p-4  rounded-xl cursor-pointer transition-all duration-300 ${
+              selectedBudget === range.id
+                ? "bg-gradient-to-r from-secondary-500/80 to-secondary-600 text-white shadow-lg"
+                : "bg-white/10 text-white hover:bg-white/20"
+            }`}
             onClick={() => handleSelectBudget(range.id)}
           >
             <div className="flex flex-col items-center text-center">
               <p className="font-medium text-lg mb-2">{range.label}</p>
               <p className="text-sm text-white/80 mb-2">{range.description}</p>
-             
+              {range.recommended && (
+                <span className="bg-white/30 text-white text-xs px-3 py-1 rounded-full">
+                  Recommended
+                </span>
+              )}
             </div>
           </motion.div>
         ))}
@@ -97,8 +149,9 @@ const BudgetRangeStep = ({ formData, updateFormData, nextStep, prevStep }) => {
       <div className="mt-8 bg-primary-700/50 backdrop-blur-sm rounded-lg p-4 flex items-start">
         <TbInfoCircle className="text-secondary-300 h-5 w-5 mt-0.5 mr-3 flex-shrink-0" />
         <p className="text-white/80 text-sm">
-          Your budget helps us find plans that offer the best value for your needs.
-          Higher budgets typically provide more comprehensive coverage and additional benefits.
+          Your budget helps us find plans that offer the best value for your
+          needs. Higher budgets typically provide more comprehensive coverage
+          and additional benefits.
         </p>
       </div>
 

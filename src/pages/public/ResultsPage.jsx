@@ -95,9 +95,35 @@ const ResultsPage = () => {
             throw new Error("No results found with default parameters");
           }
         } else {
-          // Use the API service with user query parameters
-          console.log("Using user query for API call:", userQuery);
-          const reportData = await insuranceService.comparePlans(userQuery);
+          // Use the API service with processed user query parameters
+          let processedQuery = { ...userQuery };
+
+          // Prioritize budgetValue over budget for API calls
+          if (processedQuery.budgetValue) {
+            processedQuery.budget = processedQuery.budgetValue;
+            // Remove budgetValue to avoid confusion in API
+            delete processedQuery.budgetValue;
+          }
+          // If no budgetValue but budget is a range string, process it
+          else if (
+            typeof processedQuery.budget === "string" &&
+            processedQuery.budget.includes("-")
+          ) {
+            const [minBudget, maxBudget] = processedQuery.budget.split("-");
+            // Use the maximum value of the range for filtering
+            processedQuery.budget = maxBudget.trim();
+            console.log(
+              `Processed budget range from ${processedQuery.budget} to max value: ${maxBudget}`
+            );
+          }
+
+          console.log(
+            "Using processed user query for API call:",
+            processedQuery
+          );
+          const reportData = await insuranceService.comparePlans(
+            processedQuery
+          );
 
           if (
             reportData &&
@@ -111,36 +137,69 @@ const ResultsPage = () => {
             setError("No plans found that match your criteria.");
 
             // Try with a more relaxed query (increase budget by 50%)
-            if (userQuery.budget) {
-              const relaxedQuery = {
-                ...userQuery,
-                budget: Number(userQuery.budget) * 1.5, // Increase budget by 50%
-              };
+            if (processedQuery.budget) {
+              // Ensure budget is a number for calculations
+              const budgetNum = parseFloat(processedQuery.budget);
+              if (!isNaN(budgetNum)) {
+                const relaxedQuery = {
+                  ...processedQuery,
+                  budget: Math.round(budgetNum * 1.5).toString(), // Increase budget by 50%
+                };
 
-              console.log("Trying relaxed query:", relaxedQuery);
-              const fallbackData = await insuranceService.comparePlans(
-                relaxedQuery
-              );
-
-              if (
-                fallbackData &&
-                fallbackData.comparisonResults &&
-                fallbackData.comparisonResults.length > 0
-              ) {
-                setReport(fallbackData);
-                setComparisonResults(fallbackData.comparisonResults);
-                setError(
-                  "No exact matches found within your budget. Showing plans with slightly higher premiums."
+                console.log(
+                  "Trying relaxed query with increased budget:",
+                  relaxedQuery
                 );
+                const fallbackData = await insuranceService.comparePlans(
+                  relaxedQuery
+                );
+
+                if (
+                  fallbackData &&
+                  fallbackData.comparisonResults &&
+                  fallbackData.comparisonResults.length > 0
+                ) {
+                  setReport(fallbackData);
+                  setComparisonResults(fallbackData.comparisonResults);
+                  setError(
+                    "No exact matches found within your budget. Showing plans with slightly higher premiums."
+                  );
+                } else {
+                  // If still no results, try without budget constraint
+                  const noBudgetQuery = {
+                    ...processedQuery,
+                    budget: undefined,
+                  };
+
+                  console.log(
+                    "Trying query without budget constraint:",
+                    noBudgetQuery
+                  );
+                  const noBudgetData = await insuranceService.comparePlans(
+                    noBudgetQuery
+                  );
+
+                  if (
+                    noBudgetData &&
+                    noBudgetData.comparisonResults &&
+                    noBudgetData.comparisonResults.length > 0
+                  ) {
+                    setReport(noBudgetData);
+                    setComparisonResults(noBudgetData.comparisonResults);
+                    setError(
+                      "No plans found within your budget. Showing all available plans that match your other criteria."
+                    );
+                  }
+                }
               } else {
-                // If still no results, try without budget constraint
+                // If budget isn't a valid number, try without budget constraint
                 const noBudgetQuery = {
-                  ...userQuery,
+                  ...processedQuery,
                   budget: undefined,
                 };
 
                 console.log(
-                  "Trying query without budget constraint:",
+                  "Budget is not a valid number. Trying query without budget constraint:",
                   noBudgetQuery
                 );
                 const noBudgetData = await insuranceService.comparePlans(
@@ -155,7 +214,7 @@ const ResultsPage = () => {
                   setReport(noBudgetData);
                   setComparisonResults(noBudgetData.comparisonResults);
                   setError(
-                    "No plans found within your budget. Showing all available plans that match your other criteria."
+                    "Budget format was invalid. Showing all available plans that match your other criteria."
                   );
                 }
               }
