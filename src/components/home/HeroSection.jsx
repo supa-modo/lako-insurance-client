@@ -108,7 +108,7 @@ const HeroSection = ({ activeSlide, heroSlides }) => {
               </motion.div>
             </AnimatePresence>
 
-            <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 font-lexend">
+            <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4 font-lexend">
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}

@@ -62,21 +62,21 @@ const ServiceDetailsPage = () => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-center max-w-xl mx-auto bg-white p-8 rounded-xl shadow-lg border border-gray-100"
+            className="text-center max-w-xl mx-auto bg-white p-4 md:p-8 rounded-xl shadow-lg border border-gray-100"
           >
-            <div className="text-red-500 text-6xl mb-6">
+            <div className="text-red-500 text-4xl md:text-6xl mb-2 md:mb-6">
               <TbInfoCircle className="mx-auto" />
             </div>
-            <h1 className="text-2xl md:text-3xl font-bold text-primary-700 mb-4">
+            <h1 className="text-xl md:text-3xl font-bold text-primary-700 mb-4">
               Service Not Found
             </h1>
-            <p className="text-gray-600 mb-8">
+            <p className="text-gray-600 text-sm md:text-base mb-6 md:mb-8">
               Sorry, the service you're looking for doesn't exist or is no
               longer available.
             </p>
             <button
               onClick={() => navigate(-1)}
-              className="px-6 py-3 bg-primary-600 text-white font-medium rounded-lg shadow-lg hover:bg-primary-700 transition-all duration-200 flex items-center justify-center mx-auto"
+              className="px-6 py-2 md:py-3 bg-primary-600 text-white font-medium rounded-lg shadow-lg hover:bg-primary-700 transition-all duration-200 flex items-center justify-center mx-auto"
             >
               <TbArrowLeft className="mr-2" />
               Go Back

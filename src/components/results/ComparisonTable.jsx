@@ -47,48 +47,15 @@ const ComparisonTable = ({ plans, formatCurrency, onDownload }) => {
         {
           name: "Annual Premium",
           accessor: (plan) => {
-            const premium =
-              typeof plan.premium === "object"
-                ? plan.premium[Object.keys(plan.premium)[0]]
-                : plan.premium;
+            const premium = parseFloat(plan.premium) || 0;
             return {
-              value: premium || 50000,
-              display: formatCurrencyFn(premium || 50000),
+              value: premium,
+              display: formatCurrencyFn(premium),
               isAmount: true,
             };
           },
           icon: <TbCoins className="text-secondary-600 h-5 w-5" />,
         },
-        // {
-        //   name: "Inpatient Premium",
-        //   accessor: (plan) => {
-        //     const premium =
-        //       typeof plan.inpatientPremium === "object"
-        //         ? plan.inpatientPremium[Object.keys(plan.inpatientPremium)[0]]
-        //         : plan.inpatientPremium;
-        //     return {
-        //       value: premium || 0,
-        //       display: formatCurrencyFn(premium || 0),
-        //       isAmount: true,
-        //     };
-        //   },
-        //   icon: <TbCoins className="text-secondary-600 h-5 w-5" />,
-        // },
-        // {
-        //   name: "Outpatient Premium",
-        //   accessor: (plan) => {
-        //     const premium =
-        //       typeof plan.outpatientPremium === "object"
-        //         ? plan.outpatientPremium[Object.keys(plan.outpatientPremium)[0]]
-        //         : plan.outpatientPremium;
-        //     return {
-        //       value: premium || 0,
-        //       display: formatCurrencyFn(premium || 0),
-        //       isAmount: true,
-        //     };
-        //   },
-        //   icon: <TbCoins className="text-secondary-600 h-5 w-5" />,
-        // },
       ],
     },
     {
@@ -96,22 +63,28 @@ const ComparisonTable = ({ plans, formatCurrency, onDownload }) => {
       items: [
         {
           name: "Inpatient Limit",
-          accessor: (plan) => ({
-            value: plan.inpatientCoverageLimit || 1000000,
-            display: formatCurrencyFn(plan.inpatientCoverageLimit || 1000000),
-            isAmount: true,
-          }),
+          accessor: (plan) => {
+            const value = parseFloat(plan.inpatientCoverageLimit) || 0;
+            return {
+              value,
+              display: formatCurrencyFn(value),
+              isAmount: true,
+            };
+          },
           icon: (
             <TbShieldHalfFilled className="text-secondary-600 h-5 w-5 sm:h-5 sm:w-5" />
           ),
         },
         {
           name: "Outpatient Limit",
-          accessor: (plan) => ({
-            value: plan.outpatientCoverageLimit || 100000,
-            display: formatCurrencyFn(plan.outpatientCoverageLimit || 100000),
-            isAmount: true,
-          }),
+          accessor: (plan) => {
+            const value = parseFloat(plan.outpatientCoverageLimit) || 0;
+            return {
+              value,
+              display: formatCurrencyFn(value),
+              isAmount: true,
+            };
+          },
           icon: (
             <TbStethoscope className="text-secondary-600 h-5 w-5 sm:h-5 sm:w-5" />
           ),
@@ -119,8 +92,8 @@ const ComparisonTable = ({ plans, formatCurrency, onDownload }) => {
         {
           name: "Room Type",
           accessor: (plan) => ({
-            value: plan.roomRate || plan.bedLimit || "Standard",
-            display: plan.roomRate || plan.bedLimit || "Standard",
+            value: plan.bedLimit || "Standard",
+            display: plan.bedLimit || "Standard",
             isAmount: false,
           }),
           icon: (
@@ -135,14 +108,15 @@ const ComparisonTable = ({ plans, formatCurrency, onDownload }) => {
         {
           name: "Dental Cover",
           accessor: (plan) => {
-            const hasDental =
-              plan.dentalCover || plan.optionalCovers?.includes("dental");
-            const value = hasDental ? plan.dentalLimit || 30000 : 0;
+            const hasDental = plan.hasDental;
+            const value = hasDental
+              ? parseFloat(plan.dentalCoverageLimit) || 0
+              : 0;
             return {
               value,
-              display: value ? formatCurrencyFn(value) : "Not Covered",
+              display: value > 0 ? formatCurrencyFn(value) : "Not Covered",
               isAmount: true,
-              isIncluded: Boolean(value),
+              isIncluded: value > 0,
             };
           },
           icon: (
@@ -152,14 +126,15 @@ const ComparisonTable = ({ plans, formatCurrency, onDownload }) => {
         {
           name: "Optical Cover",
           accessor: (plan) => {
-            const hasOptical =
-              plan.opticalCover || plan.optionalCovers?.includes("optical");
-            const value = hasOptical ? plan.opticalLimit || 30000 : 0;
+            const hasOptical = plan.hasOptical;
+            const value = hasOptical
+              ? parseFloat(plan.opticalCoverageLimit) || 0
+              : 0;
             return {
               value,
-              display: value ? formatCurrencyFn(value) : "Not Covered",
+              display: value > 0 ? formatCurrencyFn(value) : "Not Covered",
               isAmount: true,
-              isIncluded: Boolean(value),
+              isIncluded: value > 0,
             };
           },
           icon: (
@@ -169,14 +144,15 @@ const ComparisonTable = ({ plans, formatCurrency, onDownload }) => {
         {
           name: "Maternity Cover",
           accessor: (plan) => {
-            const hasMaternity =
-              plan.maternityCover || plan.optionalCovers?.includes("maternity");
-            const value = hasMaternity ? plan.maternityLimit || 0 : 0;
+            const hasMaternity = plan.hasMaternity;
+            const value = hasMaternity
+              ? parseFloat(plan.maternityCoverageLimit) || 0
+              : 0;
             return {
               value,
-              display: value ? formatCurrencyFn(value) : "Not Covered",
+              display: value > 0 ? formatCurrencyFn(value) : "Not Covered",
               isAmount: true,
-              isIncluded: Boolean(value),
+              isIncluded: value > 0,
             };
           },
           icon: (
@@ -190,30 +166,37 @@ const ComparisonTable = ({ plans, formatCurrency, onDownload }) => {
       items: [
         {
           name: "Last Expense",
-          accessor: (plan) => ({
-            value: plan.lastExpenseCover || 50000,
-            display: formatCurrencyFn(plan.lastExpenseCover || 50000),
-            isAmount: true,
-          }),
+          accessor: (plan) => {
+            const value = parseFloat(plan.lastExpenseCover) || 0;
+            return {
+              value,
+              display: formatCurrencyFn(value),
+              isAmount: true,
+            };
+          },
           icon: (
             <TbCoffin className="text-secondary-600 h-5 w-5 sm:h-5 sm:w-5" />
           ),
         },
-        {
-          name: "Pre-existing Conditions",
-          accessor: (plan) => {
-            const covered = plan.preExistingConditions !== false;
-            return {
-              value: covered ? plan.inpatientCoverageLimit * 0.25 || 250000 : 0,
-              display: covered ? "Covered (25% of limit)" : "Not Covered",
-              isAmount: false,
-              isIncluded: covered,
-            };
-          },
-          icon: (
-            <TbHeartRateMonitor className="text-secondary-600 h-5 w-5 sm:h-5 sm:w-5" />
-          ),
-        },
+        // {
+        //   name: "Pre-existing Conditions",
+        //   accessor: (plan) => {
+        //     // Assuming pre-existing conditions are covered at 25% of the inpatient limit
+        //     const inpatientLimit = plan.inpatientCoverageLimit || 0;
+        //     const preExistingLimit = inpatientLimit * 0.25;
+
+        //     return {
+        //       value: preExistingLimit || 0,
+        //       display:
+        //         preExistingLimit > 0 ? "Covered (25% of limit)" : "Not Covered",
+        //       isAmount: false,
+        //       isIncluded: preExistingLimit > 0,
+        //     };
+        //   },
+        //   icon: (
+        //     <TbHeartRateMonitor className="text-secondary-600 h-5 w-5 sm:h-5 sm:w-5" />
+        //   ),
+        // },
       ],
     },
   ];

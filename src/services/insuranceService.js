@@ -1,6 +1,5 @@
 import { apiClient } from "./authService";
 
-
 /**
  * Service for handling insurance-related API calls
  */
@@ -15,7 +14,6 @@ const insuranceService = {
       return response.data;
     } catch (error) {
       console.error("Error fetching insurance plans:", error);
-     
     }
   },
 
@@ -30,7 +28,6 @@ const insuranceService = {
       return response.data;
     } catch (error) {
       console.error(`Error fetching plan ${planId}:`, error);
-      
     }
   },
 
@@ -45,7 +42,6 @@ const insuranceService = {
       return response.data;
     } catch (error) {
       console.error("Error creating insurance plan:", error);
-      
     }
   },
 
@@ -57,11 +53,13 @@ const insuranceService = {
    */
   updatePlan: async (planId, planData) => {
     try {
-      const response = await apiClient.put(`/admin/insurance/plans/${planId}`, planData);
+      const response = await apiClient.put(
+        `/admin/insurance/plans/${planId}`,
+        planData
+      );
       return response.data;
     } catch (error) {
       console.error(`Error updating plan ${planId}:`, error);
-      
     }
   },
 
@@ -72,11 +70,12 @@ const insuranceService = {
    */
   deletePlan: async (planId) => {
     try {
-      const response = await apiClient.delete(`/admin/insurance/plans/${planId}`);
+      const response = await apiClient.delete(
+        `/admin/insurance/plans/${planId}`
+      );
       return response.data;
     } catch (error) {
       console.error(`Error deleting plan ${planId}:`, error);
-      
     }
   },
 
@@ -90,7 +89,6 @@ const insuranceService = {
       return response.data;
     } catch (error) {
       console.error("Error fetching insurance companies:", error);
-      
     }
   },
 
@@ -101,11 +99,12 @@ const insuranceService = {
    */
   getPlanBenefits: async (planId) => {
     try {
-      const response = await apiClient.get(`/admin/insurance/plans/${planId}/benefits`);
+      const response = await apiClient.get(
+        `/admin/insurance/plans/${planId}/benefits`
+      );
       return response.data;
     } catch (error) {
       console.error(`Error fetching benefits for plan ${planId}:`, error);
-
     }
   },
 
@@ -116,11 +115,12 @@ const insuranceService = {
    */
   getPlanExclusions: async (planId) => {
     try {
-      const response = await apiClient.get(`/admin/insurance/plans/${planId}/exclusions`);
+      const response = await apiClient.get(
+        `/admin/insurance/plans/${planId}/exclusions`
+      );
       return response.data;
     } catch (error) {
       console.error(`Error fetching exclusions for plan ${planId}:`, error);
-      
     }
   },
 
@@ -131,12 +131,15 @@ const insuranceService = {
    */
   getPlanWaitingPeriods: async (planId) => {
     try {
-      const response = await apiClient.get(`/admin/insurance/plans/${planId}/waiting-periods`);
+      const response = await apiClient.get(
+        `/admin/insurance/plans/${planId}/waiting-periods`
+      );
       return response.data;
     } catch (error) {
-      console.error(`Error fetching waiting periods for plan ${planId}:`, error);
-     
-     
+      console.error(
+        `Error fetching waiting periods for plan ${planId}:`,
+        error
+      );
     }
   },
 
@@ -147,11 +150,12 @@ const insuranceService = {
    */
   getPlanPremiums: async (planId) => {
     try {
-      const response = await apiClient.get(`/admin/insurance/plans/${planId}/premiums`);
+      const response = await apiClient.get(
+        `/admin/insurance/plans/${planId}/premiums`
+      );
       return response.data;
     } catch (error) {
       console.error(`Error fetching premiums for plan ${planId}:`, error);
-     
     }
   },
 
@@ -163,12 +167,35 @@ const insuranceService = {
   comparePlans: async (criteria) => {
     try {
       const response = await apiClient.post("/insurance/compare", criteria);
-      return response.data;
+      if (response.data && response.data.success) {
+        return response.data.data;
+      } else {
+        throw new Error(response.data?.message || "Failed to compare plans");
+      }
     } catch (error) {
       console.error("Error comparing insurance plans:", error);
-     
+      throw error;
     }
-  }
+  },
+
+  /**
+   * Get detailed information for a specific plan
+   * @param {string} planId - ID of the plan
+   * @returns {Promise<Object>} Plan details
+   */
+  getPlanDetails: async (planId) => {
+    try {
+      const response = await apiClient.get(`/insurance/plans/${planId}`);
+      if (response.data && response.data.success) {
+        return response.data.data;
+      } else {
+        throw new Error(response.data?.message || "Failed to get plan details");
+      }
+    } catch (error) {
+      console.error(`Error fetching details for plan ${planId}:`, error);
+      throw error;
+    }
+  },
 };
 
 export default insuranceService;

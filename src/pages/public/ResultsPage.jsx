@@ -9,9 +9,10 @@ import {
   FiArrowRight,
   FiHelpCircle,
 } from "react-icons/fi";
-import { useSelector } from "react-redux";
+import { useComparison } from "../../context/ComparisonContext";
 
 // Import services
+import insuranceService from "../../services/insuranceService";
 import { mockDownloadReportPdf } from "../../services/mockReportService";
 
 // Import components
@@ -26,12 +27,18 @@ import Header from "../../components/layout/Header";
 
 const ResultsPage = () => {
   const navigate = useNavigate();
+  const {
+    userQuery,
+    comparisonResults,
+    setComparisonResults,
+    loading,
+    setLoading,
+    error,
+    setError,
+  } = useComparison();
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [showPlanDetailsModal, setShowPlanDetailsModal] = useState(false);
-  const [comparisonResults, setComparisonResults] = useState([]);
   const [report, setReport] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [showCallbackModal, setShowCallbackModal] = useState(false);
   const [downloadStatus, setDownloadStatus] = useState(null); // null, 'pdf-loading', 'pdf-success', etc.
   const [isMobile, setIsMobile] = useState(false);
@@ -58,45 +65,107 @@ const ResultsPage = () => {
 
     const fetchComparisonResults = async () => {
       try {
+        console.log("Current query data:", userQuery);
+
         // Validate userQuery before making the API call
-        if (!userQuery) {
+        if (!userQuery || !userQuery.insuranceType || !userQuery.age) {
           console.warn("No user query data available, using default query");
           // Create a default query for seniors insurance
           const defaultQuery = {
             insuranceType: "seniors",
-            ageMin: 65,
-            ageMax: 75,
-            budget: 50000,
-            coverageLimit: 1000000,
-            optionalCovers: ["outpatient", "dental", "optical"]
+            age: "65",
+            budget: "50000",
+            optionalCovers: ["outpatient"],
           };
-          
-          // Use the real API service with default parameters
-          const reportData = await insuranceService.getComparisonResults(defaultQuery);
-          
-          if (reportData && reportData.comparisonResults && reportData.comparisonResults.length > 0) {
+
+          // Use the API service with default parameters
+          const reportData = await insuranceService.comparePlans(defaultQuery);
+
+          if (
+            reportData &&
+            reportData.comparisonResults &&
+            reportData.comparisonResults.length > 0
+          ) {
             setReport(reportData);
             setComparisonResults(reportData.comparisonResults);
-            setError("Using default search parameters. Please try again with your preferences.");
+            setError(
+              "Using default search parameters. Please try again with your preferences."
+            );
           } else {
             throw new Error("No results found with default parameters");
           }
         } else {
-          // Use the real API service with user query parameters
-          console.log("Using user query:", userQuery);
-          const reportData = await insuranceService.getComparisonResults(userQuery);
+          // Use the API service with user query parameters
+          console.log("Using user query for API call:", userQuery);
+          const reportData = await insuranceService.comparePlans(userQuery);
 
-          if (reportData && reportData.comparisonResults && reportData.comparisonResults.length > 0) {
+          if (
+            reportData &&
+            reportData.comparisonResults &&
+            reportData.comparisonResults.length > 0
+          ) {
             setReport(reportData);
             setComparisonResults(reportData.comparisonResults);
             setError(null); // Clear any previous errors
           } else {
-            setError("No plans found that match your criteria. Showing sample plans instead.");
+            setError("No plans found that match your criteria.");
+
+            // Try with a more relaxed query (increase budget by 50%)
+            if (userQuery.budget) {
+              const relaxedQuery = {
+                ...userQuery,
+                budget: Number(userQuery.budget) * 1.5, // Increase budget by 50%
+              };
+
+              console.log("Trying relaxed query:", relaxedQuery);
+              const fallbackData = await insuranceService.comparePlans(
+                relaxedQuery
+              );
+
+              if (
+                fallbackData &&
+                fallbackData.comparisonResults &&
+                fallbackData.comparisonResults.length > 0
+              ) {
+                setReport(fallbackData);
+                setComparisonResults(fallbackData.comparisonResults);
+                setError(
+                  "No exact matches found within your budget. Showing plans with slightly higher premiums."
+                );
+              } else {
+                // If still no results, try without budget constraint
+                const noBudgetQuery = {
+                  ...userQuery,
+                  budget: undefined,
+                };
+
+                console.log(
+                  "Trying query without budget constraint:",
+                  noBudgetQuery
+                );
+                const noBudgetData = await insuranceService.comparePlans(
+                  noBudgetQuery
+                );
+
+                if (
+                  noBudgetData &&
+                  noBudgetData.comparisonResults &&
+                  noBudgetData.comparisonResults.length > 0
+                ) {
+                  setReport(noBudgetData);
+                  setComparisonResults(noBudgetData.comparisonResults);
+                  setError(
+                    "No plans found within your budget. Showing all available plans that match your other criteria."
+                  );
+                }
+              }
+            }
           }
         }
       } catch (err) {
         console.error("Error fetching comparison results:", err);
-        
+        setError("Failed to fetch comparison results. Please try again.");
+        setComparisonResults([]);
       } finally {
         setLoading(false);
       }
@@ -104,7 +173,7 @@ const ResultsPage = () => {
 
     // Execute the fetch function
     fetchComparisonResults();
-  }, [userQuery]); // Re-run when userQuery changes
+  }, [userQuery, setComparisonResults, setLoading, setError]);
 
   const handlePlanSelect = async (plan) => {
     try {
@@ -116,7 +185,7 @@ const ResultsPage = () => {
           const detailedPlan = {
             plan: planDetails,
             score: plan.score,
-            rank: plan.rank
+            rank: plan.rank,
           };
           setSelectedPlan(detailedPlan);
         } else {
@@ -125,7 +194,7 @@ const ResultsPage = () => {
       } else {
         setSelectedPlan(plan);
       }
-      // setShowPlanDetailsModal(true);
+      setShowPlanDetailsModal(true);
     } catch (error) {
       console.error("Error fetching plan details:", error);
     }
@@ -312,7 +381,7 @@ const ResultsPage = () => {
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-primary-900 via-neutral-800 to-primary-900 text-white relative overflow-hidden">
-        <Header/>
+        <Header />
         {/* Decorative elements */}
         <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-primary-500/40 rounded-full filter blur-3xl opacity-20 animate-pulse-slow"></div>
         <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-blue-500/30 rounded-full filter blur-3xl opacity-20 transform translate-y-1/4 translate-x-[-30%]"></div>
@@ -320,7 +389,6 @@ const ResultsPage = () => {
 
         {/* Main content */}
         <div className="mx-auto px-0 sm:px-3 md:px-6 lg:px-10  pt-24 lg:pt-32 py-4 sm:py-6 relative z-10 font-outfit">
-
           <header className="text-center mb-8">
             <motion.h1
               className="text-xl sm:text-3xl md:text-4xl font-bold text-gradient bg-gradient-to-r from-white via-secondary-200 to-white bg-clip-text text-transparent mb-2 font-lexend"
@@ -543,7 +611,7 @@ const ResultsPage = () => {
 
         {/* Modals */}
         <AnimatePresence>
-           {/*{showPlanDetailsModal && selectedPlan && (
+          {/*{showPlanDetailsModal && selectedPlan && (
             <PlanDetailsModal
               plan={selectedPlan}
               formatCurrency={formatCurrency}

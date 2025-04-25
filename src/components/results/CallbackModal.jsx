@@ -88,6 +88,17 @@ const CallbackModal = ({ isOpen, onClose }) => {
 
               <div>
                 <label className="block text-sm font-semibold text-primary-600 mb-1 font-outfit">
+                  Phone Number
+                </label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 rounded-lg border-2 focus:border bg-white text-gray-700 border-gray-200 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 focus:outline-none font-outfit shadow-sm hover:border-primary-300"
+                  placeholder="Enter your phone number"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-primary-600 mb-1 font-outfit">
                   Additional Notes
                 </label>
                 <textarea
@@ -97,16 +108,7 @@ const CallbackModal = ({ isOpen, onClose }) => {
                 ></textarea>
               </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-primary-600 mb-1 font-outfit">
-                  Phone Number
-                </label>
-                <input
-                  type="text"
-                  className="w-full px-3 py-2 rounded-lg border-2 focus:border bg-white text-gray-700 border-gray-200 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 focus:outline-none font-outfit shadow-sm hover:border-primary-300"
-                  placeholder="Enter your phone number"
-                />
-              </div>
+              
 
               <motion.button
                 whileHover={{ scale: 1.02 }}
@@ -121,9 +123,8 @@ const CallbackModal = ({ isOpen, onClose }) => {
                 </span>
               </motion.button>
 
-              <p className="text-xs text-center text-gray-500 mt-2 font-outfit">
-                We will call you on the phone number you entered while selecting
-                your preferences.
+              <p className="text-xs text-center text-neutral-600 mt-2 font-outfit">
+                Safeguarding what's truly yours. Lako Insurance.
               </p>
             </form>
           </motion.div>
