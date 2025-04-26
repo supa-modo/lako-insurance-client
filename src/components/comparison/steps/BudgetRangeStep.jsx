@@ -14,38 +14,44 @@ const budgetRanges = [
     id: "0-25000",
     label: "Ksh. 0 - 25,000",
     description: "premium per year",
-    value: 25000,
+    minValue: 0,
+    maxValue: 25000,
   },
   {
     id: "25000-50000",
     label: "Ksh. 25,000 - 50,000",
     description: "premium per year",
-    value: 50000,
+    minValue: 25000,
+    maxValue: 50000,
   },
   {
     id: "50000-75000",
     label: "Ksh. 50,000 - 75,000",
     description: "premium per year",
     recommended: true,
-    value: 75000,
+    minValue: 50000,
+    maxValue: 75000,
   },
   {
     id: "75000-100000",
     label: "Ksh. 75,000 - 100,000",
     description: "premium per year",
-    value: 100000,
+    minValue: 75000,
+    maxValue: 100000,
   },
   {
     id: "100000-150000",
     label: "Ksh. 100,000 - 150,000",
     description: "premium per year",
-    value: 150000,
+    minValue: 100000,
+    maxValue: 150000,
   },
   {
-    id: "150000-plus",
+    id: "150000+",
     label: "Ksh. 150,000+",
     description: "premium per year",
-    value: 200000, // Use a reasonable max value for "plus" ranges
+    minValue: 150000,
+    maxValue: 1000000, // Using a high value for "plus" ranges
   },
 ];
 
@@ -62,7 +68,7 @@ const BudgetRangeStep = ({ formData, updateFormData, nextStep, prevStep }) => {
     // If formData.budget is a number, find the matching range
     if (typeof formData.budget === "number") {
       const matchingRange = budgetRanges.find((range) => {
-        if (range.id === "150000-plus") {
+        if (range.id === "150000+") {
           return formData.budget >= 150000;
         }
 
@@ -86,20 +92,26 @@ const BudgetRangeStep = ({ formData, updateFormData, nextStep, prevStep }) => {
       const selectedRange = budgetRanges.find(
         (range) => range.id === selectedBudget
       );
-      // Store both the range ID (for UI) and the numeric value (for API)
+
+      // Store both the range ID (for UI) and the numeric values (for API)
       updateFormData("budget", selectedBudget);
-      updateFormData("budgetValue", selectedRange?.value || 75000);
+      updateFormData("budgetMin", selectedRange?.minValue || 50000);
+      updateFormData("budgetMax", selectedRange?.maxValue || 75000);
     }
   }, []);
 
   // Handle clicking on a budget range card
   const handleSelectBudget = (budgetId) => {
     setSelectedBudget(budgetId);
+
     // Find the selected range
     const selectedRange = budgetRanges.find((range) => range.id === budgetId);
-    // Store both the range ID (for UI) and the numeric value (for API)
+
+    // Store both the range ID (for UI) and the numeric values (for API)
     updateFormData("budget", budgetId);
-    updateFormData("budgetValue", selectedRange?.value || 75000);
+    updateFormData("budgetMin", selectedRange?.minValue || 0);
+    updateFormData("budgetMax", selectedRange?.maxValue || 1000000);
+
     nextStep();
   };
 

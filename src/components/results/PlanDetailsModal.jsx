@@ -232,8 +232,8 @@ const PlanDetailsModal = ({
                 <div className="flex items-center">
                   <div className="w-20 h-14 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200 mr-3 flex-shrink-0 shadow-sm">
                     <img
-                      src={planData.companyLogo || "/insurance-placeholder.png"}
-                      alt={planData.companyName}
+                      src={planData.company?.logoUrl || "/insurance-placeholder.png"}
+                      alt={planData.company?.name || "Insurance Company"}
                       className="max-h-8 max-w-16 object-contain"
                       onError={(e) => {
                         e.target.src = "/insurance-placeholder.png";
@@ -248,7 +248,7 @@ const PlanDetailsModal = ({
                       </span>
                     </h3>
                     <p className="text-gray-600 text-xs sm:text-sm font-lexend">
-                      {planData.companyName || "Insurance Company"}
+                      {planData.company?.name || "Insurance Company"}
                     </p>
                   </div>
                 </div>

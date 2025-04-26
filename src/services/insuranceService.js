@@ -166,15 +166,54 @@ const insuranceService = {
    */
   comparePlans: async (criteria) => {
     try {
-      const response = await apiClient.post("/insurance/compare", criteria);
-      if (response.data && response.data.success) {
+      console.log(
+        "Sending comparison request with criteria:",
+        JSON.stringify(criteria)
+      );
+
+      // Ensure criteria has the correct format
+      const formattedCriteria = {
+        ...criteria,
+        insuranceType: criteria.insuranceType || "seniors",
+      };
+
+      // If age is provided as a range string, parse it
+      if (typeof formattedCriteria.age === 'string' && formattedCriteria.age.includes('-')) {
+        const [min, max] = formattedCriteria.age.split('-').map(num => parseInt(num.trim(), 10));
+        formattedCriteria.ageMin = min;
+        formattedCriteria.ageMax = max;
+      }
+
+      // If budget is provided as a single value, use it as budgetMax
+      if (formattedCriteria.budget && !formattedCriteria.budgetMax) {
+        formattedCriteria.budgetMax = formattedCriteria.budget;
+      }
+
+      // Call the backend API
+      const response = await apiClient.post("/insurance/compare", formattedCriteria);
+
+      if (response.data && response.data.success && 
+          response.data.data.comparisonResults && 
+          response.data.data.comparisonResults.length > 0) {
+        console.log(
+          `Comparison successful: Found ${
+            response.data.data.comparisonResults.length
+          } plans`
+        );
         return response.data.data;
       } else {
-        throw new Error(response.data?.message || "Failed to compare plans");
+        // If no plans found, return empty results structure
+        console.warn("No plans found from API");
+        return {
+          id: 'empty-' + Date.now(),
+          createdAt: new Date(),
+          userQuery: formattedCriteria,
+          comparisonResults: []
+        };
       }
     } catch (error) {
       console.error("Error comparing insurance plans:", error);
-      throw error;
+      throw new Error("Failed to compare insurance plans. Please try again later.");
     }
   },
 
@@ -185,11 +224,22 @@ const insuranceService = {
    */
   getPlanDetails: async (planId) => {
     try {
-      const response = await apiClient.get(`/insurance/plans/${planId}`);
-      if (response.data && response.data.success) {
-        return response.data.data;
+      // Try the new endpoint first
+      try {
+        const response = await apiClient.get(`/insurance/plans/${planId}/details`);
+        if (response.data && response.data.success) {
+          return response.data.data;
+        }
+      } catch (apiError) {
+        console.warn(`New details endpoint failed, trying fallback endpoint for plan ${planId}:`, apiError);
+      }
+      
+      // Fallback to the old endpoint
+      const fallbackResponse = await apiClient.get(`/insurance/plans/${planId}`);
+      if (fallbackResponse.data && fallbackResponse.data.success) {
+        return fallbackResponse.data.data;
       } else {
-        throw new Error(response.data?.message || "Failed to get plan details");
+        throw new Error(fallbackResponse.data?.message || "Failed to get plan details");
       }
     } catch (error) {
       console.error(`Error fetching details for plan ${planId}:`, error);
@@ -197,5 +247,7 @@ const insuranceService = {
     }
   },
 };
+
+// This mock data helper has been removed to ensure we only use the backend API
 
 export default insuranceService;

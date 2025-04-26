@@ -20,24 +20,15 @@ import {
   TbCoffin,
 } from "react-icons/tb";
 import { PiTooth } from "react-icons/pi";
+import { formatCurrency } from "../../utils/formatCurrency";
 
-const ComparisonTable = ({ plans, formatCurrency, onDownload }) => {
+const ComparisonTable = ({ plans, onDownload }) => {
+  console.log(plans)
   // Ensure plans are properly formatted
   if (!plans || !plans.length) return null;
 
-  // Extract actual plan objects if needed
-  const normalizedPlans = plans.map((planItem) => planItem.plan || planItem);
-
-  // Format currency function with fallback
-  const formatCurrencyFn =
-    formatCurrency ||
-    ((amount) => {
-      return new Intl.NumberFormat("en-KE", {
-        style: "currency",
-        currency: "KES",
-        maximumFractionDigits: 0,
-      }).format(amount);
-    });
+  // Extract actual plan objects
+  const normalizedPlans = plans.map((planItem) => planItem.plan);
 
   // Define rows for comparison
   const comparisonRows = [
@@ -47,10 +38,32 @@ const ComparisonTable = ({ plans, formatCurrency, onDownload }) => {
         {
           name: "Annual Premium",
           accessor: (plan) => {
-            const premium = parseFloat(plan.premium) || 0;
+            let premium = 0;
+            
+            // Handle different premium structures
+            if (plan.premiumStructure === 'fixed') {
+              premium = parseFloat(plan.annualPremium || "0");
+            } else if (plan.premiumStructure === 'age-based' && plan.premiumsByAgeRange) {
+              try {
+                // For comparison table, we'll show the middle age range premium
+                const premiumsByAge = JSON.parse(plan.premiumsByAgeRange);
+                const ageRanges = Object.keys(premiumsByAge);
+                if (ageRanges.length > 0) {
+                  // Use the middle age range for display
+                  const middleRangeIndex = Math.floor(ageRanges.length / 2);
+                  premium = parseFloat(premiumsByAge[ageRanges[middleRangeIndex]] || "0");
+                }
+              } catch (error) {
+                console.error('Error parsing premiums by age range:', error);
+                premium = parseFloat(plan.annualPremium || "0"); // Fallback
+              }
+            } else {
+              premium = parseFloat(plan.annualPremium || "0"); // Fallback
+            }
+            
             return {
               value: premium,
-              display: formatCurrencyFn(premium),
+              display: formatCurrency(premium),
               isAmount: true,
             };
           },
@@ -64,10 +77,10 @@ const ComparisonTable = ({ plans, formatCurrency, onDownload }) => {
         {
           name: "Inpatient Limit",
           accessor: (plan) => {
-            const value = parseFloat(plan.inpatientCoverageLimit) || 0;
+            const value = parseFloat(plan.inpatientCoverageLimit || "0");
             return {
               value,
-              display: formatCurrencyFn(value),
+              display: formatCurrency(value),
               isAmount: true,
             };
           },
@@ -78,10 +91,10 @@ const ComparisonTable = ({ plans, formatCurrency, onDownload }) => {
         {
           name: "Outpatient Limit",
           accessor: (plan) => {
-            const value = parseFloat(plan.outpatientCoverageLimit) || 0;
+            const value = parseFloat(plan.outpatientCoverageLimit || "0");
             return {
               value,
-              display: formatCurrencyFn(value),
+              display: formatCurrency(value),
               isAmount: true,
             };
           },
@@ -108,15 +121,25 @@ const ComparisonTable = ({ plans, formatCurrency, onDownload }) => {
         {
           name: "Dental Cover",
           accessor: (plan) => {
-            const hasDental = plan.hasDental;
+            const hasDental = plan.hasDental || false;
+            const dentalCoveredInBase = plan.dentalCoveredInBase || false;
             const value = hasDental
-              ? parseFloat(plan.dentalCoverageLimit) || 0
+              ? parseFloat(plan.dentalCoverageLimit || "0")
               : 0;
+              
+            let display = "Not Covered";
+            if (value > 0) {
+              display = dentalCoveredInBase 
+                ? `${formatCurrency(value)} (Included)` 
+                : formatCurrency(value);
+            }
+            
             return {
               value,
-              display: value > 0 ? formatCurrencyFn(value) : "Not Covered",
+              display,
               isAmount: true,
               isIncluded: value > 0,
+              isBaseCover: dentalCoveredInBase,
             };
           },
           icon: (
@@ -126,15 +149,25 @@ const ComparisonTable = ({ plans, formatCurrency, onDownload }) => {
         {
           name: "Optical Cover",
           accessor: (plan) => {
-            const hasOptical = plan.hasOptical;
+            const hasOptical = plan.hasOptical || false;
+            const opticalCoveredInBase = plan.opticalCoveredInBase || false;
             const value = hasOptical
-              ? parseFloat(plan.opticalCoverageLimit) || 0
+              ? parseFloat(plan.opticalCoverageLimit || "0")
               : 0;
+              
+            let display = "Not Covered";
+            if (value > 0) {
+              display = opticalCoveredInBase 
+                ? `${formatCurrency(value)} (Included)` 
+                : formatCurrency(value);
+            }
+            
             return {
               value,
-              display: value > 0 ? formatCurrencyFn(value) : "Not Covered",
+              display,
               isAmount: true,
               isIncluded: value > 0,
+              isBaseCover: opticalCoveredInBase,
             };
           },
           icon: (
@@ -144,13 +177,13 @@ const ComparisonTable = ({ plans, formatCurrency, onDownload }) => {
         {
           name: "Maternity Cover",
           accessor: (plan) => {
-            const hasMaternity = plan.hasMaternity;
+            const hasMaternity = plan.hasMaternity || false;
             const value = hasMaternity
-              ? parseFloat(plan.maternityCoverageLimit) || 0
+              ? parseFloat(plan.maternityCoverageLimit || "0")
               : 0;
             return {
               value,
-              display: value > 0 ? formatCurrencyFn(value) : "Not Covered",
+              display: value > 0 ? formatCurrency(value) : "Not Covered",
               isAmount: true,
               isIncluded: value > 0,
             };
@@ -167,10 +200,10 @@ const ComparisonTable = ({ plans, formatCurrency, onDownload }) => {
         {
           name: "Last Expense",
           accessor: (plan) => {
-            const value = parseFloat(plan.lastExpenseCover) || 0;
+            const value = parseFloat(plan.lastExpenseCover || "0");
             return {
               value,
-              display: formatCurrencyFn(value),
+              display: formatCurrency(value),
               isAmount: true,
             };
           },
@@ -232,33 +265,48 @@ const ComparisonTable = ({ plans, formatCurrency, onDownload }) => {
                 </div>
               </th>
 
-              {normalizedPlans.map((plan, index) => (
-                <th
-                  key={plan.id || index}
-                  className="px-2 sm:px-4 py-3 sm:py-4 text-left min-w-[110px] sm:min-w-[150px] border-b border-primary-200"
-                >
-                  <div className="flex flex-col items-center">
-                    <div className="w-14 sm:w-20 h-[2.5rem] sm:h-[3.1rem] bg-white rounded-lg mb-2 sm:mb-3 flex items-center justify-center shadow-md border border-gray-100 hover:border-secondary-200 transition-all duration-300 group">
-                      <img
-                        src={plan.companyLogo || "/insurance-placeholder.png"}
-                        alt={plan.companyName || "Insurance"}
-                        className="max-w-[80%] max-h-[80%] object-contain"
-                        onError={(e) => {
-                          e.target.src = "/insurance-placeholder.png";
-                        }}
-                      />
-                    </div>
-                    <div className="text-center">
-                      <div className="font-semibold text-primary-800 text-xs sm:text-sm font-lexend">
-                        {plan.name || "Insurance Plan"}
+              {plans.map((planItem, index) => {
+                const plan = planItem.plan;
+                const {
+                  id,
+                  name,
+                  company,
+                  planType,
+                  inpatientCoverageLimit,
+                  outpatientCoverageLimit,
+                  bedLimit,
+                  dentalPremium,
+                  opticalPremium,
+                  maternityPremium,
+                } = plan;
+                return (
+                  <th
+                    key={id || index}
+                    className="px-2 sm:px-4 py-3 sm:py-4 text-left min-w-[110px] sm:min-w-[150px] border-b border-primary-200"
+                  >
+                    <div className="flex flex-col items-center">
+                      <div className="w-14 sm:w-20 h-[2.5rem] sm:h-[3.1rem] bg-white rounded-lg mb-2 sm:mb-3 flex items-center justify-center shadow-md border border-gray-100 hover:border-secondary-200 transition-all duration-300 group">
+                        <img
+                          src={company?.logoUrl || "/insurance-placeholder.png"}
+                          alt={company?.name || "Insurance"}
+                          className="max-w-[80%] max-h-[80%] object-contain"
+                          onError={(e) => {
+                            e.target.src = "/insurance-placeholder.png";
+                          }}
+                        />
                       </div>
-                      <div className="text-[10px] sm:text-xs font-normal text-primary-600 font-lexend">
-                        {plan.companyName || "Insurance Company"}
+                      <div className="text-center">
+                        <div className="font-semibold text-primary-800 text-xs sm:text-sm font-lexend">
+                          {plan.name || "Insurance Plan"}
+                        </div>
+                        <div className="text-[10px] sm:text-xs font-normal text-primary-600 font-lexend">
+                          {plan.company?.name || "Insurance Company"}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </th>
-              ))}
+                  </th>
+                );
+              })}
             </tr>
           </thead>
 
@@ -268,7 +316,7 @@ const ComparisonTable = ({ plans, formatCurrency, onDownload }) => {
                 {/* Category Header */}
                 <tr className="bg-gradient-to-r from-neutral-300/80 to-neutral-50/70">
                   <td
-                    colSpan={normalizedPlans.length + 1}
+                    colSpan={plans.length + 1}
                     className="px-2 sm:px-5 py-2 sm:py-3 font-medium text-xs sm:text-sm text-primary-700 border-b border-primary-100/50 font-lexend"
                   >
                     {section.category}
@@ -288,8 +336,8 @@ const ComparisonTable = ({ plans, formatCurrency, onDownload }) => {
                       {row.name}
                     </td>
 
-                    {normalizedPlans.map((plan, planIndex) => {
-                      const cellData = row.accessor(plan);
+                    {plans.map((planItem, planIndex) => {
+                      const cellData = row.accessor(planItem.plan);
                       return (
                         <td
                           key={`cell-${sectionIndex}-${rowIndex}-${planIndex}`}
@@ -310,15 +358,11 @@ const ComparisonTable = ({ plans, formatCurrency, onDownload }) => {
                                   <TbX size={15} className="sm:text-lg" />
                                 )}
                               </div>
-                              <span
-                                className={`text-[10px] sm:text-xs mt-1 sm:mt-1.5 font-outfit ${
-                                  cellData.isIncluded
-                                    ? "text-gray-700"
-                                    : "text-gray-500"
-                                }`}
+                              <div
+                                className={`text-xs sm:text-sm font-medium ${cellData.isIncluded ? (cellData.isBaseCover ? "text-green-700" : "text-green-600") : "text-gray-500"}`}
                               >
                                 {cellData.display}
-                              </span>
+                              </div>
                             </div>
                           ) : (
                             <span

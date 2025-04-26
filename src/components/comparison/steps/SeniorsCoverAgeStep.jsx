@@ -4,16 +4,58 @@ import { TbChevronLeft, TbChevronRight } from "react-icons/tb";
 import { FaUserClock } from "react-icons/fa";
 
 const ageRanges = [
-  { id: "60-64", label: "60-64 years", description: "Early senior coverage" },
-  { id: "65-69", label: "65-69 years", description: "Mid-range senior coverage" },
-  { id: "70-74", label: "70-74 years", description: "Standard senior coverage" },
-  { id: "75-79", label: "75-79 years", description: "Advanced senior coverage" },
-  { id: "80-plus", label: "80+ years", description: "Elite senior coverage" },
+  {
+    id: "60-64",
+    label: "60-64 years",
+    description: "Early senior coverage",
+    minAge: 60,
+    maxAge: 64,
+  },
+  {
+    id: "65-69",
+    label: "65-69 years",
+    description: "Mid-range senior coverage",
+    minAge: 65,
+    maxAge: 69,
+  },
+  {
+    id: "70-74",
+    label: "70-74 years",
+    description: "Standard senior coverage",
+    minAge: 70,
+    maxAge: 74,
+  },
+  {
+    id: "75-79",
+    label: "75-79 years",
+    description: "Advanced senior coverage",
+    minAge: 75,
+    maxAge: 79,
+  },
+  {
+    id: "80+",
+    label: "80+ years",
+    description: "Elite senior coverage",
+    minAge: 80,
+    maxAge: 120,
+  },
 ];
 
-const SeniorsCoverAgeStep = ({ formData, updateFormData, nextStep, prevStep }) => {
+const SeniorsCoverAgeStep = ({
+  formData,
+  updateFormData,
+  nextStep,
+  prevStep,
+}) => {
   const handleSelectAge = (ageId) => {
+    // Find the selected age range
+    const selectedRange = ageRanges.find((range) => range.id === ageId);
+
+    // Update both the display age range and the numeric min/max values needed for backend filtering
     updateFormData("age", ageId);
+    updateFormData("ageMin", selectedRange.minAge);
+    updateFormData("ageMax", selectedRange.maxAge);
+
     nextStep();
   };
 
@@ -48,8 +90,10 @@ const SeniorsCoverAgeStep = ({ formData, updateFormData, nextStep, prevStep }) =
           >
             <div className="p-5">
               <h4 className="text-white text-xl font-medium">{range.label}</h4>
-              <p className="text-white/70 font-light text-[0.9rem] md:text-base lg:mt-1">{range.description}</p>
-              
+              <p className="text-white/70 font-light text-[0.9rem] md:text-base lg:mt-1">
+                {range.description}
+              </p>
+
               {formData.age === range.id && (
                 <div className="absolute top-1/2 right-4 transform -translate-y-1/2">
                   <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center text-white">
@@ -72,7 +116,7 @@ const SeniorsCoverAgeStep = ({ formData, updateFormData, nextStep, prevStep }) =
           <TbChevronLeft className="mr-2" />
           Back
         </motion.button>
-        
+
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}

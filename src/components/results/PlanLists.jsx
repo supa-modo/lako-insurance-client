@@ -16,11 +16,11 @@ import {
 import { PiTooth } from "react-icons/pi";
 import { MdOutlineChildFriendly } from "react-icons/md";
 import { BsFillCreditCardFill } from "react-icons/bs";
+import { formatCurrency } from "../../utils/formatCurrency";
 
 const PlanList = ({
   plans,
-  formatCurrency,
-  // onSelectPlan,
+  onSelectPlan,
   onBuyPlan,
   activePlanId,
   userAge,
@@ -34,18 +34,6 @@ const PlanList = ({
     const bRank = b.rank || 0;
     return aRank - bRank;
   });
-
-  // Format currency function fallback
-  const formatCurrencyFn =
-    formatCurrency ||
-    ((amount) => {
-      return new Intl.NumberFormat("en-KE", {
-        style: "currency",
-        currency: "KES",
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(amount);
-    });
 
   // Toggle optional cover for a specific plan
   const toggleOptionalCover = (planId, coverType) => {
@@ -74,8 +62,33 @@ const PlanList = ({
     const planData = plan.plan || plan;
     const planId = planData.id || plan.id;
 
-    // Get base premium - ensure it's a number
-    let basePremium = parseFloat(planData.premium) || 0;
+    // Get base premium based on premium structure
+    let basePremium = 0;
+    if (planData.premiumStructure === 'fixed') {
+      basePremium = parseFloat(planData.annualPremium) || 0;
+    } else if (planData.premiumStructure === 'age-based' && planData.premiumsByAgeRange) {
+      try {
+        // Parse the JSON string of premiums by age range
+        const premiumsByAge = JSON.parse(planData.premiumsByAgeRange);
+        
+        // Find the appropriate premium for the user's age
+        const userAgeNum = parseInt(userAge, 10) || 65; // Default to 65 if not provided
+        
+        // Find the matching age range
+        for (const ageRange in premiumsByAge) {
+          if (isAgeInRange(userAgeNum, ageRange)) {
+            basePremium = parseFloat(premiumsByAge[ageRange]) || 0;
+            break;
+          }
+        }
+      } catch (error) {
+        console.error('Error parsing premiums by age range:', error);
+        basePremium = parseFloat(planData.annualPremium) || 0; // Fallback to annualPremium
+      }
+    } else {
+      // Fallback to annualPremium if structure is not specified
+      basePremium = parseFloat(planData.annualPremium) || 0;
+    }
 
     // Get plan's optional covers
     const planCurrentOptions = planOptions[planId] || {
@@ -87,12 +100,12 @@ const PlanList = ({
     // Adjust premium based on selected optional covers - ensure all values are numbers
     let adjustedPremium = basePremium;
 
-    if (planCurrentOptions.dental) {
+    if (planCurrentOptions.dental && !planData.dentalCoveredInBase) {
       const dentalPremium = parseFloat(planData.dentalPremium) || 0;
       adjustedPremium += dentalPremium;
     }
 
-    if (planCurrentOptions.optical) {
+    if (planCurrentOptions.optical && !planData.opticalCoveredInBase) {
       const opticalPremium = parseFloat(planData.opticalPremium) || 0;
       adjustedPremium += opticalPremium;
     }
@@ -104,13 +117,59 @@ const PlanList = ({
 
     return adjustedPremium;
   };
+  
+  // Helper function to check if an age is within a range string
+  const isAgeInRange = (age, rangeStr) => {
+    if (rangeStr.includes('-')) {
+      const [min, max] = rangeStr.split('-').map(part => parseInt(part.trim(), 10));
+      return age >= min && age <= max;
+    } else if (rangeStr.includes('+')) {
+      const min = parseInt(rangeStr.replace('+', '').trim(), 10);
+      return age >= min;
+    } else {
+      const exactAge = parseInt(rangeStr.trim(), 10);
+      return age === exactAge;
+    }
+  };
+
+  // Get appropriate value for plan property, accounting for nested structure
+  const getPlanValue = (
+    planResult,
+    propertyName,
+    nestedProperty = null,
+    defaultValue = ""
+  ) => {
+    const planData = planResult.plan || planResult;
+
+    // Handle nested properties (e.g., company.name)
+    if (nestedProperty && planData[propertyName]) {
+      return planData[propertyName][nestedProperty] !== undefined
+        ? planData[propertyName][nestedProperty]
+        : defaultValue;
+    }
+
+    return planData[propertyName] !== undefined
+      ? planData[propertyName]
+      : defaultValue;
+  };
 
   return (
     <div className="space-y-5">
       <div className="space-y-4">
         {sortedPlans.map((planResult, index) => {
           const plan = planResult.plan || planResult;
-          const planId = plan.id || planResult.id;
+          const {
+            id: planId,
+            name,
+            company,
+            planType,
+            inpatientCoverageLimit,
+            outpatientCoverageLimit,
+            bedLimit,
+            dentalPremium,
+            opticalPremium,
+            maternityPremium,
+          } = plan;
           const isTopPlan = index === 0;
           const isActivePlan = activePlanId && planId === activePlanId;
 
@@ -123,6 +182,11 @@ const PlanList = ({
             optical: false,
             maternity: false,
           };
+
+          // Check if the plan has the optional covers based on the model attributes
+          const hasDental = getPlanValue(planResult, "hasDental", false);
+          const hasOptical = getPlanValue(planResult, "hasOptical", false);
+          const hasMaternity = getPlanValue(planResult, "hasMaternity", false);
 
           return (
             <div
@@ -141,10 +205,8 @@ const PlanList = ({
                   <div className="flex items-center">
                     <div className="w-20 h-14 flex items-center justify-center rounded-lg bg-gray-100 border border-gray-200 overflow-hidden mr-3 flex-shrink-0">
                       <img
-                        src={
-                          `${plan.companyLogo}` || "/insurance-placeholder.png"
-                        }
-                        alt={plan.companyName || "Insurance Company"}
+                        src={company?.logoUrl || "/insurance-placeholder.png"}
+                        alt={company?.name || "Insurance Company"}
                         className="max-h-8 max-w-10 object-contain"
                         onError={(e) => {
                           e.target.src = "/insurance-placeholder.png";
@@ -153,20 +215,20 @@ const PlanList = ({
                     </div>
                     <div>
                       <h3 className="font-semibold text-gray-800 text-base flex items-center">
-                        {plan.name || "Insurance Plan"}
+                        {name || "Insurance Plan"}
                         <span className="hidden sm:block ml-2 bg-primary-100 text-primary-700 text-xs px-2 py-0.5 rounded">
-                          {plan.planType || "Standard"}
+                          {planType || "Standard"}
                         </span>
                       </h3>
                       <p className="text-gray-600 font-lexend text-[0.75rem] sm:text-sm">
-                        {plan.companyName || "Insurance Company"}
+                        {company?.name || "Insurance Company"}
                       </p>
                     </div>
                   </div>
 
                   <div className="text-right">
                     <div className="text-xl font-lexend font-bold text-secondary-600">
-                      {formatCurrencyFn(adjustedPremium)}
+                      {formatCurrency(adjustedPremium)}
                     </div>
                     <div className="text-xs text-gray-500">annual premium</div>
                   </div>
@@ -179,9 +241,7 @@ const PlanList = ({
                       <span>Inpatient</span>
                     </div>
                     <p className="text-sm font-semibold font-lexend text-gray-800">
-                      {formatCurrencyFn(
-                        parseFloat(plan.inpatientCoverageLimit) || 0
-                      )}
+                      {formatCurrency(parseFloat(inpatientCoverageLimit, 0))}
                     </p>
                   </div>
 
@@ -190,9 +250,7 @@ const PlanList = ({
                       <span>Outpatient</span>
                     </div>
                     <p className="text-sm font-semibold font-lexend text-gray-800">
-                      {formatCurrencyFn(
-                        parseFloat(plan.outpatientCoverageLimit) || 0
-                      )}
+                      {formatCurrency(parseFloat(outpatientCoverageLimit, 0))}
                     </p>
                   </div>
 
@@ -201,7 +259,7 @@ const PlanList = ({
                       <span>Room Type</span>
                     </div>
                     <p className="text-sm font-semibold text-gray-800">
-                      {plan.bedLimit || "Standard"}
+                      {bedLimit || "Standard"}
                     </p>
                   </div>
                 </div>
@@ -219,55 +277,67 @@ const PlanList = ({
                   </div>
 
                   <div className="flex flex-wrap gap-2">
-                    {plan.hasDental && parseFloat(plan.dentalPremium) > 0 && (
-                      <button
-                        onClick={() => toggleOptionalCover(planId, "dental")}
-                        className={`flex items-center px-4 py-1 rounded-full text-xs sm:text-[0.78rem] font-medium transition-colors ${
-                          planCurrentOptions.dental
-                            ? "bg-green-100 text-green-700 border border-green-300"
-                            : "bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200"
-                        }`}
-                      >
-                        <PiTooth className="mr-1 h-4 w-4" />
-                        Dental
-                        {planCurrentOptions.dental && (
+                    {hasDental && (
+                      plan.dentalCoveredInBase ? (
+                        <div className="flex items-center px-4 py-1 rounded-full text-xs sm:text-[0.78rem] font-medium bg-green-100 text-green-700 border border-green-300">
+                          <PiTooth className="mr-1 h-4 w-4" />
+                          Dental
                           <TbCheck className="ml-1" />
-                        )}
-                        <span className="ml-1 opacity-75">
-                          (+
-                          {formatCurrencyFn(
-                            parseFloat(plan.dentalPremium) || 0
+                          <span className="ml-1 opacity-75">Covered</span>
+                        </div>
+                      ) : parseFloat(dentalPremium, 0) > 0 && (
+                        <button
+                          onClick={() => toggleOptionalCover(planId, "dental")}
+                          className={`flex items-center px-4 py-1 rounded-full text-xs sm:text-[0.78rem] font-medium transition-colors ${
+                            planCurrentOptions.dental
+                              ? "bg-green-100 text-green-700 border border-green-300"
+                              : "bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200"
+                          }`}
+                        >
+                          <PiTooth className="mr-1 h-4 w-4" />
+                          Dental
+                          {planCurrentOptions.dental && (
+                            <TbCheck className="ml-1" />
                           )}
-                          )
-                        </span>
-                      </button>
+                          <span className="ml-1 opacity-75">
+                            (+
+                            {formatCurrency(parseFloat(dentalPremium, 0))})
+                          </span>
+                        </button>
+                      )
                     )}
 
-                    {plan.hasOptical && parseFloat(plan.opticalPremium) > 0 && (
-                      <button
-                        onClick={() => toggleOptionalCover(planId, "optical")}
-                        className={`flex items-center px-4 py-1 rounded-full text-xs sm:text-[0.78rem] font-medium transition-colors ${
-                          planCurrentOptions.optical
-                            ? "bg-green-100 text-green-700 border border-green-300"
-                            : "bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200"
-                        }`}
-                      >
-                        <TbEyeglass2 className="mr-1 h-4 w-4" />
-                        Optical
-                        {planCurrentOptions.optical && (
+                    {hasOptical && (
+                      plan.opticalCoveredInBase ? (
+                        <div className="flex items-center px-4 py-1 rounded-full text-xs sm:text-[0.78rem] font-medium bg-green-100 text-green-700 border border-green-300">
+                          <TbEyeglass2 className="mr-1 h-4 w-4" />
+                          Optical
                           <TbCheck className="ml-1" />
-                        )}
-                        <span className="ml-1 opacity-75">
-                          (+
-                          {formatCurrencyFn(
-                            parseFloat(plan.opticalPremium) || 0
+                          <span className="ml-1 opacity-75">Covered</span>
+                        </div>
+                      ) : parseFloat(getPlanValue(planResult, "opticalPremium", 0)) > 0 && (
+                        <button
+                          onClick={() => toggleOptionalCover(planId, "optical")}
+                          className={`flex items-center px-4 py-1 rounded-full text-xs sm:text-[0.78rem] font-medium transition-colors ${
+                            planCurrentOptions.optical
+                              ? "bg-green-100 text-green-700 border border-green-300"
+                              : "bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200"
+                          }`}
+                        >
+                          <TbEyeglass2 className="mr-1 h-4 w-4" />
+                          Optical
+                          {planCurrentOptions.optical && (
+                            <TbCheck className="ml-1" />
                           )}
-                          )
-                        </span>
-                      </button>
+                          <span className="ml-1 opacity-75">
+                            (+
+                            {formatCurrency(parseFloat(opticalPremium, 0))})
+                          </span>
+                        </button>
+                      )
                     )}
 
-                    {plan.hasMaternity && (
+                    {hasMaternity && (
                       <button
                         disabled={true}
                         className="flex items-center px-3 py-1 rounded-full text-xs font-medium font-strikethrough bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed"
@@ -293,10 +363,10 @@ const PlanList = ({
                   </button>
 
                   <button
-                    //onClick={() => onSelectPlan && onSelectPlan(planResult)}
+                    onClick={() => onSelectPlan && onSelectPlan(planResult)}
                     className="px-3 py-1.5 border border-primary-500 bg-white font-medium text-primary-600 text-sm rounded-lg hover:bg-primary-50 transition-colors"
                   >
-                    View Plan Details
+                    Download Details PDF
                   </button>
                 </div>
               </div>

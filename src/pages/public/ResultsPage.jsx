@@ -13,7 +13,6 @@ import { useComparison } from "../../context/ComparisonContext";
 
 // Import services
 import insuranceService from "../../services/insuranceService";
-import { mockDownloadReportPdf } from "../../services/mockReportService";
 
 // Import components
 import PlanList from "../../components/results/PlanLists";
@@ -68,13 +67,18 @@ const ResultsPage = () => {
         console.log("Current query data:", userQuery);
 
         // Validate userQuery before making the API call
-        if (!userQuery || !userQuery.insuranceType || !userQuery.age) {
+        if (
+          !userQuery ||
+          !userQuery.insuranceType ||
+          (!userQuery.ageMin && !userQuery.ageMax)
+        ) {
           console.warn("No user query data available, using default query");
           // Create a default query for seniors insurance
           const defaultQuery = {
             insuranceType: "seniors",
-            age: "65",
-            budget: "50000",
+            ageMin: 65,
+            ageMax: 70,
+            budgetMax: 75000,
             optionalCovers: ["outpatient"],
           };
 
@@ -95,111 +99,126 @@ const ResultsPage = () => {
             throw new Error("No results found with default parameters");
           }
         } else {
-          // Use the API service with processed user query parameters
+          // Prepare the API request with properly formatted parameters
           let processedQuery = { ...userQuery };
 
-          // Prioritize budgetValue over budget for API calls
-          if (processedQuery.budgetValue) {
-            processedQuery.budget = processedQuery.budgetValue;
-            // Remove budgetValue to avoid confusion in API
-            delete processedQuery.budgetValue;
+          // Ensure age parameters are correctly formatted
+          if (processedQuery.ageMin === undefined && processedQuery.age) {
+            // Try to extract age values if only the string format is available
+            if (
+              typeof processedQuery.age === "string" &&
+              processedQuery.age.includes("-")
+            ) {
+              const [min, max] = processedQuery.age.split("-").map(Number);
+              processedQuery.ageMin = min;
+              processedQuery.ageMax = max;
+            } else if (
+              typeof processedQuery.age === "string" &&
+              processedQuery.age.includes("+")
+            ) {
+              const min = parseInt(processedQuery.age, 10);
+              processedQuery.ageMin = min;
+              processedQuery.ageMax = 120; // Use a high upper limit
+            } else if (typeof processedQuery.age === "number") {
+              processedQuery.ageMin = processedQuery.age;
+              processedQuery.ageMax = processedQuery.age;
+            }
           }
-          // If no budgetValue but budget is a range string, process it
-          else if (
-            typeof processedQuery.budget === "string" &&
-            processedQuery.budget.includes("-")
-          ) {
-            const [minBudget, maxBudget] = processedQuery.budget.split("-");
-            // Use the maximum value of the range for filtering
-            processedQuery.budget = maxBudget.trim();
-            console.log(
-              `Processed budget range from ${processedQuery.budget} to max value: ${maxBudget}`
-            );
+
+          // Ensure budget parameters are correctly formatted
+          if (processedQuery.budgetMax === undefined) {
+            // If we have budgetMin/budgetMax, use those
+            if (processedQuery.budgetMin !== undefined) {
+              // Budget range is already properly formatted
+            }
+            // If we have a budget string that's a range
+            else if (
+              typeof processedQuery.budget === "string" &&
+              processedQuery.budget.includes("-")
+            ) {
+              const [min, max] = processedQuery.budget.split("-").map(Number);
+              processedQuery.budgetMin = min;
+              processedQuery.budgetMax = max;
+            }
+            // If we have a budget string with a plus sign
+            else if (
+              typeof processedQuery.budget === "string" &&
+              processedQuery.budget.includes("+")
+            ) {
+              const min = parseInt(processedQuery.budget, 10);
+              processedQuery.budgetMin = min;
+              processedQuery.budgetMax = 1000000; // Use a high upper limit
+            }
+            // If we have a single budget value
+            else if (typeof processedQuery.budget === "number") {
+              processedQuery.budgetMax = processedQuery.budget;
+            }
           }
 
-          console.log(
-            "Using processed user query for API call:",
-            processedQuery
-          );
-          const reportData = await insuranceService.comparePlans(
-            processedQuery
-          );
+          // Clean up unnecessary properties before sending to API
+          const apiQuery = {
+            insuranceType: processedQuery.insuranceType,
+            ageMin: processedQuery.ageMin,
+            ageMax: processedQuery.ageMax,
+            budgetMin: processedQuery.budgetMin,
+            budgetMax: processedQuery.budgetMax,
+            optionalCovers: processedQuery.optionalCovers,
+          };
 
-          if (
-            reportData &&
-            reportData.comparisonResults &&
-            reportData.comparisonResults.length > 0
-          ) {
-            setReport(reportData);
-            setComparisonResults(reportData.comparisonResults);
-            setError(null); // Clear any previous errors
-          } else {
-            setError("No plans found that match your criteria.");
+          console.log("Using processed user query for API call:", apiQuery);
+          
+          try {
+            const reportData = await insuranceService.comparePlans(apiQuery);
 
-            // Try with a more relaxed query (increase budget by 50%)
-            if (processedQuery.budget) {
-              // Ensure budget is a number for calculations
-              const budgetNum = parseFloat(processedQuery.budget);
-              if (!isNaN(budgetNum)) {
-                const relaxedQuery = {
-                  ...processedQuery,
-                  budget: Math.round(budgetNum * 1.5).toString(), // Increase budget by 50%
-                };
+            if (
+              reportData &&
+              reportData.comparisonResults &&
+              reportData.comparisonResults.length > 0
+            ) {
+              setReport(reportData);
+              setComparisonResults(reportData.comparisonResults);
+              setError(null); // Clear any previous errors
+              console.log(`Successfully found ${reportData.comparisonResults.length} matching plans`);
+            } else {
+              console.log("No plans found in initial query response");
+              setError("No plans found that match your criteria. Trying with relaxed parameters...");
 
-                console.log(
-                  "Trying relaxed query with increased budget:",
-                  relaxedQuery
-                );
-                const fallbackData = await insuranceService.comparePlans(
-                  relaxedQuery
-                );
-
-                if (
-                  fallbackData &&
-                  fallbackData.comparisonResults &&
-                  fallbackData.comparisonResults.length > 0
-                ) {
-                  setReport(fallbackData);
-                  setComparisonResults(fallbackData.comparisonResults);
-                  setError(
-                    "No exact matches found within your budget. Showing plans with slightly higher premiums."
-                  );
-                } else {
-                  // If still no results, try without budget constraint
-                  const noBudgetQuery = {
-                    ...processedQuery,
-                    budget: undefined,
+              try {
+                if (apiQuery.budgetMax) {
+                  const relaxedQuery = {
+                    ...apiQuery,
+                    budgetMax: Math.round(apiQuery.budgetMax * 1.5), // Increase budget by 50%
                   };
 
                   console.log(
-                    "Trying query without budget constraint:",
-                    noBudgetQuery
-                  );
-                  const noBudgetData = await insuranceService.comparePlans(
-                    noBudgetQuery
+                    "Trying relaxed query with increased budget:",
+                    relaxedQuery
                   );
 
+                  const fallbackData = await insuranceService.comparePlans(relaxedQuery);
+
                   if (
-                    noBudgetData &&
-                    noBudgetData.comparisonResults &&
-                    noBudgetData.comparisonResults.length > 0
+                    fallbackData &&
+                    fallbackData.comparisonResults &&
+                    fallbackData.comparisonResults.length > 0
                   ) {
-                    setReport(noBudgetData);
-                    setComparisonResults(noBudgetData.comparisonResults);
+                    setReport(fallbackData);
+                    setComparisonResults(fallbackData.comparisonResults);
                     setError(
-                      "No plans found within your budget. Showing all available plans that match your other criteria."
+                      "No exact matches found within your budget. Showing plans with slightly higher premiums."
                     );
+                    return; // Exit early if we found plans
                   }
                 }
-              } else {
-                // If budget isn't a valid number, try without budget constraint
+
                 const noBudgetQuery = {
-                  ...processedQuery,
-                  budget: undefined,
+                  ...apiQuery,
+                  budgetMin: undefined,
+                  budgetMax: undefined,
                 };
 
                 console.log(
-                  "Budget is not a valid number. Trying query without budget constraint:",
+                  "Trying query without budget constraint:",
                   noBudgetQuery
                 );
                 const noBudgetData = await insuranceService.comparePlans(
@@ -214,11 +233,47 @@ const ResultsPage = () => {
                   setReport(noBudgetData);
                   setComparisonResults(noBudgetData.comparisonResults);
                   setError(
-                    "Budget format was invalid. Showing all available plans that match your other criteria."
+                    "No plans found within your budget. Showing all available plans that match your other criteria."
+                  );
+                  return; // Exit early if we found plans
+                }
+
+                const minimalQuery = {
+                  insuranceType: "seniors",
+                };
+
+                console.log("Last resort - trying with minimal criteria:", minimalQuery);
+                const minimalData = await insuranceService.comparePlans(
+                  minimalQuery
+                );
+
+                if (
+                  minimalData &&
+                  minimalData.comparisonResults &&
+                  minimalData.comparisonResults.length > 0
+                ) {
+                  setReport(minimalData);
+                  setComparisonResults(minimalData.comparisonResults);
+                  setError(
+                    "Showing all available senior insurance plans. You can refine your search to find more specific matches."
+                  );
+                } else {
+                  setError(
+                    "We're experiencing technical difficulties. Please try again later or contact customer support."
                   );
                 }
+              } catch (fallbackError) {
+                console.error("Error in fallback queries:", fallbackError);
+                setError(
+                  "We're experiencing technical difficulties. Please try again later or contact customer support."
+                );
               }
             }
+          } catch (error) {
+            console.error("Error fetching comparison results:", error);
+            setError(
+              "We couldn't find plans matching your criteria. Please try different parameters."
+            );
           }
         }
       } catch (err) {
@@ -325,17 +380,8 @@ const ResultsPage = () => {
     setShowCallbackModal(false);
   };
 
-  const handleGoToHome = () => {
-    navigate("/");
-  };
-
-  // Format currency
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("en-KE", {
-      style: "currency",
-      currency: "KES",
-      maximumFractionDigits: 0,
-    }).format(amount);
+  const handleGoBack = () => {
+    navigate("/compare");
   };
 
   const itemVariants = {
@@ -376,13 +422,13 @@ const ResultsPage = () => {
   );
 
   // Error State Component
-  const ErrorState = ({ error, onGoHome }) => (
+  const ErrorState = ({ error, onGoBack }) => (
     <div className="flex items-center justify-center py-20 px-2">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="text-center max-w-md p-8 bg-white/10 backdrop-blur-md rounded-xl shadow-lg border border-red-400/20"
+        className="text-center max-w-lg px-4 py-6 bg-white/10 backdrop-blur-md rounded-xl shadow-lg border border-red-400/20"
       >
         <div className="inline-flex items-center justify-center w-16 h-16 bg-red-500/20 rounded-full mb-6">
           <FiX className="text-red-400 h-8 w-8" />
@@ -391,11 +437,11 @@ const ResultsPage = () => {
           Something Went Wrong
         </h2>
         <p className="text-neutral-300 mb-6 font-outfit">
-          {error || "We couldn't process your request. Please try again."}
+           We couldn't process your request. Please choose your preferences and try again.
         </p>
         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
           <button
-            onClick={onGoHome}
+            onClick={onGoBack}
             className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-secondary-500 to-secondary-600 hover:from-secondary-600 hover:to-secondary-700 text-white font-medium rounded-lg shadow-md transition-all group"
           >
             <FiArrowLeft className="mr-2" /> Try Again
@@ -406,7 +452,7 @@ const ResultsPage = () => {
   );
 
   // Empty State Component
-  const EmptyState = ({ onGoHome }) => (
+  const EmptyState = ({ onGoBack }) => (
     <div className="flex items-center justify-center py-20">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -426,7 +472,7 @@ const ResultsPage = () => {
         </p>
         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
           <button
-            onClick={onGoHome}
+            onClick={onGoBack}
             className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-secondary-500 to-secondary-600 hover:from-secondary-600 hover:to-secondary-700 text-white font-medium rounded-lg shadow-md transition-all group"
           >
             <FiArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />{" "}
@@ -455,7 +501,7 @@ const ResultsPage = () => {
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.5 }}
             >
-              Your Insurance Comparison Results
+              Your Insurance Plan Results
             </motion.h1>
             <motion.p
               className="text-sm sm:text-base md:text-lg text-neutral-300 max-w-3xl mx-auto font-outfit"
@@ -471,9 +517,9 @@ const ResultsPage = () => {
           {loading ? (
             <LoadingState />
           ) : error ? (
-            <ErrorState error={error} onGoHome={handleGoToHome} />
+            <ErrorState error={error} onGoBack={handleGoBack} />
           ) : !report || comparisonResults.length === 0 ? (
-            <EmptyState onGoHome={handleGoToHome} />
+            <EmptyState onGoBack={handleGoBack} />
           ) : (
             <div className="space-y-6 lg:space-y-8">
               {/* Two Column Layout - Desktop */}
@@ -483,7 +529,6 @@ const ResultsPage = () => {
                   <div className="">
                     <PlanList
                       plans={report.comparisonResults}
-                      formatCurrency={formatCurrency}
                       // onSelectPlan={handlePlanSelect}
                       onBuyPlan={handleBuyPlan}
                       activePlanId={selectedPlan?.id || selectedPlan?.plan?.id}
@@ -513,7 +558,6 @@ const ResultsPage = () => {
                 >
                   <ComparisonTable
                     plans={report.comparisonResults}
-                    formatCurrency={formatCurrency}
                     onDownload={handleDownloadPdf}
                   />
 
@@ -573,7 +617,6 @@ const ResultsPage = () => {
                   <div className="px-2">
                     <PlanList
                       plans={report.comparisonResults}
-                      formatCurrency={formatCurrency}
                       onSelectPlan={handlePlanSelect}
                       onBuyPlan={handleBuyPlan}
                       activePlanId={selectedPlan?.id || selectedPlan?.plan?.id}
@@ -600,7 +643,6 @@ const ResultsPage = () => {
                 <motion.div variants={itemVariants}>
                   <ComparisonTable
                     plans={report.comparisonResults}
-                    formatCurrency={formatCurrency}
                     onDownload={handleDownloadPdf}
                   />
                 </motion.div>
@@ -673,7 +715,6 @@ const ResultsPage = () => {
           {/*{showPlanDetailsModal && selectedPlan && (
             <PlanDetailsModal
               plan={selectedPlan}
-              formatCurrency={formatCurrency}
               onClose={handleClosePlanDetails}
               onRequestCallback={handleRequestCallback}
               onBuyPlan={handleBuyPlan}
