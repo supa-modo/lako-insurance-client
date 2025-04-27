@@ -1,4 +1,5 @@
-import { apiClient } from "./authService";
+import { apiClient, safeApiCall, ENABLE_MOCK_DATA } from "./apiConfig";
+import mockInsuranceData from "../data/mockInsuranceData";
 
 /**
  * Service for handling insurance-related API calls
@@ -161,17 +162,11 @@ const insuranceService = {
 
   /**
    * Compare insurance plans based on user criteria
-   * Simplified approach that only uses age and budget for filtering
    * @param {Object} criteria - Comparison criteria (age, budget, etc.)
    * @returns {Promise<Object>} Response with matching plans
    */
   comparePlans: async (criteria) => {
     try {
-      console.log(
-        "Sending comparison request with criteria:",
-        JSON.stringify(criteria)
-      );
-
       // Ensure criteria has the correct format
       const formattedCriteria = {
         ...criteria,
@@ -208,6 +203,9 @@ const insuranceService = {
           // If age is a number, use it directly
           formattedCriteria.ageMax = criteria.age;
         }
+      } else {
+        // Default age range for seniors if not specified
+        formattedCriteria.ageMax = 70;
       }
 
       // Process budget parameter - extract both min and max values
@@ -239,17 +237,23 @@ const insuranceService = {
         }
       }
 
+      // Use mock data if enabled or in development mode
+      if (ENABLE_MOCK_DATA) {
+        console.log("Using mock data for comparison");
+        return {
+          id: 'mock-' + Date.now(),
+          createdAt: new Date(),
+          userQuery: formattedCriteria,
+          comparisonResults: mockInsuranceData.generateMockComparisonResults(formattedCriteria)
+        };
+      }
+
       // Call the backend API
       const response = await apiClient.post("/insurance/compare", formattedCriteria);
 
       if (response.data && response.data.success && 
           response.data.data.comparisonResults && 
           response.data.data.comparisonResults.length > 0) {
-        console.log(
-          `Comparison successful: Found ${
-            response.data.data.comparisonResults.length
-          } plans`
-        );
         return response.data.data;
       } else {
         // If no plans found, return empty results structure
@@ -263,7 +267,26 @@ const insuranceService = {
       }
     } catch (error) {
       console.error("Error comparing insurance plans:", error);
-      throw new Error("Failed to compare insurance plans. Please try again later.");
+      
+      // Fallback to mock data in case of API failure
+      if (import.meta.env.DEV || ENABLE_MOCK_DATA) {
+        console.warn("API failed, falling back to mock data");
+        return {
+          id: 'fallback-' + Date.now(),
+          createdAt: new Date(),
+          userQuery: criteria,
+          comparisonResults: mockInsuranceData.generateMockComparisonResults(criteria)
+        };
+      }
+      
+      // In production with no mock data, return empty results
+      return {
+        id: 'error-' + Date.now(),
+        createdAt: new Date(),
+        userQuery: criteria,
+        error: error.message || "Unknown error occurred",
+        comparisonResults: []
+      };
     }
   },
 
