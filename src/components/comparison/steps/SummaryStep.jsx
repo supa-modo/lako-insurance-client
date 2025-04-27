@@ -140,7 +140,7 @@ const SummaryStep = ({ formData, submitForm, prevStep }) => {
         </div>
 
         {/* Optional Covers */}
-        <div className="flex items-start p-5 rounded-xl bg-white/10">
+        {/* <div className="flex items-start p-5 rounded-xl bg-white/10">
           <div className="flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center bg-primary-600 text-white mr-4">
             <TbShieldCheck className="h-5 w-5" />
           </div>
@@ -150,7 +150,7 @@ const SummaryStep = ({ formData, submitForm, prevStep }) => {
               {formatOptionalCovers()}
             </p>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* <div className="mt-8 bg-secondary-500/20 backdrop-blur-sm rounded-lg p-4 flex items-start">

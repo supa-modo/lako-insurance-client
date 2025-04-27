@@ -20,7 +20,7 @@ const NewComparisonPage = () => {
     useComparison();
 
   // Progress percentage calculation
-  const totalSteps = 5;
+  const totalSteps = 4;
   const progress = Math.round((currentStep / totalSteps) * 100);
 
   // Update form data
@@ -107,18 +107,18 @@ const NewComparisonPage = () => {
     //   title: "Coverage Limit",
     //   description: "Select your preferred inpatient coverage limit",
     // },
-    {
-      component: (
-        <OptionalCoversStep
-          formData={userQuery}
-          updateFormData={updateFormData}
-          nextStep={nextStep}
-          prevStep={prevStep}
-        />
-      ),
-      title: "Optional Covers",
-      description: "Enhance your coverage with additional benefits",
-    },
+    // {
+    //   component: (
+    //     <OptionalCoversStep
+    //       formData={userQuery}
+    //       updateFormData={updateFormData}
+    //       nextStep={nextStep}
+    //       prevStep={prevStep}
+    //     />
+    //   ),
+    //   title: "Optional Covers",
+    //   description: "Enhance your coverage with additional benefits",
+    // },
     {
       component: (
         <SummaryStep
