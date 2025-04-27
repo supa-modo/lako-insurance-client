@@ -17,6 +17,8 @@ import { PiTooth } from "react-icons/pi";
 import { MdOutlineChildFriendly } from "react-icons/md";
 import { BsFillCreditCardFill } from "react-icons/bs";
 import { formatCurrency } from "../../utils/formatCurrency";
+import { FaFilePdf } from "react-icons/fa";
+import { FaRegFilePdf } from "react-icons/fa";
 
 const PlanList = ({
   plans,
@@ -366,7 +368,11 @@ const PlanList = ({
                     onClick={() => onSelectPlan && onSelectPlan(planResult)}
                     className="px-3 py-1.5 border border-primary-500 bg-white font-medium text-primary-600 text-sm rounded-lg hover:bg-primary-50 transition-colors"
                   >
-                    Download Details PDF
+                    <div className="flex items-center justify-center space-x-2">
+                      <FaFilePdf className="text-red-500 w-5 h-5"/>
+                      <span className="text-sm">Plan Details</span>
+                    </div>
+
                   </button>
                 </div>
               </div>

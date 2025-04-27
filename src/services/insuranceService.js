@@ -161,6 +161,7 @@ const insuranceService = {
 
   /**
    * Compare insurance plans based on user criteria
+   * Simplified approach that only uses age and budget for filtering
    * @param {Object} criteria - Comparison criteria (age, budget, etc.)
    * @returns {Promise<Object>} Response with matching plans
    */
@@ -177,16 +178,65 @@ const insuranceService = {
         insuranceType: criteria.insuranceType || "seniors",
       };
 
-      // If age is provided as a range string, parse it
-      if (typeof formattedCriteria.age === 'string' && formattedCriteria.age.includes('-')) {
-        const [min, max] = formattedCriteria.age.split('-').map(num => parseInt(num.trim(), 10));
-        formattedCriteria.ageMin = min;
-        formattedCriteria.ageMax = max;
+      // Process age parameter - always use the higher age for filtering
+      if (criteria.age) {
+        // If age is provided as a range string, extract the max age
+        if (typeof criteria.age === 'string') {
+          if (criteria.age.includes('-')) {
+            // For age range (e.g., "65-70"), use the higher number
+            const parts = criteria.age.split('-');
+            if (parts.length === 2) {
+              const max = parseInt(parts[1].trim(), 10);
+              if (!isNaN(max)) {
+                formattedCriteria.ageMax = max;
+              }
+            }
+          } else if (criteria.age.includes('+')) {
+            // For age with plus (e.g., "70+"), use the base number
+            const base = parseInt(criteria.age.replace('+', '').trim(), 10);
+            if (!isNaN(base)) {
+              formattedCriteria.ageMax = base;
+            }
+          } else {
+            // For single age as string
+            const parsedAge = parseInt(criteria.age, 10);
+            if (!isNaN(parsedAge)) {
+              formattedCriteria.ageMax = parsedAge;
+            }
+          }
+        } else if (typeof criteria.age === 'number') {
+          // If age is a number, use it directly
+          formattedCriteria.ageMax = criteria.age;
+        }
       }
 
-      // If budget is provided as a single value, use it as budgetMax
-      if (formattedCriteria.budget && !formattedCriteria.budgetMax) {
-        formattedCriteria.budgetMax = formattedCriteria.budget;
+      // Process budget parameter - extract both min and max values
+      if (criteria.budget) {
+        if (typeof criteria.budget === 'string' && criteria.budget.includes('-')) {
+          // For budget range (e.g., "5000-10000"), extract both min and max
+          const parts = criteria.budget.split('-');
+          if (parts.length === 2) {
+            const min = parseInt(parts[0].trim(), 10);
+            const max = parseInt(parts[1].trim(), 10);
+            
+            if (!isNaN(min) && !formattedCriteria.budgetMin) {
+              formattedCriteria.budgetMin = min;
+            }
+            
+            if (!isNaN(max) && !formattedCriteria.budgetMax) {
+              formattedCriteria.budgetMax = max;
+            }
+          }
+        } else {
+          // For single budget value, use as budgetMax
+          const budgetValue = typeof criteria.budget === 'string' 
+            ? parseInt(criteria.budget, 10) 
+            : criteria.budget;
+            
+          if (!isNaN(budgetValue) && !formattedCriteria.budgetMax) {
+            formattedCriteria.budgetMax = budgetValue;
+          }
+        }
       }
 
       // Call the backend API

@@ -82,7 +82,7 @@ const OptionalCoversStep = ({ formData, updateFormData, nextStep, prevStep }) =>
               </div>
             </div>
 
-      <div className="space-y-4 mt-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
         {optionalCovers.map((cover) => (
           <motion.div
             key={cover.id}
@@ -138,9 +138,7 @@ const OptionalCoversStep = ({ formData, updateFormData, nextStep, prevStep }) =>
       <div className="mt-6 bg-primary-700/50 rounded-lg p-4 flex items-start">
         <TbInfoCircle className="text-secondary-300 h-5 w-5 mt-0.5 mr-3 flex-shrink-0" />
         <p className="text-white/80 text-sm">
-          Optional covers enhance your base insurance plan with specialized coverage. 
-          For seniors, we recommend considering the Chronic Condition Management cover, 
-          which provides additional support for managing long-term health conditions.
+          Optional covers enhance your base insurance plan with specialized coverage.
         </p>
       </div>
 

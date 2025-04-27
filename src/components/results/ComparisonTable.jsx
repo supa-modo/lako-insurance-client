@@ -21,14 +21,21 @@ import {
 } from "react-icons/tb";
 import { PiTooth } from "react-icons/pi";
 import { formatCurrency } from "../../utils/formatCurrency";
+import PrintableComparisonTable from "./PrintableComparisonTable";
+import { useComparison } from "../../context/ComparisonContext";
 
 const ComparisonTable = ({ plans, onDownload }) => {
-  console.log(plans)
+  console.log(plans);
+  // Get user query from context
+  const { userQuery } = useComparison();
+  
   // Ensure plans are properly formatted
   if (!plans || !plans.length) return null;
+  
+  // Initialize the printable table functionality
+  const { openPrintableVersion } = PrintableComparisonTable({ plans, userQuery });
 
-  // Extract actual plan objects
-  const normalizedPlans = plans.map((planItem) => planItem.plan);
+  
 
   // Define rows for comparison
   const comparisonRows = [
@@ -39,11 +46,14 @@ const ComparisonTable = ({ plans, onDownload }) => {
           name: "Annual Premium",
           accessor: (plan) => {
             let premium = 0;
-            
+
             // Handle different premium structures
-            if (plan.premiumStructure === 'fixed') {
+            if (plan.premiumStructure === "fixed") {
               premium = parseFloat(plan.annualPremium || "0");
-            } else if (plan.premiumStructure === 'age-based' && plan.premiumsByAgeRange) {
+            } else if (
+              plan.premiumStructure === "age-based" &&
+              plan.premiumsByAgeRange
+            ) {
               try {
                 // For comparison table, we'll show the middle age range premium
                 const premiumsByAge = JSON.parse(plan.premiumsByAgeRange);
@@ -51,16 +61,18 @@ const ComparisonTable = ({ plans, onDownload }) => {
                 if (ageRanges.length > 0) {
                   // Use the middle age range for display
                   const middleRangeIndex = Math.floor(ageRanges.length / 2);
-                  premium = parseFloat(premiumsByAge[ageRanges[middleRangeIndex]] || "0");
+                  premium = parseFloat(
+                    premiumsByAge[ageRanges[middleRangeIndex]] || "0"
+                  );
                 }
               } catch (error) {
-                console.error('Error parsing premiums by age range:', error);
+                console.error("Error parsing premiums by age range:", error);
                 premium = parseFloat(plan.annualPremium || "0"); // Fallback
               }
             } else {
               premium = parseFloat(plan.annualPremium || "0"); // Fallback
             }
-            
+
             return {
               value: premium,
               display: formatCurrency(premium),
@@ -68,6 +80,50 @@ const ComparisonTable = ({ plans, onDownload }) => {
             };
           },
           icon: <TbCoins className="text-secondary-600 h-5 w-5" />,
+        },
+        {
+          name: "Dental Premium",
+          accessor: (plan) => {
+            // Check if dental is covered in the base plan
+            if (plan.dentalCoveredInBase) {
+              return {
+                value: 0,
+                display: "Already covered",
+                isAmount: false,
+                highlight: true,
+              };
+            }
+            // Otherwise show the premium amount
+            const value = parseFloat(plan.dentalPremium || "0");
+            return {
+              value,
+              display: formatCurrency(value),
+              isAmount: true,
+            };
+          },
+          icon: <PiTooth className="text-secondary-600 h-5 w-5" />,
+        },
+        {
+          name: "Optical Premium",
+          accessor: (plan) => {
+            // Check if optical is covered in the base plan
+            if (plan.opticalCoveredInBase) {
+              return {
+                value: 0,
+                display: "Already covered",
+                isAmount: false,
+                highlight: true,
+              };
+            }
+            // Otherwise show the premium amount
+            const value = parseFloat(plan.opticalPremium || "0");
+            return {
+              value,
+              display: formatCurrency(value),
+              isAmount: true,
+            };
+          },
+          icon: <TbEyeglass2 className="text-secondary-600 h-5 w-5" />,
         },
       ],
     },
@@ -103,43 +159,23 @@ const ComparisonTable = ({ plans, onDownload }) => {
           ),
         },
         {
-          name: "Room Type",
-          accessor: (plan) => ({
-            value: plan.bedLimit || "Standard",
-            display: plan.bedLimit || "Standard",
-            isAmount: false,
-          }),
-          icon: (
-            <TbBuildingHospital className="text-secondary-600 h-5 w-5 sm:h-5 sm:w-5" />
-          ),
-        },
-      ],
-    },
-    {
-      category: "Optional Covers",
-      items: [
-        {
-          name: "Dental Cover",
+          name: "Dental Limit",
           accessor: (plan) => {
             const hasDental = plan.hasDental || false;
-            const dentalCoveredInBase = plan.dentalCoveredInBase || false;
             const value = hasDental
               ? parseFloat(plan.dentalCoverageLimit || "0")
               : 0;
-              
+
             let display = "Not Covered";
             if (value > 0) {
-              display = dentalCoveredInBase 
-                ? `${formatCurrency(value)} (Included)` 
-                : formatCurrency(value);
+              display = formatCurrency(value);
             }
-            
+
             return {
               value,
               display,
               isAmount: true,
               isIncluded: value > 0,
-              isBaseCover: dentalCoveredInBase,
             };
           },
           icon: (
@@ -147,27 +183,23 @@ const ComparisonTable = ({ plans, onDownload }) => {
           ),
         },
         {
-          name: "Optical Cover",
+          name: "Optical Limit",
           accessor: (plan) => {
             const hasOptical = plan.hasOptical || false;
-            const opticalCoveredInBase = plan.opticalCoveredInBase || false;
             const value = hasOptical
               ? parseFloat(plan.opticalCoverageLimit || "0")
               : 0;
-              
+
             let display = "Not Covered";
             if (value > 0) {
-              display = opticalCoveredInBase 
-                ? `${formatCurrency(value)} (Included)` 
-                : formatCurrency(value);
+              display = formatCurrency(value);
             }
-            
+
             return {
               value,
               display,
               isAmount: true,
               isIncluded: value > 0,
-              isBaseCover: opticalCoveredInBase,
             };
           },
           icon: (
@@ -175,7 +207,7 @@ const ComparisonTable = ({ plans, onDownload }) => {
           ),
         },
         {
-          name: "Maternity Cover",
+          name: "Maternity Limit",
           accessor: (plan) => {
             const hasMaternity = plan.hasMaternity || false;
             const value = hasMaternity
@@ -192,8 +224,10 @@ const ComparisonTable = ({ plans, onDownload }) => {
             <TbBabyCarriage className="text-secondary-600 h-5 w-5 sm:h-5 sm:w-5" />
           ),
         },
+       
       ],
     },
+    
     {
       category: "Additional Benefits",
       items: [
@@ -209,6 +243,17 @@ const ComparisonTable = ({ plans, onDownload }) => {
           },
           icon: (
             <TbCoffin className="text-secondary-600 h-5 w-5 sm:h-5 sm:w-5" />
+          ),
+        },
+        {
+          name: "Room Type",
+          accessor: (plan) => ({
+            value: plan.bedLimit || "Standard",
+            display: plan.bedLimit || "Standard",
+            isAmount: false,
+          }),
+          icon: (
+            <TbBuildingHospital className="text-secondary-600 h-5 w-5 sm:h-5 sm:w-5" />
           ),
         },
         // {
@@ -267,18 +312,7 @@ const ComparisonTable = ({ plans, onDownload }) => {
 
               {plans.map((planItem, index) => {
                 const plan = planItem.plan;
-                const {
-                  id,
-                  name,
-                  company,
-                  planType,
-                  inpatientCoverageLimit,
-                  outpatientCoverageLimit,
-                  bedLimit,
-                  dentalPremium,
-                  opticalPremium,
-                  maternityPremium,
-                } = plan;
+                const { id, company } = plan;
                 return (
                   <th
                     key={id || index}
@@ -345,21 +379,21 @@ const ComparisonTable = ({ plans, onDownload }) => {
                         >
                           {cellData.isIncluded !== undefined ? (
                             <div className="flex flex-col items-center">
+                              {!cellData.isIncluded && (
+                                <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center shadow-sm transition-all duration-300 bg-red-200 text-red-600 group-hover:bg-red-300 group-hover:scale-105">
+                                  {!cellData.isIncluded && (
+                                    <TbX size={14} className="" />
+                                  )}
+                                </div>
+                              )}
                               <div
-                                className={`w-5 h-5 sm:w-7 sm:h-7 rounded-full flex items-center justify-center shadow-sm transition-all duration-300 ${
+                                className={` font-medium ${
                                   cellData.isIncluded
-                                    ? "bg-green-200 text-green-600 group-hover:bg-green-300 group-hover:scale-105"
-                                    : "bg-red-200 text-red-600 group-hover:bg-red-300 group-hover:scale-105"
+                                    ? cellData.isBaseCover
+                                      ? "text-green-700"
+                                      : "text-secondary-700 group-hover:text-secondary-600 font-lexend text-xs md:text-base"
+                                    : "text-gray-500 text-xs sm:text-[0.85rem]"
                                 }`}
-                              >
-                                {cellData.isIncluded ? (
-                                  <TbCheck size={15} className="sm:text-lg" />
-                                ) : (
-                                  <TbX size={15} className="sm:text-lg" />
-                                )}
-                              </div>
-                              <div
-                                className={`text-xs sm:text-sm font-medium ${cellData.isIncluded ? (cellData.isBaseCover ? "text-green-700" : "text-green-600") : "text-gray-500"}`}
                               >
                                 {cellData.display}
                               </div>
@@ -391,11 +425,15 @@ const ComparisonTable = ({ plans, onDownload }) => {
           <motion.button
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.98 }}
-            onClick={onDownload}
+            onClick={() => {
+              // Call both the original onDownload function and open the printable version
+              if (onDownload) onDownload();
+              openPrintableVersion();
+            }}
             className="flex items-center px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-secondary-500 to-secondary-600 hover:from-secondary-600 hover:to-secondary-700 text-white rounded-lg text-xs sm:text-sm font-medium shadow-lg hover:shadow-xl transition-all duration-300 group font-lexend"
           >
             <TbDownload className="mr-1 sm:mr-2 h-3.5 w-3.5 sm:h-5 sm:w-5" />
-            Download Comparison
+            Download Comparison Table
             <TbChevronRight className="ml-1 sm:ml-2 h-3.5 w-3.5 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
           </motion.button>
         </div>
