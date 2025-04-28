@@ -355,15 +355,20 @@ const TaskForm = ({ task = null, onSave, onCancel }) => {
           <div className="flex space-x-4">
             {["low", "medium", "high"].map((priority) => (
               <label key={priority} className="flex items-center">
-                <input
-                  type="radio"
-                  name="priority"
-                  value={priority}
-                  checked={formData.priority === priority}
-                  onChange={handleChange}
-                  className="h-[1.1rem] w-[1.1rem] bg-neutral-100 text-gray-600 font-medium rounded-md border border-neutral-400 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
-                />
-                <span className="ml-2 text-sm text-neutral-700 capitalize">
+                <div className={`relative flex items-center justify-center h-[1.1rem] w-[1.1rem] rounded-md border ${formData.priority === priority ? 'border-primary-500 bg-primary-50' : 'border-neutral-400'}`}>
+                  <input
+                    type="radio"
+                    name="priority"
+                    value={priority}
+                    checked={formData.priority === priority}
+                    onChange={handleChange}
+                    className="absolute opacity-0 h-full w-full cursor-pointer"
+                  />
+                  {formData.priority === priority && (
+                    <div className="h-2 w-2 rounded-sm bg-primary-500"></div>
+                  )}
+                </div>
+                <span className={`ml-2 text-sm ${formData.priority === priority ? 'text-primary-700 font-medium' : 'text-neutral-700'} capitalize`}>
                   {priority}
                 </span>
               </label>

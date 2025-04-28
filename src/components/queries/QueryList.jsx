@@ -324,22 +324,7 @@ const QueryList = ({
         )}
       </div>
 
-      {/* Footer */}
-      <div className="bg-neutral-50 rounded-lg mx-1 py-3 mt-3 border-t border-neutral-200 sm:px-6 flex items-center justify-between">
-        <div className="text-sm text-neutral-600">
-          Showing <span className="">{filteredQueries.length}</span>{" "}
-          of <span className="">{queries.length}</span> queries
-        </div>
-
-        <div>
-          <button
-            className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 flex items-center text-sm"
-            onClick={() => onEdit(null)} // Pass null to create a new query
-          >
-            <TbMessageCircle className="mr-2 h-4 w-4" /> Add New Query
-          </button>
-        </div>
-      </div>
+      
     </div>
   );
 };

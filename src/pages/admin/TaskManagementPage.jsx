@@ -10,6 +10,7 @@ import {
   TbSearch,
   TbRefresh,
   TbAlertCircle,
+  TbMessageCircle,
 } from "react-icons/tb";
 
 // Import task components
@@ -22,6 +23,7 @@ import taskService from "../../services/taskService";
 
 const TaskManagementPage = () => {
   const [tasks, setTasks] = useState([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const [showForm, setShowForm] = useState(true);
   const [editingTask, setEditingTask] = useState(null);
@@ -89,6 +91,16 @@ const TaskManagementPage = () => {
   const handleViewTask = (task) => {
     setSelectedTask(task);
     setShowForm(false);
+  };
+
+  // Refresh tasks data
+  const refreshTasks = () => {
+    setIsRefreshing(true);
+    fetchTasks();
+    fetchTaskStats();
+    setTimeout(() => {
+      setIsRefreshing(false);
+    }, 1000);
   };
 
   // Save a task (create or edit)
@@ -240,8 +252,12 @@ const TaskManagementPage = () => {
           </div>
 
           <div className="flex flex-wrap mt-4 md:mt-0 space-x-2">
-            <button className="bg-white border border-gray-200 rounded-lg p-2 text-gray-500 hover:text-primary-600 hover:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-500">
-              <TbRefresh />
+            <button 
+              onClick={refreshTasks}
+              className="bg-white border border-gray-200 rounded-lg p-2 text-gray-500 hover:text-primary-600 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 transition-all duration-200 hover:shadow-sm"
+              title="Refresh tasks"
+            >
+              <TbRefresh className={`h-5 w-5 ${isRefreshing ? "animate-spin" : ""}`} />
             </button>
 
             <button
@@ -323,7 +339,7 @@ const TaskManagementPage = () => {
         </div>
 
         {/* Task Content */}
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-6 gap-5 min-h-0">
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-6 gap-5 pb-6">
           {/* Task list  */}
           <div
             className={`${
@@ -337,7 +353,7 @@ const TaskManagementPage = () => {
                 <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary-600"></div>
               </div>
             ) : (
-              <div className=" flex-1">
+              <div className="flex-1 h-full">
                 <TaskList
                   tasks={filteredTasks}
                   onTaskSelect={handleViewTask}
@@ -374,6 +390,8 @@ const TaskManagementPage = () => {
             </div>
           )}
         </div>
+
+       
       </div>
     </div>
   );

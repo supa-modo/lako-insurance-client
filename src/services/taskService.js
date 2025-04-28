@@ -178,8 +178,44 @@ const taskService = {
    * Safe wrapper for getTaskStats
    * @returns {Promise<Object>} Response with task statistics or null on error
    */
-  safeGetTaskStats: () => {
-    return safeApiCall(() => taskService.getTaskStats());
+  safeGetTaskStats: async () => {
+    return await safeApiCall(taskService.getTaskStats);
+  },
+
+  /**
+   * Get task activity history
+   * @param {string} id - Task ID
+   * @returns {Promise<Object>} Response with activity history data
+   */
+  getTaskActivityHistory: async (id) => {
+    try {
+      const response = await apiClient.get(`/tasks/${id}`);
+      if (response.data.success && response.data.data) {
+        return {
+          success: true,
+          data: response.data.data.activityHistory || []
+        };
+      }
+      return {
+        success: false,
+        message: "Failed to fetch activity history"
+      };
+    } catch (error) {
+      console.error(`Error fetching task activity history for ${id}:`, error);
+      return {
+        success: false,
+        message: error.message || "An error occurred"
+      };
+    }
+  },
+
+  /**
+   * Safe wrapper for getTaskActivityHistory
+   * @param {string} id - Task ID
+   * @returns {Promise<Object>} Response with activity history data or error
+   */
+  safeGetTaskActivityHistory: async (id) => {
+    return await safeApiCall(() => taskService.getTaskActivityHistory(id));
   },
 };
 

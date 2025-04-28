@@ -158,7 +158,7 @@ const TaskList = ({
 
   return (
     <div className="bg-white rounded-lg shadow-sm overflow-hidden flex flex-col h-full">
-      {/* Toolbar */}
+      {/* Toolbar - Fixed */}
       <div className="bg-primary-600 px-4 py-3 border-b border-neutral-200 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center space-x-2">
           <div className="relative">
@@ -329,7 +329,7 @@ const TaskList = ({
       </div>
 
       {/* Task list - Scrollable */}
-      <div className="overflow-y-auto flex-1">
+      <div className="overflow-y-auto" style={{ height: 'calc(100vh - 280px)', minHeight: '300px' }}>
         <div className="divide-y divide-neutral-200">
           {filteredTasks.length === 0 ? (
             <div className="p-8 text-center">
