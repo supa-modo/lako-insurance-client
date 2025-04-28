@@ -20,9 +20,10 @@ import {
   TbCircleX,
   TbArrowNarrowRight,
   TbCalendarDue,
+  TbAlertTriangle,
 } from "react-icons/tb";
-import { FiMoreVertical } from "react-icons/fi";
 import taskService from "../../services/taskService";
+import { PiUserDuotone } from "react-icons/pi";
 
 const TaskDetail = ({
   task,
@@ -143,20 +144,20 @@ const TaskDetail = ({
   const priorityInfo = getPriorityInfo(task.priority);
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-neutral-100 flex flex-col h-full overflow-hidden">
-      {/* Header */}
-      <div className="bg-white border-b border-neutral-100 px-6 py-4 flex justify-between items-center sticky top-0 z-10">
+    <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-neutral-200 flex flex-col h-[calc(100vh-16rem)]" >
+      {/* Header - fixed */}
+      <div className="bg-white border-b border-neutral-200 px-6 py-3 flex justify-between items-center z-10 flex-shrink-0">
         <div className="flex items-center">
           <button
             onClick={onBack}
-            className="mr-3 h-9 w-9 flex items-center justify-center text-neutral-400 hover:text-primary-600 rounded-full transition-all duration-200"
+            className="mr-3 h-9 w-9 flex items-center justify-center text-neutral-600 hover:text-primary-600 rounded-full transition-all duration-200"
             title="Back to tasks"
           >
             <TbArrowLeft className="h-5 w-5" />
           </button>
           
           <div>
-            <h1 className="text-lg font-medium text-neutral-800 flex items-center">
+            <h1 className=" font-medium text-neutral-600 flex items-center">
               Task Details
             </h1>
           </div>
@@ -177,56 +178,26 @@ const TaskDetail = ({
 
           <button
             onClick={() => onEdit(task)}
-            className="h-9 w-9 flex items-center justify-center text-neutral-400 hover:text-primary-600 rounded-full transition-colors duration-200"
+            className="h-9 w-9 flex items-center justify-center text-neutral-600 hover:text-primary-600 rounded-full transition-colors duration-200"
             title="Edit task"
           >
             <TbEdit className="h-5 w-5" />
           </button>
 
-          <div className="relative group">
-            <button
-              className="h-9 w-9 flex items-center justify-center text-neutral-400 hover:text-neutral-700 rounded-full transition-colors duration-200"
-              title="More options"
-            >
-              <FiMoreVertical className="h-5 w-5" />
-            </button>
-            
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-md border border-neutral-100 py-1 hidden group-hover:block z-20">
-              <button
-                onClick={() => onToggleComplete(task.id)}
-                className="w-full text-left px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 flex items-center"
-              >
-                {task.completed ? (
-                  <>
-                    <TbCircleX className="h-4 w-4 mr-2 text-neutral-500" /> Mark as Incomplete
-                  </>
-                ) : (
-                  <>
-                    <TbCircleCheck className="h-4 w-4 mr-2 text-green-500" /> Mark as Complete
-                  </>
-                )}
-              </button>
-              <button
-                onClick={() => onDelete(task.id)}
-                className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-neutral-50 flex items-center"
-              >
-                <TbTrash className="h-4 w-4 mr-2" /> Delete Task
-              </button>
-            </div>
-          </div>
+          
         </div>
       </div>
 
-      {/* Task details */}
-      <div className="flex-1 overflow-auto">
-        {/* Task title section */}
-        <div className="bg-neutral-50 border-b border-neutral-100">
-          <div className="p-8">
-            <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
+      {/* Task details container */}
+      <div className="flex flex-col flex-1 overflow-hidden">
+        {/* Task title section - fixed */}
+        <div className="bg-white border-b border-neutral-200 flex-shrink-0">
+          <div className="px-6 py-4">
+            <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
               <div className="flex items-center max-w-3xl">
                 <button
                   onClick={() => onToggleComplete(task.id)}
-                  className={`h-7 w-7 rounded-md flex items-center justify-center mr-4 transition-all duration-200 ${
+                  className={`h-6 w-6 rounded-md flex items-center justify-center mr-3 transition-all duration-200 ${
                     task.completed
                       ? "bg-green-500 text-white"
                       : "border border-neutral-300 hover:border-primary-500"
@@ -236,9 +207,9 @@ const TaskDetail = ({
                 </button>
 
                 <h2
-                  className={`text-2xl font-medium ${
+                  className={`text-lg font-semibold ${
                     task.completed
-                      ? "line-through text-neutral-400"
+                      ? "line-through text-neutral-500"
                       : "text-neutral-800"
                   }`}
                 >
@@ -246,16 +217,16 @@ const TaskDetail = ({
                 </h2>
               </div>
 
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2">
                 <div
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium flex items-center ${priorityInfo.bgColor} ${priorityInfo.color} ${priorityInfo.borderColor} border`}
+                  className={`px-2.5 py-1 rounded-md text-xs font-medium flex items-center ${priorityInfo.bgColor} ${priorityInfo.color} ${priorityInfo.borderColor} border`}
                 >
-                  <TbStar className="mr-1.5 h-4 w-4" />
+                  <TbStar className="mr-1 h-3.5 w-3.5" />
                   {priorityInfo.label}
                 </div>
                 
                 <div
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium flex items-center border ${
+                  className={`px-2.5 py-1 rounded-md text-xs font-medium flex items-center border ${
                     task.completed
                       ? "bg-green-50 text-green-700 border-green-100"
                       : isOverdue(task.dueDate)
@@ -266,13 +237,13 @@ const TaskDetail = ({
                   }`}
                 >
                   {task.completed ? (
-                    <TbCircleCheck className="mr-1.5 h-4 w-4" />
+                    <TbCircleCheck className="mr-1 h-3.5 w-3.5" />
                   ) : isOverdue(task.dueDate) ? (
-                    <TbCalendarDue className="mr-1.5 h-4 w-4" />
+                    <TbCalendarDue className="mr-1 h-3.5 w-3.5" />
                   ) : task.dueDate ? (
-                    <TbCalendarTime className="mr-1.5 h-4 w-4" />
+                    <TbCalendarTime className="mr-1 h-3.5 w-3.5" />
                   ) : (
-                    <TbCalendarEvent className="mr-1.5 h-4 w-4" />
+                    <TbCalendarEvent className="mr-1 h-3.5 w-3.5" />
                   )}
                   {task.completed
                     ? "Completed"
@@ -285,75 +256,75 @@ const TaskDetail = ({
               </div>
             </div>
             
-            {/* Quick info bar */}
-            <div className="flex flex-wrap items-center text-sm text-neutral-500 gap-x-6 gap-y-2">
-              <div className="flex items-center">
-                <TbCalendarTime className="mr-2 h-4 w-4 text-neutral-400" />
-                <span className="font-medium">Due:</span>
-                <span className={`ml-1.5 ${isOverdue(task.dueDate) && !task.completed ? "text-red-600 font-medium" : ""}`}>
-                  {formatDate(task.dueDate)}
-                </span>
-              </div>
-              
-              {task.category && (
-                <div className="flex items-center">
-                  <TbTag className="mr-2 h-4 w-4 text-neutral-400" />
-                  <span className="font-medium">Category:</span>
-                  <span className="ml-1.5 px-2 py-0.5 bg-neutral-100 text-neutral-700 rounded-md text-xs font-medium">
-                    {task.category}
-                  </span>
-                </div>
-              )}
-              
-              {task.assignee && (
-                <div className="flex items-center">
-                  <TbUserCircle className="mr-2 h-4 w-4 text-neutral-400" />
-                  <span className="font-medium">Assigned to:</span>
-                  <div className="ml-1.5 flex items-center">
-                    <div className="h-5 w-5 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center mr-1 text-xs font-bold">
-                      {task.assignee.firstName.charAt(0)}{task.assignee.lastName.charAt(0)}
+            {/* Task metadata */}
+            <div className="mt-5 border-t border-neutral-100 pt-4">
+              <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+                <div>
+                  <div className="flex items-center">
+                    <TbCalendarTime className="text-neutral-500 h-5 w-5 mr-2" />
+                    <span className={`text-sm ${isOverdue(task.dueDate) && !task.completed ? "text-red-600" : "text-neutral-700"}`}>
+                      {formatDate(task.dueDate)}
+                    </span>
+                  </div>
+                  {isOverdue(task.dueDate) && !task.completed && (
+                    <div className="text-xs text-red-500 mt-1 ml-6 flex items-center">
+                      <TbAlertTriangle className="h-4 w-4 mr-1" /> Overdue
                     </div>
-                    <span>{task.assignee.firstName} {task.assignee.lastName}</span>
+                  )}
+                </div>
+                
+                {task.category && (
+                  <div>
+                    <div className=" flex items-center">
+                      <TbTag className="text-neutral-500 h-5 w-5 mr-2" />
+                      <span className="text-[0.8rem] text-neutral-700 bg-neutral-200 px-2 py-0.5 rounded">
+                        {task.category}
+                      </span>
+                    </div>
+                  </div>
+                )}
+                
+                {task.assignee && (
+                  <div>
+                    <div className="flex items-center">
+                      <PiUserDuotone className="h-5 w-5 mr-1.5 text-primary-600" />
+                      <span className="text-sm text-neutral-700">
+                        Assignee - <span className="font-semibold">{task.assignee.firstName} {task.assignee.lastName}</span>
+                      </span>
+                    </div>
+                  </div>
+                )}
+                
+                <div>
+                  <div className="flex items-center">
+                    <TbHistory className="text-neutral-500 h-5 w-5 mr-2" />
+                    <span className="text-sm text-neutral-700">
+                      Created on {new Date(task.createdAt).toLocaleDateString()} - <span className="font-semibold">{task.creator?.firstName || "System"}</span>
+                    </span>
                   </div>
                 </div>
-              )}
-              
-              <div className="flex items-center">
-                <TbHistory className="mr-2 h-4 w-4 text-neutral-400" />
-                <span className="font-medium">Created:</span>
-                <span className="ml-1.5">
-                  {new Date(task.createdAt).toLocaleDateString()} by {task.creator?.firstName || "System"}
-                </span>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="p-6 space-y-6">
+        {/* Scrollable content area */}
+        <div className="p-6 space-y-4 overflow-y-auto flex-1" style={{ overflowY: 'auto' }}>
           {/* Description */}
           {task.description && (
-            <div className="bg-white rounded-lg border border-neutral-100">
-              <div className="flex items-center px-5 py-4 border-b border-neutral-100">
-                <div className="text-primary-600 mr-3">
-                  <TbFileText className="h-5 w-5" />
-                </div>
-                <h3 className="text-sm font-medium text-neutral-800">Description</h3>
-              </div>
-              <div className="p-5 text-neutral-700 whitespace-pre-wrap text-sm leading-relaxed">
+            <div className="bg-white ">
+                <h3 className="font-semibold pb-2 border-b border-neutral-200 text-primary-600">Description</h3>
+             
+              <div className="p-2 min-h-[150px] rounded-lg text-neutral-700 whitespace-pre-wrap leading-relaxed bg-neutral-300">
                 {task.description}
               </div>
             </div>
           )}
 
           {/* Activity Timeline */}
-          <div className="bg-white rounded-lg border border-neutral-100">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100">
-              <div className="flex items-center">
-                <div className="text-primary-600 mr-3">
-                  <TbHistory className="h-5 w-5" />
-                </div>
-                <h3 className="text-sm font-medium text-neutral-800">Activity Timeline</h3>
-              </div>
+          <div className="bg-white ">
+            <div className="flex items-center justify-between pb-2 border-b border-neutral-200">
+              <h3 className=" font-semibold text-primary-600">Activity Timeline</h3>
               
               {loadingActivity && (
                 <div className="flex items-center text-neutral-500 text-xs">
@@ -363,11 +334,11 @@ const TaskDetail = ({
               )}
             </div>
 
-            <div className="p-5">
+            <div className="">
               {activityHistory.length === 0 ? (
-                <div className="text-center py-8 bg-neutral-50 rounded-md">
+                <div className="text-center py-6 bg-white rounded-md border border-neutral-100">
                   <div className="text-neutral-300 mb-3">
-                    <TbHistory className="h-10 w-10 mx-auto" />
+                    <TbHistory className="h-8 w-8 mx-auto" />
                   </div>
                   <div className="text-neutral-600 text-sm font-medium">
                     No activity history available
@@ -388,23 +359,23 @@ const TaskDetail = ({
                     
                     if (activity.action === "created") {
                       icon = <TbCalendarPlus className="h-4 w-4" />;
-                      bgColor = "bg-blue-50";
+                      bgColor = "bg-blue-100";
                       textColor = "text-blue-600";
                     } else if (activity.action === "updated") {
                       icon = <TbPencil className="h-4 w-4" />;
-                      bgColor = "bg-amber-50";
+                      bgColor = "bg-amber-100";
                       textColor = "text-amber-600";
                     } else if (activity.action === "completed") {
                       icon = <TbCheck className="h-4 w-4" />;
-                      bgColor = "bg-green-50";
+                      bgColor = "bg-green-100";
                       textColor = "text-green-600";
                     } else if (activity.action === "reopened") {
                       icon = <TbX className="h-4 w-4" />;
-                      bgColor = "bg-orange-50";
+                      bgColor = "bg-orange-100";
                       textColor = "text-orange-600";
                     } else if (activity.action === "deleted") {
                       icon = <TbTrash className="h-4 w-4" />;
-                      bgColor = "bg-red-50";
+                      bgColor = "bg-red-100";
                       textColor = "text-red-600";
                     }
                     
@@ -415,39 +386,41 @@ const TaskDetail = ({
                     
                     return (
                       <div key={activity.id} className="flex items-start relative z-10">
-                        <div className={`h-8 w-8 rounded-full ${bgColor} flex items-center justify-center mr-4 ${textColor} border border-white`}>
+                        <div className={`h-7 w-7 rounded-full ${bgColor} flex items-center justify-center mr-3 ${textColor} border border-white shadow-sm`}>
                           {icon}
                         </div>
-                        <div className="bg-white p-3 rounded-md border border-neutral-100 flex-1">
+                        <div className="bg-white p-3 rounded-md border border-neutral-100 flex-1 shadow-sm">
                           <div className="flex justify-between items-start">
-                            <div className="text-sm font-medium text-neutral-800">
+                            <div className="text-sm font-medium text-neutral-700">
                               {activity.action === "created" && "Task created"}
                               {activity.action === "updated" && "Task updated"}
                               {activity.action === "completed" && "Marked as completed"}
                               {activity.action === "reopened" && "Marked as incomplete"}
                               {activity.action === "deleted" && "Task deleted"}
                             </div>
-                            <div className="text-xs text-neutral-500">
+                            <div className="text-xs text-neutral-500 bg-neutral-50 px-1.5 py-0.5 rounded">
                               {formattedDate} • {formattedTime}
                             </div>
                           </div>
-                          <div className="text-xs text-neutral-600 mt-1 flex items-center">
-                            <div className="h-4 w-4 rounded-full bg-neutral-100 text-neutral-700 flex items-center justify-center mr-1.5 text-xs font-medium">
-                              {activity.userName ? activity.userName.split(' ').map(name => name.charAt(0)).join('') : 'U'}
-                            </div>
+                          <div className="text-xs text-gray-400 mt-1 flex items-center">
+                           <PiUserDuotone className="h-3.5 w-3.5 mr-1.5 text-primary-600" />
+                            
                             {activity.userName || "Unknown User"}
                           </div>
                           
                           {/* Show details for updates */}
                           {activity.action === "updated" && activity.details && Object.keys(activity.details).length > 0 && (
-                            <div className="mt-2 text-xs bg-neutral-50 p-2 rounded-md border border-neutral-100">
+                            <div className="mt-2 text-xs bg-gray-200 p-2 rounded border border-neutral-200">
                               {Object.entries(activity.details).map(([field, values]) => (
-                                <div key={field} className="mb-1 last:mb-0">
-                                  <span className="font-medium capitalize">{field}:</span> 
-                                  <span className="line-through text-red-500 mr-1">{String(values.from || '-')}</span> 
-                                  <span className="text-green-600">
-                                    <TbArrowNarrowRight className="inline h-3 w-3 mx-0.5" /> {String(values.to || '-')}
-                                  </span>
+                                <div key={field} className="text-gray-400 mb-1 last:mb-0 flex items-center">
+                                  <span className="font-medium capitalize min-w-[80px]">{field}:</span> 
+                                  <div className="flex items-center flex-1">
+                                    <span className="line-through text-red-500">{String(values.from || '-')}</span> 
+                                    <span className="mx-1 text-neutral-600">
+                                      <TbArrowNarrowRight className="inline h-3.5 w-3.5" />
+                                    </span>
+                                    <span className="text-green-600 font-medium">{String(values.to || '-')}</span>
+                                  </div>
                                 </div>
                               ))}
                             </div>
@@ -463,8 +436,8 @@ const TaskDetail = ({
         </div>
       </div>
 
-      {/* Footer actions */}
-      <div className="border-t border-neutral-100 p-4 bg-white sticky bottom-0 z-10">
+      {/* Footer actions - fixed */}
+      <div className="border-t border-neutral-200 p-4 bg-white z-10 flex-shrink-0">
         <div className="flex flex-wrap gap-3 justify-between">
           <div>
             <button
@@ -497,7 +470,7 @@ const TaskDetail = ({
             
             <button
               onClick={() => onDelete(task.id)}
-              className="px-4 py-2 bg-white text-neutral-600 rounded-md flex items-center hover:bg-neutral-50 text-sm font-medium border border-neutral-200 transition-all duration-200"
+              className="px-4 py-2 bg-white text-red-600 rounded-md flex items-center hover:bg-red-50 text-sm font-medium border border-red-200 transition-all duration-200"
             >
               <TbTrash className="mr-2 h-4 w-4" /> Delete
             </button>

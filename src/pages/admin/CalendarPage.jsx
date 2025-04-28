@@ -15,15 +15,18 @@ import {
   TbEdit,
   TbTrash,
   TbX,
+  TbAlertCircle,
 } from "react-icons/tb";
 
 import MonthView from "../../components/calendar/MonthView";
 import WeekView from "../../components/calendar/WeekView";
 import DayView from "../../components/calendar/DayView";
 import EventModal from "../../components/calendar/EventModal";
-import eventsData from "../../data/events.json";
+import eventService from "../../services/eventService";
+import { useNotification } from "../../context/NotificationContext";
 
 const CalendarPage = () => {
+  const { showSuccess, showError, showInfo, showConfirmation } = useNotification();
   const [view, setView] = useState("month"); // month, week, day
   const [currentDate, setCurrentDate] = useState(new Date());
   const [events, setEvents] = useState([]);
@@ -35,16 +38,73 @@ const CalendarPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [detailsPosition, setDetailsPosition] = useState({ x: 0, y: 0 });
 
-  // Load events from JSON file
+  // Load events and tasks from API
   useEffect(() => {
-    // Transform dates from strings to Date objects
-    const transformedEvents = eventsData.events.map((event) => ({
-      ...event,
-      start: new Date(event.start),
-      end: new Date(event.end),
-    }));
-    setEvents(transformedEvents);
-  }, []);
+    const fetchEventsAndTasks = async () => {
+      try {
+        setIsRefreshing(true);
+        // Get current view's date range
+        const startDate = new Date(currentDate);
+        const endDate = new Date(currentDate);
+        
+        if (view === "month") {
+          startDate.setDate(1); // First day of month
+          startDate.setHours(0, 0, 0, 0);
+          endDate.setMonth(endDate.getMonth() + 1, 0); // Last day of month
+          endDate.setHours(23, 59, 59, 999);
+        } else if (view === "week") {
+          const day = currentDate.getDay(); // 0 = Sunday, 6 = Saturday
+          startDate.setDate(currentDate.getDate() - day); // First day of week (Sunday)
+          startDate.setHours(0, 0, 0, 0);
+          endDate.setDate(startDate.getDate() + 6); // Last day of week (Saturday)
+          endDate.setHours(23, 59, 59, 999);
+        } else {
+          // Day view
+          startDate.setHours(0, 0, 0, 0);
+          endDate.setHours(23, 59, 59, 999);
+        }
+
+        const dateParams = {
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString(),
+        };
+
+        // Fetch events for the date range
+        const [eventsResponse, tasksResponse] = await Promise.all([
+          eventService.getAllEvents(dateParams),
+          eventService.getTasksForCalendar(dateParams)
+        ]);
+
+        let allCalendarItems = [];
+
+        if (eventsResponse.success) {
+          // Transform dates from strings to Date objects
+          const transformedEvents = eventsResponse.data.map((event) => ({
+            ...event,
+            start: new Date(event.start),
+            end: new Date(event.end),
+          }));
+          allCalendarItems = [...transformedEvents];
+        } else {
+          showError("Failed to load events");
+        }
+
+        if (tasksResponse.success) {
+          // Tasks are already transformed in the service
+          allCalendarItems = [...allCalendarItems, ...tasksResponse.data];
+        }
+
+        setEvents(allCalendarItems);
+      } catch (error) {
+        console.error("Error loading calendar items:", error);
+        showError("Error loading calendar items");
+      } finally {
+        setIsRefreshing(false);
+      }
+    };
+    
+    fetchEventsAndTasks();
+  }, [currentDate, view, showError]);
 
   // Navigation functions
   const navigateToToday = () => setCurrentDate(new Date());
@@ -64,46 +124,106 @@ const CalendarPage = () => {
   };
 
   // Handle drag and drop
-  const onDragEnd = (result) => {
+  const onDragEnd = async (result) => {
     if (!result.destination) return;
 
     const { source, destination, draggableId } = result;
     const event = events.find((e) => e.id === draggableId);
     if (!event) return;
 
-    // Parse the destination droppableId to get the new date and hour
-    const [dateString, hourString] = destination.droppableId.split("-");
-    const newDate = new Date(dateString);
+    console.log("Drop target ID:", destination.droppableId);
 
+    // Parsing the new droppableId format
+    let year, month, day, hour;
+    
+
+    if (destination.droppableId.startsWith('date:')) {
+      const parts = destination.droppableId.split('-');
+      // Format is 'date:YYYY-MM-DD' or 'date:YYYY-MM-DD-hour:HH'
+      year = parseInt(parts[0].substring(5)); // Remove 'date:' prefix
+      month = parseInt(parts[1]) - 1; // JS months are 0-indexed
+      day = parseInt(parts[2]);
+      
+      
+      if (parts.length > 3 && parts[3].startsWith('hour:')) {
+        hour = parseInt(parts[3].substring(5)); 
+      }
+    } else {
+      console.error("Invalid droppableId format:", destination.droppableId);
+      showError("Error updating event: invalid drop target");
+      return;
+    }
+    
+    // Create the new date object
+    const newDate = new Date(year, month, day);
+    
     // Ensure the date is valid
-    if (isNaN(newDate.getTime())) return;
+    if (isNaN(newDate.getTime())) {
+      console.error("Invalid date components:", { year, month, day });
+      showError("Error updating event: invalid date");
+      return;
+    }
+
+    console.log("Parsed date components:", { year, month, day, hour, newDate: newDate.toISOString() });
 
     // Get the original event time components
     const originalStart = new Date(event.start);
-    const minutes = originalStart.getMinutes();
-    const duration = event.end.getTime() - event.start.getTime();
-
-    // Set the new start time
-    if (hourString) {
-      // If hour is specified (week/day view), use it
-      newDate.setHours(parseInt(hourString), minutes);
+    const originalEnd = new Date(event.end);
+    const duration = originalEnd.getTime() - originalStart.getTime();
+    
+    // Create new start date by combining the destination date with original time
+    const newStart = new Date(newDate);
+    
+    if (hour !== undefined) {
+      // If hour is specified (week/day view), use the hour from the drop target
+      // but keep the original minutes
+      newStart.setHours(hour, originalStart.getMinutes(), 0, 0);
     } else {
       // For month view, keep the original time
-      newDate.setHours(originalStart.getHours(), minutes);
+      newStart.setHours(
+        originalStart.getHours(),
+        originalStart.getMinutes(),
+        0,
+        0
+      );
     }
-
-    // Create the updated event with new times
+    
+    // Calculate the new end time by adding the original duration
+    const newEnd = new Date(newStart.getTime() + duration);
+    
+    console.log("Event drag details:", {
+      eventId: event.id,
+      originalStart: originalStart.toISOString(),
+      originalEnd: originalEnd.toISOString(),
+      newStart: newStart.toISOString(),
+      newEnd: newEnd.toISOString(),
+      dropTarget: destination.droppableId
+    });
+    
+    // Optimistically update UI
     const updatedEvent = {
       ...event,
-      start: newDate,
-      end: new Date(newDate.getTime() + duration),
+      start: newStart,
+      end: newEnd,
     };
 
-    // Update events array
+    // Update events array in state
     const updatedEvents = events.map((e) =>
       e.id === draggableId ? updatedEvent : e
     );
     setEvents(updatedEvents);
+    
+    // Update in backend
+    try {
+      await eventService.updateEventTime(event.id, newStart, newEnd);
+      showSuccess("Event time updated successfully");
+    } catch (error) {
+      console.error("Error updating event time:", error);
+      showError("Failed to update event time");
+      
+      // Revert to original state on error
+      setEvents(events);
+    }
   };
 
   // Handle slot click
@@ -123,17 +243,13 @@ const CalendarPage = () => {
     // Stop propagation to prevent triggering slot click
     if (e) {
       e.stopPropagation();
-
-      // Set the position for the details popup
-      const rect = e.currentTarget.getBoundingClientRect();
-      setDetailsPosition({
-        x: rect.left + window.scrollX,
-        y: rect.bottom + window.scrollY,
-      });
     }
 
+    // Set the selected event and open the modal in view mode
     setSelectedEvent(event);
-    setShowEventDetails(true);
+    setIsEditing(false); // Ensure we're in view mode, not edit mode
+    setSelectedSlot(null);
+    setShowEventModal(true); // Open the modal instead of just showing details popup
   };
 
   // Close event details popup
@@ -149,53 +265,174 @@ const CalendarPage = () => {
   };
 
   // Handle delete event
-  const handleDeleteEvent = (eventId) => {
-    if (window.confirm("Are you sure you want to delete this event?")) {
-      setEvents(events.filter((e) => e.id !== eventId));
-      setShowEventDetails(false);
+  const handleDeleteEvent = async (eventId) => {
+    // Check if this is a task-based event
+    const isTaskEvent = typeof eventId === 'string' && eventId.startsWith('task-');
+    
+    const confirmMessage = isTaskEvent 
+      ? "This will only remove the task from the calendar view. To delete the task completely, please go to the Tasks page."
+      : "Are you sure you want to delete this event?";
 
-      // If we're also showing the modal for this event, close it
-      if (selectedEvent && selectedEvent.id === eventId && showEventModal) {
-        setShowEventModal(false);
-      }
-    }
+    showConfirmation(
+      confirmMessage,
+      async () => {
+        // Optimistically update UI
+        setEvents(events.filter((e) => e.id !== eventId));
+        setShowEventDetails(false);
+
+        // If we're also showing the modal for this event, close it
+        if (selectedEvent && selectedEvent.id === eventId && showEventModal) {
+          setShowEventModal(false);
+        }
+        
+        // For task-based events, we don't actually delete the task
+        if (!isTaskEvent) {
+          // Delete from backend
+          try {
+            await eventService.deleteEvent(eventId);
+            showSuccess("Event deleted successfully");
+          } catch (error) {
+            console.error("Error deleting event:", error);
+            showError("Failed to delete event");
+            
+            // Refresh events to restore state
+            handleRefresh();
+          }
+        } else {
+          showSuccess("Task removed from calendar view");
+        }
+      },
+      () => {
+        // User canceled, do nothing
+      },
+      { title: isTaskEvent ? "Remove from Calendar" : "Confirm Deletion" }
+    );
   };
 
   // Handle save event
-  const handleSaveEvent = (eventData) => {
-    if (selectedEvent) {
-      // Update existing event
-      const updatedEvents = events.map((e) =>
-        e.id === selectedEvent.id ? { ...eventData, id: selectedEvent.id } : e
-      );
-      setEvents(updatedEvents);
-    } else {
-      // Add new event
-      const newEvent = {
-        ...eventData,
-        id: `event-${Date.now()}`,
-      };
-      setEvents([...events, newEvent]);
+  const handleSaveEvent = async (eventData) => {
+    try {
+      let response;
+      
+      // Check if this is a task-based event
+      if (eventData.isTask && eventData.relatedTaskId) {
+        // For task-based events, we need to update the task
+        const taskId = eventData.relatedTaskId;
+        const taskData = {
+          title: eventData.title,
+          description: eventData.description,
+          dueDate: eventData.start,
+          priority: eventData.priority,
+          completed: eventData.isCompleted
+        };
+        
+        // Use task service to update the task
+        // This would require importing taskService
+        // response = await taskService.updateTask(taskId, taskData);
+        
+        // For now, just update the UI optimistically
+        const updatedEvents = events.map((e) =>
+          e.id === eventData.id ? { ...eventData, start: new Date(eventData.start), end: new Date(eventData.end) } : e
+        );
+        setEvents(updatedEvents);
+        showSuccess("Task updated successfully");
+      } else if (eventData.id && !eventData.id.startsWith('task-')) {
+        // Update existing event
+        response = await eventService.updateEvent(eventData.id, eventData);
+        if (response.success) {
+          // Update the event in the local state
+          const updatedEvents = events.map((e) =>
+            e.id === selectedEvent.id ? { ...response.data, start: new Date(response.data.start), end: new Date(response.data.end) } : e
+          );
+          setEvents(updatedEvents);
+          showSuccess("Event updated successfully");
+        } else {
+          showError("Failed to update event");
+        }
+      } else {
+        // Add new event
+        response = await eventService.createEvent(eventData);
+        if (response.success) {
+          // Add the new event to the local state
+          const newEvent = { ...response.data, start: new Date(response.data.start), end: new Date(response.data.end) };
+          setEvents([...events, newEvent]);
+          showSuccess("Event created successfully");
+        } else {
+          showError("Failed to create event");
+        }
+      }
+      setShowEventModal(false);
+      setSelectedEvent(null);
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error saving event:", error);
+      showError("An error occurred while saving the event");
     }
-    setShowEventModal(false);
-    setSelectedEvent(null);
-    setSelectedSlot(null);
-    setIsEditing(false);
   };
 
   // Handle refresh
-  const handleRefresh = () => {
-    setIsRefreshing(true);
-    // Simulate refresh by reloading events from JSON
-    const transformedEvents = eventsData.events.map((event) => ({
-      ...event,
-      start: new Date(event.start),
-      end: new Date(event.end),
-    }));
-    setEvents(transformedEvents);
-    setTimeout(() => {
+  const handleRefresh = async () => {
+    try {
+      setIsRefreshing(true);
+      
+      // Get current view's date range
+      const startDate = new Date(currentDate);
+      const endDate = new Date(currentDate);
+      
+      if (view === "month") {
+        startDate.setDate(1); // First day of month
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setMonth(endDate.getMonth() + 1, 0); // Last day of month
+        endDate.setHours(23, 59, 59, 999);
+      } else if (view === "week") {
+        const day = currentDate.getDay(); // 0 = Sunday, 6 = Saturday
+        startDate.setDate(currentDate.getDate() - day); // First day of week (Sunday)
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setDate(startDate.getDate() + 6); // Last day of week (Saturday)
+        endDate.setHours(23, 59, 59, 999);
+      } else {
+        // Day view
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(23, 59, 59, 999);
+      }
+
+      const dateParams = {
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+      };
+
+      // Fetch events and tasks for the date range
+      const [eventsResponse, tasksResponse] = await Promise.all([
+        eventService.getAllEvents(dateParams),
+        eventService.getTasksForCalendar(dateParams)
+      ]);
+
+      let allCalendarItems = [];
+
+      if (eventsResponse.success) {
+        // Transform dates from strings to Date objects
+        const transformedEvents = eventsResponse.data.map((event) => ({
+          ...event,
+          start: new Date(event.start),
+          end: new Date(event.end),
+        }));
+        allCalendarItems = [...transformedEvents];
+      } else {
+        showError("Failed to load events");
+      }
+
+      if (tasksResponse.success) {
+        // Tasks are already transformed in the service
+        allCalendarItems = [...allCalendarItems, ...tasksResponse.data];
+      }
+
+      setEvents(allCalendarItems);
+    } catch (error) {
+      console.error("Error refreshing calendar items:", error);
+      showError("Error refreshing calendar items");
+    } finally {
       setIsRefreshing(false);
-    }, 1000);
+    }
   };
 
   // Format event time

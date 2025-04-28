@@ -25,6 +25,7 @@ import RenewalsPage from "./pages/admin/RenewalsPage";
 import { ModalProvider } from "./context/ModalContext";
 import { AuthProvider } from "./context/AuthContext";
 import { ComparisonProvider } from "./context/ComparisonContext";
+import { NotificationProvider } from "./context/NotificationContext";
 import InsurancePlanPage from "./pages/admin/InsurancePlanPage";
 import ServiceDetailsPage from "./pages/public/ServiceDetailsPage";
 
@@ -32,10 +33,11 @@ function App() {
   return (
     <>
       <Analytics />
-      <AuthProvider>
-        <ModalProvider>
-          <ComparisonProvider>
-            <Router>
+      <NotificationProvider>
+        <AuthProvider>
+          <ModalProvider>
+            <ComparisonProvider>
+              <Router>
               <ScrollToTop />
               <Routes>
                 {/* Public Routes */}
@@ -170,9 +172,10 @@ function App() {
                 <Route path="*" element={<PageNotFound />} />
               </Routes>
             </Router>
-          </ComparisonProvider>
-        </ModalProvider>
-      </AuthProvider>
+            </ComparisonProvider>
+          </ModalProvider>
+        </AuthProvider>
+      </NotificationProvider>
     </>
   );
 }

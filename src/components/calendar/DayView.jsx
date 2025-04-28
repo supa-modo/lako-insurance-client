@@ -7,7 +7,7 @@ import {
   TbCalendarEvent,
 } from "react-icons/tb";
 
-const DayView = ({ currentDate, events, onSlotClick }) => {
+const DayView = ({ currentDate, events, onSlotClick, onEventClick }) => {
   // Get hours array (24 hours)
   const hours = Array.from({ length: 24 }, (_, i) => i);
 
@@ -92,7 +92,7 @@ const DayView = ({ currentDate, events, onSlotClick }) => {
             {hours.map((hour) => (
               <Droppable
                 key={`${currentDate.toISOString()}-${hour}`}
-                droppableId={`${currentDate.toISOString()}-${hour}`}
+                droppableId={`date:${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}-hour:${hour}`}
               >
                 {(provided, snapshot) => (
                   <div
@@ -121,12 +121,17 @@ const DayView = ({ currentDate, events, onSlotClick }) => {
                               event.type
                             )} p-2 rounded-md text-sm border shadow-sm mb-2 ${
                               snapshot.isDragging ? "shadow-lg" : ""
-                            }`}
+                            } cursor-pointer`}
+                            onClick={(e) => {
+                              e.stopPropagation(); // Prevent triggering the grid click
+                              onEventClick(event, e);
+                            }}
                           >
                             <div className="flex items-start">
                               <div
                                 {...provided.dragHandleProps}
                                 className="mr-2 cursor-grab mt-1"
+                                onClick={(e) => e.stopPropagation()} // Prevent triggering event click when using drag handle
                               >
                                 <TbGripVertical className="h-4 w-4" />
                               </div>

@@ -11,6 +11,7 @@ import {
   TbRefresh,
   TbAlertCircle,
   TbMessageCircle,
+  TbLoader2,
 } from "react-icons/tb";
 
 // Import task components
@@ -339,21 +340,21 @@ const TaskManagementPage = () => {
         </div>
 
         {/* Task Content */}
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-6 gap-5 pb-6">
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-6 gap-4 pb-6">
           {/* Task list  */}
           <div
             className={`${
               showForm || selectedTask
-                ? "hidden lg:block lg:col-span-3"
-                : "col-span-full"
-            } flex flex-col`}
+                ? "hidden lg:block lg:col-span-3 "
+                : "col-span-full "
+            } flex flex-col `}
           >
             {loading ? (
               <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary-600"></div>
+                <TbLoader2 className="animate-spin text-primary-600 w-10 h-10 "/>
               </div>
             ) : (
-              <div className="flex-1 h-full">
+              <div className="flex-1 ">
                 <TaskList
                   tasks={filteredTasks}
                   onTaskSelect={handleViewTask}
@@ -370,7 +371,7 @@ const TaskManagementPage = () => {
 
           {/* Task form or detail view */}
           {(showForm || selectedTask) && (
-            <div className="col-span-full md:col-span-3 overflow-auto">
+            <div className="col-span-full md:col-span-3 rounded-lg ">
               {showForm ? (
                 <TaskForm
                   task={editingTask}

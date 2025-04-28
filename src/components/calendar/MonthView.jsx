@@ -7,7 +7,7 @@ import {
   TbGripVertical,
 } from "react-icons/tb";
 
-const MonthView = ({ currentDate, events, onSlotClick }) => {
+const MonthView = ({ currentDate, events, onSlotClick, onEventClick }) => {
   // Get days in month
   const getDaysInMonth = (date) => {
     const year = date.getFullYear();
@@ -149,7 +149,7 @@ const MonthView = ({ currentDate, events, onSlotClick }) => {
         {calendarGrid.map((day, index) => (
           <Droppable
             key={`${day.date.toISOString()}-${index}`}
-            droppableId={`${day.date.toISOString()}`}
+            droppableId={`date:${day.date.getFullYear()}-${String(day.date.getMonth() + 1).padStart(2, '0')}-${String(day.date.getDate()).padStart(2, '0')}`}
             type="event"
           >
             {(provided, snapshot) => (
@@ -186,12 +186,17 @@ const MonthView = ({ currentDate, events, onSlotClick }) => {
                             event.type
                           )} p-1 rounded-md text-xs border shadow-sm ${
                             snapshot.isDragging ? "shadow-lg" : ""
-                          }`}
+                          } cursor-pointer`}
+                          onClick={(e) => {
+                            e.stopPropagation(); // Prevent triggering the grid click
+                            onEventClick(event, e);
+                          }}
                         >
                           <div className="flex items-center">
                             <div
                               {...provided.dragHandleProps}
                               className="mr-1 cursor-grab"
+                              onClick={(e) => e.stopPropagation()} // Prevent triggering event click when using drag handle
                             >
                               <TbGripVertical className="h-3 w-3" />
                             </div>

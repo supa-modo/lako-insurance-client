@@ -157,7 +157,7 @@ const TaskList = ({
       : sortedTasks.filter((task) => task.completed);
 
   return (
-    <div className="bg-white rounded-lg shadow-sm overflow-hidden flex flex-col h-full">
+    <div className="bg-white rounded-lg shadow-sm overflow-hidden flex flex-col h-[calc(100vh-16rem)]">
       {/* Toolbar - Fixed */}
       <div className="bg-primary-600 px-4 py-3 border-b border-neutral-200 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center space-x-2">
@@ -454,6 +454,8 @@ const TaskList = ({
                       >
                         {task.priority === "high" ? (
                           <TbStarFilled className="h-5 w-5 text-yellow-500" />
+                        ) : task.priority === "medium" ? (
+                          <TbStar className="h-5 w-5 text-amber-500" />
                         ) : (
                           <TbStar className="h-5 w-5" />
                         )}

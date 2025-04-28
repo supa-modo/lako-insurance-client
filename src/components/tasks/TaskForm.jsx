@@ -163,8 +163,8 @@ const TaskForm = ({ task = null, onSave, onCancel }) => {
     setUserSearchQuery(`${user.firstName} ${user.lastName}`);
     setFormData({
       ...formData,
-      assignedTo: user.id,
-      assignedToId: user.id,
+      assignedTo: user.id, // Store the user ID in assignedTo
+      assignedToId: user.id, // Keep assignedToId for UI purposes
     });
     setShowUserResults(false);
   };
@@ -229,6 +229,16 @@ const TaskForm = ({ task = null, onSave, onCancel }) => {
 
     // Remove dueTime from final data
     delete taskData.dueTime;
+    
+    // Ensure assignedTo is always the UUID (assignedToId) if available
+    // This fixes the bug where assignedTo could be sent as a name string
+    if (taskData.assignedToId) {
+      taskData.assignedTo = taskData.assignedToId;
+    } else if (typeof taskData.assignedTo === 'string' && 
+              !taskData.assignedTo.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+      // If assignedTo is not a UUID, set it to empty string
+      taskData.assignedTo = '';
+    }
 
     // If editing, preserve the ID
     if (task && task.id) {

@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   TbX,
   TbCalendarEvent,
   TbClock,
   TbUser,
+  TbUsers,
   TbTag,
   TbStar,
   TbAlignLeft,
@@ -12,9 +13,16 @@ import {
   TbTrash,
   TbMailForward,
   TbAlertCircle,
+  TbAlertTriangle,
   TbExternalLink,
   TbClipboardCheck,
+  TbMapPin,
+  TbSearch,
+  TbLoader,
+  TbLoader2,
 } from "react-icons/tb";
+import userService from "../../services/userService";
+import { PiUsersDuotone } from "react-icons/pi";
 
 const EventModal = ({
   event,
@@ -32,16 +40,43 @@ const EventModal = ({
     type: "meeting",
     priority: "medium",
     assignedTo: "",
+    assignedToId: "", // Store the user ID
     location: "",
     isCompleted: false,
   });
 
   const [errors, setErrors] = useState({});
   const [mode, setMode] = useState(event && !isEditing ? "view" : "edit");
+  
+  // User search state
+  const [userSearchQuery, setUserSearchQuery] = useState("");
+  const [userSearchResults, setUserSearchResults] = useState([]);
+  const [showUserResults, setShowUserResults] = useState(false);
+  const [searchingUsers, setSearchingUsers] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const userSearchRef = useRef(null);
 
   useEffect(() => {
     if (event) {
-      setFormData(event);
+      // Extract assignee information if present
+      let assignedToValue = "";
+      let assignedToIdValue = "";
+      let selectedUserValue = null;
+      
+      if (event.assignedTo && event.creator) {
+        assignedToValue = `${event.creator.firstName} ${event.creator.lastName}`;
+        assignedToIdValue = event.creator.id;
+        selectedUserValue = event.creator;
+      }
+      
+      setFormData({
+        ...event,
+        assignedTo: assignedToValue,
+        assignedToId: assignedToIdValue,
+      });
+      
+      setSelectedUser(selectedUserValue);
+      setUserSearchQuery(assignedToValue);
       setMode(isEditing ? "edit" : "view");
     } else if (slot) {
       const slotDate = new Date(slot);
@@ -54,11 +89,89 @@ const EventModal = ({
     }
   }, [event, slot, isEditing]);
 
+  // Handle user search
+  const searchUsers = async (query) => {
+    if (!query || query.trim() === "") {
+      setUserSearchResults([]);
+      return;
+    }
+    
+    setSearchingUsers(true);
+    try {
+      const response = await userService.searchUsers(query);
+      if (response.success) {
+        setUserSearchResults(response.data);
+      } else {
+        console.error("Failed to search users:", response.message);
+        setUserSearchResults([]);
+      }
+    } catch (error) {
+      console.error("Error searching users:", error);
+      setUserSearchResults([]);
+    } finally {
+      setSearchingUsers(false);
+    }
+  };
+  
+  // Debounce user search
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (userSearchQuery) {
+        searchUsers(userSearchQuery);
+      }
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [userSearchQuery]);
+  
+  // Handle user selection
+  const handleUserSelect = (user) => {
+    setSelectedUser(user);
+    setUserSearchQuery(`${user.firstName} ${user.lastName}`);
+    setFormData({
+      ...formData,
+      assignedTo: user.id,
+      assignedToId: user.id,
+    });
+    setShowUserResults(false);
+  };
+  
+  // Handle user search input change
+  const handleUserSearchChange = (e) => {
+    const query = e.target.value;
+    setUserSearchQuery(query);
+    setShowUserResults(true);
+    
+    // If search is cleared, clear the selected user
+    if (!query) {
+      setSelectedUser(null);
+      setFormData({
+        ...formData,
+        assignedTo: "",
+        assignedToId: "",
+      });
+    }
+  };
+  
+  // Close user results when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userSearchRef.current && !userSearchRef.current.contains(event.target)) {
+        setShowUserResults(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
-    onSave(formData);
-    onClose();
+      onSave(formData);
+      onClose();
     }
   };
 
@@ -82,12 +195,18 @@ const EventModal = ({
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
+    });
 
-    // Clear error when field is updated
+    // Clear error for the field being edited
     if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: "" }));
+      setErrors({
+        ...errors,
+        [name]: undefined,
+      });
     }
   };
 
@@ -302,182 +421,249 @@ const EventModal = ({
   );
 
   const renderEditMode = () => (
-        <form
-          onSubmit={handleSubmit}
-          className="overflow-y-auto h-[calc(100vh-84px)]"
-        >
-          <div className="p-6 space-y-6">
-            {/* Title */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+    <form onSubmit={handleSubmit} className="overflow-y-auto h-[calc(100vh-84px)]">
+      <div className="p-5 space-y-4">
+        {/* Title */}
+        <div>
+          <label htmlFor="title" className="block text-sm font-medium text-neutral-700 mb-1">
             Event Title <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-            className={`w-full px-4 py-2 bg-neutral-100 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 ${
-              errors.title ? "border-red-300 bg-red-50" : "border-gray-300"
-            }`}
-                placeholder="Enter event title"
-              />
+          </label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            className={`block w-full bg-neutral-100 text-gray-600 font-medium rounded-md border placeholder:text-gray-400 placeholder:font-normal ${errors.title ? "border-red-300" : "border-neutral-300"} focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm p-2.5`}
+            placeholder="Enter event title"
+          />
           {errors.title && (
-            <div className="text-red-500 text-xs mt-1 flex items-center">
-              <TbAlertCircle className="mr-1" /> {errors.title}
-            </div>
+            <p className="mt-1 text-sm text-red-600 flex items-center">
+              <TbAlertTriangle className="h-4 w-4 mr-1" /> {errors.title}
+            </p>
           )}
-            </div>
+        </div>
 
-            {/* Date and Time */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-              Start <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="datetime-local"
-                  name="start"
-                  value={
-                    formData.start instanceof Date
-                      ? formData.start.toISOString().slice(0, 16)
-                      : formData.start
-                  }
-                  onChange={handleChange}
-              className={`w-full px-4 py-2 bg-neutral-100 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 ${
-                errors.start ? "border-red-300 bg-red-50" : "border-gray-300"
-              }`}
-                />
+        {/* Date and Time */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="start" className="block text-sm font-medium text-neutral-700 mb-1">
+              Start Date & Time <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <div className="absolute top-2.5 left-3 text-neutral-600">
+                <TbCalendarEvent className="h-5 w-5" />
+              </div>
+              <input
+                type="datetime-local"
+                id="start"
+                name="start"
+                value={
+                  formData.start instanceof Date
+                    ? formData.start.toISOString().slice(0, 16)
+                    : formData.start
+                }
+                onChange={handleChange}
+                className={`block w-full bg-neutral-100 text-gray-600 font-medium rounded-md border pl-10 ${errors.start ? "border-red-300" : "border-neutral-300"} focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm p-2.5`}
+              />
+            </div>
             {errors.start && (
-              <div className="text-red-500 text-xs mt-1 flex items-center">
-                <TbAlertCircle className="mr-1" /> {errors.start}
-              </div>
+              <p className="mt-1 text-sm text-red-600 flex items-center">
+                <TbAlertTriangle className="h-4 w-4 mr-1" /> {errors.start}
+              </p>
             )}
+          </div>
+          <div>
+            <label htmlFor="end" className="block text-sm font-medium text-neutral-700 mb-1">
+              End Date & Time <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <div className="absolute top-2.5 left-3 text-neutral-600">
+                <TbClock className="h-5 w-5" />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-              End <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="datetime-local"
-                  name="end"
-                  value={
-                    formData.end instanceof Date
-                      ? formData.end.toISOString().slice(0, 16)
-                      : formData.end
-                  }
-                  onChange={handleChange}
-              className={`w-full px-4 py-2 bg-neutral-100 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 ${
-                errors.end ? "border-red-300 bg-red-50" : "border-gray-300"
-              }`}
-                />
+              <input
+                type="datetime-local"
+                id="end"
+                name="end"
+                value={
+                  formData.end instanceof Date
+                    ? formData.end.toISOString().slice(0, 16)
+                    : formData.end
+                }
+                onChange={handleChange}
+                className={`block w-full bg-neutral-100 text-gray-600 font-medium rounded-md border pl-10 ${errors.end ? "border-red-300" : "border-neutral-300"} focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm p-2.5`}
+              />
+            </div>
             {errors.end && (
-              <div className="text-red-500 text-xs mt-1 flex items-center">
-                <TbAlertCircle className="mr-1" /> {errors.end}
-              </div>
+              <p className="mt-1 text-sm text-red-600 flex items-center">
+                <TbAlertTriangle className="h-4 w-4 mr-1" /> {errors.end}
+              </p>
             )}
+          </div>
+        </div>
+
+        {/* Event Type */}
+        <div>
+          <label htmlFor="type" className="block text-sm font-medium text-neutral-700 mb-1">
+            Event Type
+          </label>
+          <div className="relative">
+            <div className="absolute top-2.5 left-3 text-neutral-600">
+              <TbTag className="h-5 w-5" />
+            </div>
+            <select
+              id="type"
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              className="block w-full bg-neutral-100 text-gray-600 font-medium rounded-md border border-neutral-300 pl-10 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm p-2.5"
+            >
+              <option value="meeting">Meeting</option>
+              <option value="task">Task</option>
+              <option value="reminder">Reminder</option>
+              <option value="appointment">Appointment</option>
+            </select>
           </div>
         </div>
 
         {/* Location */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="location" className="block text-sm font-medium text-neutral-700 mb-1">
             Location
           </label>
-          <input
-            type="text"
-            name="location"
-            value={formData.location || ""}
-            onChange={handleChange}
-            className="w-full px-4 py-2 bg-neutral-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-            placeholder="Add location (optional)"
-          />
+          <div className="relative">
+            <div className="absolute top-2.5 left-3 text-neutral-600">
+              <TbMapPin className="h-5 w-5" />
             </div>
+            <input
+              type="text"
+              id="location"
+              name="location"
+              value={formData.location || ""}
+              onChange={handleChange}
+              className="block w-full bg-neutral-100 text-gray-600 font-medium rounded-md border border-neutral-300 pl-10 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm p-2.5 placeholder:text-gray-400 placeholder:font-normal"
+              placeholder="Add location (optional)"
+            />
+          </div>
+        </div>
 
-            {/* Event Type */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Event Type
+        {/* Priority */}
+        <div>
+          <label className="block text-sm font-medium text-neutral-700 mb-1">
+            Priority
+          </label>
+          <div className="flex space-x-4">
+            {["low", "medium", "high"].map((priority) => (
+              <label key={priority} className="flex items-center">
+                <div className={`relative flex items-center justify-center h-[1.1rem] w-[1.1rem] rounded-md border ${formData.priority === priority ? 'border-primary-500 bg-primary-50' : 'border-neutral-400'}`}>
+                  <input
+                    type="radio"
+                    name="priority"
+                    value={priority}
+                    checked={formData.priority === priority}
+                    onChange={handleChange}
+                    className="absolute opacity-0 h-full w-full cursor-pointer"
+                  />
+                  {formData.priority === priority && (
+                    <div className="h-2 w-2 rounded-sm bg-primary-500"></div>
+                  )}
+                </div>
+                <span className={`ml-2 text-sm ${formData.priority === priority ? 'text-primary-700 font-medium' : 'text-neutral-700'} capitalize`}>
+                  {priority}
+                </span>
               </label>
-              <select
-                name="type"
-                value={formData.type}
-                onChange={handleChange}
-            className="w-full px-4 py-2 bg-neutral-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-              >
-                <option value="meeting">Meeting</option>
-                <option value="task">Task</option>
-                <option value="reminder">Reminder</option>
-                <option value="appointment">Appointment</option>
-              </select>
+            ))}
+          </div>
+        </div>
+
+        {/* Assigned To - User Search */}
+        <div ref={userSearchRef}>
+          <label htmlFor="userSearch" className="block text-sm font-medium text-neutral-700 mb-1">
+            Assigned To
+          </label>
+          <div className="relative">
+            <div className="absolute top-2.5 left-3 text-neutral-600">
+              {searchingUsers ? (
+                <TbLoader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <PiUsersDuotone className="h-5 w-5" />
+              )}
             </div>
-
-            {/* Priority */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Priority
-              </label>
-              <div className="flex space-x-2">
-                {["low", "medium", "high"].map((priority) => (
-                  <button
-                    key={priority}
-                    type="button"
-                    className={`flex-1 py-2 px-3 rounded-lg border ${
-                      formData.priority === priority
-                        ? priority === "high"
-                          ? "bg-red-100 border-red-300 text-red-800"
-                          : priority === "medium"
-                          ? "bg-yellow-100 border-yellow-300 text-yellow-800"
-                          : "bg-blue-100 border-blue-300 text-blue-800"
-                        : "bg-white border-gray-300 text-gray-700"
-                    } transition-colors`}
-                onClick={() => handlePriorityChange(priority)}
-                  >
-                    {priority.charAt(0).toUpperCase() + priority.slice(1)}
-                  </button>
-                ))}
+            <input
+              type="text"
+              id="userSearch"
+              value={userSearchQuery}
+              onChange={handleUserSearchChange}
+              onFocus={() => setShowUserResults(true)}
+              className="block w-full bg-neutral-100 text-gray-600 font-medium rounded-md border border-neutral-300 pl-10 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm p-2.5 placeholder:text-gray-400 placeholder:font-normal"
+              placeholder="Search for a user by name or email"
+              autoComplete="off"
+            />
+            
+            {/* User search results dropdown */}
+            {showUserResults && userSearchQuery && (
+              <div className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm border border-neutral-200">
+                {userSearchResults.length === 0 ? (
+                  <div className="px-4 py-2 text-sm text-gray-500">
+                    {searchingUsers ? "Searching..." : "No users found"}
+                  </div>
+                ) : (
+                  userSearchResults.map((user) => (
+                    <div
+                      key={user.id}
+                      className="cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-neutral-100"
+                      onClick={() => handleUserSelect(user)}
+                    >
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0 h-6 w-6 rounded-full bg-primary-100 flex items-center justify-center text-primary-600">
+                          {user.firstName.charAt(0)}
+                        </div>
+                        <span className="ml-3 block font-medium truncate">
+                          {user.firstName} {user.lastName}
+                        </span>
+                        <span className="ml-2 truncate text-gray-500">{user.email}</span>
+                      </div>
+                      {selectedUser && selectedUser.id === user.id && (
+                        <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-primary-600">
+                          <TbCheck className="h-5 w-5" />
+                        </span>
+                      )}
+                    </div>
+                  ))
+                )}
               </div>
-            </div>
+            )}
+          </div>
+        </div>
 
-            {/* Assigned To */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Assigned To
-              </label>
-              <select
-                name="assignedTo"
-            value={formData.assignedTo || ""}
-                onChange={handleChange}
-            className="w-full px-4 py-2 bg-neutral-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-              >
-                <option value="">Not Assigned</option>
-                <option value="Mary W.">Mary W.</option>
-                <option value="James O.">James O.</option>
-                <option value="Sarah N.">Sarah N.</option>
-              </select>
+        {/* Description */}
+        <div>
+          <label htmlFor="description" className="block text-sm font-medium text-neutral-700 mb-1">
+            Description
+          </label>
+          <div className="relative">
+            <div className="absolute top-3 left-3 text-neutral-600">
+              <TbAlignLeft className="h-5 w-5" />
             </div>
-
-            {/* Description */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Description
-              </label>
-              <textarea
-                name="description"
-            value={formData.description || ""}
-                onChange={handleChange}
-                rows="4"
-            className="w-full px-4 py-2 bg-neutral-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                placeholder="Add event description"
-              ></textarea>
+            <textarea
+              id="description"
+              name="description"
+              value={formData.description || ""}
+              onChange={handleChange}
+              rows="5"
+              className="block w-full bg-neutral-100 text-gray-600 font-medium rounded-md border border-neutral-300 pl-10 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm p-2.5 placeholder:text-gray-400 placeholder:font-normal"
+              placeholder="Enter event description"
+            ></textarea>
+          </div>
         </div>
 
         {/* Completion Status */}
         {formData.type === "task" && (
-          <div className="flex items-center">
+          <div className="flex items-center mt-2">
             <input
               type="checkbox"
               id="isCompleted"
+              name="isCompleted"
               checked={formData.isCompleted || false}
               onChange={handleToggleCompletion}
               className="h-4 w-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
@@ -490,25 +676,25 @@ const EventModal = ({
             </label>
           </div>
         )}
-            </div>
+      </div>
 
-            {/* Form Actions */}
-      <div className="border-t border-gray-200 py-4 px-6 flex justify-end space-x-3">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 flex items-center"
-              >
-                <TbCheck className="mr-2" />
-                {event ? "Update Event" : "Add Event"}
-              </button>
-            </div>
+      {/* Form Actions */}
+      <div className="border-t border-gray-200 py-4 px-5 flex justify-end space-x-3">
+        <button
+          type="button"
+          onClick={onClose}
+          className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 text-sm font-medium"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          className="px-5 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 flex items-center text-sm font-medium"
+        >
+          <TbCheck className="mr-1.5 h-4 w-4" />
+          {event ? "Update Event" : "Add Event"}
+        </button>
+      </div>
     </form>
   );
 
@@ -518,7 +704,7 @@ const EventModal = ({
       onClick={handleBackdropClick}
     >
       <div
-        className="w-[500px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-2xl"
+        className="w-[600px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-2xl"
         style={{
           animation: "slide-in 0.3s ease-out forwards",
         }}
@@ -544,7 +730,7 @@ const EventModal = ({
         {mode === "view" ? renderViewMode() : renderEditMode()}
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes slide-in {
           from {
             transform: translateX(100%);

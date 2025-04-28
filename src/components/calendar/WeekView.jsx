@@ -7,7 +7,7 @@ import {
   TbCalendarEvent,
 } from "react-icons/tb";
 
-const WeekView = ({ currentDate, events, onSlotClick }) => {
+const WeekView = ({ currentDate, events, onSlotClick, onEventClick }) => {
   // Get week dates
   const getWeekDates = (date) => {
     const week = [];
@@ -114,7 +114,7 @@ const WeekView = ({ currentDate, events, onSlotClick }) => {
               {hours.map((hour) => (
                 <Droppable
                   key={`${date.toISOString()}-${hour}`}
-                  droppableId={`${date.toISOString()}-${hour}`}
+                  droppableId={`date:${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}-hour:${hour}`}
                 >
                   {(provided, snapshot) => (
                     <div
@@ -144,12 +144,17 @@ const WeekView = ({ currentDate, events, onSlotClick }) => {
                                   event.type
                                 )} p-1 rounded-md text-xs border shadow-sm mb-1 ${
                                   snapshot.isDragging ? "shadow-lg" : ""
-                                }`}
+                                } cursor-pointer`}
+                                onClick={(e) => {
+                                  e.stopPropagation(); // Prevent triggering the grid click
+                                  onEventClick(event, e);
+                                }}
                               >
                                 <div className="flex items-center">
                                   <div
                                     {...provided.dragHandleProps}
                                     className="mr-1 cursor-grab"
+                                    onClick={(e) => e.stopPropagation()} // Prevent triggering event click when using drag handle
                                   >
                                     <TbGripVertical className="h-3 w-3" />
                                   </div>
