@@ -217,8 +217,9 @@ const NewComparisonPage = () => {
           </motion.div>
         </main>
 
-        <Footer />
+        
       </div>
+      <Footer />
     </>
   );
 };

@@ -379,7 +379,7 @@ const BenefitsSection = () => {
                     whileTap={{ scale: 0.98 }}
                   >
                     <Link
-                      to="/get-quote"
+                      to="/compare"
                       className="inline-flex items-center px-6 py-2 lg:py-3.5 bg-white text-primary-700 font-medium rounded-lg shadow-xl hover:bg-primary-50 transition-all duration-200 text-center group"
                     >
                       Get a quote now

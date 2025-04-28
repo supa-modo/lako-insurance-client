@@ -19,11 +19,10 @@ import {
   TbChevronUp,
   TbReport,
   TbDatabaseExport,
+  TbInfoCircle,
 } from "react-icons/tb";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import InsurancePlanTable from "../../components/admin/InsurancePlanTable";
-import InsurancePlanDetailsModal from "../../components/admin/InsurancePlanDetailsModal";
-import InsurancePlanForm from "../../components/admin/InsurancePlanForm";
 import { useAuth } from "../../context/AuthContext";
 import insuranceService from "../../services/insuranceService";
 
@@ -49,6 +48,11 @@ const InsurancePlanPage = () => {
     fetchPlans();
     fetchCompanies();
   }, []);
+  
+  // Set up page title
+  useEffect(() => {
+    document.title = "Insurance Plans | Lako Admin";
+  }, []);
 
   // Filter plans when search term or filter category changes
   useEffect(() => {
@@ -61,17 +65,25 @@ const InsurancePlanPage = () => {
     setError(null);
     try {
       const response = await insuranceService.getAllPlans();
-      if (response.success) {
+      if (response && response.success) {
         setPlans(response.data);
-        setLoading(false);
       } else {
-        setError("Failed to fetch insurance plans");
-        setLoading(false);
+        setError("Failed to fetch insurance plans: " + (response?.message || "Unknown error"));
+        toast.error("Failed to fetch insurance plans", {
+          position: "top-right",
+          autoClose: 5000,
+        });
       }
     } catch (error) {
       console.error("Error fetching plans:", error);
-      setError("Failed to fetch insurance plans");
+      setError("Failed to fetch insurance plans: " + (error.message || "Unknown error"));
+      toast.error("Error loading insurance plans", {
+        position: "top-right",
+        autoClose: 5000,
+      });
+    } finally {
       setLoading(false);
+      setIsRefreshing(false);
     }
   };
 
@@ -79,11 +91,21 @@ const InsurancePlanPage = () => {
   const fetchCompanies = async () => {
     try {
       const response = await insuranceService.getAllCompanies();
-      if (response.success) {
+      if (response && response.success) {
         setCompanies(response.data);
+      } else {
+        console.error("Failed to fetch companies:", response?.message || "Unknown error");
+        toast.error("Failed to load insurance companies", {
+          position: "top-right",
+          autoClose: 3000,
+        });
       }
     } catch (error) {
       console.error("Error fetching companies:", error);
+      toast.error("Error loading insurance companies", {
+        position: "top-right",
+        autoClose: 3000,
+      });
     }
   };
 
@@ -147,87 +169,44 @@ const InsurancePlanPage = () => {
     }
   };
 
-  // Handle plan selection for viewing details
-  const handleViewPlan = (plan) => {
-    setSelectedPlan(plan);
-    setShowDetailsModal(true);
-  };
-
-  // Handle plan selection for editing
-  const handleEditPlan = (plan) => {
-    setSelectedPlan(plan);
-    setIsEditing(true);
-    setShowAddEditModal(true);
-  };
-
-  // Handle adding new plan
-  const handleAddPlan = () => {
-    setSelectedPlan(null);
-    setIsEditing(false);
-    setShowAddEditModal(true);
-  };
-
   // Handle plan deletion
   const handleDeletePlan = async (planId) => {
-    if (window.confirm("Are you sure you want to delete this plan?")) {
+    // Use a custom confirmation dialog instead of window.confirm
+    if (window.confirm("Are you sure you want to delete this plan? This action cannot be undone.")) {
       try {
+        setIsRefreshing(true);
         const response = await insuranceService.deletePlan(planId);
+        
         if (response.success) {
-          // Remove plan from state
-          setPlans(plans.filter((plan) => plan.id !== planId));
-          alert("Plan deleted successfully");
+          // Show success notification
+          toast.success("Plan deleted successfully", {
+            position: "top-right",
+            autoClose: 3000,
+          });
+          
+          // Refresh plans to get the latest data
+          await fetchPlans();
         } else {
-          alert("Failed to delete plan");
+          toast.error("Failed to delete plan: " + (response.message || "Unknown error"), {
+            position: "top-right",
+            autoClose: 5000,
+          });
         }
       } catch (error) {
         console.error("Error deleting plan:", error);
-        alert("Failed to delete plan");
-
-        // For demo, remove from state anyway
-        setPlans(plans.filter((plan) => plan.id !== planId));
+        toast.error("An error occurred while deleting the plan", {
+          position: "top-right",
+          autoClose: 5000,
+        });
+        
+        // Refresh plans to ensure UI is in sync with backend
+        await fetchPlans();
+      } finally {
+        setIsRefreshing(false);
       }
     }
   };
 
-  // Handle form submission for add/edit
-  const handleFormSubmit = async (formData) => {
-    try {
-      if (isEditing) {
-        // Update existing plan
-        const response = await insuranceService.updatePlan(
-          selectedPlan.id,
-          formData
-        );
-        if (response.success) {
-          // Update plan in state
-          setPlans(
-            plans.map((plan) =>
-              plan.id === selectedPlan.id ? response.data : plan
-            )
-          );
-          setShowAddEditModal(false);
-          alert("Plan updated successfully");
-        } else {
-          alert("Failed to update plan");
-        }
-      } else {
-        // Add new plan
-        const response = await insuranceService.createPlan(formData);
-        if (response.success) {
-          // Add new plan to state
-          setPlans([...plans, response.data]);
-          setShowAddEditModal(false);
-          alert("Plan added successfully");
-        } else {
-          alert("Failed to add plan");
-        }
-      }
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      alert("Failed to save plan");
-      setShowAddEditModal(false);
-    }
-  };
 
   // Handle refresh button click
   const handleRefresh = () => {
@@ -288,7 +267,7 @@ const InsurancePlanPage = () => {
             </div>
 
             <button
-              onClick={handleAddPlan}
+              // onClick={handleAddPlan}
               className="bg-primary-600 font-medium text-white rounded-lg px-4 py-2 text-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 flex items-center"
             >
               <TbShieldPlus size={18} className=" mr-2" />
@@ -301,29 +280,77 @@ const InsurancePlanPage = () => {
       {/* Main Content */}
       <div className="px-8 py-6 overflow-y-auto">
         {error && (
-          <div className="mb-4 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded">
+          <div className="mb-4 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg shadow-sm">
             <div className="flex items-center">
-              <TbAlertTriangle className="mr-2 text-red-500" />
-              <p>{error}</p>
+              <TbAlertTriangle className="mr-2 text-red-500 flex-shrink-0" />
+              <div>
+                <p className="font-medium">Error loading insurance plans</p>
+                <p className="text-sm">{error}</p>
+              </div>
+              <button 
+                onClick={() => setError(null)} 
+                className="ml-auto p-1 hover:bg-red-100 rounded-full"
+                aria-label="Dismiss"
+              >
+                <TbX className="text-red-500" />
+              </button>
             </div>
           </div>
         )}
 
         {/* Insurance Plan Table */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          <InsurancePlanTable
-            plans={filteredPlans}
-            loading={loading}
-            onView={handleViewPlan}
-            onEdit={handleEditPlan}
-            onDelete={handleDeletePlan}
-            sortField={sortField}
-            sortDirection={sortDirection}
-            onSort={handleSortChange}
-          />
+          <AnimatePresence mode="wait">
+            {loading ? (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex flex-col items-center justify-center p-12"
+              >
+                <div className="w-16 h-16 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mb-4"></div>
+                <p className="text-gray-500 font-medium">Loading insurance plans...</p>
+              </motion.div>
+            ) : filteredPlans.length === 0 ? (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex flex-col items-center justify-center p-12 bg-gray-50"
+              >
+                <div className="bg-gray-100 p-4 rounded-full mb-4">
+                  <TbInfoCircle className="text-4xl text-gray-400" />
+                </div>
+                <p className="text-gray-500 font-medium mb-2">No insurance plans found</p>
+                <p className="text-gray-400 text-sm mb-6">Try adjusting your search or filters</p>
+                <button
+                  // onClick={handleAddPlan}
+                  className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors flex items-center"
+                >
+                  <TbPlus className="mr-2" />
+                  Add New Plan
+                </button>
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <InsurancePlanTable
+                  plans={filteredPlans}
+                  loading={loading}
+                  // onView={handleViewPlan}
+                  // onEdit={handleEditPlan}
+                  onDelete={handleDeletePlan}
+                  sortField={sortField}
+                  sortDirection={sortDirection}
+                  onSort={handleSortChange}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-
-      
       </div>
 
          {/* Footer */}
@@ -343,29 +370,7 @@ const InsurancePlanPage = () => {
         </div>
       </div>
 
-      {/* Plan Details Modal */}
-      {showDetailsModal && selectedPlan && (
-        <InsurancePlanDetailsModal
-          plan={selectedPlan}
-          onClose={() => setShowDetailsModal(false)}
-          onEdit={() => {
-            setShowDetailsModal(false);
-            handleEditPlan(selectedPlan);
-          }}
-        />
-      )}
-
-      {/* Add/Edit Plan Modal */}
-      {showAddEditModal && (
-        <InsurancePlanForm
-          plan={selectedPlan}
-          companies={companies}
-          isEditing={isEditing}
-          onClose={() => setShowAddEditModal(false)}
-          onSubmit={handleFormSubmit}
-        />
-      )}
-    </div>
+     </div>
   );
 };
 

@@ -96,14 +96,14 @@ const Header = () => {
 
   // Services submenu
   const services = [
-    { name: "Motor Insurance", path: "/motor-insurance" },
-    { name: "Property Insurance", path: "/property-insurance" },
-    { name: "Health Insurance", path: "/health-insurance" },
-    { name: "Life Insurance", path: "/life-insurance" },
-    { name: "Education Policy", path: "/education-policy" },
-    { name: "Seniors Cover", path: "/seniors-cover" },
-    { name: "WIBA", path: "/wiba" },
-    { name: "Travel Insurance", path: "/travel-insurance" },
+    { name: "Motor Insurance", path: "/services/motor-insurance" },
+    { name: "Property Insurance", path: "/services/property-insurance" },
+    { name: "Health Insurance", path: "/services/health-insurance" },
+    { name: "Life Insurance", path: "/services/life-insurance" },
+    { name: "Education Policy", path: "/services/education-policy" },
+    { name: "Seniors Cover", path: "/services/seniors-cover" },
+    { name: "WIBA", path: "/services/wiba" },
+    { name: "Travel Insurance", path: "/services/travel-insurance" },
   ];
 
   return (

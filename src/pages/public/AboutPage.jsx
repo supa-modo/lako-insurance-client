@@ -594,7 +594,7 @@ const AboutPage = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center"
+              className="flex flex-col sm:flex-row gap-2 md:gap-4 justify-center"
             >
               <motion.div
                 whileHover={{ scale: 1.05 }}
@@ -616,7 +616,7 @@ const AboutPage = () => {
                   to="/compare"
                   className="px-8 py-3 bg-secondary-500 text-white font-medium rounded-lg shadow-lg hover:bg-secondary-600 transition-all duration-200 w-full sm:w-auto inline-block"
                 >
-                  Compare Plans
+                  Get an Insurance Quote
                 </Link>
               </motion.div>
             </motion.div>

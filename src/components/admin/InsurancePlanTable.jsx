@@ -105,7 +105,7 @@ const InsurancePlanTable = ({
               onClick={() => handleSortClick("monthlyCost")}
             >
               <div className="flex items-center">
-                Monthly Cost {renderSortIndicator("monthlyCost")}
+                Base Premium {renderSortIndicator("annualPremium")}
               </div>
             </th>
             <th
@@ -169,7 +169,7 @@ const InsurancePlanTable = ({
                 {plan.ageRange}
               </td>
               <td className="px-6 py-3.5 whitespace-nowrap text-sm text-gray-500">
-                {plan.monthlyCost}
+                {plan.annualPremium}
               </td>
               <td className="px-6 py-3.5 whitespace-nowrap text-sm text-gray-500">
                 {plan.subscribers}

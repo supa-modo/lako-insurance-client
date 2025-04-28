@@ -237,7 +237,7 @@ const ServiceDetailsPage = () => {
 
                   <div className="mt-6">
                     <Link
-                      to="/get-quote"
+                      to="/compare "
                       className="inline-flex items-center px-6 py-3 text-sm md:text-base bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
                     >
                       Get a Quote

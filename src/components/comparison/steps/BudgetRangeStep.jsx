@@ -148,11 +148,11 @@ const BudgetRangeStep = ({ formData, updateFormData, nextStep, prevStep }) => {
             <div className="flex flex-col items-center text-center">
               <p className="font-medium text-lg mb-2">{range.label}</p>
               <p className="text-sm text-white/80 mb-2">{range.description}</p>
-              {range.recommended && (
+              {/* {range.recommended && (
                 <span className="bg-white/30 text-white text-xs px-3 py-1 rounded-full">
                   Recommended
                 </span>
-              )}
+              )} */}
             </div>
           </motion.div>
         ))}

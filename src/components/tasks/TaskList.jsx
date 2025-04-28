@@ -23,7 +23,7 @@ const TaskList = ({
   onDeleteTask,
   onEditTask,
   searchQuery,
-  handleSearch,
+  setSearchQuery,
 }) => {
   const [sortField, setSortField] = useState("dueDate");
   const [sortDirection, setSortDirection] = useState("asc");
@@ -305,17 +305,17 @@ const TaskList = ({
           <div className="text-sm text-secondary-500">
             {filteredTasks.length} task{filteredTasks.length !== 1 ? "s" : ""}
           </div>
-          <form onSubmit={handleSearch} className="flex max-w-md">
+          <form onSubmit={(e) => setSearchQuery(e.target.value)} className="flex max-w-md">
             <div className="relative flex-1">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <TbSearch className="h-5 w-5 text-gray-400" />
               </div>
               <input
                 type="text"
-                className="block w-full pl-10 pr-3 py-2 bg-white text-gray-500 font-medium border border-neutral-300 rounded-l-md focus:ring-1 focus:ring-primary-500 focus:border-primary-500 text-sm"
+                className="block w-full pl-10 pr-3 py-2 bg-white text-gray-500 font-medium border border-neutral-300 rounded-l-md focus:outline-none focus:ring-1 focus:ring-secondary-500 focus:border-secondary-500 text-sm"
                 placeholder="Search tasks..."
                 value={searchQuery}
-                // onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
             <button
@@ -429,10 +429,10 @@ const TaskList = ({
                             </span>
                           )}
 
-                          {task.assignedTo && (
+                          {task.assignee && (
                             <span className="text-xs text-neutral-600 flex items-center">
                               <PiUsersDuotone className="h-3.5 w-3.5 mr-1" />
-                              {task.assignedTo}
+                              {task.assignee.firstName} {task.assignee.lastName}
                             </span>
                           )}
                         </div>

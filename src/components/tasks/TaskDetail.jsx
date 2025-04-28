@@ -247,13 +247,13 @@ const TaskDetail = ({
               </div>
             )}
 
-            {task.assignedTo && (
+            {task.assignee && (
               <div>
                 <div className="flex items-center text-sm font-medium text-neutral-500 mb-2">
                   <PiUsersDuotone className="mr-2 h-5 w-5" />
                   Assigned To
                 </div>
-                <div className="text-neutral-700">{task.assignedTo}</div>
+                <div className="text-neutral-700">{task.assignee.firstName} {task.assignee.lastName}</div>
               </div>
             )}
           </div>

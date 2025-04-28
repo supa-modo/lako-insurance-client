@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { PiUsersDuotone } from "react-icons/pi";
 import {
   TbCalendarEvent,
@@ -9,7 +9,10 @@ import {
   TbCheck,
   TbPlus,
   TbAlertTriangle,
+  TbSearch,
+  TbLoader,
 } from "react-icons/tb";
+import userService from "../../services/userService";
 
 const TaskForm = ({ task = null, onSave, onCancel }) => {
   // Initialize form state
@@ -21,11 +24,20 @@ const TaskForm = ({ task = null, onSave, onCancel }) => {
     priority: "medium",
     category: "",
     assignedTo: "",
+    assignedToId: "", // Store the user ID
     completed: false,
   });
 
   const [errors, setErrors] = useState({});
   const [showCategoryOptions, setShowCategoryOptions] = useState(false);
+  
+  // User search state
+  const [userSearchQuery, setUserSearchQuery] = useState("");
+  const [userSearchResults, setUserSearchResults] = useState([]);
+  const [showUserResults, setShowUserResults] = useState(false);
+  const [searchingUsers, setSearchingUsers] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const userSearchRef = useRef(null);
 
   // Predefined categories for the insurance management context
   const predefinedCategories = [
@@ -55,6 +67,17 @@ const TaskForm = ({ task = null, onSave, onCancel }) => {
           hour12: false,
         });
       }
+      
+      // Handle assignee if present
+      let assignedToValue = "";
+      let assignedToIdValue = "";
+      let selectedUserValue = null;
+      
+      if (task.assignee) {
+        assignedToValue = `${task.assignee.firstName} ${task.assignee.lastName}`;
+        assignedToIdValue = task.assignee.id;
+        selectedUserValue = task.assignee;
+      }
 
       setFormData({
         title: task.title || "",
@@ -63,9 +86,13 @@ const TaskForm = ({ task = null, onSave, onCancel }) => {
         dueTime,
         priority: task.priority || "medium",
         category: task.category || "",
-        assignedTo: task.assignedTo || "",
+        assignedTo: assignedToValue,
+        assignedToId: assignedToIdValue,
         completed: task.completed || false,
       });
+      
+      setSelectedUser(selectedUserValue);
+      setUserSearchQuery(assignedToValue);
     }
   }, [task]);
 
@@ -94,6 +121,84 @@ const TaskForm = ({ task = null, onSave, onCancel }) => {
     });
     setShowCategoryOptions(false);
   };
+
+  // Handle user search
+  const searchUsers = async (query) => {
+    if (!query || query.trim() === "") {
+      setUserSearchResults([]);
+      return;
+    }
+    
+    setSearchingUsers(true);
+    try {
+      const response = await userService.searchUsers(query);
+      if (response.success) {
+        setUserSearchResults(response.data);
+      } else {
+        console.error("Failed to search users:", response.message);
+        setUserSearchResults([]);
+      }
+    } catch (error) {
+      console.error("Error searching users:", error);
+      setUserSearchResults([]);
+    } finally {
+      setSearchingUsers(false);
+    }
+  };
+  
+  // Debounce user search
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (userSearchQuery) {
+        searchUsers(userSearchQuery);
+      }
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [userSearchQuery]);
+  
+  // Handle user selection
+  const handleUserSelect = (user) => {
+    setSelectedUser(user);
+    setUserSearchQuery(`${user.firstName} ${user.lastName}`);
+    setFormData({
+      ...formData,
+      assignedTo: user.id,
+      assignedToId: user.id,
+    });
+    setShowUserResults(false);
+  };
+  
+  // Handle user search input change
+  const handleUserSearchChange = (e) => {
+    const query = e.target.value;
+    setUserSearchQuery(query);
+    setShowUserResults(true);
+    
+    // If search is cleared, clear the selected user
+    if (!query) {
+      setSelectedUser(null);
+      setFormData({
+        ...formData,
+        assignedTo: "",
+        assignedToId: "",
+      });
+    }
+  };
+  
+  // Close user results when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userSearchRef.current && !userSearchRef.current.contains(event.target)) {
+        setShowUserResults(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   // Handle form submission
   const handleSubmit = (e) => {
@@ -309,28 +414,97 @@ const TaskForm = ({ task = null, onSave, onCancel }) => {
           </div>
         </div>
 
-        {/* Assigned To */}
-        <div>
+        {/* Assigned To - User Search */}
+        <div ref={userSearchRef}>
           <label
-            htmlFor="assignedTo"
+            htmlFor="userSearch"
             className="block text-sm font-medium text-neutral-700 mb-1"
           >
             Assigned To
           </label>
           <div className="relative">
             <div className="absolute top-2.5 left-3 text-neutral-600">
-              <PiUsersDuotone className="h-5 w-5" />
+              {searchingUsers ? (
+                <TbLoader className="h-5 w-5 animate-spin" />
+              ) : (
+                <PiUsersDuotone className="h-5 w-5" />
+              )}
             </div>
             <input
               type="text"
-              id="assignedTo"
-              name="assignedTo"
-              value={formData.assignedTo}
-              onChange={handleChange}
-              className="block w-full bg-neutral-100 text-gray-600 font-medium   rounded-md border border-neutral-300 pl-10 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm p-2.5 placeholder:text-gray-400 placeholder:font-normal"
-              placeholder="Who should complete this task?"
+              id="userSearch"
+              value={userSearchQuery}
+              onChange={handleUserSearchChange}
+              onFocus={() => setShowUserResults(true)}
+              className="block w-full bg-neutral-100 text-gray-600 font-medium rounded-md border border-neutral-300 pl-10 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm p-2.5 placeholder:text-gray-400 placeholder:font-normal"
+              placeholder="Search for a user by name or email"
+              autoComplete="off"
             />
+            
+            {/* User search results dropdown */}
+            {showUserResults && userSearchQuery && (
+              <div className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm border border-neutral-200">
+                {searchingUsers && (
+                  <div className="flex items-center justify-center py-4">
+                    <TbLoader className="h-5 w-5 animate-spin mr-2" />
+                    <span className="text-neutral-600">Searching...</span>
+                  </div>
+                )}
+                
+                {!searchingUsers && userSearchResults.length === 0 && (
+                  <div className="px-4 py-3 text-sm text-neutral-500">
+                    No users found. Try a different search term.
+                  </div>
+                )}
+                
+                {!searchingUsers && userSearchResults.map((user) => (
+                  <div
+                    key={user.id}
+                    className="cursor-pointer select-none relative py-2 pl-3 pr-9 text-neutral-900 hover:bg-neutral-100"
+                    onClick={() => handleUserSelect(user)}
+                  >
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0 h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-semibold text-sm">
+                        {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+                      </div>
+                      <div className="ml-3">
+                        <div className="font-medium">{user.firstName} {user.lastName}</div>
+                        <div className="text-xs text-neutral-500">{user.email}</div>
+                      </div>
+                    </div>
+                    {selectedUser && selectedUser.id === user.id && (
+                      <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-primary-600">
+                        <TbCheck className="h-5 w-5" />
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
+          {selectedUser && (
+            <div className="mt-2 flex items-center bg-primary-50 text-primary-700 py-1.5 px-3 rounded-md text-sm">
+              <div className="flex-shrink-0 h-6 w-6 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-semibold text-xs mr-2">
+                {selectedUser.firstName.charAt(0)}{selectedUser.lastName.charAt(0)}
+              </div>
+              <span className="font-medium">{selectedUser.firstName} {selectedUser.lastName}</span>
+              <button 
+                type="button" 
+                className="ml-auto text-neutral-500 hover:text-neutral-700"
+                onClick={() => {
+                  setSelectedUser(null);
+                  setUserSearchQuery("");
+                  setFormData({
+                    ...formData,
+                    assignedTo: "",
+                    assignedToId: "",
+                  });
+                }}
+              >
+                <TbX className="h-4 w-4" />
+              </button>
+            </div>
+          )}
         </div>
 
         

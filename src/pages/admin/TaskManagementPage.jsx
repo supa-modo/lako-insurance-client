@@ -9,6 +9,7 @@ import {
   TbChartBar,
   TbSearch,
   TbRefresh,
+  TbAlertCircle,
 } from "react-icons/tb";
 
 // Import task components
@@ -16,99 +17,8 @@ import TaskList from "../../components/tasks/TaskList";
 import TaskForm from "../../components/tasks/TaskForm";
 import TaskDetail from "../../components/tasks/TaskDetail";
 
-// Mock task data service
-const getMockTasks = () => {
-  return [
-    {
-      id: "task1",
-      title: "Follow up with John Mwangi regarding senior plan",
-      description:
-        "Call John to discuss his questions about the Premium Senior Gold plan and discuss additional benefits.",
-      dueDate: "2023-10-20T10:00:00",
-      priority: "high",
-      category: "Client Follow-up",
-      assignedTo: "Admin",
-      completed: false,
-    },
-    {
-      id: "task2",
-      title: "Process Mary Kamau's policy renewal",
-      description:
-        "Mary's policy #KS-243 is due for renewal. Prepare the necessary documents and send renewal quote.",
-      dueDate: "2023-10-18T14:30:00",
-      priority: "high",
-      category: "Policy Renewal",
-      assignedTo: "Admin",
-      completed: false,
-    },
-    {
-      id: "task3",
-      title: "Prepare meeting notes for AAR Insurance partnership",
-      description:
-        "Compile notes and action items from yesterday's meeting with Sarah from AAR Insurance.",
-      dueDate: "2023-10-15T12:00:00",
-      priority: "medium",
-      category: "Meeting",
-      assignedTo: "Admin",
-      completed: true,
-    },
-    {
-      id: "task4",
-      title: "Send David Otieno's policy documentation",
-      description:
-        "Forward the Senior Gold Plan policy documents from CIC Insurance to David Otieno.",
-      dueDate: "2023-10-16T09:00:00",
-      priority: "medium",
-      category: "Documentation",
-      assignedTo: "Admin",
-      completed: false,
-    },
-    {
-      id: "task5",
-      title: "Create new quote for Peter Kamau",
-      description:
-        "Peter needs a comprehensive quote for his parents. Prepare options from Jubilee, AAR, and CIC.",
-      dueDate: "2023-10-19T11:00:00",
-      priority: "medium",
-      category: "Quote Preparation",
-      assignedTo: "Admin",
-      completed: false,
-    },
-    {
-      id: "task6",
-      title: "Call Joyce Omondi about policy renewal",
-      description:
-        "Joyce's policy is set to expire on November 1st. Call to discuss renewal options.",
-      dueDate: "2025-10-25T15:00:00",
-      priority: "low",
-      category: "Client Follow-up",
-      assignedTo: "Admin",
-      completed: false,
-    },
-    {
-      id: "task7",
-      title: "Submit monthly sales report",
-      description:
-        "Compile and submit the monthly sales and conversion report to the management team.",
-      dueDate: "2023-10-30T17:00:00",
-      priority: "medium",
-      category: "Documentation",
-      assignedTo: "Admin",
-      completed: false,
-    },
-    {
-      id: "task8",
-      title: "Update lead status in CRM",
-      description:
-        "Update status of all current leads in the CRM system and add notes from recent follow-ups.",
-      dueDate: "2023-10-17T16:00:00",
-      priority: "low",
-      category: "Documentation",
-      assignedTo: "Admin",
-      completed: true,
-    },
-  ];
-};
+// Import task service
+import taskService from "../../services/taskService";
 
 const TaskManagementPage = () => {
   const [tasks, setTasks] = useState([]);
@@ -126,48 +36,39 @@ const TaskManagementPage = () => {
 
   // Fetch tasks on component mount
   useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      const mockTasks = getMockTasks();
-      setTasks(mockTasks);
-
-      // Calculate task statistics
-      calculateTaskStats(mockTasks);
-
-      setLoading(false);
-    }, 600);
+    fetchTasks();
+    fetchTaskStats();
   }, []);
-
-  // Calculate task statistics
-  const calculateTaskStats = (taskList) => {
-    const now = new Date();
-    const stats = {
-      total: taskList.length,
-      completed: taskList.filter((task) => task.completed).length,
-      upcoming: 0,
-      overdue: 0,
-    };
-
-    // Calculate upcoming and overdue tasks
-    taskList.forEach((task) => {
-      if (!task.completed && task.dueDate) {
-        const dueDate = new Date(task.dueDate);
-        if (dueDate < now) {
-          stats.overdue++;
-        } else {
-          stats.upcoming++;
-        }
+  
+  // Fetch tasks from API
+  const fetchTasks = async () => {
+    setLoading(true);
+    try {
+      const response = await taskService.getAllTasks();
+      if (response.success) {
+        setTasks(response.data);
+      } else {
+        console.error("Failed to fetch tasks:", response.message);
       }
-    });
-
-    setTaskStats(stats);
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+    } finally {
+      setLoading(false);
+    }
   };
-
-  // Handle search
-  const handleSearch = (e) => {
-    e.preventDefault();
-    // In a real app, this would filter tasks from the API
-    console.log("Searching for:", searchQuery);
+  
+  // Fetch task statistics from API
+  const fetchTaskStats = async () => {
+    try {
+      const response = await taskService.getTaskStats();
+      if (response.success) {
+        setTaskStats(response.data);
+      } else {
+        console.error("Failed to fetch task statistics:", response.message);
+      }
+    } catch (error) {
+      console.error("Error fetching task statistics:", error);
+    }
   };
 
   // Create a new task
@@ -191,80 +92,113 @@ const TaskManagementPage = () => {
   };
 
   // Save a task (create or edit)
-  const handleSaveTask = (taskData) => {
-    if (editingTask) {
-      // Update existing task
-      const updatedTasks = tasks.map((task) =>
-        task.id === taskData.id ? { ...taskData } : task
-      );
-      setTasks(updatedTasks);
-      calculateTaskStats(updatedTasks);
-    } else {
-      // Create new task
-      const newTask = {
-        ...taskData,
-        id: `task${Date.now()}`, // Generate a simple ID
-      };
-      const updatedTasks = [...tasks, newTask];
-      setTasks(updatedTasks);
-      calculateTaskStats(updatedTasks);
+  const handleSaveTask = async (taskData) => {
+    try {
+      if (editingTask) {
+        // Update existing task
+        const response = await taskService.updateTask(taskData.id, taskData);
+        if (response.success) {
+          // Refresh tasks to get the updated list
+          await fetchTasks();
+          await fetchTaskStats();
+          setShowForm(false);
+          setEditingTask(null);
+        } else {
+          console.error("Failed to update task:", response.message);
+        }
+      } else {
+        // Create new task
+        const response = await taskService.createTask(taskData);
+        if (response.success) {
+          // Refresh tasks to get the updated list
+          await fetchTasks();
+          await fetchTaskStats();
+          setShowForm(false);
+          setEditingTask(null);
+        } else {
+          console.error("Failed to create task:", response.message);
+        }
+      }
+    } catch (error) {
+      console.error("Error saving task:", error);
     }
-
-    setShowForm(false);
-    setEditingTask(null);
   };
 
   // Toggle task completion status
-  const handleToggleComplete = (taskId) => {
-    const updatedTasks = tasks.map((task) => {
-      if (task.id === taskId) {
-        return { ...task, completed: !task.completed };
+  const handleToggleComplete = async (taskId) => {
+    try {
+      const response = await taskService.toggleTaskCompletion(taskId);
+      if (response.success) {
+        // Refresh tasks to get the updated list
+        await fetchTasks();
+        await fetchTaskStats();
+        
+        // Update selected task if it was toggled
+        if (selectedTask && selectedTask.id === taskId) {
+          const updatedTask = response.data;
+          setSelectedTask(updatedTask);
+        }
+      } else {
+        console.error("Failed to toggle task completion:", response.message);
       }
-      return task;
-    });
-
-    setTasks(updatedTasks);
-    calculateTaskStats(updatedTasks);
-
-    // Update selected task if it was toggled
-    if (selectedTask && selectedTask.id === taskId) {
-      const updatedTask = updatedTasks.find((task) => task.id === taskId);
-      setSelectedTask(updatedTask);
+    } catch (error) {
+      console.error("Error toggling task completion:", error);
     }
   };
 
   // Toggle task priority (cycles through low, medium, high)
-  const handleTogglePriority = (taskId) => {
-    const priorityOrder = { low: "medium", medium: "high", high: "low" };
-
-    const updatedTasks = tasks.map((task) => {
-      if (task.id === taskId) {
-        const newPriority = priorityOrder[task.priority] || "medium";
-        return { ...task, priority: newPriority };
+  const handleTogglePriority = async (taskId) => {
+    try {
+      // First get the current task to determine the next priority
+      const taskResponse = await taskService.getTaskById(taskId);
+      if (!taskResponse.success) {
+        console.error("Failed to get task:", taskResponse.message);
+        return;
       }
-      return task;
-    });
-
-    setTasks(updatedTasks);
-
-    // Update selected task if its priority was changed
-    if (selectedTask && selectedTask.id === taskId) {
-      const updatedTask = updatedTasks.find((task) => task.id === taskId);
-      setSelectedTask(updatedTask);
+      
+      const task = taskResponse.data;
+      const priorityOrder = { low: "medium", medium: "high", high: "low" };
+      const newPriority = priorityOrder[task.priority] || "medium";
+      
+      // Update the task with the new priority
+      const response = await taskService.updateTask(taskId, { ...task, priority: newPriority });
+      if (response.success) {
+        // Refresh tasks to get the updated list
+        await fetchTasks();
+        
+        // Update selected task if its priority was changed
+        if (selectedTask && selectedTask.id === taskId) {
+          const updatedTask = response.data;
+          setSelectedTask(updatedTask);
+        }
+      } else {
+        console.error("Failed to update task priority:", response.message);
+      }
+    } catch (error) {
+      console.error("Error updating task priority:", error);
     }
   };
 
   // Delete a task
-  const handleDeleteTask = (taskId) => {
-    // In a real app, confirm before deletion
+  const handleDeleteTask = async (taskId) => {
+    // Confirm before deletion
     if (window.confirm("Are you sure you want to delete this task?")) {
-      const updatedTasks = tasks.filter((task) => task.id !== taskId);
-      setTasks(updatedTasks);
-      calculateTaskStats(updatedTasks);
-
-      // Clear selected task if it was deleted
-      if (selectedTask && selectedTask.id === taskId) {
-        setSelectedTask(null);
+      try {
+        const response = await taskService.deleteTask(taskId);
+        if (response.success) {
+          // Refresh tasks to get the updated list
+          await fetchTasks();
+          await fetchTaskStats();
+          
+          // Clear selected task if it was deleted
+          if (selectedTask && selectedTask.id === taskId) {
+            setSelectedTask(null);
+          }
+        } else {
+          console.error("Failed to delete task:", response.message);
+        }
+      } catch (error) {
+        console.error("Error deleting task:", error);
       }
     }
   };
@@ -389,21 +323,21 @@ const TaskManagementPage = () => {
         </div>
 
         {/* Task Content */}
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-6 gap-5 min-h-0 overflow-hidden">
-          {/* Task list (larger on mobile, smaller on desktop) */}
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-6 gap-5 min-h-0">
+          {/* Task list  */}
           <div
             className={`${
               showForm || selectedTask
                 ? "hidden lg:block lg:col-span-3"
                 : "col-span-full"
-            } overflow-hidden flex flex-col`}
+            } flex flex-col`}
           >
             {loading ? (
               <div className="flex items-center justify-center h-64">
                 <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary-600"></div>
               </div>
             ) : (
-              <div className="overflow-auto flex-1">
+              <div className=" flex-1">
                 <TaskList
                   tasks={filteredTasks}
                   onTaskSelect={handleViewTask}
@@ -411,6 +345,8 @@ const TaskManagementPage = () => {
                   onTogglePriority={handleTogglePriority}
                   onDeleteTask={handleDeleteTask}
                   onEditTask={handleEditTask}
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
                 />
               </div>
             )}
