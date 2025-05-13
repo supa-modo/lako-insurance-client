@@ -1,7 +1,5 @@
 import { apiClient } from "./apiConfig";
 
-const API_URL = 'http://localhost:5000/api';
-
 /**
  * Event Service
  * Handles all API requests related to events
@@ -26,7 +24,7 @@ const eventService = {
       if (filters.createdBy) params.append('createdBy', filters.createdBy);
       if (filters.assignedTo) params.append('assignedTo', filters.assignedTo);
       
-      const response = await apiClient.get(`${API_URL}/events?${params.toString()}`);
+      const response = await apiClient.get(`/events?${params.toString()}`);
       
       return response.data;
     } catch (error) {
@@ -42,7 +40,7 @@ const eventService = {
    */
   getEventById: async (id) => {
     try {
-      const response = await apiClient.get(`${API_URL}/events/${id}`);
+      const response = await apiClient.get(`/events/${id}`);
       
       return response.data;
     } catch (error) {
@@ -58,7 +56,7 @@ const eventService = {
    */
   createEvent: async (eventData) => {
     try {
-      const response = await apiClient.post(`${API_URL}/events`, eventData);
+      const response = await apiClient.post(`/events`, eventData);
       
       return response.data;
     } catch (error) {
@@ -75,7 +73,7 @@ const eventService = {
    */
   updateEvent: async (id, eventData) => {
     try {
-      const response = await apiClient.put(`${API_URL}/events/${id}`, eventData);
+      const response = await apiClient.put(`/events/${id}`, eventData);
       
       return response.data;
     } catch (error) {
@@ -93,7 +91,7 @@ const eventService = {
    */
   updateEventTime: async (id, start, end) => {
     try {
-      const response = await apiClient.patch(`${API_URL}/events/${id}/time`, { start, end });
+      const response = await apiClient.patch(`/events/${id}/time`, { start, end });
       
       return response.data;
     } catch (error) {
@@ -109,7 +107,7 @@ const eventService = {
    */
   toggleEventCompletion: async (id) => {
     try {
-      const response = await apiClient.patch(`${API_URL}/events/${id}/toggle-completion`);
+      const response = await apiClient.patch(`/events/${id}/toggle-completion`);
       
       return response.data;
     } catch (error) {
@@ -125,7 +123,7 @@ const eventService = {
    */
   deleteEvent: async (id) => {
     try {
-      const response = await apiClient.delete(`${API_URL}/events/${id}`);
+      const response = await apiClient.delete(`/events/${id}`);
       
       return response.data;
     } catch (error) {
@@ -140,7 +138,7 @@ const eventService = {
    */
   createEventsFromTasks: async () => {
     try {
-      const response = await apiClient.post(`${API_URL}/events/create-from-tasks`);
+      const response = await apiClient.post(`/events/create-from-tasks`);
       
       return response.data;
     } catch (error) {
@@ -162,7 +160,7 @@ const eventService = {
       if (filters.startDate) params.append('startDate', filters.startDate);
       if (filters.endDate) params.append('endDate', filters.endDate);
       
-      const response = await apiClient.get(`${API_URL}/tasks/calendar?${params.toString()}`);
+      const response = await apiClient.get(`/tasks/calendar?${params.toString()}`);
       
       // Transform tasks to event format
       if (response.data.success && response.data.data) {
