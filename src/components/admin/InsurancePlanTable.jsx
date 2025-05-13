@@ -8,6 +8,7 @@ import {
   TbLoader,
   TbShieldCheck,
   TbShieldX,
+  TbLoader2,
 } from "react-icons/tb";
 import { motion } from "framer-motion";
 
@@ -42,8 +43,8 @@ const InsurancePlanTable = ({
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
-        <TbLoader className="animate-spin text-4xl text-primary-500 mb-3" />
-        <p className="text-gray-500">Loading insurance plans...</p>
+        <TbLoader2 size={26} className="animate-spin text-primary-500 mb-3" />
+        <p className="text-gray-500 text-sm">Loading insurance plans...</p>
       </div>
     );
   }

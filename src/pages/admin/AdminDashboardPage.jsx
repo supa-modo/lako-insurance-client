@@ -30,6 +30,7 @@ import {
   TbCalendar,
   TbInfoCircle,
   TbSearch,
+  TbClipboardPlus,
 } from "react-icons/tb";
 import {
   LineChart,
@@ -125,44 +126,6 @@ const AdminDashboardPage = () => {
     { stage: "Converted", count: 19, color: "bg-secondary-500" },
   ];
 
-  // Recent client activity
-  const recentActivity = [
-    {
-      id: 1,
-      client: "John Mwangi",
-      activity: "Submitted a new insurance query",
-      time: "5 minutes ago",
-      type: "query",
-    },
-    {
-      id: 2,
-      client: "Mary Kamau",
-      activity: "Policy KS-243 is due for renewal",
-      time: "1 hour ago",
-      type: "renewal",
-    },
-    {
-      id: 3,
-      client: "David Otieno",
-      activity: "Upgraded to Premium Health 65+ plan",
-      time: "2 hours ago",
-      type: "conversion",
-    },
-    {
-      id: 4,
-      client: "Sarah Njoroge",
-      activity: "Added family member to policy",
-      time: "Yesterday",
-      type: "update",
-    },
-    {
-      id: 5,
-      client: "Michael Waweru",
-      activity: "Scheduled a follow-up call",
-      time: "Yesterday",
-      type: "task",
-    },
-  ];
 
   // Insurance plans by subscriber count
   const topPlans = [
@@ -253,16 +216,6 @@ const AdminDashboardPage = () => {
     { name: "Jul", rate: 34 },
   ];
 
-  const revenueData = [
-    { name: "Jan", revenue: 3.2 },
-    { name: "Feb", revenue: 3.5 },
-    { name: "Mar", revenue: 3.8 },
-    { name: "Apr", revenue: 4.1 },
-    { name: "May", revenue: 4.6 },
-    { name: "Jun", revenue: 4.8 },
-    { name: "Jul", revenue: 5.2 },
-  ];
-
   const planDistributionData = [
     { name: "Gold Plus", value: 142 },
     { name: "Premium 65+", value: 128 },
@@ -277,19 +230,6 @@ const AdminDashboardPage = () => {
     // In a real app, this would fetch new data for the selected period
   };
 
-  // Function to get role badge color
-  const getRoleBadgeColor = (role) => {
-    switch (role) {
-      case "admin":
-        return "bg-secondary-500";
-      case "manager":
-        return "bg-blue-500";
-      case "viewer":
-        return "bg-green-500";
-      default:
-        return "bg-gray-500";
-    }
-  };
 
   return (
     <div className="text-gray-800 font-lexend h-[calc(100vh-64px)] overflow-y-auto pb-6 bg-neutral-100">
@@ -385,7 +325,7 @@ const AdminDashboardPage = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {[
               {
-                name: "Add Client",
+                name: "New Client",
                 icon: RiUserAddLine,
                 path: "/admin/clients/new",
                 color: "bg-blue-100 text-blue-600",
@@ -397,15 +337,15 @@ const AdminDashboardPage = () => {
                 color: "bg-green-100 text-green-600",
               },
               {
-                name: "Record Call",
-                icon: TbPhonePlus,
-                path: "/admin/calls/new",
+                name: "Add New Task",
+                icon: TbClipboardPlus,
+                path: "/admin/tasks",
                 color: "bg-secondary-100 text-secondary-600",
               },
               {
                 name: "Send Email",
                 icon: TbMail,
-                path: "/admin/mail/compose",
+                path: "/admin/mail",
                 color: "bg-purple-100 text-purple-600",
               },
               {

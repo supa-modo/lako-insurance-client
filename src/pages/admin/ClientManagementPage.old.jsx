@@ -34,7 +34,6 @@ import {
 import ClientModal from "../../components/clients/ClientModal";
 import EventModal from "../../components/calendar/EventModal";
 import { safeGetClients, safeGetClientStats } from "../../services/clientService";
-import { getStatusBadgeColor, formatDate } from "../../utils/formatDate";
 
 const ClientManagementPage = () => {
   const [clients, setClients] = useState([]);
@@ -215,13 +214,21 @@ const ClientManagementPage = () => {
   // Refresh clients data
   const refreshClients = () => {
     setIsRefreshing(true);
-    fetchClients();
-    fetchStats();
+    // In a real app, would fetch from API
     setTimeout(() => {
       setIsRefreshing(false);
     }, 1000);
   };
 
+  // Format date for display
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    }).format(date);
+  };
 
   // Calculate days until renewal
   const getDaysUntilRenewal = (renewalDate) => {
@@ -230,6 +237,20 @@ const ClientManagementPage = () => {
     const diffTime = renewal - today;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
+  };
+
+  // Get status badge color
+  const getStatusBadgeColor = (status) => {
+    switch (status) {
+      case "active":
+        return "bg-green-100 border border-green-300 text-green-800";
+      case "inactive":
+        return "bg-red-100 border border-red-300 text-red-800";
+      case "pending_renewal":
+        return "bg-yellow-100 border border-yellow-300 text-yellow-800";
+      default:
+        return "bg-gray-100 border border-gray-300 text-gray-800";
+    }
   };
 
   // Client modal handlers

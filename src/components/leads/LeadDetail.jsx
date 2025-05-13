@@ -1,5 +1,8 @@
-import React from "react";
-import { PiUserDuotone, PiUserListDuotone } from "react-icons/pi";
+import React, { useState, useEffect } from "react";
+import { PiCaretDownDuotone, PiInfo, PiInfoBold, PiUserDuotone, PiUserListDuotone } from "react-icons/pi";
+import leadActivityService from "../../services/leadActivityService";
+import { useAuth } from "../../context/AuthContext";
+import userService from "../../services/userService";
 import { RiUserShared2Line } from "react-icons/ri";
 import {
   TbUser,
@@ -23,6 +26,11 @@ import {
   TbMessage2Plus,
   TbMessage2Star,
   TbInfoCircleFilled,
+  TbInfoCircle,
+  TbArrowsDown,
+  TbArrowsDownUp,
+  TbMailFilled,
+  TbPhoneCall,
 } from "react-icons/tb";
 
 // Helper function to format date
@@ -124,42 +132,94 @@ const getStatusInfo = (status) => {
 const LeadDetail = ({ lead, onClose, onEdit, onDelete }) => {
   if (!lead) return null;
 
+  const { user } = useAuth();
   const priorityInfo = getPriorityInfo(lead.priority);
   const statusInfo = getStatusInfo(lead.status);
 
-  // Mock activity history
-  const activityHistory = [
-    {
-      id: 1,
-      type: "note",
-      date: "2023-10-12T14:30:00",
-      user: "Mary W.",
-      content:
-        "Client is interested in Senior Gold and Senior Premium plans. Follow up next week.",
-    },
-    {
-      id: 2,
-      type: "email",
-      date: "2023-10-10T09:15:00",
-      user: "System",
-      content: "Initial welcome email sent to client.",
-    },
-    {
-      id: 3,
-      type: "call",
-      date: "2023-10-08T11:20:00",
-      user: "James O.",
-      content:
-        "Had an introductory call with client to discuss their insurance needs.",
-    },
-    {
-      id: 4,
-      type: "statusChange",
-      date: "2023-10-05T08:00:00",
-      user: "System",
-      content: `Lead status changed from "New" to "${statusInfo.label}"`,
-    },
-  ];
+  const [activityHistory, setActivityHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [newActivity, setNewActivity] = useState({
+    type: "note",
+    content: ""
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [userMap, setUserMap] = useState({});
+
+  // Fetch lead activities and user data
+  useEffect(() => {
+    const fetchActivities = async () => {
+      try {
+        setLoading(true);
+        const response = await leadActivityService.getLeadActivities(lead.id);
+        if (response.success) {
+          // Activities should already have userName from backend
+          setActivityHistory(response.data);
+          
+          // But as a fallback, we'll still maintain the userMap for any activities without userName
+          // We won't need to make a separate API call as the backend should already provide this info
+        } else {
+          setError("Failed to load activities");
+        }
+      } catch (err) {
+        setError("An error occurred while fetching activities");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (lead?.id) {
+      fetchActivities();
+    }
+  }, [lead?.id]);
+
+  // Handle adding a new activity
+  const handleAddActivity = async (e) => {
+    e.preventDefault();
+    if (!newActivity.content.trim()) return;
+
+    try {
+      setSubmitting(true);
+      
+      // Get current user information
+      let userIdentifier = "System";
+      
+      if (user?.id) {
+        // If we have a user ID, use it regardless of format
+        // The backend will handle validation
+        userIdentifier = user.id;
+      } else if (user?.firstName && user?.lastName) {
+        // If no ID but we have a name, use that
+        userIdentifier = `${user.firstName} ${user.lastName}`;
+      }
+      
+      const activityData = {
+        ...newActivity,
+        date: new Date().toISOString(),
+        user: userIdentifier
+      };
+
+      const response = await leadActivityService.addLeadActivity(lead.id, activityData);
+      
+      if (response.success) {
+        // Add the new activity to the list
+        setActivityHistory([response.data, ...activityHistory]);
+        // Reset the form
+        setNewActivity({
+          type: "note",
+          content: ""
+        });
+      } else {
+        setError("Failed to add activity");
+      }
+    } catch (err) {
+      setError("An error occurred while adding activity");
+      console.error(err);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget) {
@@ -220,13 +280,13 @@ const LeadDetail = ({ lead, onClose, onEdit, onDelete }) => {
                 <div className="flex items-center text-primary-700">
                   <RiUserShared2Line size={20} className="mr-2" />
                   <span className="text-sm font-medium text-primary-700">
-                    {lead.assignedTo || "Not Assigned"}
+                    {lead.assignedToName || "Not Assigned"}
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="flex  gap-3 mt-4 text-sm">
+            <div className="flex gap-3 mt-4 text-sm">
               <div className="border-r pr-6 w-[45%]">
                 <p className="text-primary-700 font-semibold text-sm mb-1">
                   Contact Details
@@ -333,7 +393,7 @@ const LeadDetail = ({ lead, onClose, onEdit, onDelete }) => {
               >
                 <TbEdit className="mr-1.5 w-4 h-4" /> Edit
               </button>
-              <button className="border hover:bg-blue-200 text-blue-600 px-6 py-1.5 rounded-md flex items-center transition-colors text-sm">
+              <button className="border hover:bg-blue-200 text-blue-600 px-5 py-1.5 rounded-md flex items-center transition-colors text-sm">
                 <TbSend className="mr-1.5 w-4 h-4" /> Email
               </button>
               <button className="border hover:bg-green-200 text-green-600 px-5 py-1.5 rounded-md flex items-center transition-colors text-sm">
@@ -357,7 +417,7 @@ const LeadDetail = ({ lead, onClose, onEdit, onDelete }) => {
           {/* Notes */}
           <div className="p-5 border-b border-gray-200">
             <h3 className="font-semibold text-primary-700 mb-3 flex items-center">
-              <TbMessage2Star className="mr-2 " /> Client Notes
+              <TbMessage2Star className="mr-2" /> Client Notes
             </h3>
             <div className="bg-neutral-200 rounded-md px-4 py-2 min-h-[100px]">
               <p className="text-gray-700 text-sm whitespace-pre-line">
@@ -366,49 +426,127 @@ const LeadDetail = ({ lead, onClose, onEdit, onDelete }) => {
             </div>
           </div>
 
-          {/* Activity History */}
-          <div className="p-5">
-            <h3 className="font-semibold text-primary-700 mb-3 flex items-center">
-              <TbHistory className="mr-2 " /> Activity History
+          {/* Add New Activity */}
+          <div className="p-5 border-b border-gray-200">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center">
+              <TbMessageCircle className="mr-2" /> Add Activity
             </h3>
-            <div className="space-y-2">
-              {activityHistory.map((activity) => (
-                <div
-                  key={activity.id}
-                  className="flex items-center bg-white rounded-lg p-2 border border-gray-100 hover:border-gray-200 transition-colors"
+            <form onSubmit={handleAddActivity} className="mb-6">
+              <div className="flex mb-2">
+                <div className="relative">
+                <select
+                  value={newActivity.type}
+                  onChange={(e) => setNewActivity({...newActivity, type: e.target.value})}
+                  className="relative mr-2 pr-7 pl-2 py-2 bg-neutral-100 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
                 >
-                  <TbInfoCircleFilled className="h-5 w-5 text-primary-500" />
+                  <option value="note">Note</option>
+                  <option value="email">Email</option>
+                  <option value="call">Call</option>
+                  <option value="whatsapp">WhatsApp</option>
+                </select>
+                <PiCaretDownDuotone className="absolute right-4 top-0 bottom-0 my-auto h-5 w-5 text-gray-400 pointer-events-none" />
+                                </div>
+                <input
+                  type="text"
+                  value={newActivity.content}
+                  onChange={(e) => setNewActivity({...newActivity, content: e.target.value})}
+                  placeholder="Add a note, email summary, call details..."
+                  className="flex-1 p-2 bg-neutral-100 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+                  required
+                />
+                <button
+                  type="submit"
+                  disabled={submitting || !newActivity.content.trim()}
+                  className="ml-2 bg-primary-600 text-white py-2 px-2.5 rounded-md hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <TbSend className="w-5 h-5" />
+                </button>
+              </div>
+              {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+            </form>
 
-                  <div className="ml-3 flex-1">
-                    <div className="flex justify-between text-sm">
-                      <span className="font-medium text-gray-800">
-                        {activity.user}
-                      </span>
-                      <span className="text-gray-500 text-xs">
-                        {formatDate(activity.date)}
-                      </span>
-                    </div>
-                    <p className="text-gray-600 mt-1 text-sm">
+            {/* Activity History */}
+            <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center">
+              <TbHistory className="mr-2" /> Activity History
+            </h3>
+            
+            {loading ? (
+              <div className="text-center py-4">
+                <div className="inline-block animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-primary-600"></div>
+                <p className="mt-2 text-sm text-gray-500">Loading activities...</p>
+              </div>
+            ) : activityHistory.length === 0 ? (
+              <div className="text-center py-4 bg-gray-50 rounded-lg border border-gray-200">
+                <p className="text-sm text-gray-500">No activities recorded yet</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {activityHistory.map((activity) => (
+                  <div
+                    key={activity.id}
+                    className="p-2 bg-gray-50 rounded-lg border border-gray-200"
+                  >
+                    <div className="flex justify-between items-start mb-1">
+                      <div className="flex items-center">
+                        <span
+                          className={`w-8 h-8 rounded-full mr-2 flex items-center justify-center ${
+                            activity.type === "note"
+                              ? "bg-primary-200 text-primary-600"
+                              : activity.type === "email"
+                              ? "bg-purple-200 text-purple-600"
+                              : activity.type === "call"
+                              ? "bg-green-200 text-green-600"
+                              : activity.type === "whatsapp"
+                              ? "bg-green-200 text-green-600"
+                              : activity.type === "statusChange"
+                              ? "bg-blue-200 text-blue-600"
+                              : "bg-gray-200 text-gray-600"
+                          }`}
+                        >
+                          {activity.type === "note" ? (
+                            <TbMessageCircle />
+                          ) : activity.type === "email" ? (
+                            <TbMailFilled />
+                          ) : activity.type === "call" ? (
+                            <TbPhoneCall />
+                          ) : activity.type === "whatsapp" ? (
+                            <TbBrandWhatsapp />
+                          ) : (
+                            <TbArrowsDownUp size={14} className="rotate-90" />
+                          )}
+                        </span>
+                        <p className="text-sm text-gray-600">
                       {activity.content}
                     </p>
+                      </div>
+                    </div>
+                    
+                    <div className=" ml-10">
+                          <span className="text-sm font-medium text-gray-700">
+                            {activity.userName || userMap[activity.user] || activity.user || "System"}
+                          </span>
+                          <span className="text-xs text-gray-500 ml-2">
+                            {formatDate(activity.date)}
+                          </span>
+                        </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
-      </div>
 
-      <style jsx>{`
-        @keyframes slide-in {
-          from {
-            transform: translateX(100%);
+        <style jsx>{`
+          @keyframes slide-in {
+            from {
+              transform: translateX(100%);
+            }
+            to {
+              transform: translateX(0);
+            }
           }
-          to {
-            transform: translateX(0);
-          }
-        }
-      `}</style>
+        `}</style>
+      </div>
     </div>
   );
 };

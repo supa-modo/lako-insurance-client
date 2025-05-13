@@ -58,7 +58,7 @@ const AdminLayout = () => {
 
         {/* Main content - scrollable */}
         <motion.main
-          className="flex-1 overflow-y-auto bg-gradient-to-br from-neutral-100 via-neutral-200 to-neutral-300"
+          className="flex-1 overflow-y-auto bg-gradient-to-br from-neutral-100 via-neutral-200 to-neutral-100"
           animate={{
             marginLeft: isMobile ? 0 : sidebarCollapsed ? "80px" : "280px",
             width: isMobile

@@ -17,6 +17,7 @@ import {
   TbCalendarEvent,
   TbMessageCircle,
 } from "react-icons/tb";
+import { getStatusBadgeColor } from "../../utils/formatDate";
 
 const ProcessedQueriesPage = () => {
   // State management
@@ -130,19 +131,6 @@ const ProcessedQueriesPage = () => {
     });
   };
 
-  // Get status badge color
-  const getStatusBadgeColor = (status) => {
-    switch (status) {
-      case "converted":
-        return "bg-green-100 text-green-800";
-      case "declined":
-        return "bg-red-100 text-red-800";
-      case "pending":
-        return "bg-yellow-100 text-yellow-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
 
   // Handle refresh
   const handleRefresh = () => {
@@ -271,6 +259,7 @@ const ProcessedQueriesPage = () => {
 
         {/* Queries Table */}
         <div className="flex-1 bg-white rounded-lg border border-gray-200 overflow-hidden">
+          
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
@@ -446,7 +435,7 @@ const ProcessedQueriesPage = () => {
       </div>
 
       {/* Footer */}
-      <div className="bg-white border-t border-gray-200 px-6 py-3">
+      <div className="mt-auto bg-white border-t border-gray-200 px-6 py-3">
         <div className="flex flex-wrap justify-between items-center text-sm text-gray-600">
           <div>Showing {queries.length} processed queries</div>
           <div className="flex space-x-4">

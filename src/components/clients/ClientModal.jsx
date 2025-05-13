@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { safeGetClientById } from "../../services/clientService";
 import { PiUserDuotone } from "react-icons/pi";
+import { getStatusBadgeColor, formatDate } from "../../utils/formatDate";
 import {
   TbPhone,
   TbMail,
@@ -106,31 +108,6 @@ const ClientModal = ({
   const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget) {
       onClose();
-    }
-  };
-
-  // Format date for display
-  const formatDate = (dateString) => {
-    if (!dateString) return "—";
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    }).format(date);
-  };
-
-  // Get status badge color
-  const getStatusBadgeColor = (status) => {
-    switch (status) {
-      case "active":
-        return "bg-green-100 border border-green-300 text-green-800";
-      case "inactive":
-        return "bg-red-100 border border-red-300 text-red-800";
-      case "pending_renewal":
-        return "bg-yellow-100 border border-yellow-300 text-yellow-800";
-      default:
-        return "bg-gray-100 border border-gray-300 text-gray-800";
     }
   };
 

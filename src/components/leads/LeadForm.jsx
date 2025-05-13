@@ -16,8 +16,10 @@ import {
   TbTrash,
   TbTag,
   TbMoneybag,
+  TbLoader,
 } from "react-icons/tb";
 import { RiUserShared2Line } from "react-icons/ri";
+import userService from "../../services/userService";
 const LeadForm = ({ initialData, onSave, onCancel }) => {
   // Form states
   const [formData, setFormData] = useState({
@@ -28,7 +30,7 @@ const LeadForm = ({ initialData, onSave, onCancel }) => {
     budget: "",
     status: "new", // Default status is 'new'
     priority: "medium",
-    assignedTo: "",
+    assignedTo: "", // This will be a user ID
     tags: [],
     nextFollowUp: "",
     notes: "",
@@ -37,16 +39,65 @@ const LeadForm = ({ initialData, onSave, onCancel }) => {
   const [errors, setErrors] = useState({});
   const [newTag, setNewTag] = useState("");
   const [submitAttempted, setSubmitAttempted] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
 
   // Load initial data if provided (for editing)
   useEffect(() => {
     if (initialData) {
+      // Format the date properly for the date input (yyyy-MM-dd)
+      let formattedNextFollowUp = initialData.nextFollowUp || "";
+      
+      // If nextFollowUp is an ISO date string, format it to yyyy-MM-dd
+      if (formattedNextFollowUp && typeof formattedNextFollowUp === 'string' && formattedNextFollowUp.includes('T')) {
+        try {
+          const date = new Date(formattedNextFollowUp);
+          formattedNextFollowUp = date.toISOString().split('T')[0]; // Get only the date part (yyyy-MM-dd)
+        } catch (error) {
+          console.error("Error formatting date:", error);
+          formattedNextFollowUp = "";
+        }
+      }
+      
       setFormData({
         ...initialData,
+        age: initialData.age ? initialData.age.toString() : "",
         tags: initialData.tags || [],
+        nextFollowUp: formattedNextFollowUp
       });
     }
   }, [initialData]);
+
+  // Fetch users for the assignedTo dropdown
+  useEffect(() => {
+    const fetchUsers = async () => {
+      setLoadingUsers(true);
+      try {
+        const response = await userService.getAllUsers({ limit: 50 });
+        if (response.success) {
+          setUsers(response.data || []);
+        } else {
+          console.error("Failed to fetch users:", response.message);
+          // Fallback to mock data if API fails
+          setUsers([
+            { id: "1", firstName: "Mary", lastName: "W." },
+            { id: "2", firstName: "James", lastName: "O." },
+          ]);
+        }
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        // Fallback to mock data
+        setUsers([
+          { id: "1", firstName: "Mary", lastName: "W." },
+          { id: "2", firstName: "James", lastName: "O." },
+        ]);
+      } finally {
+        setLoadingUsers(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   // Form validation
   const validateForm = () => {
@@ -63,7 +114,7 @@ const LeadForm = ({ initialData, onSave, onCancel }) => {
       newErrors.phone = "Phone number is required";
     }
 
-    if (!formData.age.trim()) {
+    if (!formData.age || formData.age === "") {
       newErrors.age = "Age is required";
     } else if (
       isNaN(formData.age) ||
@@ -117,11 +168,83 @@ const LeadForm = ({ initialData, onSave, onCancel }) => {
     setSubmitAttempted(true);
 
     if (validateForm()) {
-      const dataToSubmit = {
-        ...formData,
-        age: Number(formData.age),
-      };
-      onSave(dataToSubmit);
+      try {
+        // Create a clean copy of the data for submission
+        const dataToSubmit = { ...formData };
+        
+        // Ensure numeric fields are properly typed
+        dataToSubmit.age = Number(dataToSubmit.age);
+        
+        // Ensure assignedTo is a valid UUID or empty string
+        dataToSubmit.assignedTo = dataToSubmit.assignedTo || "";
+        
+        // Handle date fields properly
+        // Format nextFollowUp date if present
+        if (dataToSubmit.nextFollowUp) {
+          const nextFollowUpDate = new Date(dataToSubmit.nextFollowUp);
+          if (!isNaN(nextFollowUpDate.getTime())) {
+            dataToSubmit.nextFollowUp = nextFollowUpDate.toISOString();
+          } else {
+            // If invalid date, remove it to avoid validation errors
+            delete dataToSubmit.nextFollowUp;
+          }
+        } else {
+          // If empty, remove the field entirely
+          delete dataToSubmit.nextFollowUp;
+        }
+        
+        // Always set a valid conversionDate for converted leads
+        if (dataToSubmit.status === "converted") {
+          // For converted leads, always ensure a valid conversion date
+          const now = new Date();
+          
+          if (dataToSubmit.conversionDate) {
+            // Try to parse the existing date
+            const conversionDate = new Date(dataToSubmit.conversionDate);
+            if (!isNaN(conversionDate.getTime())) {
+              dataToSubmit.conversionDate = conversionDate.toISOString();
+            } else {
+              // If parsing fails, use current date
+              dataToSubmit.conversionDate = now.toISOString();
+            }
+          } else {
+            // If no conversion date exists, use current date
+            dataToSubmit.conversionDate = now.toISOString();
+          }
+        } else {
+          // For non-converted leads, remove the conversionDate field entirely
+          delete dataToSubmit.conversionDate;
+        }
+        
+        // Ensure tags is always an array
+        if (!dataToSubmit.tags || !Array.isArray(dataToSubmit.tags)) {
+          dataToSubmit.tags = [];
+        }
+        
+        // Handle any other null/undefined values
+        Object.keys(dataToSubmit).forEach(key => {
+          if (dataToSubmit[key] === null || dataToSubmit[key] === undefined) {
+            // For arrays, use empty array
+            if (key === 'tags') {
+              dataToSubmit[key] = [];
+            } 
+            // For dates that should be null, remove them entirely
+            else if (key === 'lastContact' || key === 'nextFollowUp' || key === 'conversionDate') {
+              delete dataToSubmit[key];
+            }
+            // For other fields, use empty string
+            else {
+              dataToSubmit[key] = "";
+            }
+          }
+        });
+        
+        // Submit the cleaned data
+        onSave(dataToSubmit);
+      } catch (error) {
+        console.error("Error preparing form data:", error);
+        alert("There was an error processing your form. Please try again.");
+      }
     }
   };
 
@@ -346,19 +469,25 @@ const LeadForm = ({ initialData, onSave, onCancel }) => {
                   </label>
                   <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <RiUserShared2Line className="h-5 w-5 text-gray-400" />
+                    {loadingUsers ? (
+                      <TbLoader className="h-5 w-5 text-gray-400 animate-spin" />
+                    ) : (
+                      <RiUserShared2Line className="h-5 w-5 text-gray-400" />
+                    )}
                   </div>
                   <select
                     name="assignedTo"
                     value={formData.assignedTo}
                     onChange={handleChange}
                     className={`w-full font-medium text-[0.93rem] bg-neutral-100 text-neutral-800 pl-10 px-4 py-2 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors`}
+                    disabled={loadingUsers}
                   >
                     <option value="">Not Assigned</option>
-                    <option value="Mary W.">Mary W.</option>
-                    <option value="James O.">James O.</option>
-                    <option value="Sarah N.">Sarah N.</option>
-                    <option value="David K.">David K.</option>
+                    {users.map(user => (
+                      <option key={user.id} value={user.id}>
+                        {user.firstName} {user.lastName}
+                      </option>
+                    ))}
                   </select>
                   <PiCaretDownDuotone className="absolute right-4 top-0 bottom-0 my-auto h-5 w-5 text-gray-400 pointer-events-none" />
                   </div>
@@ -447,7 +576,7 @@ const LeadForm = ({ initialData, onSave, onCancel }) => {
                 {formData.tags.map((tag, index) => (
                   <div
                     key={index}
-                    className="bg-primary-50 text-primary-700 px-3 py-1 rounded-full text-sm flex items-center"
+                    className="bg-primary-100 border border-primary-300 text-primary-700 px-3 py-1 rounded-full text-sm flex items-center"
                   >
                     {tag}
                     <button

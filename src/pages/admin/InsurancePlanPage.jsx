@@ -20,6 +20,7 @@ import {
   TbReport,
   TbDatabaseExport,
   TbInfoCircle,
+  TbLoader2,
 } from "react-icons/tb";
 import { motion, AnimatePresence } from "framer-motion";
 import InsurancePlanTable from "../../components/admin/InsurancePlanTable";
@@ -282,9 +283,9 @@ const InsurancePlanPage = () => {
         {error && (
           <div className="mb-4 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg shadow-sm">
             <div className="flex items-center">
-              <TbAlertTriangle className="mr-2 text-red-500 flex-shrink-0" />
+              <TbAlertTriangle size={20} className="mr-2 text-red-500 flex-shrink-0" />
               <div>
-                <p className="font-medium">Error loading insurance plans</p>
+                <p className="font-medium text-sm">Error loading insurance plans</p>
                 <p className="text-sm">{error}</p>
               </div>
               <button 
@@ -308,8 +309,7 @@ const InsurancePlanPage = () => {
                 exit={{ opacity: 0 }}
                 className="flex flex-col items-center justify-center p-12"
               >
-                <div className="w-16 h-16 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mb-4"></div>
-                <p className="text-gray-500 font-medium">Loading insurance plans...</p>
+                 <TbLoader2 size={30} className="animate-spin text-primary-500 mb-3" />
               </motion.div>
             ) : filteredPlans.length === 0 ? (
               <motion.div
@@ -354,7 +354,7 @@ const InsurancePlanPage = () => {
       </div>
 
          {/* Footer */}
-         <div className="bg-white border-t border-gray-200 px-6 py-3">
+         <div className="mt-auto bg-white border-t border-gray-200 px-6 py-3">
         <div className="flex flex-wrap justify-between items-center text-sm text-gray-600">
           <div>Showing {filteredPlans.length} Insurance Plans</div>
           <div className="flex space-x-4">

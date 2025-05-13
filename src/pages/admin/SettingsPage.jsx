@@ -94,7 +94,7 @@ const SettingsPage = () => {
   return (
     <div className="h-[calc(100vh-64px)] flex flex-col overflow-hidden">
       {/* Page Header */}
-      <div className="bg-gradient-to-r from-primary-50 to-white px-8 py-4 border-b border-gray-200 flex-shrink-0">
+      <div className="bg-gradient-to-r from-primary-50 to-white px-8 py-3 border-b border-gray-200 flex-shrink-0">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
           <div>
             <h1 className="text-[1.3rem] font-bold text-primary-600">

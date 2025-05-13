@@ -11,7 +11,10 @@ import {
   TbBrandWhatsapp,
   TbCheck,
   TbDotsVertical,
+  TbMailFilled,
+  TbPhoneCall,
 } from "react-icons/tb";
+import {FaEye} from "react-icons/fa"
 
 const LeadActions = ({
   lead,
@@ -56,7 +59,7 @@ const LeadActions = ({
   return (
     <div className="relative" ref={dropdownRef}>
       <button
-        className="text-gray-400 hover:text-gray-600 p-1 rounded-md hover:bg-gray-100"
+        className="text-gray-400 hover:text-gray-600 p-1 rounded-md hover:bg-gray-200"
         onClick={toggleDropdown}
         aria-label="Lead actions"
       >
@@ -71,7 +74,7 @@ const LeadActions = ({
               className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
               onClick={(e) => handleAction(() => onView(lead), e)}
             >
-              <TbEye className="mr-2 text-blue-500" /> View Details
+              <FaEye size={15} className="mr-2 text-gray-500" /> View Details
             </button>
 
             {/* Edit */}
@@ -79,10 +82,10 @@ const LeadActions = ({
               className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
               onClick={(e) => handleAction(() => onEdit(lead), e)}
             >
-              <TbEdit className="mr-2 text-purple-500" /> Edit Lead
+              <TbEdit size={16} className="mr-2 text-gray-500" /> Edit Lead
             </button>
 
-            <div className="border-t border-gray-100 my-1"></div>
+            <div className="border-t border-gray-200/60 my-1"></div>
 
             {/* Star/Unstar */}
             <button
@@ -93,11 +96,11 @@ const LeadActions = ({
             >
               {lead.starred ? (
                 <>
-                  <TbStar className="mr-2 text-gray-500" /> Remove Star
+                  <TbStar size={16} className="mr-2 text-gray-500" /> Remove Star
                 </>
               ) : (
                 <>
-                  <TbStarFilled className="mr-2 text-yellow-500" /> Star Lead
+                  <TbStarFilled size={16} className="mr-2 text-amber-500" /> Star Lead
                 </>
               )}
             </button>
@@ -108,39 +111,35 @@ const LeadActions = ({
                 className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
                 onClick={(e) => handleAction(() => onMarkConverted(lead.id), e)}
               >
-                <TbCheck className="mr-2 text-green-500" /> Mark as Converted
+                <TbCheck size={16} className="mr-2 text-green-600" /> Mark as Converted
               </button>
             )}
 
             <div className="border-t border-gray-100 my-1"></div>
 
             {/* Contact actions */}
-            <button
+            <a href={`mailto: ${lead.email}`}
               className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
-              onClick={(e) =>
-                handleAction(() => alert(`Email to ${lead.email}`), e)
-              }
+              // onClick={(e) =>
+              //   handleAction(() => alert(`Email to ${lead.email}`), e)
+              // }
             >
-              <TbSend className="mr-2 text-blue-500" /> Send Email
-            </button>
+              <TbMailFilled size={16} className="mr-2 text-primary-500" /> Send Email
+            </a>
 
-            <button
+            <a href={`tel: ${lead.phone}`}
               className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
-              onClick={(e) =>
-                handleAction(() => alert(`Call ${lead.phone}`), e)
-              }
+              
             >
-              <TbPhone className="mr-2 text-green-500" /> Call Lead
-            </button>
+              <TbPhoneCall size={16} className="mr-2 text-primary-500" /> Call Lead
+            </a>
 
-            <button
+            <a href={`https://wa.me/${lead.phone}`} target="_blank"
               className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
-              onClick={(e) =>
-                handleAction(() => alert(`WhatsApp to ${lead.phone}`), e)
-              }
+              
             >
-              <TbBrandWhatsapp className="mr-2 text-green-600" /> WhatsApp
-            </button>
+              <TbBrandWhatsapp size={16} className="mr-2 text-primary-500" /> WhatsApp
+            </a>
 
             <div className="border-t border-gray-100 my-1"></div>
 
@@ -149,7 +148,7 @@ const LeadActions = ({
               className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center"
               onClick={(e) => handleAction(() => onDelete(lead.id), e)}
             >
-              <TbTrash className="mr-2" /> Delete Lead
+              <TbTrash size={16} className="mr-2" /> Delete Lead
             </button>
           </div>
         </div>

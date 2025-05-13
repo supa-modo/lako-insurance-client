@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   TbFileText,
   TbSettings,
@@ -17,6 +17,7 @@ import { MdSpaceDashboard } from "react-icons/md";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PiUsersDuotone } from "react-icons/pi";
+import { LuLogOut } from "react-icons/lu";
 import { RiUserFollowLine, RiUserShared2Line } from "react-icons/ri";
 import { useAuth } from "../../context/AuthContext";
 
@@ -80,7 +81,6 @@ const navItems = [
         name: "Insurance Plans",
         icon: TbShieldHalfFilled,
         path: "/admin/plans",
-        
       },
       {
         name: "Renewals",
@@ -134,13 +134,8 @@ const navItems = [
 ];
 
 const AdminSidebar = ({ collapsed }) => {
-  const { user, logout } = useAuth();
-
-  const userData = user?.user || {};
-  const firstName = userData.firstName || "";
-  const lastName = userData.lastName || "";
-  const username = firstName && lastName ? `${firstName} ${lastName}` : "Admin";
-  const email = userData.email;
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
   // Initialize only the "Clients & Leads" submenu as open by default
   const [openSubmenus, setOpenSubmenus] = useState(() => {
@@ -171,6 +166,11 @@ const AdminSidebar = ({ collapsed }) => {
         [itemName]: true,
       };
     });
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/admin");
   };
 
   // Reset submenu state when sidebar expands - only "Clients & Leads" is open
@@ -336,29 +336,18 @@ const AdminSidebar = ({ collapsed }) => {
       </div>
 
       {/* Bottom section with user profile */}
-      <div className="border-t border-white/10 px-3 py-2">
-        <div
-          className={`flex items-center ${
-            collapsed ? "justify-center" : "justify-between"
-          } p-2 rounded-lg hover:bg-white/5 cursor-pointer group transition-colors`}
-        >
-          <div className="flex items-center">
-            <div className="h-8 w-8 rounded-full text-[0.9rem] bg-secondary-700 flex items-center justify-center text-white font-medium">
-              {firstName.charAt(0).toUpperCase()}{lastName.charAt(0).toUpperCase()}
-            </div>
-            {!collapsed && (
-              <div className="ml-2">
-                <div className="text-sm text-white font-medium">{username}</div>
-                <div className="text-xs text-white/50">{email}</div>
-              </div>
-            )}
-          </div>
-
-          {!collapsed && (
-            <div className="text-white/50 hover:text-white/80 transition-colors">
-              <TbLogout className="h-5 w-5" />
-            </div>
-          )}
+      <div className="border-t border-white/10 px-3 py-4">
+        <div className="rounded-xl bg-white/10 backdrop-blur-sm p-1.5 border border-white/5">
+          <button
+            onClick={() => {
+              handleLogout();
+            }}
+            
+            className={`flex w-full justify-center items-center rounded-lg ${!collapsed ? "px-4 space-x-2" : "px-0 justify-center"} py-2.5 text-left text-sm font-medium text-white hover:bg-red-500 hover:text-white transition-all duration-200`}
+          >
+            <LuLogOut className="w-5 h-5" />
+            {!collapsed && <span>Logout</span>}
+          </button>
         </div>
       </div>
     </aside>

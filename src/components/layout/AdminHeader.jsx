@@ -276,11 +276,10 @@ const AdminHeader = ({ toggleSidebarCollapse, sidebarCollapsed }) => {
 
           {/* Profile */}
           <div className="relative" ref={profileRef}>
-            <button
-              onClick={() => setIsProfileOpen(!isProfileOpen)}
-              className="p-1 px-1.5 rounded-full text-white/90 hover:text-white hover:bg-white/10 transition-colors flex items-center space-x-2"
+            <div
+              className="pr-6 text-white/90 flex items-center space-x-3"
             >
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white shadow-lg overflow-hidden">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white shadow-lg overflow-hidden">
                 {user?.profileImage ? (
                   <img
                     src={user.profileImage}
@@ -292,14 +291,12 @@ const AdminHeader = ({ toggleSidebarCollapse, sidebarCollapsed }) => {
                 )}
               </div>
               <div className="hidden md:block text-left">
-                <div className="text-sm font-medium">{username}</div>
+              
+                <div className="text-sm text-white font-medium">{username}</div>
+                <div className="text-xs text-white/50">{userData?.email}</div>
               </div>
-              <TbChevronDown
-                className={`h-4 w-4 transition-transform ${
-                  isProfileOpen ? "rotate-180" : ""
-                }`}
-              />
-            </button>
+             
+            </div>
 
             {/* Profile dropdown menu */}
             <AnimatePresence>

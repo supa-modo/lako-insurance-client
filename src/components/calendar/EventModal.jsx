@@ -421,7 +421,7 @@ const EventModal = ({
   );
 
   const renderEditMode = () => (
-    <form onSubmit={handleSubmit} className="overflow-y-auto h-[calc(100vh-84px)]">
+    <form onSubmit={handleSubmit} className="relative overflow-y-auto h-[calc(100vh-84px)]">
       <div className="p-5 space-y-4">
         {/* Title */}
         <div>
@@ -679,7 +679,7 @@ const EventModal = ({
       </div>
 
       {/* Form Actions */}
-      <div className="border-t border-gray-200 py-4 px-5 flex justify-end space-x-3">
+      <div className="mt-auto border-t border-gray-200 py-4 px-5 flex justify-end space-x-3">
         <button
           type="button"
           onClick={onClose}

@@ -24,6 +24,7 @@ import DayView from "../../components/calendar/DayView";
 import EventModal from "../../components/calendar/EventModal";
 import eventService from "../../services/eventService";
 import { useNotification } from "../../context/NotificationContext";
+import taskService from "../../services/taskService";
 
 const CalendarPage = () => {
   const { showSuccess, showError, showInfo, showConfirmation } = useNotification();
@@ -38,70 +39,74 @@ const CalendarPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [detailsPosition, setDetailsPosition] = useState({ x: 0, y: 0 });
 
+
+  const fetchEventsAndTasks = async () => {
+    try {
+      setIsRefreshing(true);
+      // Get current view's date range
+      const startDate = new Date(currentDate);
+      const endDate = new Date(currentDate);
+      
+      if (view === "month") {
+        startDate.setDate(1); // First day of month
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setMonth(endDate.getMonth() + 1, 0); // Last day of month
+        endDate.setHours(23, 59, 59, 999);
+      } else if (view === "week") {
+        const day = currentDate.getDay(); // 0 = Sunday, 6 = Saturday
+        startDate.setDate(currentDate.getDate() - day); // First day of week (Sunday)
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setDate(startDate.getDate() + 6); // Last day of week (Saturday)
+        endDate.setHours(23, 59, 59, 999);
+      } else {
+        // Day view
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(23, 59, 59, 999);
+      }
+
+      const dateParams = {
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+      };
+
+      // Fetch events for the date range
+      const [eventsResponse, tasksResponse] = await Promise.all([
+        eventService.getAllEvents(dateParams),
+        eventService.getTasksForCalendar(dateParams)
+      ]);
+
+      let allCalendarItems = [];
+
+      if (eventsResponse.success) {
+        // Transform dates from strings to Date objects
+        const transformedEvents = eventsResponse.data.map((event) => ({
+          ...event,
+          start: new Date(event.start),
+          end: new Date(event.end),
+        }));
+        allCalendarItems = [...transformedEvents];
+      } else {
+        showError("Failed to load events");
+      }
+
+      if (tasksResponse.success) {
+        // Tasks are already transformed in the service
+        allCalendarItems = [...allCalendarItems, ...tasksResponse.data];
+      }
+
+      setEvents(allCalendarItems);
+    } catch (error) {
+      console.error("Error loading calendar items:", error);
+      showError("Error loading calendar items");
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
+
   // Load events and tasks from API
   useEffect(() => {
-    const fetchEventsAndTasks = async () => {
-      try {
-        setIsRefreshing(true);
-        // Get current view's date range
-        const startDate = new Date(currentDate);
-        const endDate = new Date(currentDate);
-        
-        if (view === "month") {
-          startDate.setDate(1); // First day of month
-          startDate.setHours(0, 0, 0, 0);
-          endDate.setMonth(endDate.getMonth() + 1, 0); // Last day of month
-          endDate.setHours(23, 59, 59, 999);
-        } else if (view === "week") {
-          const day = currentDate.getDay(); // 0 = Sunday, 6 = Saturday
-          startDate.setDate(currentDate.getDate() - day); // First day of week (Sunday)
-          startDate.setHours(0, 0, 0, 0);
-          endDate.setDate(startDate.getDate() + 6); // Last day of week (Saturday)
-          endDate.setHours(23, 59, 59, 999);
-        } else {
-          // Day view
-          startDate.setHours(0, 0, 0, 0);
-          endDate.setHours(23, 59, 59, 999);
-        }
-
-        const dateParams = {
-          startDate: startDate.toISOString(),
-          endDate: endDate.toISOString(),
-        };
-
-        // Fetch events for the date range
-        const [eventsResponse, tasksResponse] = await Promise.all([
-          eventService.getAllEvents(dateParams),
-          eventService.getTasksForCalendar(dateParams)
-        ]);
-
-        let allCalendarItems = [];
-
-        if (eventsResponse.success) {
-          // Transform dates from strings to Date objects
-          const transformedEvents = eventsResponse.data.map((event) => ({
-            ...event,
-            start: new Date(event.start),
-            end: new Date(event.end),
-          }));
-          allCalendarItems = [...transformedEvents];
-        } else {
-          showError("Failed to load events");
-        }
-
-        if (tasksResponse.success) {
-          // Tasks are already transformed in the service
-          allCalendarItems = [...allCalendarItems, ...tasksResponse.data];
-        }
-
-        setEvents(allCalendarItems);
-      } catch (error) {
-        console.error("Error loading calendar items:", error);
-        showError("Error loading calendar items");
-      } finally {
-        setIsRefreshing(false);
-      }
-    };
+    
     
     fetchEventsAndTasks();
   }, [currentDate, view, showError]);
@@ -326,20 +331,15 @@ const CalendarPage = () => {
           completed: eventData.isCompleted
         };
         
-        // Use task service to update the task
-        // This would require importing taskService
-        // response = await taskService.updateTask(taskId, taskData);
-        
-        // For now, just update the UI optimistically
-        const updatedEvents = events.map((e) =>
-          e.id === eventData.id ? { ...eventData, start: new Date(eventData.start), end: new Date(eventData.end) } : e
-        );
-        setEvents(updatedEvents);
+
+        response = await taskService.updateTask(taskId, taskData);
+        fetchEventsAndTasks();
         showSuccess("Task updated successfully");
       } else if (eventData.id && !eventData.id.startsWith('task-')) {
         // Update existing event
         response = await eventService.updateEvent(eventData.id, eventData);
         if (response.success) {
+          //TODO: Check on this to ensure event is saved to database and not local state
           // Update the event in the local state
           const updatedEvents = events.map((e) =>
             e.id === selectedEvent.id ? { ...response.data, start: new Date(response.data.start), end: new Date(response.data.end) } : e
@@ -446,7 +446,7 @@ const CalendarPage = () => {
 
   return (
     <div className="h-[calc(100vh-64px)] flex flex-col overflow-hidden">
-      {/* Calendar Header */}
+      {/* Calendar Header */} 
       <div className="bg-white px-8 py-3 border-b border-gray-200">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
           <div>

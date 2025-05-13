@@ -99,6 +99,16 @@ export const safeApiCall = async (apiCall, defaultValue = null) => {
     return result;
   } catch (error) {
     console.error("API call failed:", error);
+    
+    // If we have a response with validation errors, return them properly
+    if (error.response && error.response.data) {
+      return {
+        success: false,
+        message: error.response.data.message || 'Operation failed',
+        errors: error.response.data.errors || [],
+      };
+    }
+    
     return defaultValue;
   }
 };

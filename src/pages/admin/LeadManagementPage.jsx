@@ -16,8 +16,14 @@ import {
   TbBrandWhatsapp,
   TbCaretDownFilled,
   TbChevronRight,
+  TbCheck,
+  TbX,
+  TbAlertCircle,
+  TbInfoCircle,
+  TbPhoneCall,
+  TbMailFilled,
 } from "react-icons/tb";
-import {formatDate} from "../../utils/formatDate"
+import {formatDate, getPriorityColor} from "../../utils/formatDate"
 import { RiUserAddLine } from "react-icons/ri";
 
 // Import our components
@@ -25,261 +31,24 @@ import LeadForm from "../../components/leads/LeadForm";
 import LeadDetail from "../../components/leads/LeadDetail";
 import LeadActions from "../../components/leads/LeadActions";
 
+// Import lead service
+import { 
+  getLeads, 
+  createLead, 
+  updateLead, 
+  updateLeadStatus, 
+  toggleLeadStar, 
+  deleteLead 
+} from "../../services/leadService";
+import { PiUserDuotone } from "react-icons/pi";
+
 const LeadManagementPage = () => {
   // Lead stages configuration
   const stages = [
     { id: "new", name: "New Leads", color: "blue" },
-    // { id: "contacted", name: "Contacted", color: "indigo" },
-    // { id: "qualified", name: "Qualified", color: "violet" },
     { id: "proposal", name: "Proposal", color: "purple" },
     { id: "negotiation", name: "Negotiation", color: "pink" },
     { id: "converted", name: "Converted", color: "green" },
-  ];
-
-  // Mock lead data - in a real app, this would come from an API
-  const initialLeads = [
-    {
-      id: "1",
-      name: "John Mwangi",
-      email: "john.mwangi@example.com",
-      phone: "+254 712 345678",
-      age: 65,
-      avatar: null, // Would be an image URL in a real app
-      budget: "KES 50,000",
-      status: "new",
-      priority: "high",
-      score: 85,
-      assignedTo: "Mary W.",
-      tags: ["Senior Gold", "Family Plan"],
-      lastContact: "2023-08-10T09:24:00",
-      nextFollowUp: "2023-08-15",
-      starred: true,
-    },
-    {
-      id: "2",
-      name: "Sarah Njoroge",
-      email: "sarah.njoroge@example.com",
-      phone: "+254 745 678901",
-      age: 63,
-      avatar: null,
-      budget: "KES 40,000",
-      status: "new",
-      priority: "medium",
-      score: 72,
-      assignedTo: "James O.",
-      tags: ["Premium 65+"],
-      lastContact: "2023-08-09T14:30:00",
-      nextFollowUp: "2023-08-16",
-      starred: false,
-    },
-    {
-      id: "3",
-      name: "Mary Kamau",
-      email: "mary.kamau@example.com",
-      phone: "+254 723 456789",
-      age: 68,
-      avatar: null,
-      budget: "KES 70,000",
-      status: "new",
-      priority: "high",
-      score: 88,
-      assignedTo: "Mary W.",
-      tags: ["Family Plan", "Dental Coverage"],
-      lastContact: "2023-08-11T08:12:00",
-      nextFollowUp: "2023-08-14",
-      starred: true,
-    },
-    {
-      id: "4",
-      name: "Michael Waweru",
-      email: "michael.waweru@example.com",
-      phone: "+254 756 789012",
-      age: 70,
-      avatar: null,
-      budget: "KES 65,000",
-      status: "proposal",
-      priority: "medium",
-      score: 76,
-      assignedTo: "James O.",
-      tags: ["Elder Care", "Vision Coverage"],
-      lastContact: "2023-08-10T10:15:00",
-      nextFollowUp: "2023-08-17",
-      starred: false,
-    },
-    {
-      id: "5",
-      name: "David Ochieng",
-      email: "david.ochieng@example.com",
-      phone: "+254 734 567890",
-      age: 72,
-      avatar: null,
-      budget: "KES 100,000",
-      status: "proposal",
-      priority: "high",
-      score: 92,
-      assignedTo: "Mary W.",
-      tags: ["Gold Plus", "Comprehensive"],
-      lastContact: "2023-08-11T16:45:00",
-      nextFollowUp: "2023-08-13",
-      starred: true,
-    },
-    {
-      id: "6",
-      name: "Elizabeth Muthoni",
-      email: "elizabeth.muthoni@example.com",
-      phone: "+254 767 890123",
-      age: 66,
-      avatar: null,
-      budget: "KES 55,000",
-      status: "proposal",
-      priority: "high",
-      score: 89,
-      assignedTo: "James O.",
-      tags: ["Senior Comprehensive"],
-      lastContact: "2023-08-12T11:20:00",
-      nextFollowUp: "2023-08-14",
-      starred: false,
-    },
-    {
-      id: "7",
-      name: "George Kimani",
-      email: "george.kimani@example.com",
-      phone: "+254 778 901234",
-      age: 69,
-      avatar: null,
-      budget: "KES 80,000",
-      status: "negotiation",
-      priority: "medium",
-      score: 84,
-      assignedTo: "Mary W.",
-      tags: ["Silver Years", "Medication Coverage"],
-      lastContact: "2023-08-11T13:10:00",
-      nextFollowUp: "2023-08-15",
-      starred: true,
-    },
-    {
-      id: "8",
-      name: "Grace Atieno",
-      email: "grace.atieno@example.com",
-      phone: "+254 789 012345",
-      age: 64,
-      avatar: null,
-      budget: "KES 60,000",
-      status: "converted",
-      priority: "high",
-      score: 96,
-      assignedTo: "James O.",
-      tags: ["Premium Health 65+"],
-      lastContact: "2023-08-12T09:45:00",
-      nextFollowUp: null,
-      starred: false,
-      conversionDate: "2023-08-12",
-      selectedPlan: "Premium Health 65+",
-    },
-    {
-      id: "9",
-      name: "Grace Atieno",
-      email: "grace.atieno@example.com",
-      phone: "+254 789 012345",
-      age: 64,
-      avatar: null,
-      budget: "KES 60,000",
-      status: "converted",
-      priority: "high",
-      score: 96,
-      assignedTo: "James O.",
-      tags: ["Premium Health 65+"],
-      lastContact: "2023-08-12T09:45:00",
-      nextFollowUp: null,
-      starred: false,
-      conversionDate: "2023-08-12",
-      selectedPlan: "Premium Health 65+",
-    },
-    {
-      id: "10",
-      name: "George Kimani",
-      email: "george.kimani@example.com",
-      phone: "+254 778 901234",
-      age: 69,
-      avatar: null,
-      budget: "KES 80,000",
-      status: "proposal",
-      priority: "medium",
-      score: 84,
-      assignedTo: "Mary W.",
-      tags: ["Silver Years", "Medication Coverage"],
-      lastContact: "2023-08-11T13:10:00",
-      nextFollowUp: "2023-08-15",
-      starred: true,
-    },
-    {
-      id: "11",
-      name: "George Kimani",
-      email: "george.kimani@example.com",
-      phone: "+254 778 901234",
-      age: 69,
-      avatar: null,
-      budget: "KES 80,000",
-      status: "new",
-      priority: "medium",
-      score: 84,
-      assignedTo: "Mary W.",
-      tags: ["Silver Years", "Medication Coverage"],
-      lastContact: "2023-08-11T13:10:00",
-      nextFollowUp: "2023-08-15",
-      starred: true,
-    },
-    {
-      id: "12",
-      name: "George Kimani",
-      email: "george.kimani@example.com",
-      phone: "+254 778 901234",
-      age: 69,
-      avatar: null,
-      budget: "KES 80,000",
-      status: "negotiation",
-      priority: "medium",
-      score: 84,
-      assignedTo: "Mary W.",
-      tags: ["Silver Years", "Medication Coverage"],
-      lastContact: "2023-08-11T13:10:00",
-      nextFollowUp: "2023-08-15",
-      starred: true,
-    },
-    {
-      id: "13",
-      name: "Elvis Agunga",
-      email: "elvis.agunga@example.com",
-      phone: "+254 778 901234",
-      age: 69,
-      avatar: null,
-      budget: "KES 80,000",
-      status: "converted",
-      priority: "medium",
-      score: 84,
-      assignedTo: "Mary W.",
-      tags: ["Silver Years", "Medication Coverage"],
-      lastContact: "2023-08-11T13:10:00",
-      nextFollowUp: "2023-08-15",
-      starred: true,
-    },
-    {
-      id: "14",
-      name: "Joseph Kamau",
-      email: "joseph.kamau@example.com",
-      phone: "+254 778 901234",
-      age: 69,
-      avatar: null,
-      budget: "KES 80,000",
-      status: "converted",
-      priority: "medium",
-      score: 84,
-      assignedTo: "Mary W.",
-      tags: ["Silver Years", "Medication Coverage"],
-      lastContact: "2023-08-11T13:10:00",
-      nextFollowUp: "2023-08-15",
-      starred: true,
-    },
   ];
 
   // State for leads
@@ -298,15 +67,45 @@ const LeadManagementPage = () => {
   const [showLeadDetail, setShowLeadDetail] = useState(false);
   const [selectedLead, setSelectedLead] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  
+  // Notification state
+  const [notification, setNotification] = useState({
+    show: false,
+    type: "success", // success, error, info
+    message: "",
+  });
 
-  // Initialize leads by stage
+  // Fetch leads from API
+  const fetchLeads = async () => {
+    setIsRefreshing(true);
+    try {
+      const response = await getLeads({
+        search: searchQuery,
+        ...activeFilters,
+      });
+      
+      if (response.success) {
+        // Initialize any missing stages with empty arrays
+        const leadsByStage = stages.reduce((acc, stage) => {
+          acc[stage.id] = response.data[stage.id] || [];
+          return acc;
+        }, {});
+        
+        setLeads(leadsByStage);
+      } else {
+        console.error("Failed to fetch leads:", response.message);
+      }
+    } catch (error) {
+      console.error("Error fetching leads:", error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
+  // Initialize leads
   useEffect(() => {
-    const leadsByStage = stages.reduce((acc, stage) => {
-      acc[stage.id] = initialLeads.filter((lead) => lead.status === stage.id);
-      return acc;
-    }, {});
-    setLeads(leadsByStage);
-  }, []);
+    fetchLeads();
+  }, [searchQuery, activeFilters]);
 
   // Handle opening add lead form
   const handleAddLead = (initialStatus = "new") => {
@@ -329,108 +128,136 @@ const LeadManagementPage = () => {
     setShowLeadDetail(true);
   };
 
+  // Show notification function
+  const showNotification = (type, message, duration = 5000) => {
+    setNotification({
+      show: true,
+      type,
+      message,
+    });
+
+    // Auto-hide notification after duration
+    setTimeout(() => {
+      setNotification(prev => ({ ...prev, show: false }));
+    }, duration);
+  };
+
   // Handle saving a lead (add or edit)
-  const handleSaveLead = (leadData) => {
-    if (isEditMode) {
-      // Update existing lead
-      const status = leadData.status;
-      const updatedLeads = { ...leads };
-      const leadIndex = updatedLeads[status].findIndex(
-        (lead) => lead.id === leadData.id
-      );
-
-      if (leadIndex !== -1) {
-        updatedLeads[status][leadIndex] = {
-          ...updatedLeads[status][leadIndex],
-          ...leadData,
-        };
-        setLeads(updatedLeads);
+  const handleSaveLead = async (leadData) => {
+    try {
+      if (isEditMode) {
+        // Update existing lead
+        const response = await updateLead(leadData.id, leadData);
+        
+        if (response.success) {
+          // Refresh leads to get the updated data
+          fetchLeads();
+          
+          // If the lead detail view is open, update the selected lead
+          if (showLeadDetail && selectedLead && selectedLead.id === leadData.id) {
+            setSelectedLead(response.data);
+          }
+          
+          // Show success notification
+          showNotification("success", "Lead updated successfully!");
+        } else {
+          console.error("Failed to update lead:", response.message);
+          // Show error notification
+          showNotification("error", `Failed to update lead: ${response.message || 'Unknown error'}`); 
+        }
+      } else {
+        // Add new lead
+        const response = await createLead(leadData);
+        
+        if (response.success) {
+          // Refresh leads to get the updated data
+          fetchLeads();
+          // Show success notification
+          showNotification("success", "New lead added successfully!");
+        } else {
+          console.error("Failed to create lead:", response.message);
+          // Show error notification
+          showNotification("error", `Failed to add lead: ${response.message || 'Unknown error'}`);
+        }
       }
-    } else {
-      // Add new lead
-      const newLead = {
-        ...leadData,
-        id: `lead-${Date.now()}`, // Generate a unique ID
-        lastContact: new Date().toISOString(),
-        starred: false,
-      };
-
-      setLeads((prev) => ({
-        ...prev,
-        [newLead.status]: [...prev[newLead.status], newLead],
-      }));
+      
+      setShowLeadForm(false);
+      setSelectedLead(null);
+    } catch (error) {
+      console.error("Error saving lead:", error);
+      // Show error notification
+      showNotification("error", `An error occurred: ${error.message || 'Unknown error'}`);
     }
-
-    setShowLeadForm(false);
-    setSelectedLead(null);
   };
 
   // Handle deleting a lead
-  const handleDeleteLead = (leadId) => {
+  const handleDeleteLead = async (leadId) => {
     if (window.confirm("Are you sure you want to delete this lead?")) {
+      try {
+        const response = await deleteLead(leadId);
+        
+        if (response.success) {
+          // Refresh leads to get the updated data
+          fetchLeads();
+          
+          // Close the detail view if open
+          if (showLeadDetail && selectedLead && selectedLead.id === leadId) {
+            setShowLeadDetail(false);
+            setSelectedLead(null);
+          }
+          
+          // Show success notification
+          showNotification("success", "Lead deleted successfully!");
+        } else {
+          console.error("Failed to delete lead:", response.message);
+          // Show error notification
+          showNotification("error", `Failed to delete lead: ${response.message || 'Unknown error'}`);
+        }
+      } catch (error) {
+        console.error("Error deleting lead:", error);
+        // Show error notification
+        showNotification("error", `An error occurred: ${error.message || 'Unknown error'}`);
+      }
+    }
+  };
+
+  // Handle marking lead as converted
+  const handleMarkConverted = async (leadId) => {
+    try {
       // Find which stage the lead is in
       const stageId = Object.keys(leads).find((stageId) =>
         leads[stageId].some((lead) => lead.id === leadId)
       );
 
       if (stageId) {
-        const updatedLeads = { ...leads };
-        updatedLeads[stageId] = updatedLeads[stageId].filter(
-          (lead) => lead.id !== leadId
-        );
-        setLeads(updatedLeads);
-
-        // Close the detail view if open
-        if (showLeadDetail && selectedLead && selectedLead.id === leadId) {
-          setShowLeadDetail(false);
-          setSelectedLead(null);
+        const response = await updateLeadStatus(leadId, "converted");
+        
+        if (response.success) {
+          // Refresh leads to get the updated data
+          fetchLeads();
+          
+          // Update detail view if open
+          if (showLeadDetail && selectedLead && selectedLead.id === leadId) {
+            setSelectedLead(response.data);
+          }
+          
+          // Show success notification
+          showNotification("success", "Lead marked as converted!");
+        } else {
+          console.error("Failed to convert lead:", response.message);
+          // Show error notification
+          showNotification("error", `Failed to convert lead: ${response.message || 'Unknown error'}`);
         }
       }
-    }
-  };
-
-  // Handle marking lead as converted
-  const handleMarkConverted = (leadId) => {
-    // Find which stage the lead is in
-    const stageId = Object.keys(leads).find((stageId) =>
-      leads[stageId].some((lead) => lead.id === leadId)
-    );
-
-    if (stageId) {
-      const leadIndex = leads[stageId].findIndex((lead) => lead.id === leadId);
-      const lead = leads[stageId][leadIndex];
-
-      // Create a new lead object with updated status
-      const updatedLead = {
-        ...lead,
-        status: "converted",
-        lastUpdated: new Date().toISOString(),
-        conversionDate: new Date().toISOString(),
-      };
-
-      // Remove from source and add to destination
-      const sourceLeads = [...leads[stageId]];
-      sourceLeads.splice(leadIndex, 1);
-
-      const destLeads = [...leads["converted"]];
-      destLeads.push(updatedLead);
-
-      // Update state
-      setLeads({
-        ...leads,
-        [stageId]: sourceLeads,
-        converted: destLeads,
-      });
-
-      // Update detail view if open
-      if (showLeadDetail && selectedLead && selectedLead.id === leadId) {
-        setSelectedLead(updatedLead);
-      }
+    } catch (error) {
+      console.error("Error converting lead:", error);
+      // Show error notification
+      showNotification("error", `An error occurred: ${error.message || 'Unknown error'}`);
     }
   };
 
   // Handle drag end
-  const onDragEnd = (result) => {
+  const onDragEnd = async (result) => {
     const { destination, source, draggableId } = result;
 
     // If dropped outside of a droppable area
@@ -444,97 +271,125 @@ const LeadManagementPage = () => {
       return;
     }
 
-    // Find the lead being moved
-    const lead = leads[source.droppableId].find(
-      (lead) => lead.id === draggableId
-    );
+    try {
+      // Find the lead being moved
+      const lead = leads[source.droppableId].find(
+        (lead) => lead.id === draggableId
+      );
 
-    // Create a new lead object with updated status
-    const updatedLead = {
-      ...lead,
-      status: destination.droppableId,
-      lastUpdated: new Date().toISOString(),
-    };
+      // Optimistically update the UI
+      // Create a new lead object with updated status
+      const updatedLead = {
+        ...lead,
+        status: destination.droppableId,
+      };
 
-    // Remove from source and add to destination
-    const sourceLeads = [...leads[source.droppableId]];
-    sourceLeads.splice(source.index, 1);
+      // Remove from source and add to destination
+      const sourceLeads = [...leads[source.droppableId]];
+      sourceLeads.splice(source.index, 1);
 
-    const destLeads = [...leads[destination.droppableId]];
-    destLeads.splice(destination.index, 0, updatedLead);
+      const destLeads = [...leads[destination.droppableId]];
+      destLeads.splice(destination.index, 0, updatedLead);
 
-    // Update state
-    setLeads({
-      ...leads,
-      [source.droppableId]: sourceLeads,
-      [destination.droppableId]: destLeads,
-    });
+      // Update state
+      setLeads({
+        ...leads,
+        [source.droppableId]: sourceLeads,
+        [destination.droppableId]: destLeads,
+      });
 
-    // In a real app, you'd make an API call here to update the lead status
+      // Make API call to update the lead status
+      const response = await updateLeadStatus(draggableId, destination.droppableId);
+      
+      if (!response.success) {
+        console.error("Failed to update lead status:", response.message);
+        // Revert the UI change by refreshing leads
+        fetchLeads();
+      }
+    } catch (error) {
+      console.error("Error updating lead status:", error);
+      // Revert the UI change by refreshing leads
+      fetchLeads();
+    }
   };
 
   // Toggle star on a lead
-  const toggleStar = (leadId, stage) => {
-    const updatedLeads = { ...leads };
-    const leadIndex = updatedLeads[stage].findIndex(
-      (lead) => lead.id === leadId
-    );
-    updatedLeads[stage][leadIndex].starred =
-      !updatedLeads[stage][leadIndex].starred;
-    setLeads(updatedLeads);
+  const toggleStar = async (leadId, stage) => {
+    try {
+      // Optimistically update the UI
+      const updatedLeads = { ...leads };
+      const leadIndex = updatedLeads[stage].findIndex(
+        (lead) => lead.id === leadId
+      );
+      updatedLeads[stage][leadIndex].starred =
+        !updatedLeads[stage][leadIndex].starred;
+      setLeads(updatedLeads);
+
+      // Make API call to toggle star
+      const response = await toggleLeadStar(leadId);
+      
+      if (!response.success) {
+        console.error("Failed to toggle lead star:", response.message);
+        // Revert the UI change by refreshing leads
+        fetchLeads();
+      }
+    } catch (error) {
+      console.error("Error toggling lead star:", error);
+      // Revert the UI change by refreshing leads
+      fetchLeads();
+    }
   };
 
   // Refresh leads data
   const refreshLeads = () => {
     setIsRefreshing(true);
-    // In a real app, you'd fetch fresh lead data here
-    setTimeout(() => {
-      setIsRefreshing(false);
-    }, 1000);
+    fetchLeads();
   };
 
   // Get avatar or placeholder based on lead name
   const getAvatar = (lead) => {
-    if (lead.avatar) {
-      return (
-        <img
-          src={lead.avatar}
-          alt={lead.name}
-          className="h-full w-full rounded-full object-cover"
-        />
-      );
-    }
     return (
       <div
         className={`flex items-center justify-center h-full w-full bg-${
           lead.status === "converted" ? "green" : "primary"
-        }-100 text-${
+        }-200 text-${
           lead.status === "converted" ? "green" : "primary"
         }-600 font-medium`}
       >
+        
         {lead.name.charAt(0)}
       </div>
     );
   };
 
-  // Get badge color based on priority
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case "high":
-        return "bg-red-100 text-red-800";
-      case "medium":
-        return "bg-yellow-100 text-yellow-800";
-      case "low":
-        return "bg-blue-100 text-blue-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
-
-
   return (
     <div className="text-gray-800 font-lexend flex flex-col h-[calc(100vh-64px)]">
+      {/* Notification */}
+      {notification.show && (
+        <div 
+          className={`fixed top-20 right-4 z-50 p-3 text-sm rounded-lg shadow-lg flex items-center space-x-3 animate-slideInRight ${
+            notification.type === 'success' ? 'bg-green-100 text-green-800 border-l-4 border-green-600' :
+            notification.type === 'error' ? 'bg-red-100 text-red-800 border-l-4 border-red-500' :
+            'bg-blue-100 text-blue-800 border-l-4 border-blue-500'
+          }`}
+        >
+          {notification.type === 'success' ? (
+            <TbCheck className="w-6 h-6 text-green-700 flex-shrink-0" />
+          ) : notification.type === 'error' ? (
+            <TbAlertCircle className="w-6 h-6 text-red-600 flex-shrink-0" />
+          ) : (
+            <TbInfoCircle className="w-6 h-6 text-blue-600 flex-shrink-0" />
+          )}
+          <div className="flex-1">{notification.message}</div>
+          <button 
+            onClick={() => setNotification(prev => ({ ...prev, show: false }))} 
+            className="text-gray-500 hover:text-gray-700"
+          >
+            <TbX className="w-5 h-5" />
+          </button>
+        </div>
+      )}
+      
       {/* Page Header */}
       <div className="bg-white px-8 py-3 border-b border-gray-200">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
@@ -692,7 +547,7 @@ const LeadManagementPage = () => {
                                   {lead.priority.charAt(0).toUpperCase() +
                                     lead.priority.slice(1)}
                                 </div>
-                                <div className="bg-gray-100 text-gray-800 text-xs px-1.5 py-0.5 rounded">
+                                <div className="bg-gray-100  text-gray-800 text-xs px-1.5 py-0.5 rounded">
                                   {lead.age} yrs
                                 </div>
                                 <div className="bg-primary-100 text-primary-800 text-xs px-1.5 py-0.5 rounded">
@@ -705,7 +560,7 @@ const LeadManagementPage = () => {
                                   {lead.tags.map((tag, i) => (
                                     <div
                                       key={i}
-                                      className="bg-gray-100 text-gray-600 text-xs px-1.5 py-0.5 rounded"
+                                      className="bg-gray-100 border text-gray-600 text-xs px-2 py-0.5 rounded-full"
                                     >
                                       {tag}
                                     </div>
@@ -713,35 +568,37 @@ const LeadManagementPage = () => {
                                 </div>
                               )}
 
-                              <div className="flex items-center justify-between mt-3 text-xs text-gray-500">
+                              <div className="flex items-center justify-between mt-3 text-xs font-medium text-gray-500">
                                 <div className="flex items-center">
-                                  <TbCalendar className="h-3 w-3 mr-1" />
+                                  <TbCalendar size={16} className=" mr-1" />
                                   {lead.nextFollowUp
                                     ? formatDate(lead.nextFollowUp)
                                     : "—"}
                                 </div>
-                                <div>{lead.assignedTo}</div>
+                                <div className="flex items-center space-x-1 text-primary-500"><PiUserDuotone size={15}/>
+                                <span>{lead.assignedToName}</span></div>
                               </div>
 
                               {/* Quick actions */}
-                              <div className="flex mt-2 pt-2 border-t border-gray-100 justify-between">
+                              <div className="flex mt-2 pt-2 border-t border-gray-200 justify-between">
                                 <div className="flex space-x-1">
-                                  <button className="p-1 text-gray-400 hover:text-blue-600 rounded-md hover:bg-blue-50 transition-colors">
-                                    <TbPhone className="h-4 w-4" />
-                                  </button>
-                                  <button className="p-1 text-gray-400 hover:text-purple-600 rounded-md hover:bg-purple-50 transition-colors">
-                                    <TbMail className="h-4 w-4" />
-                                  </button>
-                                  <button className="p-1 text-gray-400 hover:text-green-600 rounded-md hover:bg-green-50 transition-colors">
-                                    <TbBrandWhatsapp className="h-4 w-4" />
-                                  </button>
+                                  <a href={`tel: ${lead.phone}`}
+                                className="p-1 text-gray-400 hover:text-blue-600 rounded-md hover:bg-blue-50 transition-colors">
+                                    <TbPhoneCall size={19}/>
+                                  </a>
+                                  <a href={`mailto: ${lead.email}`} className="p-1 text-gray-400 hover:text-purple-600 rounded-md hover:bg-purple-50 transition-colors">
+                                    <TbMailFilled size={19} />
+                                  </a >
+                                  <a href={`https://wa.me/${lead.phone}`} target="_blank" className="p-1 text-gray-400 hover:text-green-600 rounded-md hover:bg-green-50 transition-colors">
+                                    <TbBrandWhatsapp size={19} />
+                                  </a >
                                 </div>
                                 <div>
                                   <button
                                     onClick={() => handleViewLead(lead)}
-                                    className="flex items-center space-x-1 py-1 px-2 text-xs text-gray-400 hover:text-primary-600 rounded-md bg-gray-100/60 hover:bg-primary-100 transition-colors"
+                                    className="flex items-center space-x-1 py-1 px-2 text-xs text-gray-400 hover:text-primary-600 rounded-md bg-gray-100/60 underline underline-offset-4 hover:bg-primary-100 transition-colors"
                                   > <span>View Lead</span>
-                                    <TbChevronRight className="h-4 w-4" />
+                                    <TbChevronRight size={18} />
                                   </button>
                                 </div>
                               </div>
