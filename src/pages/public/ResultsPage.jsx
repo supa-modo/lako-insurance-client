@@ -70,9 +70,9 @@ const ResultsPage = () => {
         if (
           !userQuery ||
           !userQuery.insuranceType ||
-          (!userQuery.ageMin && !userQuery.ageMax)
+          (userQuery.ageMin === undefined && userQuery.ageMax === undefined && !userQuery.age)
         ) {
-          console.warn("No user query data available, using default query");
+          console.warn("No user query data available or incomplete data, using default query");
           // Create a default query for seniors insurance
           const defaultQuery = {
             insuranceType: "seniors",
@@ -99,11 +99,17 @@ const ResultsPage = () => {
             throw new Error("No results found with default parameters");
           }
         } else {
-          // Prepare the API request with properly formatted parameters
+          // The query should already be properly formatted from SummaryStep,
+          // but let's ensure all parameters are correct
           let processedQuery = { ...userQuery };
 
+          // Ensure insurance type is set
+          if (!processedQuery.insuranceType) {
+            processedQuery.insuranceType = "seniors";
+          }
+
           // Ensure age parameters are correctly formatted
-          if (processedQuery.ageMin === undefined && processedQuery.age) {
+          if (processedQuery.ageMin === undefined && processedQuery.ageMax === undefined && processedQuery.age) {
             // Try to extract age values if only the string format is available
             if (
               typeof processedQuery.age === "string" &&
@@ -116,43 +122,56 @@ const ResultsPage = () => {
               typeof processedQuery.age === "string" &&
               processedQuery.age.includes("+")
             ) {
-              const min = parseInt(processedQuery.age, 10);
+              const min = parseInt(processedQuery.age.replace("+", ""), 10);
               processedQuery.ageMin = min;
               processedQuery.ageMax = 120; // Use a high upper limit
             } else if (typeof processedQuery.age === "number") {
               processedQuery.ageMin = processedQuery.age;
               processedQuery.ageMax = processedQuery.age;
+            } else {
+              // Parse single age as string
+              const age = parseInt(processedQuery.age, 10);
+              if (!isNaN(age)) {
+                processedQuery.ageMin = age;
+                processedQuery.ageMax = age;
+              }
             }
           }
 
+          // Ensure we have default age values if still undefined
+          if (processedQuery.ageMin === undefined || processedQuery.ageMax === undefined) {
+            processedQuery.ageMin = processedQuery.ageMin || 65;
+            processedQuery.ageMax = processedQuery.ageMax || 70;
+          }
+
           // Ensure budget parameters are correctly formatted
-          if (processedQuery.budgetMax === undefined) {
-            // If we have budgetMin/budgetMax, use those
-            if (processedQuery.budgetMin !== undefined) {
-              // Budget range is already properly formatted
-            }
-            // If we have a budget string that's a range
-            else if (
-              typeof processedQuery.budget === "string" &&
-              processedQuery.budget.includes("-")
-            ) {
-              const [min, max] = processedQuery.budget.split("-").map(Number);
-              processedQuery.budgetMin = min;
-              processedQuery.budgetMax = max;
-            }
-            // If we have a budget string with a plus sign
-            else if (
-              typeof processedQuery.budget === "string" &&
-              processedQuery.budget.includes("+")
-            ) {
-              const min = parseInt(processedQuery.budget, 10);
-              processedQuery.budgetMin = min;
-              processedQuery.budgetMax = 1000000; // Use a high upper limit
-            }
-            // If we have a single budget value
-            else if (typeof processedQuery.budget === "number") {
-              processedQuery.budgetMax = processedQuery.budget;
-            }
+          // If we have budgetValue, use it as budgetMax
+          if (processedQuery.budgetValue !== undefined && processedQuery.budgetMax === undefined) {
+            processedQuery.budgetMax = Number(processedQuery.budgetValue);
+          }
+          // If we have a budget string that's a range
+          else if (
+            processedQuery.budgetMax === undefined &&
+            typeof processedQuery.budget === "string" &&
+            processedQuery.budget.includes("-")
+          ) {
+            const [min, max] = processedQuery.budget.split("-").map(Number);
+            processedQuery.budgetMin = min;
+            processedQuery.budgetMax = max;
+          }
+          // If we have a budget string with a plus sign
+          else if (
+            processedQuery.budgetMax === undefined &&
+            typeof processedQuery.budget === "string" &&
+            processedQuery.budget.includes("+")
+          ) {
+            const min = parseInt(processedQuery.budget.replace("+", ""), 10);
+            processedQuery.budgetMin = min;
+            processedQuery.budgetMax = 1000000; // Use a high upper limit
+          }
+          // If we have a single budget value
+          else if (processedQuery.budgetMax === undefined && typeof processedQuery.budget === "number") {
+            processedQuery.budgetMax = processedQuery.budget;
           }
 
           // Clean up unnecessary properties before sending to API
@@ -184,6 +203,7 @@ const ResultsPage = () => {
               setError("No plans found that match your criteria. Trying with relaxed parameters...");
 
               try {
+                // Try with increased budget if we have a budget constraint
                 if (apiQuery.budgetMax) {
                   const relaxedQuery = {
                     ...apiQuery,
@@ -211,6 +231,7 @@ const ResultsPage = () => {
                   }
                 }
 
+                // Try without budget constraints
                 const noBudgetQuery = {
                   ...apiQuery,
                   budgetMin: undefined,
@@ -238,6 +259,7 @@ const ResultsPage = () => {
                   return; // Exit early if we found plans
                 }
 
+                // Last resort - try with minimal criteria
                 const minimalQuery = {
                   insuranceType: "seniors",
                 };
@@ -414,8 +436,7 @@ const ResultsPage = () => {
           Analyzing Your Perfect Plans
         </h2>
         <p className="text-neutral-300 max-w-md font-outfit">
-          We're finding the best insurance plans tailored to your unique needs
-          and preferences...
+          We're finding the best insurance plans matching your selections...
         </p>
       </motion.div>
     </div>
@@ -437,7 +458,7 @@ const ResultsPage = () => {
           Something Went Wrong
         </h2>
         <p className="text-neutral-300 mb-6 font-outfit">
-           We couldn't process your request. Please choose your preferences and try again.
+           We couldn't find any plans matching your selections. Please choose your preferences and try again.
         </p>
         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
           <button
@@ -501,7 +522,7 @@ const ResultsPage = () => {
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.5 }}
             >
-              Your Insurance Plan Results
+              Your Insurance Comparison Results
             </motion.h1>
             <motion.p
               className="text-sm sm:text-base md:text-lg text-neutral-300 max-w-3xl mx-auto font-outfit"
@@ -509,8 +530,8 @@ const ResultsPage = () => {
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              We've analyzed {comparisonResults.length || "several"} insurance
-              plans based on your preferences and budget to find the best plan
+              We've found {comparisonResults.length || "several"} insurance
+              plans that match your preferences and budget
             </motion.p>
           </header>
 

@@ -11,18 +11,24 @@ const Header = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 20) {
+      // Always set scrolled to true on results and compare pages
+      if (location.pathname === '/results' || location.pathname === '/compare') {
+        setScrolled(true);
+      } else if (window.scrollY > 20) {
         setScrolled(true);
       } else {
         setScrolled(false);
       }
     };
 
+    // Initial check when component mounts or route changes
+    handleScroll();
+    
     window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [location.pathname]);
 
   useEffect(() => {
     setIsMenuOpen(false);

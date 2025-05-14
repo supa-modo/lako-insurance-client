@@ -53,7 +53,7 @@ const HomePage = () => {
   useEffect(() => {
     const heroInterval = setInterval(() => {
       setActiveSlide((current) => (current + 1) % heroSlides.length);
-    }, 7000);
+    }, 9000);
     return () => clearInterval(heroInterval);
   }, [heroSlides.length]);
 

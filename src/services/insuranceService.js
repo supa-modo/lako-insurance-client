@@ -94,174 +94,205 @@ const insuranceService = {
   },
 
   /**
-   * Get plan benefits
-   * @param {string} planId - ID of the plan
-   * @returns {Promise<Object>} Response with plan benefits data
-   */
-  getPlanBenefits: async (planId) => {
-    try {
-      const response = await apiClient.get(
-        `/admin/insurance/plans/${planId}/benefits`
-      );
-      return response.data;
-    } catch (error) {
-      console.error(`Error fetching benefits for plan ${planId}:`, error);
-    }
-  },
-
-  /**
-   * Get plan exclusions
-   * @param {string} planId - ID of the plan
-   * @returns {Promise<Object>} Response with plan exclusions data
-   */
-  getPlanExclusions: async (planId) => {
-    try {
-      const response = await apiClient.get(
-        `/admin/insurance/plans/${planId}/exclusions`
-      );
-      return response.data;
-    } catch (error) {
-      console.error(`Error fetching exclusions for plan ${planId}:`, error);
-    }
-  },
-
-  /**
-   * Get plan waiting periods
-   * @param {string} planId - ID of the plan
-   * @returns {Promise<Object>} Response with plan waiting periods data
-   */
-  getPlanWaitingPeriods: async (planId) => {
-    try {
-      const response = await apiClient.get(
-        `/admin/insurance/plans/${planId}/waiting-periods`
-      );
-      return response.data;
-    } catch (error) {
-      console.error(
-        `Error fetching waiting periods for plan ${planId}:`,
-        error
-      );
-    }
-  },
-
-  /**
-   * Get plan premiums
-   * @param {string} planId - ID of the plan
-   * @returns {Promise<Object>} Response with plan premiums data
-   */
-  getPlanPremiums: async (planId) => {
-    try {
-      const response = await apiClient.get(
-        `/admin/insurance/plans/${planId}/premiums`
-      );
-      return response.data;
-    } catch (error) {
-      console.error(`Error fetching premiums for plan ${planId}:`, error);
-    }
-  },
-
-  /**
    * Compare insurance plans based on user criteria
    * @param {Object} criteria - Comparison criteria (age, budget, etc.)
    * @returns {Promise<Object>} Response with matching plans
    */
   comparePlans: async (criteria) => {
     try {
-      // Ensure criteria has the correct format
+      console.log("Original criteria received:", JSON.stringify(criteria, null, 2));
+      
+      // Create a deep copy to avoid mutating the original object
       const formattedCriteria = {
         ...criteria,
         insuranceType: criteria.insuranceType || "seniors",
       };
 
-      // Process age parameter - always use the higher age for filtering
-      if (criteria.age) {
-        // If age is provided as a range string, extract the max age
+      // STEP 1: Process age parameters
+      // If we already have ageMin and ageMax, use them directly
+      if (criteria.ageMin !== undefined && criteria.ageMax !== undefined) {
+        formattedCriteria.ageMin = Number(criteria.ageMin);
+        formattedCriteria.ageMax = Number(criteria.ageMax);
+        console.log(`Using provided age range: ${formattedCriteria.ageMin}-${formattedCriteria.ageMax}`);
+      }
+      // If we have only ageMin, use it for both min and max
+      else if (criteria.ageMin !== undefined) {
+        formattedCriteria.ageMin = Number(criteria.ageMin);
+        formattedCriteria.ageMax = Number(criteria.ageMin);
+        console.log(`Using ageMin for both: ${formattedCriteria.ageMin}`);
+      }
+      // If we have only ageMax, use it for both min and max
+      else if (criteria.ageMax !== undefined) {
+        formattedCriteria.ageMin = Number(criteria.ageMax);
+        formattedCriteria.ageMax = Number(criteria.ageMax);
+        console.log(`Using ageMax for both: ${formattedCriteria.ageMax}`);
+      }
+      // If we have age string or number, parse it
+      else if (criteria.age !== undefined) {
+        // Handle age as a string
         if (typeof criteria.age === 'string') {
+          // Check for range format (e.g., "65-70")
           if (criteria.age.includes('-')) {
-            // For age range (e.g., "65-70"), use the higher number
             const parts = criteria.age.split('-');
             if (parts.length === 2) {
+              const min = parseInt(parts[0].trim(), 10);
               const max = parseInt(parts[1].trim(), 10);
-              if (!isNaN(max)) {
+              if (!isNaN(min) && !isNaN(max)) {
+                formattedCriteria.ageMin = min;
                 formattedCriteria.ageMax = max;
+                console.log(`Parsed age range ${criteria.age} as min: ${min}, max: ${max}`);
               }
             }
-          } else if (criteria.age.includes('+')) {
-            // For age with plus (e.g., "70+"), use the base number
+          }
+          // Check for plus format (e.g., "70+")
+          else if (criteria.age.includes('+')) {
             const base = parseInt(criteria.age.replace('+', '').trim(), 10);
             if (!isNaN(base)) {
-              formattedCriteria.ageMax = base;
-            }
-          } else {
-            // For single age as string
-            const parsedAge = parseInt(criteria.age, 10);
-            if (!isNaN(parsedAge)) {
-              formattedCriteria.ageMax = parsedAge;
+              formattedCriteria.ageMin = base;
+              formattedCriteria.ageMax = 120; // Use a high upper limit
+              console.log(`Parsed age with plus sign ${criteria.age} as min: ${base}, max: 120`);
             }
           }
-        } else if (typeof criteria.age === 'number') {
-          // If age is a number, use it directly
+          // Handle simple string number
+          else {
+            const singleAge = parseInt(criteria.age, 10);
+            if (!isNaN(singleAge)) {
+              formattedCriteria.ageMin = singleAge;
+              formattedCriteria.ageMax = singleAge;
+              console.log(`Parsed single age ${criteria.age} as: ${singleAge}`);
+            }
+          }
+        }
+        // Handle age as a number
+        else if (typeof criteria.age === 'number') {
+          formattedCriteria.ageMin = criteria.age;
           formattedCriteria.ageMax = criteria.age;
+          console.log(`Using numeric age ${criteria.age}`);
         }
-      } else {
-        // Default age range for seniors if not specified
+      }
+
+      // Default age range for seniors if still not specified
+      if (formattedCriteria.ageMin === undefined || formattedCriteria.ageMax === undefined) {
+        formattedCriteria.ageMin = 65;
         formattedCriteria.ageMax = 70;
+        console.log(`Using default age range: 65-70`);
       }
 
-      // Process budget parameter - extract both min and max values
-      if (criteria.budget) {
-        if (typeof criteria.budget === 'string' && criteria.budget.includes('-')) {
-          // For budget range (e.g., "5000-10000"), extract both min and max
-          const parts = criteria.budget.split('-');
-          if (parts.length === 2) {
-            const min = parseInt(parts[0].trim(), 10);
-            const max = parseInt(parts[1].trim(), 10);
-            
-            if (!isNaN(min) && !formattedCriteria.budgetMin) {
+      // STEP 2: Process budget parameters
+      // If we already have budgetMin and budgetMax, use them directly
+      if (criteria.budgetMin !== undefined && criteria.budgetMax !== undefined) {
+        formattedCriteria.budgetMin = Number(criteria.budgetMin);
+        formattedCriteria.budgetMax = Number(criteria.budgetMax);
+        console.log(`Using provided budget range: ${formattedCriteria.budgetMin}-${formattedCriteria.budgetMax}`);
+      }
+      // If we have only budgetMin, use it with a high upper limit
+      else if (criteria.budgetMin !== undefined) {
+        formattedCriteria.budgetMin = Number(criteria.budgetMin);
+        formattedCriteria.budgetMax = 1000000; // High upper limit
+        console.log(`Using budgetMin with high upper limit: ${formattedCriteria.budgetMin}+`);
+      }
+      // If we have only budgetMax, use it with no lower limit
+      else if (criteria.budgetMax !== undefined) {
+        formattedCriteria.budgetMax = Number(criteria.budgetMax);
+        console.log(`Using budgetMax: ${formattedCriteria.budgetMax}`);
+      }
+      // If we have budgetValue, use it as budgetMax
+      else if (criteria.budgetValue !== undefined) {
+        formattedCriteria.budgetMax = Number(criteria.budgetValue);
+        console.log(`Using budgetValue as max: ${formattedCriteria.budgetMax}`);
+      }
+      // If we have budget string or number, parse it
+      else if (criteria.budget !== undefined) {
+        // Handle budget as a string
+        if (typeof criteria.budget === 'string') {
+          // Check for range format (e.g., "5000-10000")
+          if (criteria.budget.includes('-')) {
+            const parts = criteria.budget.split('-');
+            if (parts.length === 2) {
+              const min = parseInt(parts[0].trim(), 10);
+              const max = parseInt(parts[1].trim(), 10);
+              if (!isNaN(min) && !isNaN(max)) {
+                formattedCriteria.budgetMin = min;
+                formattedCriteria.budgetMax = max;
+                console.log(`Parsed budget range ${criteria.budget} as min: ${min}, max: ${max}`);
+              }
+            }
+          }
+          // Check for plus format (e.g., "5000+")
+          else if (criteria.budget.includes('+')) {
+            const min = parseInt(criteria.budget.replace('+', '').trim(), 10);
+            if (!isNaN(min)) {
               formattedCriteria.budgetMin = min;
-            }
-            
-            if (!isNaN(max) && !formattedCriteria.budgetMax) {
-              formattedCriteria.budgetMax = max;
+              formattedCriteria.budgetMax = 1000000; // High upper limit
+              console.log(`Parsed budget with plus sign ${criteria.budget} as min: ${min}`);
             }
           }
-        } else {
-          // For single budget value, use as budgetMax
-          const budgetValue = typeof criteria.budget === 'string' 
-            ? parseInt(criteria.budget, 10) 
-            : criteria.budget;
-            
-          if (!isNaN(budgetValue) && !formattedCriteria.budgetMax) {
-            formattedCriteria.budgetMax = budgetValue;
+          // Handle simple string number
+          else {
+            const singleBudget = parseInt(criteria.budget, 10);
+            if (!isNaN(singleBudget)) {
+              formattedCriteria.budgetMax = singleBudget;
+              console.log(`Parsed single budget ${criteria.budget} as max: ${singleBudget}`);
+            }
           }
+        }
+        // Handle budget as a number
+        else if (typeof criteria.budget === 'number') {
+          formattedCriteria.budgetMax = criteria.budget;
+          console.log(`Using numeric budget ${criteria.budget} as max`);
         }
       }
 
-      // Use mock data if enabled or in development mode
+      // STEP 3: Clean up the criteria object to only include necessary fields
+      const apiQuery = {
+        insuranceType: formattedCriteria.insuranceType,
+        ageMin: formattedCriteria.ageMin,
+        ageMax: formattedCriteria.ageMax,
+        budgetMin: formattedCriteria.budgetMin,
+        budgetMax: formattedCriteria.budgetMax,
+        optionalCovers: formattedCriteria.optionalCovers,
+      };
+
+      console.log("Final formatted criteria for API:", JSON.stringify(apiQuery, null, 2));
+
+      // STEP 4: Use mock data if enabled
       if (ENABLE_MOCK_DATA) {
         console.log("Using mock data for comparison");
         return {
           id: 'mock-' + Date.now(),
           createdAt: new Date(),
-          userQuery: formattedCriteria,
-          comparisonResults: mockInsuranceData.generateMockComparisonResults(formattedCriteria)
+          userQuery: apiQuery,
+          comparisonResults: mockInsuranceData.generateMockComparisonResults(apiQuery)
         };
       }
 
-      // Call the backend API
-      const response = await apiClient.post("/insurance/compare", formattedCriteria);
+      // STEP 5: Call the backend API
+      const response = await apiClient.post("/insurance/compare", apiQuery);
 
       if (response.data && response.data.success && 
           response.data.data.comparisonResults && 
           response.data.data.comparisonResults.length > 0) {
+        console.log(`API returned ${response.data.data.comparisonResults.length} plans`);
         return response.data.data;
       } else {
         // If no plans found, return empty results structure
         console.warn("No plans found from API");
+        
+        // Try fallback to mock data if in development
+        if (import.meta.env.DEV || ENABLE_MOCK_DATA) {
+          console.warn("No API results, falling back to mock data");
+          return {
+            id: 'fallback-' + Date.now(),
+            createdAt: new Date(),
+            userQuery: apiQuery,
+            comparisonResults: mockInsuranceData.generateMockComparisonResults(apiQuery)
+          };
+        }
+        
         return {
           id: 'empty-' + Date.now(),
           createdAt: new Date(),
-          userQuery: formattedCriteria,
+          userQuery: apiQuery,
           comparisonResults: []
         };
       }

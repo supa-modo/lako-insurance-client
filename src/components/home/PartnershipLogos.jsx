@@ -8,8 +8,10 @@ const PartnershipLogos = () => {
     "jubilee.png",
     "icea.png",
     "britam.png",
+    "apa.png",
     "cic.png",
     "aar.png",
+    "oldmutual.png",
     "madison.png",
     "germinia.png"
   ];

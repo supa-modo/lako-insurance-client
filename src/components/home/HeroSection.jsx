@@ -32,7 +32,7 @@ const HeroSection = ({ activeSlide, heroSlides }) => {
     useEffect(() => {
       const featureInterval = setInterval(() => {
         setActiveFeature((current) => (current + 1) % features.length);
-      }, 6000);
+      }, 4500);
       return () => clearInterval(featureInterval);
     }, [features.length]);
 
@@ -160,7 +160,7 @@ const HeroSection = ({ activeSlide, heroSlides }) => {
 
               {/* Card content */}
               <div className="text-white">
-                <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-4 text-primary-500">
+                <h3 className="text-lg sm:text-xl font-bold mb-2 md:mb-4 text-primary-500">
                   See how much you could save today
                 </h3>
                 <p className="text-white/80 text-sm font-lexend font-normal mb-4">
@@ -170,22 +170,19 @@ const HeroSection = ({ activeSlide, heroSlides }) => {
 
                 {/* Call to action button */}
                 <motion.div
-                  whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.98 }}
                 >
                   <Link
-                    to="/compare"
+                    // to="/compare"
                     className="block w-full py-3 bg-gradient-to-r from-secondary-500 to-secondary-600 text-white text-center font-bold rounded-lg hover:from-secondary-600 hover:to-secondary-700 transition-all duration-300 shadow-lg mt-4 sm:mt-6 group"
                   >
                     <motion.span
                       className="inline-flex items-center font-lexend font-semibold justify-center"
                       whileHover={{ x: 5 }}
-                      transition={{ type: "spring", stiffness: 300 }}
                     >
-                      Start My Quote
+                      Get a Quote
                       <motion.div
                         whileHover={{ x: 6 }}
-                        transition={{ type: "spring", stiffness: 300 }}
                       >
                         <TbArrowRight className="ml-2" />
                       </motion.div>
@@ -194,7 +191,7 @@ const HeroSection = ({ activeSlide, heroSlides }) => {
                 </motion.div>
 
                 {/* Features Carousel */}
-                <div className="mt-6 relative">
+                <div className="mt-3 relative">
                   <div className="h-11 overflow-hidden rounded-lg bg-white/10 backdrop-blur-sm flex items-center justify-center">
                     <AnimatePresence mode="wait">
                       {features.map(

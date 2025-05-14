@@ -3,9 +3,10 @@ import { motion } from "framer-motion";
 import {
   TbChevronLeft,
   TbChevronRight,
-  TbCoin,
-  TbCoins,
   TbInfoCircle,
+  TbCurrencyDollar,
+  TbCheck,
+  TbCoins,
 } from "react-icons/tb";
 
 // Budget ranges with descriptions and a recommended option
@@ -28,7 +29,6 @@ const budgetRanges = [
     id: "50000-75000",
     label: "Ksh. 50,000 - 75,000",
     description: "premium per year",
-    recommended: true,
     minValue: 50000,
     maxValue: 75000,
   },
@@ -60,7 +60,7 @@ const BudgetRangeStep = ({ formData, updateFormData, nextStep, prevStep }) => {
   const getSelectedBudgetId = () => {
     if (!formData.budget) {
       return (
-        budgetRanges.find((range) => range.recommended)?.id ||
+        budgetRanges.find((range) => range.id === "50000-75000")?.id ||
         budgetRanges[2].id
       );
     }
@@ -111,78 +111,91 @@ const BudgetRangeStep = ({ formData, updateFormData, nextStep, prevStep }) => {
     updateFormData("budget", budgetId);
     updateFormData("budgetMin", selectedRange?.minValue || 0);
     updateFormData("budgetMax", selectedRange?.maxValue || 1000000);
-
-    nextStep();
   };
 
   return (
     <div>
-      <div className="flex items-center mb-6">
-        <div className="pl-2 lg:px-4 flex items-center justify-center text-secondary-300 mr-4">
-          <TbCoins className="h-10 md:h-12 w-10 md:w-12" />
-        </div>
-        <div>
-          <h3 className="text-white text-lg">
-            What's your annual budget for insurance?
-          </h3>
-          <p className="text-white/80 font-light text-[0.9rem] mt-1">
-            We'll find plans that fit within your budget range
-          </p>
-        </div>
-      </div>
+      <p className="text-slate-600 text-[0.9rem] md:text-[1.1rem] mb-6">
+        We'll find plans that fit within your budget range and provide the best
+        value for your healthcare needs.
+      </p>
 
       {/* Budget range cards with descriptions */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 mb-8">
         {budgetRanges.map((range) => (
           <motion.div
             key={range.id}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            className={`p-4  rounded-xl cursor-pointer transition-all duration-300 ${
+            whileHover={{
+              scale: 1.02,
+              boxShadow: "0 8px 20px -4px rgba(0, 0, 0, 0.1)",
+            }}
+            whileTap={{ scale: 0.98 }}
+            className={`relative rounded-xl overflow-hidden border-2 ${
               selectedBudget === range.id
-                ? "bg-gradient-to-r from-secondary-500/80 to-secondary-600 text-white shadow-lg"
-                : "bg-white/10 text-white hover:bg-white/20"
-            }`}
+                ? "border-primary-500 bg-primary-50 shadow-md"
+                : "border-slate-200 bg-white hover:border-primary-300 shadow-sm"
+            } transition-all duration-300 cursor-pointer`}
             onClick={() => handleSelectBudget(range.id)}
           >
-            <div className="flex flex-col items-center text-center">
-              <p className="font-medium text-lg mb-2">{range.label}</p>
-              <p className="text-sm text-white/80 mb-2">{range.description}</p>
-              {/* {range.recommended && (
-                <span className="bg-white/30 text-white text-xs px-3 py-1 rounded-full">
-                  Recommended
-                </span>
-              )} */}
+            <div className="p-4">
+              <div className="flex flex-row md:flex-col justify-center items-center gap-3">
+                <div
+                  className={`w-12 md:w-16 h-12 md:h-16 rounded-full flex items-center justify-center ${
+                    selectedBudget === range.id
+                      ? "bg-primary-100 text-primary-500"
+                      : "bg-slate-100 text-slate-500/80"
+                  }`}
+                >
+                  <TbCoins className="w-6 md:w-8 h-6 md:h-8" />
+                </div>
+                <div className="flex flex-col items-center">
+                  <h4
+                    className={`text-lg md:text-xl font-bold ${
+                      selectedBudget === range.id
+                        ? "text-primary-600"
+                        : "text-slate-500"
+                    }`}
+                  >
+                    {range.label}
+                  </h4>
+                  <p
+                    className={`text-sm mt-1 ${
+                      selectedBudget === range.id
+                        ? "text-primary-600"
+                        : "text-slate-600"
+                    }`}
+                  >
+                    {range.description}
+                  </p>
+                </div>
+              </div>
+
+              {selectedBudget === range.id && (
+                <div className="absolute top-2 right-2 h-6 md:h-8 w-6 md:w-8 rounded-full bg-primary-500 text-white flex items-center justify-center shadow-md">
+                  <TbCheck className="h-5 w-5" />
+                </div>
+              )}
             </div>
           </motion.div>
         ))}
       </div>
 
-      <div className="mt-8 bg-primary-700/50 backdrop-blur-sm rounded-lg p-4 flex items-start">
-        <TbInfoCircle className="text-secondary-300 h-5 w-5 mt-0.5 mr-3 flex-shrink-0" />
-        <p className="text-white/80 text-sm">
-          Your budget helps us find plans that offer the best value for your
-          needs. Higher budgets typically provide more comprehensive coverage
-          and additional benefits.
-        </p>
-      </div>
-
       <div className="flex justify-between mt-8">
         <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
           onClick={prevStep}
-          className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-lg flex items-center transition-all duration-300"
+          className="px-6 py-3 border-2 border-slate-300 hover:bg-slate-50 text-slate-700 rounded-lg flex items-center transition-all duration-200 font-medium"
         >
           <TbChevronLeft className="mr-2" />
           Back
         </motion.button>
 
         <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
           onClick={nextStep}
-          className="px-6 py-3 rounded-lg flex items-center transition-all duration-300 bg-gradient-to-r from-secondary-500 to-secondary-600 text-white shadow-md hover:shadow-lg"
+          className="px-8 py-3 rounded-lg flex items-center transition-all duration-200 font-medium shadow-md bg-primary-600 hover:bg-primary-700 text-white"
         >
           Continue
           <TbChevronRight className="ml-2" />
