@@ -63,7 +63,7 @@ const Footer = () => {
     <>
       {/* Scroll to top button */}
       <motion.div
-        className="fixed right-6 bottom-6 z-30"
+        className="fixed left-4 md:left-6 bottom-4 z-30"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}

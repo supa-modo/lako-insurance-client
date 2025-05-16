@@ -125,10 +125,10 @@ const HeroSection = ({ activeSlide, heroSlides }) => {
                 transition={{ type: "spring", stiffness: 200 }}
               >
                 <Link
-                  to="/about"
+                  to="/buy-online"
                   className="btn w-full border-2 border-white/50 text-secondary-500 hover:bg-white/20 hover:text-secondary-600 transition-all duration-300 px-8 py-2 sm:py-2.5 rounded-lg text-base sm:text-lg"
                 >
-                  Learn More
+                  Buy Plan Online
                 </Link>
               </motion.div>
             </div>

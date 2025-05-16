@@ -12,7 +12,11 @@ const Header = () => {
   useEffect(() => {
     const handleScroll = () => {
       // Always set scrolled to true on results and compare pages
-      if (location.pathname === '/results' || location.pathname === '/compare') {
+      if (
+        location.pathname === "/results" ||
+        location.pathname === "/buy-online" ||
+        location.pathname === "/compare"
+      ) {
         setScrolled(true);
       } else if (window.scrollY > 20) {
         setScrolled(true);
@@ -23,7 +27,7 @@ const Header = () => {
 
     // Initial check when component mounts or route changes
     handleScroll();
-    
+
     window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);
@@ -51,7 +55,7 @@ const Header = () => {
   const MobileNavLink = ({ to, label, onClick }) => (
     <Link
       to={to}
-      className="flex items-center px-2 py-2 text-neutral-800 hover:text-primary-500 font-medium font-outfit border-b border-neutral-100"
+      className="flex items-center px-2 py-2 text-neutral-900 hover:text-primary-500 font-medium font-outfit border-b border-neutral-100"
       onClick={onClick}
     >
       <span className="text-sm">{label}</span>
@@ -68,7 +72,7 @@ const Header = () => {
     return (
       <div className="border-b border-neutral-100">
         <button
-          className="flex items-center justify-between w-full px-2 py-2 text-neutral-800 hover:text-primary-500 font-medium font-outfit"
+          className="flex items-center justify-between w-full px-2 py-2 text-neutral-900 hover:text-primary-500 font-medium font-outfit"
           onClick={() => setIsOpen(!isOpen)}
         >
           <span className="text-sm">{label}</span>
@@ -167,6 +171,7 @@ const Header = () => {
               </div>
             </div>
             <NavLink to="/about" label="About Us" />
+            <NavLink to="/buy-online" label="Buy Online " />
           </nav>
 
           {/* Contact Button */}
@@ -279,11 +284,21 @@ const Header = () => {
             </a>
             <Link
               to="/compare"
-              className="block w-full  py-2 px-4 bg-secondary-500 hover:bg-primary-600 text-white hover:text-white text-center font-medium rounded-lg shadow-md transition-all"
+              className="block w-full mb-2.5 py-2 px-4 bg-white/20 border-2 border-primary-500 text-primary-600 text-center font-medium rounded-lg shadow-md transition-all"
               onClick={() => setIsMenuOpen(false)}
             >
               <div className="flex items-center justify-center">
-                <span className="text-sm font-outfit">Get Your Quote</span>
+                <span className="text-sm font-outfit">Get a Quote</span>
+                <TbArrowRight className="ml-2" />
+              </div>
+            </Link>
+            <Link
+              to="/buy-online"
+              className="block w-full  py-2 px-4 bg-secondary-500 border-2 border-secondary-500 text-white hover:text-white text-center font-medium rounded-lg shadow-md transition-all"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <div className="flex items-center justify-center">
+                <span className="text-sm font-outfit">Buy Plan Online</span>
                 <TbArrowRight className="ml-2" />
               </div>
             </Link>

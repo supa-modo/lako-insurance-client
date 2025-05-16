@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import Header from "../../components/layout/Header";
@@ -12,7 +12,10 @@ import {
   TbCoin,
   TbClipboardCheck,
   TbShieldHalfFilled,
+  TbFirstAidKit,
+  TbPlus,
 } from "react-icons/tb";
+import { FaUserInjured } from "react-icons/fa";
 
 // Step components
 import InsuranceTypeStep from "../../components/comparison/steps/InsuranceTypeStep";
@@ -20,14 +23,25 @@ import SeniorsCoverAgeStep from "../../components/comparison/steps/SeniorsCoverA
 import BudgetRangeStep from "../../components/comparison/steps/BudgetRangeStep";
 import SummaryStep from "../../components/comparison/steps/SummaryStep";
 
+// Personal Accident Step components
+import AccidentTypeStep from "../../components/comparison/steps/AccidentTypeStep";
+import AccidentCoverageAmountStep from "../../components/comparison/steps/AccidentCoverageAmountStep";
+import AccidentAdditionalBenefitsStep from "../../components/comparison/steps/AccidentAdditionalBenefitsStep";
+
 const NewComparisonPage = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const { userQuery, updateUserQuery, setLoading } = useComparison();
 
-  // Progress percentage calculation
-  const totalSteps = 4;
-  const progress = Math.round((currentStep / totalSteps) * 100);
+  // Calculate total steps based on insurance type
+  const getTotalSteps = () => {
+    if (userQuery.insuranceType === "personal-accident") {
+      return 4; // InsuranceType + AccidentType + CoverageAmount + AdditionalBenefits + Summary
+    }
+    return 4; // Default for health insurance: InsuranceType + Age + Budget + Summary
+  };
+  
+  const totalSteps = getTotalSteps();
 
   // Update form data
   const updateFormData = (field, value) => {
@@ -92,8 +106,16 @@ const NewComparisonPage = () => {
     },
   ];
 
-  // Step components with their respective props
-  const steps = [
+  // Effect to update current step when insurance type changes
+  useEffect(() => {
+    // If user switches insurance type after step 1, reset to step 2
+    if (currentStep > 1) {
+      setCurrentStep(2);
+    }
+  }, [userQuery.insuranceType]);
+
+  // Define step components for health insurance
+  const healthInsuranceSteps = [
     {
       component: (
         <InsuranceTypeStep
@@ -150,6 +172,69 @@ const NewComparisonPage = () => {
     },
   ];
 
+  // Define step components for personal accident insurance
+  const personalAccidentSteps = [
+    {
+      component: (
+        <InsuranceTypeStep
+          formData={userQuery}
+          updateFormData={updateFormData}
+          nextStep={nextStep}
+        />
+      ),
+      title: "Insurance Type",
+      description: "What type of insurance are you looking for?",
+      icon: <TbShieldCheck className="w-6 h-6" />,
+      color: "secondary",
+    },
+    {
+      component: (
+        <AccidentTypeStep
+          formData={userQuery}
+          updateFormData={updateFormData}
+          nextStep={nextStep}
+          prevStep={prevStep}
+        />
+      ),
+      title: "Accident Type",
+      description: "What type of accident coverage do you need?",
+      icon: <FaUserInjured className="w-6 h-6" />,
+      color: "indigo",
+    },
+    {
+      component: (
+        <AccidentCoverageAmountStep
+          formData={userQuery}
+          updateFormData={updateFormData}
+          nextStep={nextStep}
+          prevStep={prevStep}
+        />
+      ),
+      title: "Coverage Amount",
+      description: "Select your desired coverage amount",
+      icon: <TbFirstAidKit className="w-6 h-6" />,
+      color: "teal",
+    },
+    {
+      component: (
+        <SummaryStep
+          formData={userQuery}
+          submitForm={submitForm}
+          prevStep={prevStep}
+        />
+      ),
+      title: "Review & Compare",
+      description: "Review your selections and proceed to comparison",
+      icon: <TbClipboardCheck className="w-6 h-6" />,
+      color: "emerald",
+    },
+  ];
+
+  // Choose the appropriate steps based on insurance type
+  const steps = userQuery.insuranceType === "personal-accident" 
+    ? personalAccidentSteps 
+    : healthInsuranceSteps;
+
   return (
     <>
       <div className="min-h-screen bg-gradient-to-b from-white to-slate-100 font-outfit">
@@ -159,15 +244,6 @@ const NewComparisonPage = () => {
           <div className="container mx-auto px-2.5 max-w-screen-2xl">
             {/* Page Header */}
             <div className="text-center mb-6 md:mb-12">
-              {/* <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="inline-flex items-center px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[0.8rem] md:text-sm font-medium bg-primary-50 text-primary-600 border border-primary-100 mb-3 shadow-sm"
-              >
-                <span className="flex h-2 w-2 rounded-full bg-primary-500 mr-2"></span>
-                Insurance Comparison
-              </motion.div> */}
 
               <motion.h1
                 initial={{ opacity: 0, y: -10 }}

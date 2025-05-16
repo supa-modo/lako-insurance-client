@@ -168,11 +168,11 @@ const ServiceCard = ({ service }) => {
           } mb-2 flex items-center`}
         >
           {service.title}
-          {service.featured && (
+          {/* {service.featured && (
             <span className="ml-2 text-xs bg-secondary-100 text-secondary-700 px-2 py-0.5 rounded-full">
               Featured
             </span>
-          )}
+          )} */}
         </h3>
         <p className="text-neutral-800 text-[0.95rem] lg:text-base mb-4">
           {service.description}

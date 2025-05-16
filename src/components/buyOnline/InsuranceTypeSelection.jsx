@@ -2,10 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import {
   TbHeartPlus,
-  TbHome2,
   TbChevronRight,
-  TbInfoCircle,
-  TbShieldCheck,
   TbCheck,
   TbBuildingBank,
 } from "react-icons/tb";
@@ -34,13 +31,13 @@ const insuranceTypes = [
     description:
       "Protection against accidents and injuries in various situations",
     comingSoon: false,
-    benefits: ["Workplace Accidents", "Medical Expenses", "Travel Insurance"],
+    benefits: ["Workplace Accidents", "Student Cover", "Travel Insurance"],
   },
   {
     id: "property",
     name: "Business/SMEs Cover",
     icon: <TbBuildingBank className="h-7 w-7" />,
-    description: "Comprehensive protection for your home and valuable assets",
+    description: "Comprehensive protection for your business and valuable assets",
     comingSoon: true,
     benefits: [
       "Premises Cover",
@@ -63,25 +60,13 @@ const insuranceTypes = [
   },
 ];
 
-const InsuranceTypeStep = ({ formData, updateFormData, nextStep }) => {
-  const handleSelectType = (typeId) => {
-    updateFormData("insuranceType", typeId);
-
-    // Set the default cover type based on insurance type
-    if (typeId === "health") {
-      updateFormData("coverType", "seniors");
-    } else if (typeId === "personal-accident") {
-      updateFormData("coverType", "personal-accident");
-    }
-
-    nextStep();
-  };
-
+const InsuranceTypeSelection = ({ onSelect, formData }) => {
   return (
     <div>
+      <h2 className="text-xl md:text-2xl font-bold text-primary-600 mb-4">Select Insurance Type</h2>
+      
       <p className="text-slate-600 text-[0.9rem] md:text-[1.1rem] mb-6">
-        Select the insurance category that best fits your needs. We'll guide you
-        through the rest of the process.
+        Select the insurance category you'd like to purchase. We'll guide you through the rest of the process.
       </p>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-8">
@@ -104,7 +89,7 @@ const InsuranceTypeStep = ({ formData, updateFormData, nextStep }) => {
                 ? "border-primary-500 bg-primary-50 shadow-lg"
                 : "border-slate-200 bg-white hover:border-primary-300 cursor-pointer shadow-sm"
             } transition-all duration-300`}
-            onClick={() => !type.comingSoon && handleSelectType(type.id)}
+            onClick={() => !type.comingSoon && onSelect(type.id)}
           >
             <div className="px-3 py-5 md:p-5">
               <div className="flex items-center mb-3">
@@ -146,7 +131,7 @@ const InsuranceTypeStep = ({ formData, updateFormData, nextStep }) => {
                 </div>
 
                 {!type.comingSoon && (
-                  <div className=" absolute top-2 right-2">
+                  <div className="absolute top-2 right-2">
                     <div
                       className={`h-8 w-8 rounded-full flex items-center justify-center ${
                         type.id === formData.insuranceType
@@ -197,47 +182,18 @@ const InsuranceTypeStep = ({ formData, updateFormData, nextStep }) => {
               </div>
             )}
 
-            {/* Show options for health insurance */}
-            {type.id === "health" &&
-              type.options &&
-              type.id === formData.insuranceType && (
-                <div className="px-5 pb-5 pt-2 border-t border-primary-200 bg-primary-50/50">
-                  <p className="text-sm text-primary-700 font-semibold mb-3 flex items-center">
-                    <TbInfoCircle className="h-4 w-4 mr-1" /> Available Coverage
-                    Options:
-                  </p>
-                  <ul className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                    {type.options.map((option, index) => (
-                      <li
-                        key={index}
-                        className="flex items-center bg-white rounded-lg px-3 py-2 shadow-sm border border-primary-100"
-                      >
-                        <div className="h-5 w-5 rounded-full bg-primary-100 flex items-center justify-center mr-2">
-                          <div className="h-2 w-2 rounded-full bg-primary-600"></div>
-                        </div>
-                        <span className="text-sm text-slate-700 font-medium">
-                          {option}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+            {type.popular && !type.comingSoon && (
+              <div className="absolute top-0 left-0">
+                <span className="bg-secondary-500 text-white px-3 py-1 text-xs font-semibold rounded-br-lg">
+                  POPULAR
+                </span>
+              </div>
+            )}
           </motion.div>
         ))}
-      </div>
-
-      <div className="mt-6 px-2 py-3 md:p-4 bg-primary-50 border border-primary-100 rounded-lg flex items-center">
-        <TbInfoCircle className="text-primary-600 h-6 w-6 mt-0.5 mr-3 flex-shrink-0" />
-        <div>
-          <p className="text-primary-700 text-sm">
-            Select an insurance type to continue. Only Health
-            Insurance is available for comparison for now. 
-          </p>
-        </div>
       </div>
     </div>
   );
 };
 
-export default InsuranceTypeStep;
+export default InsuranceTypeSelection;

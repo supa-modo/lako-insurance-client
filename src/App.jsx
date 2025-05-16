@@ -4,6 +4,7 @@ import AboutPage from "./pages/public/AboutPage";
 import ContactPage from "./pages/public/ContactPage";
 import NewComparisonPage from "./pages/public/NewComparisonPage";
 import ResultsPage from "./pages/public/ResultsPage";
+import BuyOnlinePage from "./pages/public/BuyOnlinePage";
 import AdminLoginPage from "./pages/admin/AdminLoginPage";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import LeadManagementPage from "./pages/admin/LeadManagementPage";
@@ -48,6 +49,7 @@ function App() {
                   <Route path="results" element={<ResultsPage />} />
                   <Route path="about" element={<AboutPage />} />
                   <Route path="contact" element={<ContactPage />} />
+                  <Route path="buy-online" element={<BuyOnlinePage />} />
 
                   {/* Service Details Route - Using a dynamic parameter */}
                   <Route
