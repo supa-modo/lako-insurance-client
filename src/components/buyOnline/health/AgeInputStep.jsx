@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { TbChevronLeft, TbChevronRight, TbInfoCircle, TbUserCircle } from "react-icons/tb";
+import { TbChevronLeft, TbChevronRight, TbInfoCircle, TbShieldHalfFilled, TbUserCircle } from "react-icons/tb";
 
 const AgeInputStep = ({ formData, updateFormData, nextStep, prevStep }) => {
   const [age, setAge] = useState(formData.age || "");
@@ -64,7 +64,7 @@ const AgeInputStep = ({ formData, updateFormData, nextStep, prevStep }) => {
 
   return (
     <div>
-      <h2 className="text-xl md:text-2xl font-bold text-primary-600 mb-4">Enter Age</h2>
+      <h2 className="text-xl md:text-2xl font-bold text-primary-600 mb-2 md:mb-4">Enter Age</h2>
       
       <p className="text-slate-600 text-[0.9rem] md:text-[1.1rem] mb-6">
         Please enter the age of the person to be insured. This will help us determine the appropriate cover type.
@@ -80,9 +80,9 @@ const AgeInputStep = ({ formData, updateFormData, nextStep, prevStep }) => {
             id="age"
             value={age}
             onChange={handleAgeChange}
-            className={`w-full px-4 py-3 rounded-lg border ${
-              error ? "border-red-300 focus:ring-red-300 focus:border-red-500" : "border-slate-300 focus:ring-primary-300 focus:border-primary-500"
-            } outline-none transition-all text-lg text-center font-medium`}
+            className={`w-full px-4 py-3 bg-slate-100 text-gray-600 rounded-lg border focus:ring-1 ${
+              error ? "border-red-300 focus:ring-red-300 focus:border-red-500" : "border-slate-400/60 focus:ring-primary-300 focus:border-primary-500"
+            } outline-none transition-all text-base md:text-lg text-center font-medium`}
             placeholder="Enter age"
             min="1"
             max="120"
@@ -96,15 +96,15 @@ const AgeInputStep = ({ formData, updateFormData, nextStep, prevStep }) => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
-            className="mb-8 p-4 rounded-lg border border-primary-200 bg-primary-50"
+            className="mb-4 p-4 rounded-lg border border-secondary-200 bg-secondary-50"
           >
             <div className="flex items-center">
-              <div className="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center mr-4">
-                <TbUserCircle className="w-6 h-6 text-primary-600" />
+              <div className="w-12 h-12 rounded-full bg-secondary-100 flex items-center justify-center mr-4">
+                <TbShieldHalfFilled className="w-6 h-6 text-secondary-600" />
               </div>
               <div>
-                <h4 className="text-primary-700 font-medium">Cover Type Determined:</h4>
-                <p className="text-primary-600 font-bold">{getCoverTypeLabel()}</p>
+                <h4 className="text-slate-500 text-sm md:text-base font-medium">Cover Type Determined:</h4>
+                <p className="text-secondary-600 font-semibold font-lexend">{getCoverTypeLabel()}</p>
               </div>
             </div>
           </motion.div>
@@ -114,7 +114,7 @@ const AgeInputStep = ({ formData, updateFormData, nextStep, prevStep }) => {
           <TbInfoCircle className="text-primary-600 h-6 w-6 mt-0.5 mr-3 flex-shrink-0" />
           <div>
             <p className="text-primary-700 text-sm">
-              Different age groups have specific health insurance needs and coverage options. We'll show you plans that are specifically designed for the age group you select.
+             We'll show you plans that are specifically designed for the age group you select.
             </p>
           </div>
         </div>

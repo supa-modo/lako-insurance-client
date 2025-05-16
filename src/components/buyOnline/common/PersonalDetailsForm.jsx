@@ -32,7 +32,7 @@ const PersonalDetailsForm = ({ formData, updateFormData, nextStep, prevStep }) =
             name="firstName"
             value={formData.personalDetails.firstName}
             onChange={handleChange}
-            className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary-300 focus:border-primary-500 outline-none transition-all"
+            className="w-full px-4 py-2.5 rounded-lg bg-slate-100 text-gray-600 font-medium placeholder:font-normal border border-slate-400/60 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
             placeholder="Enter your first name"
             required
           />
@@ -48,7 +48,7 @@ const PersonalDetailsForm = ({ formData, updateFormData, nextStep, prevStep }) =
             name="lastName"
             value={formData.personalDetails.lastName}
             onChange={handleChange}
-            className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary-300 focus:border-primary-500 outline-none transition-all"
+            className="w-full px-4 py-2.5 rounded-lg bg-slate-100 text-gray-600 font-medium placeholder:font-normal border border-slate-400/60 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
             placeholder="Enter your last name"
             required
           />
@@ -64,7 +64,7 @@ const PersonalDetailsForm = ({ formData, updateFormData, nextStep, prevStep }) =
             name="email"
             value={formData.personalDetails.email}
             onChange={handleChange}
-            className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary-300 focus:border-primary-500 outline-none transition-all"
+            className="w-full px-4 py-2.5 rounded-lg bg-slate-100 text-gray-600 font-medium placeholder:font-normal border border-slate-400/60 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
             placeholder="Enter your email address"
             required
           />
@@ -80,8 +80,8 @@ const PersonalDetailsForm = ({ formData, updateFormData, nextStep, prevStep }) =
             name="phone"
             value={formData.personalDetails.phone}
             onChange={handleChange}
-            className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary-300 focus:border-primary-500 outline-none transition-all"
-            placeholder="Enter your phone number"
+            className="w-full px-4 py-2.5 rounded-lg bg-slate-100 text-gray-600 font-medium placeholder:font-normal border border-slate-400/60 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+             placeholder="Enter your phone number"
             required
           />
         </div>
@@ -96,7 +96,7 @@ const PersonalDetailsForm = ({ formData, updateFormData, nextStep, prevStep }) =
             name="idNumber"
             value={formData.personalDetails.idNumber}
             onChange={handleChange}
-            className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary-300 focus:border-primary-500 outline-none transition-all"
+            className="w-full px-4 py-2.5 rounded-lg bg-slate-100 text-gray-600 font-medium placeholder:font-normal border border-slate-400/60 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
             placeholder="Enter your ID number"
             required
           />
@@ -112,7 +112,7 @@ const PersonalDetailsForm = ({ formData, updateFormData, nextStep, prevStep }) =
             name="dateOfBirth"
             value={formData.personalDetails.dateOfBirth}
             onChange={handleChange}
-            className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary-300 focus:border-primary-500 outline-none transition-all"
+            className="w-full px-4 py-2.5 rounded-lg bg-slate-100 text-gray-600 font-medium placeholder:font-normal border border-slate-400 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
             required
           />
         </div>
@@ -127,8 +127,8 @@ const PersonalDetailsForm = ({ formData, updateFormData, nextStep, prevStep }) =
             value={formData.personalDetails.address}
             onChange={handleChange}
             rows="3"
-            className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary-300 focus:border-primary-500 outline-none transition-all"
-            placeholder="Enter your address"
+            className="w-full px-4 py-2.5 rounded-lg bg-slate-100 text-gray-600 font-medium placeholder:font-normal border border-slate-400/60 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
+             placeholder="Enter your address"
             required
           ></textarea>
         </div>

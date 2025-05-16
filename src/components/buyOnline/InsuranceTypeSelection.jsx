@@ -182,13 +182,7 @@ const InsuranceTypeSelection = ({ onSelect, formData }) => {
               </div>
             )}
 
-            {type.popular && !type.comingSoon && (
-              <div className="absolute top-0 left-0">
-                <span className="bg-secondary-500 text-white px-3 py-1 text-xs font-semibold rounded-br-lg">
-                  POPULAR
-                </span>
-              </div>
-            )}
+           
           </motion.div>
         ))}
       </div>

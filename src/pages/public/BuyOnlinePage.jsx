@@ -120,9 +120,9 @@ const BuyOnlinePage = () => {
       <Header />
 
       <main className="pt-24 md:pt-28 pb-20 relative z-10">
-        <div className="container mx-auto px-2.5 max-w-screen-2xl">
+        <div className="container mx-auto max-w-screen-2xl">
           {/* Page Header */}
-          <div className="text-center mb-6 md:mb-12">
+          <div className="text-center px-2.5 mb-6 md:mb-12">
             <motion.h1
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -144,7 +144,7 @@ const BuyOnlinePage = () => {
 
           {/* Back button if not on first step */}
           {currentStep > 1 && (
-            <div className="mb-6">
+            <div className="px-2.5 mb-6">
               <button
                 onClick={resetFlow}
                 className="inline-flex items-center text-primary-600 hover:text-primary-700 font-medium"
@@ -156,7 +156,7 @@ const BuyOnlinePage = () => {
           )}
 
           {/* Main Content */}
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+          <div className="bg-white rounded-2xl md:rounded-xl shadow-sm border border-slate-200 px-4 py-6 md:p-8">
             {renderContent()}
           </div>
         </div>
