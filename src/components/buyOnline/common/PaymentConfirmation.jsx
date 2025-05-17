@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { TbChevronLeft, TbInfoCircle, TbCreditCard, TbCheck, TbCash, TbBrandMastercard, TbBrandVisa } from "react-icons/tb";
-import { FaMobileAlt } from "react-icons/fa";
+import MpesaIcon from "../../../components/common/MpesaIcon"
 
 const PaymentConfirmation = ({ formData, updateFormData, prevStep, onComplete }) => {
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -11,14 +11,13 @@ const PaymentConfirmation = ({ formData, updateFormData, prevStep, onComplete })
     {
       id: "card",
       name: "Credit/Debit Card",
-      icon: <TbCreditCard className="h-6 w-6" />,
+      icon: <span className="flex items-center space-x-2 text-primary-600"><TbBrandVisa key="visa" className="h-8 w-8" /> <TbBrandMastercard key="mastercard" className="h-8 w-8" /></span>,
       description: "Pay securely with your credit or debit card",
-      brands: [<TbBrandVisa key="visa" className="h-6 w-6" />, <TbBrandMastercard key="mastercard" className="h-6 w-6" />]
-    },
+      },
     {
       id: "mpesa",
       name: "M-Pesa",
-      icon: <FaMobileAlt className="h-6 w-6" />,
+      icon: <MpesaIcon  width={80} height={26}/>,
       description: "Pay using M-Pesa mobile money service",
     },
     {
@@ -51,17 +50,17 @@ const PaymentConfirmation = ({ formData, updateFormData, prevStep, onComplete })
 
   return (
     <div>
-      <h2 className="text-xl md:text-2xl font-bold text-primary-600 mb-4">Payment Confirmation</h2>
+      <h2 className="text-base md:text-xl font-bold text-primary-600 mb-2 md:mb-4">Payment Confirmation</h2>
       
       <p className="text-slate-600 text-[0.9rem] md:text-[1.1rem] mb-6">
         Review your order details and select a payment method to complete your purchase.
       </p>
 
       {/* Order Summary */}
-      <div className="bg-slate-50 rounded-lg p-6 mb-8 border border-slate-200">
-        <h3 className="text-lg font-semibold text-slate-800 mb-4">Order Summary</h3>
+      <div className="bg-slate-50 rounded-lg p-3.5 md:p-6 mb-8 border border-slate-200">
+        <h3 className="text-base md:text-lg font-semibold text-secondary-600 mb-3 md:mb-4">Order Summary</h3>
         
-        <div className="space-y-3 mb-6">
+        <div className="space-y-1.5 md:space-y-3 mb-6 text-[0.93rem] md:text-base">
           <div className="flex justify-between">
             <span className="text-slate-600">Insurance Type:</span>
             <span className="font-medium text-slate-800 capitalize">{formData.insuranceType.replace("-", " ")}</span>
@@ -93,15 +92,15 @@ const PaymentConfirmation = ({ formData, updateFormData, prevStep, onComplete })
         
         <div className="border-t border-slate-200 pt-4 mb-4">
           <div className="flex justify-between items-center">
-            <span className="text-slate-700 font-medium">Total Premium:</span>
-            <span className="text-xl font-bold text-primary-600">Ksh. {calculatePremium().toLocaleString()}</span>
+            <span className="text-slate-700 text-[0.93rem] md:text-base font-medium">Total Premium:</span>
+            <span className="text-lg md:text-xl font-lexend font-bold text-primary-600">Ksh. {calculatePremium().toLocaleString()}</span>
           </div>
-          <p className="text-xs text-slate-500 mt-1">Annual premium, inclusive of all taxes and fees</p>
+          <p className="text-[0.7rem] md:text-xs text-slate-500 mt-1">Annual premium, inclusive of all taxes and fees</p>
         </div>
       </div>
 
       {/* Payment Method Selection */}
-      <h3 className="text-lg font-semibold text-slate-800 mb-4">Select Payment Method</h3>
+      <h3 className="text-lg font-semibold text-slate-800 mb-2 md:mb-4">Choose a Payment Method</h3>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         {paymentMethods.map((method) => (
@@ -118,16 +117,16 @@ const PaymentConfirmation = ({ formData, updateFormData, prevStep, onComplete })
           >
             <div className="flex flex-col items-center text-center">
               <div
-                className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                className={` ${
                   method.id === paymentMethod
-                    ? "bg-primary-100 text-primary-600"
-                    : "bg-slate-100 text-slate-500"
+                    ? " text-primary-600"
+                    : " text-slate-500"
                 } mb-3`}
               >
                 {method.icon}
               </div>
               
-              <h4 className={`text-base font-bold ${
+              <h4 className={`text-base font-bold ${  
                 method.id === paymentMethod ? "text-primary-700" : "text-slate-700"
               }`}>
                 {method.name}

@@ -86,7 +86,7 @@ const DocumentUpload = ({ formData, updateFormData, nextStep, prevStep, required
             <TbUpload className="h-10 w-10 text-slate-400 mb-3" />
             <p className="text-sm text-slate-600 text-center mb-2">
               Drag & drop your file here, or{" "}
-              <label className="text-primary-600 hover:text-primary-700 cursor-pointer">
+              <label className="text-secondary-600 font-medium underline underline-offset-4 hover:text-primary-700 cursor-pointer">
                 browse
                 <input
                   type="file"
@@ -108,7 +108,7 @@ const DocumentUpload = ({ formData, updateFormData, nextStep, prevStep, required
                   <TbFile className="h-5 w-5 text-primary-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-slate-700 truncate max-w-xs">
+                  <p className="text-sm font-medium text-slate-700 truncate max-w-[14rem]">
                     {document.name}
                   </p>
                   <p className="text-xs text-slate-500">

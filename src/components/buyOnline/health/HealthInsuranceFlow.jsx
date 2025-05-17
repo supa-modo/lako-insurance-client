@@ -90,8 +90,8 @@ const HealthInsuranceFlow = ({ currentStep, formData, updateFormData, nextStep, 
       {!isComplete && (
         <div className="mb-8">
           <div className="flex justify-between items-center mb-2">
-            <h3 className="text-lg font-semibold text-primary-600">Health Insurance</h3>
-            <span className="text-sm font-medium text-slate-600">
+            <h3 className="text-base md:text-lg font-semibold text-primary-600">Health Insurance</h3>
+            <span className="text-[0.8rem] md:text-sm font-medium text-slate-600">
               Step {currentStep} of 5
             </span>
           </div>

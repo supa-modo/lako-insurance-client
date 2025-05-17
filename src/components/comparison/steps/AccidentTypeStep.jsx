@@ -68,7 +68,7 @@ const AccidentTypeStep = ({ formData, updateFormData, nextStep, prevStep }) => {
           >
             <div className="px-3 py-5 md:p-5">
               <div className="flex items-center mb-3">
-                <div
+                {/* <div
                   className={`flex-shrink-0 h-14 w-14 rounded-full flex items-center justify-center ${
                     type.id === formData.accidentType
                       ? "bg-primary-100 text-primary-600"
@@ -76,7 +76,7 @@ const AccidentTypeStep = ({ formData, updateFormData, nextStep, prevStep }) => {
                   } mr-4 shadow-sm`}
                 >
                   {type.icon}
-                </div>
+                </div> */}
 
                 <div className="flex-grow">
                   <h4

@@ -146,9 +146,9 @@ const SummaryStep = ({ formData, submitForm, prevStep }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 md:gap-4">
           {/* Insurance Type */}
           <div className="flex items-start p-4 rounded-[0.8rem] bg-white border border-slate-200 hover:border-primary-200 transition-all duration-200">
-            <div className="flex-shrink-0 h-12 w-12 rounded-full flex items-center justify-center bg-primary-100 text-primary-600 mr-4 shadow-sm">
+            {/* <div className="flex-shrink-0 h-12 w-12 rounded-full flex items-center justify-center bg-primary-100 text-primary-600 mr-4 shadow-sm">
               <TbHeartPlus className="h-6 w-6" />
-            </div>
+            </div> */}
             <div className="flex-grow">
               <h5 className="text-slate-500 text-sm font-medium mb-1">
                 Insurance Type
@@ -166,9 +166,9 @@ const SummaryStep = ({ formData, submitForm, prevStep }) => {
 
           {/* Age Range */}
           <div className="flex items-start p-4 rounded-[0.8rem] bg-white border border-slate-200 hover:border-primary-200 transition-all duration-200">
-            <div className="flex-shrink-0 h-12 w-12 rounded-full flex items-center justify-center bg-primary-100 text-primary-600 mr-4 shadow-sm">
+            {/* <div className="flex-shrink-0 h-12 w-12 rounded-full flex items-center justify-center bg-primary-100 text-primary-600 mr-4 shadow-sm">
               <TbUserCircle className="h-6 w-6" />
-            </div>
+            </div> */}
             <div className="flex-grow">
               <h5 className="text-slate-500 text-sm font-medium mb-1">
                 Age Range
@@ -186,9 +186,9 @@ const SummaryStep = ({ formData, submitForm, prevStep }) => {
 
           {/* Budget Range */}
           <div className="flex items-start p-4 rounded-[0.8rem] bg-white border border-slate-200 hover:border-primary-200 transition-all duration-200 md:col-span-2">
-            <div className="flex-shrink-0 h-12 w-12 rounded-full flex items-center justify-center bg-primary-100 text-primary-600 mr-4 shadow-sm">
+            {/* <div className="flex-shrink-0 h-12 w-12 rounded-full flex items-center justify-center bg-primary-100 text-primary-600 mr-4 shadow-sm">
               <TbCoin className="h-6 w-6" />
-            </div>
+            </div> */}
             <div className="flex-grow">
               <h5 className="text-slate-500 text-sm font-medium mb-1">
                 Budget Range

@@ -104,7 +104,7 @@ const AgeInputStep = ({ formData, updateFormData, nextStep, prevStep }) => {
               </div>
               <div>
                 <h4 className="text-slate-500 text-sm md:text-base font-medium">Cover Type Determined:</h4>
-                <p className="text-secondary-600 font-semibold font-lexend">{getCoverTypeLabel()}</p>
+                <p className="text-secondary-600 font-semibold">{getCoverTypeLabel()}</p>
               </div>
             </div>
           </motion.div>
