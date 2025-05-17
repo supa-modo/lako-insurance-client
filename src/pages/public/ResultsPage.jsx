@@ -458,7 +458,7 @@ const ResultsPage = () => {
           Something Went Wrong
         </h2>
         <p className="text-neutral-300 mb-6 font-outfit">
-           We couldn't find any plans matching your selections. Please choose your preferences and try again.
+           We couldn't find any plans matching your selections. Please select your preferences and try again.
         </p>
         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
           <button
@@ -506,7 +506,7 @@ const ResultsPage = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-primary-900 via-neutral-800 to-primary-900 text-white relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-primary-800 via-neutral-800 to-primary-800 text-white relative overflow-hidden">
         <Header />
         {/* Decorative elements */}
         <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-primary-500/40 rounded-full filter blur-3xl opacity-20 animate-pulse-slow"></div>

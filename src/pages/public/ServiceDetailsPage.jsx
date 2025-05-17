@@ -235,12 +235,19 @@ const ServiceDetailsPage = () => {
                     </div>
                   </div>
 
-                  <div className="mt-6">
+                  <div className="flex items-center gap-2 md:gap-6 mt-6 font-medium">
                     <Link
                       to="/compare "
                       className="inline-flex items-center px-6 py-3 text-sm md:text-base bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
                     >
                       Get a Quote
+                      <TbArrowRight className="ml-2" />
+                    </Link>
+                    <Link
+                      to="/buy-online "
+                      className="inline-flex items-center px-6 py-3 text-sm md:text-base bg-secondary-600 text-white rounded-lg hover:bg-secondary-700 transition-colors"
+                    >
+                      Buy Plan Online
                       <TbArrowRight className="ml-2" />
                     </Link>
                   </div>

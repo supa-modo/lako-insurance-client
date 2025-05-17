@@ -237,7 +237,7 @@ const NewComparisonPage = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-b from-white to-slate-100 font-outfit">
+      <div className="min-h-screen bg-gradient-to-b from-neutral-50 to-neutral-100 font-outfit">
         <Header />
 
         <main className="pt-24 md:pt-28 pb-20 relative z-10">
@@ -271,7 +271,7 @@ const NewComparisonPage = () => {
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.4 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
                   className="max-w-6xl mx-auto  mb-8"
                 >
                   {/* Progress bar and step indicator */}

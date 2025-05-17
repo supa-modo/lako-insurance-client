@@ -173,7 +173,7 @@ const HeroSection = ({ activeSlide, heroSlides }) => {
                   whileTap={{ scale: 0.98 }}
                 >
                   <Link
-                    // to="/compare"
+                    to="/compare"
                     className="block w-full py-3 bg-gradient-to-r from-secondary-500 to-secondary-600 text-white text-center font-bold rounded-lg hover:from-secondary-600 hover:to-secondary-700 transition-all duration-300 shadow-lg mt-4 sm:mt-6 group"
                   >
                     <motion.span
