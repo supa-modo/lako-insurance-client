@@ -164,9 +164,7 @@ const ContactPage = () => {
                             Our Office
                           </h3>
                           <p className="text-gray-600 text-[0.95rem] lg:text-base">
-                            Real Towers, 3rd Floor
-                            <br />
-                            Upper Hill, Nairobi, Kenya
+                             Upper Hill, Nairobi, Kenya
                           </p>
                         </div>
                       </div>
@@ -218,20 +216,21 @@ const ContactPage = () => {
                           </p>
                           <p className="">
                             <a
+                              href="tel:+254769868686"
+                              className="hover:text-gray-600 transition-colors"
+                            >
+                              +254 769 868686
+                            </a>
+                          </p>
+                          <p className="">
+                            <a
                               href="tel:+254726581487"
                               className="hover:text-gray-600 transition-colors"
                             >
                               +254 726 581487
                             </a>
                           </p>
-                          <p className="">
-                            <a
-                              href="tel:+254784581487"
-                              className="hover:text-gray-600 transition-colors"
-                            >
-                              +254 784 581487
-                            </a>
-                          </p>
+                         
                         </div>
                       </div>
 
@@ -432,7 +431,6 @@ const ContactPage = () => {
 
                     <div>
                       <motion.button
-                        whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         type="submit"
                         disabled={formStatus.status === "submitting"}
@@ -480,7 +478,7 @@ const ContactPage = () => {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="text-gray-700 max-w-3xl mx-auto mb-8 lg:mb-12"
             >
-              We're conveniently located in Real Towers - Upper Hill, Nairobi.
+              We're conveniently located in Upper Hill, Nairobi.
               Visit us during our office hours for one on one consultations with
               our insurance experts.
             </motion.p>

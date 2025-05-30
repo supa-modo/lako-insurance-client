@@ -94,12 +94,26 @@ const BottomCTASection = () => {
       <p className="text-gray-700 text-sm md:text-base lg:text-lg mb-2">
         Facing any problems getting a quote?
       </p>
-      <a
+      <div className="flex flex-col gap-2">
+        <a
         href="tel:+254720636363"
         className="text-xl font-bold text-primary-600 hover:text-primary-700 transition-colors"
       >
         Call Us: +254 720 636363
       </a>
+      <a
+        href="tel:+254720636363"
+        className="text-xl font-bold text-primary-600 hover:text-primary-700 transition-colors"
+      >
+        Call Us: +254 769 868686
+      </a>
+      <a
+        href="tel:+254720636363"
+        className="text-xl font-bold text-primary-600 hover:text-primary-700 transition-colors"
+      >
+        Call Us: +254 726 581487
+      </a>
+      </div>
     </div>
     </div>
   </section>

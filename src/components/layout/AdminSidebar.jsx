@@ -12,6 +12,7 @@ import {
   TbMailStar,
   TbShieldQuestion,
   TbLogout,
+  TbBuildingBank,
 } from "react-icons/tb";
 import { MdSpaceDashboard } from "react-icons/md";
 import { useState, useEffect } from "react";
@@ -83,6 +84,11 @@ const navItems = [
         path: "/admin/plans",
       },
       {
+        name: "Insurance Companies",
+        icon: TbBuildingBank,
+        path: "/admin/companies",
+      },
+      {
         name: "Renewals",
         icon: TbCalendarEvent,
         path: "/admin/renewals",
@@ -94,11 +100,11 @@ const navItems = [
   {
     category: "Communication",
     items: [
-      {
-        name: "Email Center",
-        icon: TbMailStar,
-        path: "/admin/mail",
-      },
+      // {
+      //   name: "Email Center",
+      //   icon: TbMailStar,
+      //   path: "/admin/mail",
+      // },
       {
         name: "Calendar",
         icon: TbCalendarEvent,
@@ -111,16 +117,16 @@ const navItems = [
       },
     ],
   },
-  {
-    category: "Analytics",
-    items: [
-      {
-        name: "Analytics & Reports",
-        icon: TbChartBar,
-        path: "/admin/analytics",
-      },
-    ],
-  },
+  // {
+  //   category: "Analytics",
+  //   items: [
+  //     {
+  //       name: "Analytics & Reports",
+  //       icon: TbChartBar,
+  //       path: "/admin/analytics",
+  //     },
+  //   ],
+  // },
   {
     category: "null",
     items: [
@@ -342,8 +348,9 @@ const AdminSidebar = ({ collapsed }) => {
             onClick={() => {
               handleLogout();
             }}
-            
-            className={`flex w-full justify-center items-center rounded-lg ${!collapsed ? "px-4 space-x-2" : "px-0 justify-center"} py-2.5 text-left text-sm font-medium text-white hover:bg-red-500 hover:text-white transition-all duration-200`}
+            className={`flex w-full justify-center items-center rounded-lg ${
+              !collapsed ? "px-4 space-x-2" : "px-0 justify-center"
+            } py-2.5 text-left text-sm font-medium text-white hover:bg-red-500 hover:text-white transition-all duration-200`}
           >
             <LuLogOut className="w-5 h-5" />
             {!collapsed && <span>Logout</span>}

@@ -14,89 +14,46 @@ import {
   TbQuote,
   TbChevronRight,
   TbClock,
-  TbBrandLinkedin,
   TbMailFilled,
-  TbBrandTwitter,
-  TbBrandFacebook,
   TbPhoneCall,
+  TbShieldCheck,
+  TbCurrencyDollar,
+  TbMessage,
+  TbCoins,
 } from "react-icons/tb";
 import Header from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
-import { PiMapPinAreaDuotone, PiUsersThreeDuotone } from "react-icons/pi";
-import {
-  FaLinkedinIn,
-  FaTwitter,
-  FaFacebookF,
-  FaEnvelope,
-  FaXTwitter,
-} from "react-icons/fa6";
+import { PiMapPinAreaDuotone, PiUsersDuotone, PiUsersThreeDuotone } from "react-icons/pi";
+import { FaLinkedinIn } from "react-icons/fa6";
+import { RiUserCommunityLine } from "react-icons/ri";
+import { MdSupportAgent } from "react-icons/md";
 
 const AboutPage = () => {
   // Values of the company
   const values = [
     {
-      icon: <TbHeartHandshake className="h-6 w-6" />,
+      icon: <TbHeartHandshake className="h-8 w-8" />,
       title: "Client-Centered",
       description:
         "Our clients are at the heart of everything we do. We listen to your needs and tailor our services to ensure you receive personalized solutions.",
     },
     {
-      icon: <TbAward className="h-6 w-6" />,
+      icon: <TbAward className="h-8 w-8" />,
       title: "Excellence",
       description:
         "We strive for excellence in all aspects of our business, from the quality of our insurance products to the level of service we provide.",
     },
     {
-      icon: <TbCheck className="h-6 w-6" />,
+      icon: <TbCheck className="h-8 w-8" />,
       title: "Integrity",
       description:
         "We conduct our business with honesty, transparency, and ethical standards. You can trust us to always act in your best interest.",
     },
     {
-      icon: <TbBuildingCommunity className="h-6 w-6" />,
+      icon: <RiUserCommunityLine className="h-8 w-8" />,
       title: "Community",
       description:
         "We believe in giving back to the community and making a positive impact beyond our business operations.",
-    },
-  ];
-
-  // Team members
-  const team = [
-    {
-      name: "Yvonne Kola",
-      position: "CEO & Founder",
-      image: "/kola.jpg",
-      bio: "With over a decade of experience in insurance, Yvonne leads with vision and expertise, ensuring Lako delivers exceptional service and innovative solutions to all clients.",
-      social: {
-        linkedin: "https://www.linkedin.com/in/yvonne-kola-mba-83b50611a/",
-        email: "ykola@lako.co.ke",
-        twitter: "",
-        facebook: "https://www.facebook.com/yvone.kola",
-      },
-    },
-    {
-      name: "Grace Mwarania",
-      position: "Digital Marketing Consultant",
-      image: "grace.jpg",
-      bio: "Grace brings creative marketing strategies that connect our services with clients who need them most, building our digital presence and brand awareness across platforms.",
-      social: {
-        linkedin: "",
-        email: "gmwarania@lako.co.ke",
-        twitter: "https://twitter.com/gracemwarania",
-        facebook: "",
-      },
-    },
-    {
-      name: "Josephine Adoli",
-      position: "Customer Experience Manager",
-      image: "/adoli.png",
-      bio: "Healthcare and insurance professional with 20+ years of experience in claims & risk management, and provider relations with proven success at AAR Insurance.",
-      social: {
-        linkedin: "",
-        email: "jadoli@lako.co.ke",
-        twitter: "",
-        facebook: "",
-      },
     },
   ];
 
@@ -152,7 +109,7 @@ const AboutPage = () => {
       </section>
 
       {/* Our Story Section */}
-      <section className="pb-16 lg:py-20 bg-white">
+      <section className="pb-14 lg:pt-20 bg-white">
         <div className="lg:container mx-auto lg:px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -188,22 +145,13 @@ const AboutPage = () => {
               transition={{ duration: 0.7, delay: 0.2 }}
               className="px-4 lg:px-0"
             >
-              <motion.span
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.9 }}
-                className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium bg-secondary-50 text-secondary-600 border border-secondary-200 mb-4"
-              >
-                <span className="flex h-2 w-2 rounded-full bg-secondary-500 mr-2"></span>
-                Our Story
-              </motion.span>
 
               <h2 className="text-3xl md:text-4xl font-bold text-primary-600 mb-3 lg:mb-6">
                 A decade of excellence in{" "}
                 <span className="text-secondary-500">insurance solutions</span>
               </h2>
 
-              <p className="text-gray-600 mb-6  text-base lg:text-[1.1rem]">
+              <p className="text-gray-600 mb-6  text-[0.97rem] lg:text-[1.1rem]">
                 Founded in 2015, Lako Insurance Agency began with a simple
                 mission: to provide affordable, accessible insurance products
                 that truly serve the needs of our community. What started as a
@@ -212,7 +160,7 @@ const AboutPage = () => {
                 across Kenya.
               </p>
 
-              <p className="text-gray-600 mb-6  text-base lg:text-[1.1rem]">
+              <p className="text-gray-600 mb-6  text-[0.97rem] lg:text-[1.1rem]">
                 Our growth is a testament to the trust our clients place in us
                 and our dedication to exceeding expectations.
               </p>
@@ -231,7 +179,7 @@ const AboutPage = () => {
                     <div className="w-4 h-4 rounded-full bg-primary-500 flex items-center justify-center mr-2">
                       <TbCheck className="text-white h-2.5 w-2.5" />
                     </div>
-                    <span className="text-primary-700 text-[0.8rem] lg:text-[0.85rem]">
+                    <span className="text-primary-700 text-xs lg:text-[0.85rem]">
                       {item}
                     </span>
                   </div>
@@ -239,19 +187,89 @@ const AboutPage = () => {
               </div>
 
               <motion.div
-                whileHover={{ scale: 1.01 }}
+                whileHover={{ scale: 1.005 }}
                 whileTap={{ scale: 0.99 }}
                 className="mt-8"
               >
                 <Link
                   to="/contact"
-                  className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-lg shadow-xl hover:shadow-2xl group"
-                >
-                  <span>Get in Touch Today</span>
-                  <TbChevronRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                  className="w-full md:w-auto inline-flex px-6 py-3 bg-gradient-to-r from-primary-500 via-primary-600 to-primary-700 text-secondary-100 rounded-lg shadow-xl hover:shadow-2xl group"
+                > 
+                <div className="flex items-center mx-auto">
+                  <span className="text-white">Get in Touch With Us </span>
+                  <TbArrowRight size={18} className="text-white ml-1 group-hover:translate-x-1 transition-transform" />
+                  <TbPhoneCall size={20} className="ml-2 animate-pulse-fast group-hover:translate-x-1 transition-transform" />
+                  <TbMessage size={20} className="ml-2 animate-pulse-fast group-hover:translate-x-1 transition-transform" />
+                </div>
                 </Link>
               </motion.div>
             </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Company Values Section */}
+      <section className="py-6 bg-white">
+        <div className="lg:container mx-auto px-4">
+          <div className="text-center md:text-left max-w-4xl mb-6 md:mb-8">
+            <motion.span
+              initial={{ opacity: 0, y: -10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="inline-flex items-center px-4 py-1.5 rounded-full text-[0.8rem] md:text-sm font-medium bg-secondary-50 text-secondary-600 border border-secondary-200 mb-4"
+            >
+              <span className="flex h-2 w-2 rounded-full bg-secondary-500 mr-2"></span>
+              Our Core Values
+            </motion.span>
+
+            <motion.h2
+              initial={{ opacity: 0, y: -10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="text-3xl md:text-4xl font-bold text-primary-600 mb-2 md:mb-4"
+            >
+              What <span className="text-secondary-500">drives us</span> forward
+            </motion.h2>
+
+            <motion.p
+              initial={{ opacity: 0, y: -10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="text-gray-600 text-[0.97rem] lg:text-[1.1rem]"
+            >
+              Our values are the foundation of everything we do. They guide our
+              decisions, shape our culture, and define how we serve our clients
+              every day.
+            </motion.p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            {values.map((value, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="flex md:flex-col gap-4 md:gap-3 bg-neutral-100 border border-neutral-300 rounded-xl p-3 md:p-6 hover:shadow-lg transition-all duration-300 group"
+              >
+                <div className="flex items-center justify-center w-12 md:w-14 h-12 md:h-14 bg-primary-100 rounded-xl group-hover:bg-primary-200 transition-colors">
+                  <div className="text-primary-600">{value.icon}</div>
+                </div>
+                <div className="w-[80%] md:w-auto">
+                <h3 className="text-lg font-bold text-primary-700 mb-1 md:mb-2">
+                  {value.title}
+                </h3>
+                <p className="text-gray-600 text-[0.95rem] md:text-base md:leading-relaxed">
+                  {value.description}
+                </p>
+                </div>
+               
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
@@ -289,7 +307,7 @@ const AboutPage = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5 }}
-                  className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium bg-primary-100 text-primary-600 border border-primary-300 mb-4"
+                  className="inline-flex items-center px-4 py-1.5 rounded-full text-[0.8rem] md:text-sm font-medium bg-primary-100 text-primary-600 border border-primary-300 mb-4"
                 >
                   Message from the CEO
                 </motion.span>
@@ -309,10 +327,9 @@ const AboutPage = () => {
                     I've witnessed the ever-evolving needs of our clients. Lako
                     is here to provide safety, reliability, and convenience. Our
                     commitment to you is unwavering, and our promise is simple:
-                    To safeguard what's 'Lako' in every way possible. In the
-                    pages that follow, you'll discover how we turn promises into
+                    To safeguard what's 'Lako' in every way possible. As you explore our services, you'll discover how we turn promises into
                     realities, how we make insurance a partnership, and how,
-                    together, we secure a brighter future
+                    together, we secure a brighter future.
                   </p>
 
                   <p className="text-gray-600 mb-4 pl-6">
@@ -362,196 +379,264 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Our Values Section */}
-      <section className="py-16 md:py-24 bg-gradient-to-b from-white to-neutral-50">
+      
+
+      {/* Why Choose Us Section */}
+      <section className="py-16 md:py-20 bg-neutral-50">
         <div className="lg:container mx-auto px-4">
-          <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="text-center max-w-4xl mx-auto mb-8 md:mb-12">
             <motion.span
               initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium font-outfit bg-secondary-100 text-secondary-600 border border-secondary-200 mb-4"
+              className="inline-flex items-center px-4 py-1.5 rounded-full text-[0.8rem] md:text-sm font-medium bg-primary-100 text-primary-600 border border-primary-300 mb-4"
             >
-              Our Core Values
+              <span className="flex h-2 w-2 rounded-full bg-primary-600 mr-2"></span>
+              Why Choose Lako
             </motion.span>
 
             <motion.h2
               initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-3xl md:text-4xl font-bold text-primary-600 font-outfit mb-4"
+              className="text-3xl md:text-4xl font-bold text-primary-600 mb-4 md:mb-6"
             >
-              The <span className="text-secondary-500">principles</span> that
-              guide our business
+              Your <span className="text-secondary-500">trusted partner</span>{" "}
+              in protection
             </motion.h2>
 
             <motion.p
               initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
               className="text-gray-600 text-base lg:text-[1.1rem]"
             >
-              At Lako, our values shape everything we do. They define how we
-              serve our clients, interact with our partners, and contribute to
-              our community.
+              We go beyond just providing insurance coverage. We build lasting
+              relationships, offer personalized solutions, and ensure your peace
+              of mind every step of the way.
             </motion.p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
-            {values.map((value, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8">
+            {[
+              {
+                icon: <TbHeartHandshake className="h-8 w-8" />,
+                title: "Personalized Service",
+                description:
+                  "Every client receives tailored attention and customized insurance solutions that fit their unique needs and budget.",
+                highlight: "One-on-one consultations",
+              },
+              {
+                icon: <TbClock className="h-8 w-8" />,
+                title: "Quick Claims Processing",
+                description:
+                  "Fast, efficient claims processing with dedicated support to get you back on your feet when you need it most.",
+                highlight: "24/7 claims support",
+              },
+              {
+                icon: <MdSupportAgent className="h-8 w-8" />,
+                title: "Expert Guidance",
+                description:
+                  "Our experienced team provides professional advice to help you make informed decisions about your insurance coverage.",
+                highlight: "10+ years experience",
+              },
+              {
+                icon: <TbShieldCheck className="h-8 w-8" />,
+                title: "Comprehensive Coverage",
+                description:
+                  "Wide range of insurance products from top-rated providers to ensure complete protection for you and your family.",
+                highlight: "15+ insurance partners",
+              },
+              {
+                icon: <TbCoins className="h-8 w-8" />,
+                title: "Competitive Pricing",
+                description:
+                  "Best value insurance solutions with transparent pricing and no hidden fees. We help you save while staying protected.",
+                highlight: "Best rates guaranteed",
+              },
+              {
+                icon: <TbAward className="h-8 w-8" />,
+                title: "Award-Winning Service",
+                description:
+                  "Recognized for excellence in customer service and client satisfaction. Your trust is our greatest achievement.",
+                highlight: "98% satisfaction rate",
+              },
+            ].map((feature, index) => (
               <motion.div
-                key={value.title}
+                key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-white rounded-xl p-6 md:p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-neutral-100 group"
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="group"
               >
-                <div className="flex items-start">
-                  <div className="h-14 w-14 rounded-xl bg-primary-100 flex items-center justify-center text-primary-600 mr-5 group-hover:bg-primary-200 transition-colors duration-300">
-                    {value.icon}
+                <div className="bg-white rounded-2xl px-4 py-6 lg:p-8 shadow-sm border border-neutral-200 hover:shadow-xl hover:border-primary-200 transition-all duration-300 h-full">
+                  <div className="flex flex-col items-center justify-center mb-2 md:mb-3">
+ {/* Icon */}
+ <div className="flex items-center justify-center w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-primary-100 to-secondary-100 rounded-xl md:rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <div className="text-primary-600">{feature.icon}</div>
                   </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-primary-700 mb-3 group-hover:text-primary-600 transition-colors duration-300">
-                      {value.title}
-                    </h3>
-                    <p className="text-gray-600 text-base lg:text-[1.05rem]">
-                      {value.description}
-                    </p>
+
+                  
+                  <h3 className="text-lg md:text-xl font-bold text-primary-700">
+                    {feature.title}
+                  </h3>
+                  </div>
+                 
+
+                  <p className="text-gray-600 text-[0.95rem] lg:text-base leading-relaxed mb-4">
+                    {feature.description}
+                  </p>
+
+                  {/* Highlight Badge */}
+                  <div className="inline-flex items-center px-3 py-1.5 bg-secondary-50 text-secondary-700 rounded-full text-[0.8rem] md:text-sm font-medium border border-secondary-200">
+                    <TbCheck className="h-4 w-4 mr-1.5" />
+                    {feature.highlight}
                   </div>
                 </div>
               </motion.div>
             ))}
           </div>
+
+          
+
+          {/* Call to Action */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+            className="text-center mt-12"
+          >
+            <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl p-6 lg:p-8 text-white relative overflow-hidden">
+              {/* Background decoration */}
+              <div className="absolute inset-0 bg-gradient-to-r from-primary-500/20 to-secondary-500/20"></div>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full transform translate-x-16 -translate-y-16"></div>
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full transform -translate-x-12 translate-y-12"></div>
+
+              <div className="relative z-10">
+               
+
+                <div className="flex flex-col sm:flex-row gap-2.5 md:gap-4 justify-center">
+                  <motion.div
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Link
+                      to="/contact"
+                      className="w-full md:w-auto inline-flex justify-center items-center px-6 py-3 bg-white text-primary-700 rounded-lg hover:bg-primary-50 transition-colors font-medium"
+                    >
+                      <MdSupportAgent className="mr-2 h-5 w-5" />
+                      Speak to an Expert
+                    </Link>
+                  </motion.div>
+
+                  <motion.div
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Link
+                      to="/buy-online"
+                      className="w-full md:w-auto inline-flex justify-center items-center px-6 py-3 bg-secondary-500 text-white rounded-lg hover:bg-secondary-600 transition-colors font-medium"
+                    >
+                      <TbChevronRight className="mr-2 h-5 w-5" />
+                      Buy Cover Online
+                    </Link>
+                  </motion.div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* Our Team Section */}
-      <section className="py-16 md:py-24 bg-white">
-        <div className="lg:container mx-auto px-4">
-          <div className="text-center max-w-3xl mx-auto mb-16">
+      {/* Statistics & Achievements Section */}
+      <section className="py-16 md:py-20 bg-primary-600 relative overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 -left-10 w-40 h-40 rounded-full bg-secondary-500/30 blur-3xl"></div>
+          <div className="absolute bottom-1/3 -right-10 w-60 h-60 rounded-full bg-primary-500/40 blur-3xl"></div>
+        </div>
+
+        <div className="lg:container mx-auto px-4 relative z-10">
+          <div className="text-center max-w-3xl mx-auto mb-12">
             <motion.span
               initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium font-outfit bg-primary-100 text-primary-600 border border-primary-200 mb-4"
+              className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium bg-white/10 backdrop-blur-sm text-white border border-white/20 mb-4"
             >
-              Our Experts Team
+              <span className="flex h-2 w-2 rounded-full bg-secondary-500 mr-2"></span>
+              Our Achievements
             </motion.span>
 
             <motion.h2
               initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-3xl md:text-4xl font-bold text-primary-600 font-outfit mb-4"
+              className="text-3xl md:text-4xl font-bold text-white mb-6"
             >
-              Meet the <span className="text-secondary-500">experts</span>{" "}
-              behind Lako
+              <span className="text-secondary-400">Numbers</span> that speak for
+              themselves
             </motion.h2>
 
             <motion.p
               initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-gray-600 text-base lg:text-[1.1rem]"
+              className="text-white/90 text-base lg:text-[1.1rem]"
             >
-              Our dedicated team of insurance professionals brings years of
-              experience and a passion for service to every client interaction.
+              Over the years, we've built a legacy of trust and excellence.
+              Here's what we've accomplished together with our valued clients.
             </motion.p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 max-w-7xl mx-auto">
-            {team.map((member, index) => (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+            {[
+              {
+                number: "10+",
+                label: "Years of Excellence",
+                description: "Serving clients since 2015",
+              },
+              {
+                number: "5000+",
+                label: "Happy Clients",
+                description: "Trusted by families and businesses",
+              },
+              {
+                number: "15+",
+                label: "Insurance Partners",
+                description: "Top-rated insurance companies",
+              },
+              {
+                number: "98%",
+                label: "Client Satisfaction",
+                description: "Consistently high ratings",
+              },
+            ].map((stat, index) => (
               <motion.div
-                key={member.name}
+                key={index}
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="group relative"
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="text-center"
               >
-                {/* Card with shadow and subtle border */}
-                <div className="relative overflow-hidden bg-white rounded-xl shadow-xl">
-                  {/* Top accent bar */}
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary-500 to-secondary-500 z-10"></div>
-
-                  {/* Circular image container */}
-                  <div className="relative h-64 flex items-center justify-center p-6 bg-gradient-to-b from-primary-50 to-white">
-                    <div className="relative w-44 h-44 rounded-full overflow-hidden border-4 border-white shadow-md z-10">
-                      <img
-                        src={member.image}
-                        alt={member.name}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Content section */}
-                  <div className="px-6 lg:px-8 pt-6 pb-8 text-center relative z-20">
-                    <h3 className="text-2xl font-bold text-primary-700 mb-1">
-                      {member.name}
-                    </h3>
-
-                    <p className="text-secondary-600 font-medium mb-4 inline-block px-4 py-1 bg-secondary-50 rounded-full text-sm">
-                      {member.position}
-                    </p>
-
-                    <p className="text-gray-600 text-[0.9rem] md:text-base leading-relaxed mb-6">
-                      {member.bio}
-                    </p>
-
-                    {/* Social links */}
-                    <div className="flex justify-center space-x-3">
-                      {member.social.linkedin && (
-                        <a
-                          href={member.social.linkedin}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="w-10 h-10 rounded-full bg-gradient-to-br from-sky-600 to-sky-700 flex items-center justify-center text-white shadow-sm hover:shadow-md transform transition-all duration-300 hover:-translate-y-1"
-                          aria-label={`LinkedIn profile of ${member.name}`}
-                        >
-                          <FaLinkedinIn className="h-4 w-4" />
-                        </a>
-                      )}
-
-                      {member.social.twitter && (
-                        <a
-                          href={member.social.twitter}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="w-10 h-10 rounded-full bg-black  flex items-center justify-center text-white shadow-sm hover:shadow-md transform transition-all duration-300 hover:-translate-y-1"
-                          aria-label={`Twitter profile of ${member.name}`}
-                        >
-                          <FaXTwitter className="h-4 w-4" />
-                        </a>
-                      )}
-
-                      {member.social.facebook && (
-                        <a
-                          href={member.social.facebook}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center text-white shadow-sm hover:shadow-md transform transition-all duration-300 hover:-translate-y-1"
-                          aria-label={`Facebook profile of ${member.name}`}
-                        >
-                          <FaFacebookF className="h-4 w-4" />
-                        </a>
-                      )}
-
-                      {member.social.email && (
-                        <a
-                          href={`mailto:${member.social.email}`}
-                          className="w-10 h-10 rounded-full bg-gradient-to-br from-secondary-500 to-secondary-600 flex items-center justify-center text-white shadow-sm hover:shadow-md transform transition-all duration-300 hover:-translate-y-1"
-                          aria-label={`Email ${member.name}`}
-                        >
-                          <FaEnvelope className="h-4 w-4" />
-                        </a>
-                      )}
-                    </div>
-                  </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 lg:p-8 border border-white/20 hover:bg-white/20 transition-all duration-300">
+                  <h3 className="text-3xl lg:text-4xl font-bold text-secondary-400 mb-2">
+                    {stat.number}
+                  </h3>
+                  <p className="text-white font-semibold text-lg mb-1">
+                    {stat.label}
+                  </p>
+                  <p className="text-white/70 text-sm">{stat.description}</p>
                 </div>
-
-                {/* Subtle card shadow effect on hover */}
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-primary-200/50 to-secondary-200/50 transform translate-y-0.5 scale-[0.98] opacity-0 group-hover:opacity-70 transition-all duration-500"></div>
               </motion.div>
             ))}
           </div>
@@ -597,26 +682,26 @@ const AboutPage = () => {
               className="flex flex-col sm:flex-row gap-2 md:gap-4 justify-center"
             >
               <motion.div
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.98 }}
               >
                 <Link
                   to="/contact"
                   className="px-8 py-3 bg-white text-primary-700 font-medium rounded-lg shadow-lg hover:bg-primary-50 transition-all duration-200 w-full sm:w-auto inline-block"
                 >
-                  Contact Us
+                  Get an Expert Quote
                 </Link>
               </motion.div>
 
               <motion.div
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.98 }}
               >
                 <Link
-                  to="/compare"
+                  to="/buy-online"
                   className="px-8 py-3 bg-secondary-500 text-white font-medium rounded-lg shadow-lg hover:bg-secondary-600 transition-all duration-200 w-full sm:w-auto inline-block"
                 >
-                  Get an Insurance Quote
+                  Compare Insurance Plans
                 </Link>
               </motion.div>
             </motion.div>
@@ -669,14 +754,13 @@ const AboutPage = () => {
                     <h3 className="text-base lg:text-xl font-lexend font-bold text-primary-600 mb-1.5 lg:mb-2">
                       Our Office
                     </h3>
-                    <p className="text-gray-600">Real Towers, 3rd Floor</p>
                     <p className="text-gray-600">Upper Hill, Nairobi</p>
                     <p className="text-gray-600">Kenya</p>
                   </div>
                 </div>
 
                 <div className="flex items-start mb-6">
-                   <div className=" flex items-center justify-center text-primary-600 mr-5">
+                  <div className=" flex items-center justify-center text-primary-600 mr-5">
                     <TbPhoneCall className="h-7 w-7" />
                   </div>
                   <div>
@@ -699,7 +783,7 @@ const AboutPage = () => {
                 </div>
 
                 <div className="flex items-start mb-6">
-                   <div className=" flex items-center justify-center text-primary-600 mr-5">
+                  <div className=" flex items-center justify-center text-primary-600 mr-5">
                     <TbClock className="h-7 w-7" />
                   </div>
                   <div>

@@ -88,12 +88,12 @@ const CallbackModal = ({ isOpen, onClose }) => {
 
               <div>
                 <label className="block text-sm font-semibold text-primary-600 mb-1 font-outfit">
-                  Phone Number
+                  Name and Phone Number
                 </label>
                 <input
                   type="text"
                   className="w-full px-3 py-2 rounded-lg border-2 focus:border bg-white text-gray-700 border-gray-200 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 focus:outline-none font-outfit shadow-sm hover:border-primary-300"
-                  placeholder="Enter your phone number"
+                  placeholder="'Your name' - 'Your phone number'"
                 />
               </div>
 
@@ -111,7 +111,7 @@ const CallbackModal = ({ isOpen, onClose }) => {
               
 
               <motion.button
-                whileHover={{ scale: 1.02 }}
+                whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.98 }}
                 type="button"
                 className="w-full py-3 bg-gradient-to-r from-secondary-600 to-secondary-700 hover:from-secondary-700 hover:to-secondary-800 text-white font-medium rounded-lg shadow-md transition-colors flex items-center justify-center font-outfit mt-2"
