@@ -90,47 +90,129 @@ const ContactMessagesPage = () => {
       if (sortOrder) params.sortOrder = sortOrder;
 
       const response = await contactService.getAllContactMessages(params);
-      setMessages(response.data || []);
+
+      // Ensure we always set an array
+      const messageData = response?.data;
+
+      let finalMessages = [];
+
+      if (Array.isArray(messageData)) {
+        finalMessages = messageData;
+      } else if (messageData && typeof messageData === "object") {
+        // If it's an object, try to extract an array property
+        const possibleArrays = Object.values(messageData).filter((val) =>
+          Array.isArray(val)
+        );
+        if (possibleArrays.length > 0) {
+          finalMessages = possibleArrays[0];
+        } else {
+          finalMessages = [];
+        }
+      } else {
+        finalMessages = [];
+      }
+
+      setMessages(finalMessages);
       setError(null);
     } catch (error) {
       console.error("Error fetching messages:", error);
       setError("Failed to fetch messages");
+      setMessages([]);
       toast.error("Failed to fetch messages");
     } finally {
       setLoading(false);
       setIsRefreshing(false);
     }
-  }, [searchTerm, activeFilters, sortBy, sortOrder, toast]);
+  }, [
+    searchTerm,
+    activeFilters.type,
+    activeFilters.priority,
+    sortBy,
+    sortOrder,
+  ]);
 
   // Fetch statistics
   const fetchStats = useCallback(async () => {
     try {
       const response = await contactService.getContactMessageStats();
-      setStats(response.data);
+      setStats(response?.data || null);
     } catch (error) {
       console.error("Error fetching stats:", error);
+      setStats(null);
     }
   }, []);
 
-  // Initial data fetch
+  // Initial data fetch - separate useEffect to avoid infinite loops
   useEffect(() => {
     fetchMessages();
+  }, [fetchMessages]);
+
+  // Fetch stats only once on mount
+  useEffect(() => {
     fetchStats();
-  }, [fetchMessages, fetchStats]);
+  }, [fetchStats]);
 
   // Handle message processing
   const handleProcessMessage = async (messageId) => {
     try {
-      await contactService.markAsProcessed(messageId, user.id, processingNotes);
+      // Validate user authentication
+      if (!user) {
+        toast.error("User authentication required to process messages");
+        return;
+      }
+
+      // Check for different possible ID field names
+      const userId = user.id || user.userId || user.adminId || user.uuid;
+
+      if (!userId) {
+        console.error("No user ID found. User object:", user);
+        toast.error("User ID not found. Please log in again.");
+        return;
+      }
+
+      const response = await contactService.markAsProcessed(
+        messageId,
+        userId,
+        processingNotes || ""
+      );
+
+      // Optimistically update the local state first
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg.id === messageId
+            ? {
+                ...msg,
+                status: "processed",
+                processedBy: userId,
+                processedAt: new Date().toISOString(),
+                notes: processingNotes || "",
+                processedByName: user.firstName
+                  ? `${user.firstName} ${user.lastName}`
+                  : user.username || user.email,
+              }
+            : msg
+        )
+      );
+
       toast.success("Message marked as processed");
       setShowModal(false);
       setSelectedMessage(null);
       setProcessingNotes("");
-      fetchMessages();
-      fetchStats();
+
+      // Fetch fresh data from backend to ensure consistency
+      setTimeout(() => {
+        fetchMessages();
+        fetchStats();
+      }, 500);
     } catch (error) {
       console.error("Error processing message:", error);
-      toast.error("Failed to process message");
+      console.error("Error response:", error.response?.data);
+      const errorMessage =
+        error.response?.data?.message || "Failed to process message";
+      toast.error(errorMessage);
+
+      // Refresh data on error to restore correct state
+      fetchMessages();
     }
   };
 
@@ -244,26 +326,28 @@ const ContactMessagesPage = () => {
   };
 
   // Filter and group messages
-  const filteredMessages = [...(messages || [])]
-    .filter((message) => {
-      if (!searchTerm.trim()) return true;
-      const query = searchTerm.toLowerCase();
-      return (
-        message.name.toLowerCase().includes(query) ||
-        message.email?.toLowerCase().includes(query) ||
-        message.phone?.toLowerCase().includes(query) ||
-        message.subject?.toLowerCase().includes(query) ||
-        message.message.toLowerCase().includes(query)
-      );
-    })
-    .filter((message) => {
-      if (!activeFilters.type) return true;
-      return message.type === activeFilters.type;
-    })
-    .filter((message) => {
-      if (!activeFilters.priority) return true;
-      return message.priority === activeFilters.priority;
-    });
+  const filteredMessages = Array.isArray(messages)
+    ? messages
+        .filter((message) => {
+          if (!searchTerm.trim()) return true;
+          const query = searchTerm.toLowerCase();
+          return (
+            message.name?.toLowerCase().includes(query) ||
+            message.email?.toLowerCase().includes(query) ||
+            message.phone?.toLowerCase().includes(query) ||
+            message.subject?.toLowerCase().includes(query) ||
+            message.message?.toLowerCase().includes(query)
+          );
+        })
+        .filter((message) => {
+          if (!activeFilters.type) return true;
+          return message.type === activeFilters.type;
+        })
+        .filter((message) => {
+          if (!activeFilters.priority) return true;
+          return message.priority === activeFilters.priority;
+        })
+    : [];
 
   // Group messages by status
   const groupedMessages = {
@@ -579,13 +663,24 @@ const ContactMessagesPage = () => {
                         <div className="flex flex-col items-center">
                           <TbList className="h-12 w-12 text-gray-300 mb-3" />
                           <p className="text-lg font-medium text-gray-500 mb-1">
-                            No {status} messages found
+                            {error
+                              ? "Error loading messages"
+                              : searchTerm ||
+                                Object.values(activeFilters).some(
+                                  (v) => v !== null
+                                )
+                              ? `No ${status} messages match your filters`
+                              : `No ${status} messages`}
                           </p>
                           <p className="text-sm text-gray-400">
-                            {searchTerm ||
-                            Object.values(activeFilters).some((v) => v !== null)
-                              ? "Try a different search term or clear filters"
-                              : "No messages in this category"}
+                            {error
+                              ? "Please try refreshing the page"
+                              : searchTerm ||
+                                Object.values(activeFilters).some(
+                                  (v) => v !== null
+                                )
+                              ? "Try adjusting your search or filter criteria"
+                              : `No ${status} messages available at the moment`}
                           </p>
                         </div>
                       </div>

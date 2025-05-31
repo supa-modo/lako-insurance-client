@@ -4,10 +4,13 @@ import Header from "./Header";
 import Footer from "./Footer";
 import CallbackModal from "../results/CallbackModal";
 import { ModalProvider, useModal } from "../../context/ModalContext";
+import ToastContainer from "../ui/ToastContainer";
+import { useToast } from "../../hooks/useToast";
 
 const Layout = () => {
   const { isCallbackModalOpen, closeCallbackModal } = useModal();
-  
+  const { toasts, removeToast } = useToast();
+
   // Add smooth scrolling for anchor links
   useEffect(() => {
     const handleAnchorClick = (e) => {
@@ -39,14 +42,18 @@ const Layout = () => {
         <div className="absolute bottom-[20%] right-[20%] w-80 h-80 bg-secondary-100 rounded-full opacity-20 blur-3xl"></div>
       </div>
 
-      
       <main className="flex-grow relative z-10">
         <Outlet />
       </main>
-      
-      
+
       {/* Callback Modal */}
-      <CallbackModal isOpen={isCallbackModalOpen} onClose={closeCallbackModal} />
+      <CallbackModal
+        isOpen={isCallbackModalOpen}
+        onClose={closeCallbackModal}
+      />
+
+      {/* Toast Container */}
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
 };

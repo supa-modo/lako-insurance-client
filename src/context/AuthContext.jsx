@@ -20,11 +20,13 @@ export const AuthProvider = ({ children }) => {
         if (authService.isAuthenticated()) {
           // Get user profile from token
           const userData = authService.getCurrentAdmin();
+          console.log("Stored user data:", userData);
           setUser(userData);
-          
+
           // Optionally fetch fresh data from API
           try {
             const freshUserData = await authService.getAdminProfile();
+            console.log("Fresh user data:", freshUserData);
             if (freshUserData) {
               setUser(freshUserData);
             }
@@ -53,13 +55,14 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     setError(null);
     setLoading(true);
-    
+
     try {
       const userData = await authService.loginAdmin(credentials);
       setUser(userData);
       return userData;
     } catch (err) {
-      const errorMessage = err.response?.data?.message || "Login failed. Please try again.";
+      const errorMessage =
+        err.response?.data?.message || "Login failed. Please try again.";
       setError(errorMessage);
       throw err;
     } finally {
@@ -83,13 +86,14 @@ export const AuthProvider = ({ children }) => {
   const updateProfile = async (profileData) => {
     setError(null);
     setLoading(true);
-    
+
     try {
       const updatedUser = await authService.updateAdminProfile(profileData);
       setUser(updatedUser);
       return updatedUser;
     } catch (err) {
-      const errorMessage = err.response?.data?.message || "Profile update failed.";
+      const errorMessage =
+        err.response?.data?.message || "Profile update failed.";
       setError(errorMessage);
       throw err;
     } finally {

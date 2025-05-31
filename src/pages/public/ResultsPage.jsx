@@ -23,8 +23,11 @@ import CallbackModal from "../../components/results/CallbackModal";
 import Footer from "../../components/layout/Footer";
 import { TbMailFilled, TbPhoneCall } from "react-icons/tb";
 import Header from "../../components/layout/Header";
+import ToastContainer from "../../components/ui/ToastContainer";
+import { useToast } from "../../hooks/useToast";
 
 const ResultsPage = () => {
+  const { toasts, removeToast } = useToast();
   const navigate = useNavigate();
   const {
     userQuery,
@@ -70,9 +73,13 @@ const ResultsPage = () => {
         if (
           !userQuery ||
           !userQuery.insuranceType ||
-          (userQuery.ageMin === undefined && userQuery.ageMax === undefined && !userQuery.age)
+          (userQuery.ageMin === undefined &&
+            userQuery.ageMax === undefined &&
+            !userQuery.age)
         ) {
-          console.warn("No user query data available or incomplete data, using default query");
+          console.warn(
+            "No user query data available or incomplete data, using default query"
+          );
           // Create a default query for seniors insurance
           const defaultQuery = {
             insuranceType: "seniors",
@@ -109,7 +116,11 @@ const ResultsPage = () => {
           }
 
           // Ensure age parameters are correctly formatted
-          if (processedQuery.ageMin === undefined && processedQuery.ageMax === undefined && processedQuery.age) {
+          if (
+            processedQuery.ageMin === undefined &&
+            processedQuery.ageMax === undefined &&
+            processedQuery.age
+          ) {
             // Try to extract age values if only the string format is available
             if (
               typeof processedQuery.age === "string" &&
@@ -139,14 +150,20 @@ const ResultsPage = () => {
           }
 
           // Ensure we have default age values if still undefined
-          if (processedQuery.ageMin === undefined || processedQuery.ageMax === undefined) {
+          if (
+            processedQuery.ageMin === undefined ||
+            processedQuery.ageMax === undefined
+          ) {
             processedQuery.ageMin = processedQuery.ageMin || 65;
             processedQuery.ageMax = processedQuery.ageMax || 70;
           }
 
           // Ensure budget parameters are correctly formatted
           // If we have budgetValue, use it as budgetMax
-          if (processedQuery.budgetValue !== undefined && processedQuery.budgetMax === undefined) {
+          if (
+            processedQuery.budgetValue !== undefined &&
+            processedQuery.budgetMax === undefined
+          ) {
             processedQuery.budgetMax = Number(processedQuery.budgetValue);
           }
           // If we have a budget string that's a range
@@ -170,7 +187,10 @@ const ResultsPage = () => {
             processedQuery.budgetMax = 1000000; // Use a high upper limit
           }
           // If we have a single budget value
-          else if (processedQuery.budgetMax === undefined && typeof processedQuery.budget === "number") {
+          else if (
+            processedQuery.budgetMax === undefined &&
+            typeof processedQuery.budget === "number"
+          ) {
             processedQuery.budgetMax = processedQuery.budget;
           }
 
@@ -185,7 +205,7 @@ const ResultsPage = () => {
           };
 
           console.log("Using processed user query for API call:", apiQuery);
-          
+
           try {
             const reportData = await insuranceService.comparePlans(apiQuery);
 
@@ -197,10 +217,14 @@ const ResultsPage = () => {
               setReport(reportData);
               setComparisonResults(reportData.comparisonResults);
               setError(null); // Clear any previous errors
-              console.log(`Successfully found ${reportData.comparisonResults.length} matching plans`);
+              console.log(
+                `Successfully found ${reportData.comparisonResults.length} matching plans`
+              );
             } else {
               console.log("No plans found in initial query response");
-              setError("No plans found that match your criteria. Trying with relaxed parameters...");
+              setError(
+                "No plans found that match your criteria. Trying with relaxed parameters..."
+              );
 
               try {
                 // Try with increased budget if we have a budget constraint
@@ -215,7 +239,9 @@ const ResultsPage = () => {
                     relaxedQuery
                   );
 
-                  const fallbackData = await insuranceService.comparePlans(relaxedQuery);
+                  const fallbackData = await insuranceService.comparePlans(
+                    relaxedQuery
+                  );
 
                   if (
                     fallbackData &&
@@ -264,7 +290,10 @@ const ResultsPage = () => {
                   insuranceType: "seniors",
                 };
 
-                console.log("Last resort - trying with minimal criteria:", minimalQuery);
+                console.log(
+                  "Last resort - trying with minimal criteria:",
+                  minimalQuery
+                );
                 const minimalData = await insuranceService.comparePlans(
                   minimalQuery
                 );
@@ -458,7 +487,8 @@ const ResultsPage = () => {
           Something Went Wrong
         </h2>
         <p className="text-neutral-300 mb-6 font-outfit">
-           We couldn't find any plans matching your selections. Please select your preferences and try again.
+          We couldn't find any plans matching your selections. Please select
+          your preferences and try again.
         </p>
         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
           <button
@@ -752,6 +782,9 @@ const ResultsPage = () => {
       </div>
 
       <Footer />
+
+      {/* Toast Container */}
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </>
   );
 };

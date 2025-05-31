@@ -27,8 +27,13 @@ import {
   FaLinkedinIn,
   FaXTwitter,
 } from "react-icons/fa6";
+import contactService from "../../services/contactService";
+import ToastContainer from "../../components/ui/ToastContainer";
+import { useToast } from "../../hooks/useToast";
 
 const ContactPage = () => {
+  const { toasts, toast, removeToast } = useToast();
+
   const [formState, setFormState] = useState({
     name: "",
     emailPhone: "",
@@ -37,7 +42,7 @@ const ContactPage = () => {
   });
 
   const [formStatus, setFormStatus] = useState({
-    status: null, // null, 'success', 'error'
+    status: null, // null, 'success', 'error', 'submitting'
     message: "",
   });
 
@@ -49,20 +54,65 @@ const ContactPage = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const validateForm = () => {
+    if (!formState.name.trim()) {
+      toast.error("Name is required");
+      return false;
+    }
+    if (!formState.emailPhone.trim()) {
+      toast.error("Email or phone number is required");
+      return false;
+    }
+    if (!formState.subject.trim()) {
+      toast.error("Subject is required");
+      return false;
+    }
+    if (!formState.message.trim()) {
+      toast.error("Message is required");
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simulate form submission
+    
+    if (!validateForm()) return;
+
     setFormStatus({ status: "submitting", message: "" });
 
-    // Mock API call delay
-    setTimeout(() => {
-      if (Math.random() > 0.2) {
-        // 80% success rate for demo
+    try {
+      // Determine if emailPhone is email or phone
+      const isEmail = formState.emailPhone.includes("@");
+      
+      const messageData = {
+        name: formState.name.trim(),
+        email: isEmail ? formState.emailPhone.trim() : "",
+        phone: !isEmail ? formState.emailPhone.trim() : "",
+        subject: formState.subject.trim(),
+        message: formState.message.trim(),
+        type: "contact",
+        priority: "medium"
+      };
+
+      // Remove empty email/phone fields to avoid validation issues
+      if (!messageData.email) {
+        delete messageData.email;
+      }
+      if (!messageData.phone) {
+        delete messageData.phone;
+      }
+
+      console.log("Sending contact message data:", messageData);
+
+      const response = await contactService.createContactMessage(messageData);
+      
+      if (response.success !== false) {
         setFormStatus({
           status: "success",
-          message:
-            "Your message has been sent successfully. We will get back to you soon!",
+          message: "Your message has been sent successfully. We will get back to you soon!",
         });
+        toast.success("Message sent successfully!");
         setFormState({
           name: "",
           emailPhone: "",
@@ -70,13 +120,17 @@ const ContactPage = () => {
           message: "",
         });
       } else {
-        setFormStatus({
-          status: "error",
-          message:
-            "There was an error sending your message. Please try again or contact us directly.",
-        });
+        throw new Error(response.message || "Failed to send message");
       }
-    }, 1500);
+    } catch (error) {
+      console.error("Error sending message:", error);
+      console.error("Error response:", error.response?.data);
+      setFormStatus({
+        status: "error",
+        message: "There was an error sending your message. Please try again or contact us directly.",
+      });
+      toast.error("Failed to send message. Please try again.");
+    }
   };
 
   return (
@@ -349,15 +403,15 @@ const ContactPage = () => {
 
                       <div>
                         <label
-                          htmlFor="email"
+                          htmlFor="emailPhone"
                           className="block text-sm font-medium text-gray-700 mb-1"
                         >
                           Email Address/Phone
                         </label>
                         <input
                           type="text"
-                          id="email-phone"
-                          name="email-phone"
+                          id="emailPhone"
+                          name="emailPhone"
                           value={formState.emailPhone}
                           onChange={handleChange}
                           className="w-full px-4 py-2.5 bg-white text-gray-600 text-[1.05rem] rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 transition-all"
@@ -666,6 +720,9 @@ const ContactPage = () => {
       </section>
 
       <Footer />
+
+      {/* Toast Container */}
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
 };

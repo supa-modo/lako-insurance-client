@@ -1,9 +1,156 @@
-import React from "react";
+import React, { useState } from "react";
 import { FiPhone, FiX, FiChevronRight, FiArrowRight } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import { TbCalendarTime, TbMessageCircle, TbPhoneCall } from "react-icons/tb";
+import contactService from "../../services/contactService";
+import { useToast } from "../../hooks/useToast";
 
 const CallbackModal = ({ isOpen, onClose }) => {
+  const { toast } = useToast();
+
+  const [formData, setFormData] = useState({
+    preferredTime: "Morning (9am - 12pm)",
+    namePhone: "",
+    notes: "",
+  });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const parseNamePhone = (namePhoneString) => {
+    const trimmed = namePhoneString.trim();
+
+    // Try to split by common separators
+    const separators = [" - ", "-", "  ", " | ", "|", " — ", "—"];
+    let name = "";
+    let phone = "";
+
+    for (const separator of separators) {
+      if (trimmed.includes(separator)) {
+        const parts = trimmed.split(separator);
+        if (parts.length >= 2) {
+          name = parts[0].trim();
+          phone = parts.slice(1).join(" ").trim();
+          break;
+        }
+      }
+    }
+
+    // If no separator found, try to identify phone number pattern
+    if (!name && !phone) {
+      // Enhanced phone pattern to catch more formats
+      const phonePattern =
+        /(\+?\d{1,4}[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,9})/;
+      const phoneMatch = trimmed.match(phonePattern);
+
+      if (phoneMatch) {
+        phone = phoneMatch[0].trim();
+        name = trimmed.replace(phoneMatch[0], "").trim();
+        // Clean up any remaining separators from name
+        name = name.replace(/^[-\s|—]+|[-\s|—]+$/g, "").trim();
+      } else {
+        // Last resort: look for any sequence of numbers as phone
+        const simplePhonePattern = /\d{7,}/;
+        const simplePhoneMatch = trimmed.match(simplePhonePattern);
+
+        if (simplePhoneMatch) {
+          phone = simplePhoneMatch[0];
+          name = trimmed.replace(simplePhoneMatch[0], "").trim();
+          name = name.replace(/^[-\s|—]+|[-\s|—]+$/g, "").trim();
+        } else {
+          // Assume it's all name if no phone pattern found
+          name = trimmed;
+        }
+      }
+    }
+
+    return { name, phone };
+  };
+
+  const validateForm = () => {
+    if (!formData.namePhone.trim()) {
+      toast.error("Name and phone number are required");
+      return false;
+    }
+
+    const { name, phone } = parseNamePhone(formData.namePhone);
+
+    if (!name || name.length < 2) {
+      toast.error("Please provide a valid name (at least 2 characters)");
+      return false;
+    }
+
+    if (!phone || phone.length < 7) {
+      toast.error("Please provide a valid phone number (at least 7 digits)");
+      return false;
+    }
+
+    console.log("Parsed name and phone:", { name, phone });
+
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
+
+    try {
+      const { name, phone } = parseNamePhone(formData.namePhone);
+
+      const callbackData = {
+        name: name.trim(),
+        phone: phone.trim(),
+        subject: `Callback Request - ${formData.preferredTime}`,
+        message: `Callback request for ${formData.preferredTime}${
+          formData.notes ? `. Additional notes: ${formData.notes}` : ""
+        }`,
+        type: "callback",
+        priority: "high",
+        preferredTime: formData.preferredTime,
+      };
+
+      console.log("Sending callback request data:", callbackData);
+
+      // Use the standard createContactMessage method instead of createCallbackRequest
+      const response = await contactService.createContactMessage(callbackData);
+
+      if (response.success !== false) {
+        toast.success(
+          "Callback request submitted successfully! We'll contact you soon."
+        );
+        setFormData({
+          preferredTime: "Morning (9am - 12pm)",
+          namePhone: "",
+          notes: "",
+        });
+        onClose();
+      } else {
+        throw new Error(
+          response.message || "Failed to submit callback request"
+        );
+      }
+    } catch (error) {
+      console.error("Error submitting callback request:", error);
+      console.error("Error response:", error.response?.data);
+      const errorMessage =
+        error.response?.data?.message ||
+        "Failed to submit callback request. Please try again.";
+      toast.error(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const modalVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { duration: 0.3 } },
@@ -68,12 +215,17 @@ const CallbackModal = ({ isOpen, onClose }) => {
               </p>
             </div>
 
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleSubmit}>
               <div>
                 <label className="block text-sm font-semibold text-primary-600 mb-1 font-outfit">
                   Preferred Time
                 </label>
-                <select className="w-full h-11 px-3 rounded-lg border-2 focus:border bg-white text-gray-700 border-gray-200 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 outline-none font-outfit  shadow-sm hover:border-primary-300">
+                <select
+                  name="preferredTime"
+                  value={formData.preferredTime}
+                  onChange={handleChange}
+                  className="w-full h-11 px-3 rounded-lg border-2 focus:border bg-white text-gray-700 border-gray-200 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 outline-none font-outfit  shadow-sm hover:border-primary-300"
+                >
                   <option value="Morning (9am - 12pm)">
                     Morning (9am - 12pm)
                   </option>
@@ -92,8 +244,12 @@ const CallbackModal = ({ isOpen, onClose }) => {
                 </label>
                 <input
                   type="text"
+                  name="namePhone"
+                  value={formData.namePhone}
+                  onChange={handleChange}
                   className="w-full px-3 py-2 rounded-lg border-2 focus:border bg-white text-gray-700 border-gray-200 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 focus:outline-none font-outfit shadow-sm hover:border-primary-300"
-                  placeholder="'Your name' - 'Your phone number'"
+                  placeholder="John Doe - +254712345678"
+                  required
                 />
               </div>
 
@@ -102,24 +258,34 @@ const CallbackModal = ({ isOpen, onClose }) => {
                   Additional Notes
                 </label>
                 <textarea
+                  name="notes"
+                  value={formData.notes}
+                  onChange={handleChange}
                   className="w-full px-3 py-2 rounded-lg border-2 focus:border bg-white text-gray-700 border-gray-200 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 focus:outline-none font-outfit shadow-sm hover:border-primary-300"
                   rows={3}
                   placeholder="Any specific questions or concerns?"
                 ></textarea>
               </div>
 
-              
-
               <motion.button
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.98 }}
-                type="button"
-                className="w-full py-3 bg-gradient-to-r from-secondary-600 to-secondary-700 hover:from-secondary-700 hover:to-secondary-800 text-white font-medium rounded-lg shadow-md transition-colors flex items-center justify-center font-outfit mt-2"
-                onClick={onClose}
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full py-3 bg-gradient-to-r from-secondary-600 to-secondary-700 hover:from-secondary-700 hover:to-secondary-800 text-white font-medium rounded-lg shadow-md transition-colors flex items-center justify-center font-outfit mt-2 disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 <span className="inline-flex items-center font-semibold">
-                  Request Callback
-                  <FiArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                  {isSubmitting ? (
+                    <>
+                      <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                      Submitting...
+                    </>
+                  ) : (
+                    <>
+                      Request Callback
+                      <FiArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                    </>
+                  )}
                 </span>
               </motion.button>
 

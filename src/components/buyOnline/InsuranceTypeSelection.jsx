@@ -5,10 +5,15 @@ import {
   TbChevronRight,
   TbCheck,
   TbBuildingBank,
+  TbLock,
 } from "react-icons/tb";
 import { GiLifeInTheBalance } from "react-icons/gi";
 import { FaCarCrash } from "react-icons/fa";
 import { FaUserInjured } from "react-icons/fa6";
+import {
+  isInsuranceTypeAvailable,
+  isProductionMode,
+} from "../../utils/featureFlags";
 
 const insuranceTypes = [
   {
@@ -18,11 +23,7 @@ const insuranceTypes = [
     description: "Comprehensive medical coverage for individuals and families",
     comingSoon: false,
     popular: true,
-    benefits: [
-      "Seniors Cover",
-      "Adult Cover",
-      "Child Cover",
-    ],
+    benefits: ["Seniors Cover", "Adult Cover", "Child Cover"],
   },
   {
     id: "personal-accident",
@@ -37,13 +38,10 @@ const insuranceTypes = [
     id: "property",
     name: "Business/SMEs Cover",
     icon: <TbBuildingBank className="h-7 w-7" />,
-    description: "Comprehensive protection for your business and valuable assets",
+    description:
+      "Comprehensive protection for your business and valuable assets",
     comingSoon: true,
-    benefits: [
-      "Premises Cover",
-      "Employees Liability",
-      "Medical Expenses",
-    ],
+    benefits: ["Premises Cover", "Employees Liability", "Medical Expenses"],
   },
   {
     id: "motor",
@@ -52,139 +50,167 @@ const insuranceTypes = [
     description:
       "Reliable coverage for your vehicles and third-party liability",
     comingSoon: true,
-    benefits: [
-      "Third Party Liability",
-      "Vehicle Damage",
-      "Driver's Liability",
-    ],
+    benefits: ["Third Party Liability", "Vehicle Damage", "Driver's Liability"],
   },
 ];
 
 const InsuranceTypeSelection = ({ onSelect, formData }) => {
+  // Check if an insurance type should be disabled based on environment
+  const isTypeDisabled = (type) => {
+    // If it's already marked as coming soon, keep it disabled
+    if (type.comingSoon) return true;
+
+    // Check environment-based availability
+    return !isInsuranceTypeAvailable(type.id);
+  };
+
+  const getDisabledMessage = (type) => {
+    if (type.comingSoon) return "Coming Soon";
+    if (isProductionMode()) return "Available in Development";
+    return "Not Available";
+  };
+
   return (
     <div>
-      <h2 className="text-xl md:text-2xl font-bold text-primary-600 mb-4">Select Insurance Type</h2>
-      
+      <h2 className="text-xl md:text-2xl font-bold text-primary-600 mb-4">
+        Select Insurance Type
+      </h2>
+
       <p className="text-slate-600 text-[0.9rem] md:text-[1.1rem] mb-6">
-        Select the insurance category you'd like to purchase. We'll guide you through the rest of the process.
+        Select the insurance category you'd like to purchase. We'll guide you
+        through the rest of the process.
       </p>
 
+      {isProductionMode() && (
+        <div className="mb-6 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="flex items-center">
+            <TbLock className="h-5 w-5 text-blue-600 mr-2" />
+            <p className="text-blue-700 text-sm">
+              Some insurance types are currently available in development mode
+              only. Health Insurance is fully available.
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-8">
-        {insuranceTypes.map((type) => (
-          <motion.div
-            key={type.id}
-            whileHover={
-              !type.comingSoon
-                ? {
-                    scale: 1.01,
-                    boxShadow: "0 4px 12px -2px rgba(0, 0, 0, 0.08)",
-                  }
-                : {}
-            }
-            whileTap={!type.comingSoon ? { scale: 0.99 } : {}}
-            className={`relative rounded-xl overflow-hidden border-2 ${
-              type.comingSoon
-                ? "border-slate-200 bg-slate-50 cursor-not-allowed"
-                : type.id === formData.insuranceType
-                ? "border-primary-500 bg-primary-50 shadow-lg"
-                : "border-slate-200 bg-white hover:border-primary-300 cursor-pointer shadow-sm"
-            } transition-all duration-300`}
-            onClick={() => !type.comingSoon && onSelect(type.id)}
-          >
-            <div className="px-3 py-5 md:p-5">
-              <div className="flex items-center mb-3">
-                <div
-                  className={`flex-shrink-0 h-14 w-14 rounded-full flex items-center justify-center ${
-                    type.comingSoon
-                      ? "bg-slate-200 text-slate-400"
-                      : type.id === formData.insuranceType
-                      ? "bg-primary-100 text-primary-600"
-                      : "bg-secondary-100 text-secondary-600"
-                  } mr-4 shadow-sm`}
-                >
-                  {type.icon}
-                </div>
+        {insuranceTypes.map((type) => {
+          const isDisabled = isTypeDisabled(type);
 
-                <div className="flex-grow">
-                  <h4
-                    className={`text-base md:text-lg font-bold ${
-                      type.comingSoon
-                        ? "text-slate-400"
+          return (
+            <motion.div
+              key={type.id}
+              whileHover={
+                !isDisabled
+                  ? {
+                      scale: 1.01,
+                      boxShadow: "0 4px 12px -2px rgba(0, 0, 0, 0.08)",
+                    }
+                  : {}
+              }
+              whileTap={!isDisabled ? { scale: 0.99 } : {}}
+              className={`relative rounded-xl overflow-hidden border-2 ${
+                isDisabled
+                  ? "border-slate-200 bg-slate-50 cursor-not-allowed"
+                  : type.id === formData.insuranceType
+                  ? "border-primary-500 bg-primary-50 shadow-lg"
+                  : "border-slate-200 bg-white hover:border-primary-300 cursor-pointer shadow-sm"
+              } transition-all duration-300`}
+              onClick={() => !isDisabled && onSelect(type.id)}
+            >
+              <div className="px-3 py-5 md:p-5">
+                <div className="flex items-center mb-3">
+                  <div
+                    className={`flex-shrink-0 h-14 w-14 rounded-full flex items-center justify-center ${
+                      isDisabled
+                        ? "bg-slate-200 text-slate-400"
                         : type.id === formData.insuranceType
-                        ? "text-primary-700"
-                        : "text-slate-600"
-                    }`}
+                        ? "bg-primary-100 text-primary-600"
+                        : "bg-secondary-100 text-secondary-600"
+                    } mr-4 shadow-sm`}
                   >
-                    {type.name}
-                  </h4>
-                  <p
-                    className={`text-sm ${
-                      type.comingSoon
-                        ? "text-slate-400"
-                        : type.id === formData.insuranceType
-                        ? "text-primary-600"
-                        : "text-slate-600"
-                    }`}
-                  >
-                    {type.description}
-                  </p>
-                </div>
-
-                {!type.comingSoon && (
-                  <div className="absolute top-2 right-2">
-                    <div
-                      className={`h-8 w-8 rounded-full flex items-center justify-center ${
-                        type.id === formData.insuranceType
-                          ? "bg-primary-600 text-white"
-                          : "bg-slate-100 text-slate-400"
-                      } shadow-sm`}
-                    >
-                      {type.id === formData.insuranceType ? (
-                        <TbCheck className="h-5 md:h-6 w-5 md:w-6" />
-                      ) : (
-                        <TbChevronRight className="h-5 md:h-6 w-5 md:w-6" />
-                      )}
-                    </div>
+                    {type.icon}
                   </div>
-                )}
-              </div>
 
-              {/* Benefits list */}
-              <div className="mt-4">
-                <div
-                  className={`flex flex-wrap gap-2 ${
-                    type.comingSoon ? "opacity-50" : ""
-                  }`}
-                >
-                  {type.benefits.map((benefit, index) => (
-                    <span
-                      key={index}
-                      className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium ${
-                        type.id === formData.insuranceType
-                          ? "bg-primary-100/80 border border-primary-200 text-primary-700"
-                          : "bg-slate-100 border border-slate-200 text-slate-700"
+                  <div className="flex-grow">
+                    <h4
+                      className={`text-base md:text-lg font-bold ${
+                        isDisabled
+                          ? "text-slate-400"
+                          : type.id === formData.insuranceType
+                          ? "text-primary-700"
+                          : "text-slate-600"
                       }`}
                     >
-                      <TbCheck className="mr-1 h-4 w-4" />
-                      {benefit}
-                    </span>
-                  ))}
+                      {type.name}
+                    </h4>
+                    <p
+                      className={`text-sm ${
+                        isDisabled
+                          ? "text-slate-400"
+                          : type.id === formData.insuranceType
+                          ? "text-primary-600"
+                          : "text-slate-600"
+                      }`}
+                    >
+                      {type.description}
+                    </p>
+                  </div>
+
+                  {!isDisabled && (
+                    <div className="absolute top-2 right-2">
+                      <div
+                        className={`h-8 w-8 rounded-full flex items-center justify-center ${
+                          type.id === formData.insuranceType
+                            ? "bg-primary-600 text-white"
+                            : "bg-slate-100 text-slate-400"
+                        } shadow-sm`}
+                      >
+                        {type.id === formData.insuranceType ? (
+                          <TbCheck className="h-5 md:h-6 w-5 md:w-6" />
+                        ) : (
+                          <TbChevronRight className="h-5 md:h-6 w-5 md:w-6" />
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Benefits list */}
+                <div className="mt-4">
+                  <div
+                    className={`flex flex-wrap gap-2 ${
+                      isDisabled ? "opacity-50" : ""
+                    }`}
+                  >
+                    {type.benefits.map((benefit, index) => (
+                      <span
+                        key={index}
+                        className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium ${
+                          type.id === formData.insuranceType
+                            ? "bg-primary-100/80 border border-primary-200 text-primary-700"
+                            : "bg-slate-100 border border-slate-200 text-slate-700"
+                        }`}
+                      >
+                        <TbCheck className="mr-1 h-4 w-4" />
+                        {benefit}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Coming soon overlay */}
-            {type.comingSoon && (
-              <div className="absolute inset-0 bg-slate-100/50 flex items-center justify-center backdrop-blur-[0.5px]">
-                <span className="bg-slate-200 text-slate-600 px-4 py-2 rounded-lg font-semibold text-sm shadow-sm">
-                  Coming Soon
-                </span>
-              </div>
-            )}
-
-           
-          </motion.div>
-        ))}
+              {/* Environment-based or Coming soon overlay */}
+              {isDisabled && (
+                <div className="absolute inset-0 bg-slate-100/50 flex items-center justify-center backdrop-blur-[0.5px]">
+                  <span className="bg-slate-200 text-slate-600 px-4 py-2 rounded-lg font-semibold text-sm shadow-sm">
+                    {getDisabledMessage(type)}
+                  </span>
+                </div>
+              )}
+            </motion.div>
+          );
+        })}
       </div>
     </div>
   );

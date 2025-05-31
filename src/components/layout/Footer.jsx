@@ -48,7 +48,8 @@ const Footer = () => {
       { label: "Compare Plans", to: "/compare" },
       { label: "About Us", to: "/about" },
       { label: "Contact Us", to: "/contact" },
-      { label: "FAQs", to: "/faq" },
+      // { label: "FAQs", to: "/faq" },
+      { label: "FAQs", to: "/" },
     ],
     services: [
       { label: "Motor Insurance", to: "/services/motor-insurance" },

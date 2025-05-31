@@ -1,4 +1,4 @@
-import { apiClient, TOKEN_KEY, USER_KEY, safeApiCall } from './apiConfig';
+import { apiClient, TOKEN_KEY, USER_KEY, safeApiCall } from "./apiConfig";
 
 /**
  * Authentication service for the Kola application
@@ -12,6 +12,9 @@ const authService = {
   loginAdmin: async (credentials) => {
     try {
       const response = await apiClient.post("/auth/login", credentials);
+      console.log("Login response:", response.data);
+
+      // Extract data from the correct structure
       const { token, user } = response.data;
 
       // Store token and user data
@@ -31,8 +34,6 @@ const authService = {
   logoutAdmin: () => {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
-
-
   },
 
   /**
@@ -66,7 +67,10 @@ const authService = {
   getAdminProfile: async () => {
     try {
       const response = await apiClient.get("/auth/profile");
-      return response.data;
+      console.log("Profile response:", response.data);
+
+      // Backend returns { success: true, user: {...} }
+      return response.data.user || response.data;
     } catch (error) {
       console.error("Error fetching admin profile:", error);
       throw error;

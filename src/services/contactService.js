@@ -15,12 +15,8 @@ const contactService = {
   // Create a callback request
   createCallbackRequest: async (callbackData) => {
     try {
-      const requestData = {
-        ...callbackData,
-        type: "callback",
-        priority: "high", // Callbacks have high priority
-      };
-      const response = await apiClient.post("/contact-messages", requestData);
+      // The callbackData already includes type and priority, so just send it as is
+      const response = await apiClient.post("/contact-messages", callbackData);
       return response.data;
     } catch (error) {
       console.error("Error creating callback request:", error);

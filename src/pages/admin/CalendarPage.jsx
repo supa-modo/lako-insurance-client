@@ -23,11 +23,12 @@ import WeekView from "../../components/calendar/WeekView";
 import DayView from "../../components/calendar/DayView";
 import EventModal from "../../components/calendar/EventModal";
 import eventService from "../../services/eventService";
-import { useNotification } from "../../context/NotificationContext";
+import { useToast } from "../../hooks/useToast";
+import ToastContainer from "../../components/ui/ToastContainer";
 import taskService from "../../services/taskService";
 
 const CalendarPage = () => {
-  const { showSuccess, showError, showInfo, showConfirmation } = useNotification();
+  const { toasts, toast, removeToast } = useToast();
   const [view, setView] = useState("month"); // month, week, day
   const [currentDate, setCurrentDate] = useState(new Date());
   const [events, setEvents] = useState([]);
@@ -39,14 +40,13 @@ const CalendarPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [detailsPosition, setDetailsPosition] = useState({ x: 0, y: 0 });
 
-
   const fetchEventsAndTasks = async () => {
     try {
       setIsRefreshing(true);
       // Get current view's date range
       const startDate = new Date(currentDate);
       const endDate = new Date(currentDate);
-      
+
       if (view === "month") {
         startDate.setDate(1); // First day of month
         startDate.setHours(0, 0, 0, 0);
@@ -72,7 +72,7 @@ const CalendarPage = () => {
       // Fetch events for the date range
       const [eventsResponse, tasksResponse] = await Promise.all([
         eventService.getAllEvents(dateParams),
-        eventService.getTasksForCalendar(dateParams)
+        eventService.getTasksForCalendar(dateParams),
       ]);
 
       let allCalendarItems = [];
@@ -86,7 +86,7 @@ const CalendarPage = () => {
         }));
         allCalendarItems = [...transformedEvents];
       } else {
-        showError("Failed to load events");
+        toast.error("Failed to load events");
       }
 
       if (tasksResponse.success) {
@@ -97,19 +97,16 @@ const CalendarPage = () => {
       setEvents(allCalendarItems);
     } catch (error) {
       console.error("Error loading calendar items:", error);
-      showError("Error loading calendar items");
+      toast.error("Error loading calendar items");
     } finally {
       setIsRefreshing(false);
     }
   };
 
-
   // Load events and tasks from API
   useEffect(() => {
-    
-    
     fetchEventsAndTasks();
-  }, [currentDate, view, showError]);
+  }, [currentDate, view]);
 
   // Navigation functions
   const navigateToToday = () => setCurrentDate(new Date());
@@ -140,45 +137,49 @@ const CalendarPage = () => {
 
     // Parsing the new droppableId format
     let year, month, day, hour;
-    
 
-    if (destination.droppableId.startsWith('date:')) {
-      const parts = destination.droppableId.split('-');
+    if (destination.droppableId.startsWith("date:")) {
+      const parts = destination.droppableId.split("-");
       // Format is 'date:YYYY-MM-DD' or 'date:YYYY-MM-DD-hour:HH'
       year = parseInt(parts[0].substring(5)); // Remove 'date:' prefix
       month = parseInt(parts[1]) - 1; // JS months are 0-indexed
       day = parseInt(parts[2]);
-      
-      
-      if (parts.length > 3 && parts[3].startsWith('hour:')) {
-        hour = parseInt(parts[3].substring(5)); 
+
+      if (parts.length > 3 && parts[3].startsWith("hour:")) {
+        hour = parseInt(parts[3].substring(5));
       }
     } else {
       console.error("Invalid droppableId format:", destination.droppableId);
-      showError("Error updating event: invalid drop target");
-      return;
-    }
-    
-    // Create the new date object
-    const newDate = new Date(year, month, day);
-    
-    // Ensure the date is valid
-    if (isNaN(newDate.getTime())) {
-      console.error("Invalid date components:", { year, month, day });
-      showError("Error updating event: invalid date");
+      toast.error("Error updating event: invalid drop target");
       return;
     }
 
-    console.log("Parsed date components:", { year, month, day, hour, newDate: newDate.toISOString() });
+    // Create the new date object
+    const newDate = new Date(year, month, day);
+
+    // Ensure the date is valid
+    if (isNaN(newDate.getTime())) {
+      console.error("Invalid date components:", { year, month, day });
+      toast.error("Error updating event: invalid date");
+      return;
+    }
+
+    console.log("Parsed date components:", {
+      year,
+      month,
+      day,
+      hour,
+      newDate: newDate.toISOString(),
+    });
 
     // Get the original event time components
     const originalStart = new Date(event.start);
     const originalEnd = new Date(event.end);
     const duration = originalEnd.getTime() - originalStart.getTime();
-    
+
     // Create new start date by combining the destination date with original time
     const newStart = new Date(newDate);
-    
+
     if (hour !== undefined) {
       // If hour is specified (week/day view), use the hour from the drop target
       // but keep the original minutes
@@ -192,19 +193,19 @@ const CalendarPage = () => {
         0
       );
     }
-    
+
     // Calculate the new end time by adding the original duration
     const newEnd = new Date(newStart.getTime() + duration);
-    
+
     console.log("Event drag details:", {
       eventId: event.id,
       originalStart: originalStart.toISOString(),
       originalEnd: originalEnd.toISOString(),
       newStart: newStart.toISOString(),
       newEnd: newEnd.toISOString(),
-      dropTarget: destination.droppableId
+      dropTarget: destination.droppableId,
     });
-    
+
     // Optimistically update UI
     const updatedEvent = {
       ...event,
@@ -217,15 +218,15 @@ const CalendarPage = () => {
       e.id === draggableId ? updatedEvent : e
     );
     setEvents(updatedEvents);
-    
+
     // Update in backend
     try {
       await eventService.updateEventTime(event.id, newStart, newEnd);
-      showSuccess("Event time updated successfully");
+      toast.success("Event time updated successfully");
     } catch (error) {
       console.error("Error updating event time:", error);
-      showError("Failed to update event time");
-      
+      toast.error("Failed to update event time");
+
       // Revert to original state on error
       setEvents(events);
     }
@@ -272,53 +273,47 @@ const CalendarPage = () => {
   // Handle delete event
   const handleDeleteEvent = async (eventId) => {
     // Check if this is a task-based event
-    const isTaskEvent = typeof eventId === 'string' && eventId.startsWith('task-');
-    
-    const confirmMessage = isTaskEvent 
+    const isTaskEvent =
+      typeof eventId === "string" && eventId.startsWith("task-");
+
+    const confirmMessage = isTaskEvent
       ? "This will only remove the task from the calendar view. To delete the task completely, please go to the Tasks page."
       : "Are you sure you want to delete this event?";
 
-    showConfirmation(
-      confirmMessage,
-      async () => {
-        // Optimistically update UI
-        setEvents(events.filter((e) => e.id !== eventId));
-        setShowEventDetails(false);
+    if (window.confirm(confirmMessage)) {
+      // Optimistically update UI
+      setEvents(events.filter((e) => e.id !== eventId));
+      setShowEventDetails(false);
 
-        // If we're also showing the modal for this event, close it
-        if (selectedEvent && selectedEvent.id === eventId && showEventModal) {
-          setShowEventModal(false);
+      // If we're also showing the modal for this event, close it
+      if (selectedEvent && selectedEvent.id === eventId && showEventModal) {
+        setShowEventModal(false);
+      }
+
+      // For task-based events, we don't actually delete the task
+      if (!isTaskEvent) {
+        // Delete from backend
+        try {
+          await eventService.deleteEvent(eventId);
+          toast.success("Event deleted successfully");
+        } catch (error) {
+          console.error("Error deleting event:", error);
+          toast.error("Failed to delete event");
+
+          // Refresh events to restore state
+          handleRefresh();
         }
-        
-        // For task-based events, we don't actually delete the task
-        if (!isTaskEvent) {
-          // Delete from backend
-          try {
-            await eventService.deleteEvent(eventId);
-            showSuccess("Event deleted successfully");
-          } catch (error) {
-            console.error("Error deleting event:", error);
-            showError("Failed to delete event");
-            
-            // Refresh events to restore state
-            handleRefresh();
-          }
-        } else {
-          showSuccess("Task removed from calendar view");
-        }
-      },
-      () => {
-        // User canceled, do nothing
-      },
-      { title: isTaskEvent ? "Remove from Calendar" : "Confirm Deletion" }
-    );
+      } else {
+        toast.success("Task removed from calendar view");
+      }
+    }
   };
 
   // Handle save event
   const handleSaveEvent = async (eventData) => {
     try {
       let response;
-      
+
       // Check if this is a task-based event
       if (eventData.isTask && eventData.relatedTaskId) {
         // For task-based events, we need to update the task
@@ -328,37 +323,46 @@ const CalendarPage = () => {
           description: eventData.description,
           dueDate: eventData.start,
           priority: eventData.priority,
-          completed: eventData.isCompleted
+          completed: eventData.isCompleted,
         };
-        
 
         response = await taskService.updateTask(taskId, taskData);
         fetchEventsAndTasks();
-        showSuccess("Task updated successfully");
-      } else if (eventData.id && !eventData.id.startsWith('task-')) {
+        toast.success("Task updated successfully");
+      } else if (eventData.id && !eventData.id.startsWith("task-")) {
         // Update existing event
         response = await eventService.updateEvent(eventData.id, eventData);
         if (response.success) {
           //TODO: Check on this to ensure event is saved to database and not local state
           // Update the event in the local state
           const updatedEvents = events.map((e) =>
-            e.id === selectedEvent.id ? { ...response.data, start: new Date(response.data.start), end: new Date(response.data.end) } : e
+            e.id === selectedEvent.id
+              ? {
+                  ...response.data,
+                  start: new Date(response.data.start),
+                  end: new Date(response.data.end),
+                }
+              : e
           );
           setEvents(updatedEvents);
-          showSuccess("Event updated successfully");
+          toast.success("Event updated successfully");
         } else {
-          showError("Failed to update event");
+          toast.error("Failed to update event");
         }
       } else {
         // Add new event
         response = await eventService.createEvent(eventData);
         if (response.success) {
           // Add the new event to the local state
-          const newEvent = { ...response.data, start: new Date(response.data.start), end: new Date(response.data.end) };
+          const newEvent = {
+            ...response.data,
+            start: new Date(response.data.start),
+            end: new Date(response.data.end),
+          };
           setEvents([...events, newEvent]);
-          showSuccess("Event created successfully");
+          toast.success("Event created successfully");
         } else {
-          showError("Failed to create event");
+          toast.error("Failed to create event");
         }
       }
       setShowEventModal(false);
@@ -366,7 +370,7 @@ const CalendarPage = () => {
       setIsEditing(false);
     } catch (error) {
       console.error("Error saving event:", error);
-      showError("An error occurred while saving the event");
+      toast.error("An error occurred while saving the event");
     }
   };
 
@@ -374,11 +378,11 @@ const CalendarPage = () => {
   const handleRefresh = async () => {
     try {
       setIsRefreshing(true);
-      
+
       // Get current view's date range
       const startDate = new Date(currentDate);
       const endDate = new Date(currentDate);
-      
+
       if (view === "month") {
         startDate.setDate(1); // First day of month
         startDate.setHours(0, 0, 0, 0);
@@ -404,7 +408,7 @@ const CalendarPage = () => {
       // Fetch events and tasks for the date range
       const [eventsResponse, tasksResponse] = await Promise.all([
         eventService.getAllEvents(dateParams),
-        eventService.getTasksForCalendar(dateParams)
+        eventService.getTasksForCalendar(dateParams),
       ]);
 
       let allCalendarItems = [];
@@ -418,7 +422,7 @@ const CalendarPage = () => {
         }));
         allCalendarItems = [...transformedEvents];
       } else {
-        showError("Failed to load events");
+        toast.error("Failed to load events");
       }
 
       if (tasksResponse.success) {
@@ -429,7 +433,7 @@ const CalendarPage = () => {
       setEvents(allCalendarItems);
     } catch (error) {
       console.error("Error refreshing calendar items:", error);
-      showError("Error refreshing calendar items");
+      toast.error("Error refreshing calendar items");
     } finally {
       setIsRefreshing(false);
     }
@@ -446,7 +450,7 @@ const CalendarPage = () => {
 
   return (
     <div className="h-[calc(100vh-64px)] flex flex-col overflow-hidden">
-      {/* Calendar Header */} 
+      {/* Calendar Header */}
       <div className="bg-white px-8 py-3 border-b border-gray-200">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
           <div>
@@ -660,6 +664,9 @@ const CalendarPage = () => {
           onDelete={handleDeleteEvent}
         />
       )}
+
+      {/* Toast Container */}
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
 };

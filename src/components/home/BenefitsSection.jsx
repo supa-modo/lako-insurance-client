@@ -22,12 +22,102 @@ import {
   PiSmileyDuotone,
   PiShieldCheckDuotone,
 } from "react-icons/pi";
+import contactService from "../../services/contactService";
+import { useToast } from "../../hooks/useToast";
 
 const BenefitsSection = () => {
+  const { toast } = useToast();
   const [activeFeature, setActiveFeature] = useState(0);
   const [activeBenefit, setActiveBenefit] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const benefitsRef = useRef(null);
+
+  // Contact form state
+  const [contactForm, setContactForm] = useState({
+    name: "",
+    emailPhone: "",
+    message: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Handle contact form changes
+  const handleContactChange = (e) => {
+    const { name, value } = e.target;
+    setContactForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Validate contact form
+  const validateContactForm = () => {
+    if (!contactForm.name.trim()) {
+      toast.error("Name is required");
+      return false;
+    }
+    if (!contactForm.emailPhone.trim()) {
+      toast.error("Email or phone number is required");
+      return false;
+    }
+    if (!contactForm.message.trim()) {
+      toast.error("Message is required");
+      return false;
+    }
+    return true;
+  };
+
+  // Handle contact form submission
+  const handleContactSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateContactForm()) return;
+
+    setIsSubmitting(true);
+
+    try {
+      // Determine if emailPhone is email or phone
+      const isEmail = contactForm.emailPhone.includes("@");
+
+      const messageData = {
+        name: contactForm.name.trim(),
+        email: isEmail ? contactForm.emailPhone.trim() : "",
+        phone: !isEmail ? contactForm.emailPhone.trim() : "",
+        subject: "General Inquiry from Benefits Section",
+        message: contactForm.message.trim(),
+        type: "contact",
+        priority: "medium",
+      };
+
+      // Remove empty email/phone fields to avoid validation issues
+      if (!messageData.email) {
+        delete messageData.email;
+      }
+      if (!messageData.phone) {
+        delete messageData.phone;
+      }
+
+      console.log("Sending contact message data:", messageData);
+
+      const response = await contactService.createContactMessage(messageData);
+
+      if (response.success !== false) {
+        toast.success("Message sent successfully! We'll get back to you soon.");
+        setContactForm({
+          name: "",
+          emailPhone: "",
+          message: "",
+        });
+      } else {
+        throw new Error(response.message || "Failed to send message");
+      }
+    } catch (error) {
+      console.error("Error sending message:", error);
+      console.error("Error response:", error.response?.data);
+      toast.error("Failed to send message. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   // Check if screen is mobile
   useEffect(() => {
@@ -312,7 +402,7 @@ const BenefitsSection = () => {
                     </h3>
                   </div>
                   <p className="text-white/90 text-[0.89rem]">
-                    We’ve got you covered from Medical Plans, Travel,
+                    We've got you covered from Medical Plans, Travel,
                     International Coverage, Liability Plans, Property Insurance,
                     Motor Coverage, and various General Insurance options.
                   </p>
@@ -411,37 +501,59 @@ const BenefitsSection = () => {
                 </div>
 
                 {/* Contact Form */}
-                <form className="space-y-4">
+                <form className="space-y-4" onSubmit={handleContactSubmit}>
                   <div className="flex items-center space-x-2">
                     <div className="w-full">
                       <input
                         type="text"
+                        name="name"
+                        value={contactForm.name}
+                        onChange={handleContactChange}
                         placeholder="Your Name"
                         className="w-full px-3.5 lg:px-4 py-2.5 text-neutral-800 bg-neutral-100 rounded-lg border border-neutral-400 focus:border-secondary-600 focus:ring-1 focus:ring-secondary-600 focus:outline-none transition-all outline-none"
+                        required
                       />
                     </div>
                     <div className="w-full">
                       <input
-                        type="email"
+                        type="text"
+                        name="emailPhone"
+                        value={contactForm.emailPhone}
+                        onChange={handleContactChange}
                         placeholder="Email Address/Phone No."
                         className="w-full px-3 lg:px-4 py-2.5 text-neutral-800 bg-neutral-100 rounded-lg border border-neutral-400 focus:border-secondary-600 focus:ring-1 focus:ring-secondary-600 focus:outline-none transition-all outline-none"
+                        required
                       />
                     </div>
                   </div>
 
                   <div>
                     <textarea
+                      name="message"
+                      value={contactForm.message}
+                      onChange={handleContactChange}
                       placeholder="Your Message"
                       rows="3"
                       className="w-full px-3.5 lg:px-4 py-2.5 text-neutral-800 bg-neutral-100 rounded-lg border border-neutral-400 focus:border-secondary-600 focus:ring-1 focus:ring-secondary-600 focus:outline-none transition-all outline-none"
+                      required
                     ></textarea>
                     <motion.button
                       whileTap={{ scale: 0.98 }}
-                      type="button"
-                      className="w-full py-2 px-6 bg-gradient-to-r from-secondary-500 to-secondary-600 text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center"
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full py-2 px-6 bg-gradient-to-r from-secondary-500 to-secondary-600 text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed"
                     >
-                      Send Message
-                      <TbChevronRight className="ml-2" />
+                      {isSubmitting ? (
+                        <>
+                          <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                          Sending...
+                        </>
+                      ) : (
+                        <>
+                          Send Message
+                          <TbChevronRight className="ml-2" />
+                        </>
+                      )}
                     </motion.button>
                   </div>
                 </form>
