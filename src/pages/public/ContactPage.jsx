@@ -21,7 +21,12 @@ import {
 import Header from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
 import { PiMapPinAreaDuotone } from "react-icons/pi";
-import { FaFacebookF, FaInstagram, FaLinkedinIn, FaXTwitter } from "react-icons/fa6";
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaLinkedinIn,
+  FaXTwitter,
+} from "react-icons/fa6";
 
 const ContactPage = () => {
   const [formState, setFormState] = useState({
@@ -93,7 +98,7 @@ const ContactPage = () => {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="inline-flex items-center px-4 py-1.5 rounded-full text-sm lg:text-[0.9rem] font-medium bg-white/10 backdrop-blur-sm text-white border border-white/20 mb-4"
+              className="inline-flex items-center px-4 py-1.5 rounded-full text-[0.8rem] md:text-sm lg:text-[0.9rem] font-medium bg-white/10 backdrop-blur-sm text-white border border-white/20 mb-4"
             >
               <span className="flex h-2 w-2 rounded-full bg-secondary-500 mr-2"></span>
               Get In Touch
@@ -105,14 +110,15 @@ const ContactPage = () => {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="text-3xl md:text-5xl font-bold text-white mb-6"
             >
-              We're here to <span className="text-secondary-500">help you</span>
+              We're here to{" "}
+              <span className="text-secondary-500">help you👍</span>
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-white/90 text-lg mb-8"
+              className="text-white/90 text-[0.95rem] md:text-lg mb-8"
             >
               Have questions about our insurance products? Need a quote? Our
               team is ready to assist you with personalized solutions.
@@ -164,7 +170,7 @@ const ContactPage = () => {
                             Our Office
                           </h3>
                           <p className="text-gray-600 text-[0.95rem] lg:text-base">
-                             Upper Hill, Nairobi, Kenya
+                            Upper Hill, Nairobi, Kenya
                           </p>
                         </div>
                       </div>
@@ -230,7 +236,6 @@ const ContactPage = () => {
                               +254 726 581487
                             </a>
                           </p>
-                         
                         </div>
                       </div>
 
@@ -478,9 +483,9 @@ const ContactPage = () => {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="text-gray-700 max-w-3xl mx-auto mb-8 lg:mb-12"
             >
-              We're conveniently located in Upper Hill, Nairobi.
-              Visit us during our office hours for one on one consultations with
-              our insurance experts.
+              We're conveniently located in Upper Hill, Nairobi. Visit us during
+              our office hours for one on one consultations with our insurance
+              experts.
             </motion.p>
           </div>
 

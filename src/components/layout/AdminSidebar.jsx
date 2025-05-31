@@ -13,6 +13,7 @@ import {
   TbShieldQuestion,
   TbLogout,
   TbBuildingBank,
+  TbMessage,
 } from "react-icons/tb";
 import { MdSpaceDashboard } from "react-icons/md";
 import { useState, useEffect } from "react";
@@ -105,6 +106,11 @@ const navItems = [
       //   icon: TbMailStar,
       //   path: "/admin/mail",
       // },
+      {
+        name: "Callbacks & Messages",
+        icon: TbMessage,
+        path: "/admin/messages",
+      },
       {
         name: "Calendar",
         icon: TbCalendarEvent,

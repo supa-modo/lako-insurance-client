@@ -281,6 +281,7 @@ const InsurancePlanManagementPage = () => {
   };
 
   return (
+    <>
     <div className="space-y-6">
       {/* Page Header */}
       <div className="bg-white px-8 py-3 border-b border-gray-200">
@@ -511,48 +512,63 @@ const InsurancePlanManagementPage = () => {
         )}
 
         {/* Plans Table */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="flex-1 bg-white rounded-[0.7rem] border border-gray-200">
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-secondary-200/40">
                 <tr>
                   <th
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                    scope="col"
+                    className="py-4 px-4 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                     onClick={() => handleSort("name")}
                   >
-                    <div className="flex items-center space-x-1">
+                    <div className="flex items-center">
                       <span>Plan Name</span>
                       {getSortIcon("name")}
                     </div>
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    scope="col"
+                    className="py-4 px-4 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider"
+                  >
                     Company
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    scope="col"
+                    className="py-4 px-4 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider"
+                  >
                     Type
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    scope="col"
+                    className="py-4 px-4 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider"
+                  >
                     Coverage
                   </th>
                   <th
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                    scope="col"
+                    className="py-4 px-4 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                     onClick={() => handleSort("annualPremium")}
                   >
-                    <div className="flex items-center space-x-1">
+                    <div className="flex items-center">
                       <span>Premium</span>
                       {getSortIcon("annualPremium")}
                     </div>
                   </th>
                   <th
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                    scope="col"
+                    className="py-4 px-4 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                     onClick={() => handleSort("createdAt")}
                   >
-                    <div className="flex items-center space-x-1">
+                    <div className="flex items-center">
                       <span>Created</span>
                       {getSortIcon("createdAt")}
                     </div>
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    scope="col"
+                    className="py-4 px-4 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider"
+                  >
                     Actions
                   </th>
                 </tr>
@@ -560,7 +576,7 @@ const InsurancePlanManagementPage = () => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {loading ? (
                   <tr>
-                    <td colSpan="7" className="px-6 py-12 text-center">
+                    <td colSpan="7" className="py-12 text-center">
                       <div className="flex justify-center">
                         <div className="h-8 w-8 border-4 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
                       </div>
@@ -568,10 +584,7 @@ const InsurancePlanManagementPage = () => {
                   </tr>
                 ) : filteredAndSortedPlans.length === 0 ? (
                   <tr>
-                    <td
-                      colSpan="7"
-                      className="px-6 py-12 text-center text-gray-500"
-                    >
+                    <td colSpan="7" className="py-8 text-center text-gray-500">
                       <div className="flex flex-col items-center">
                         <TbList className="h-12 w-12 text-gray-300 mb-3" />
                         <p className="text-lg font-medium text-gray-500 mb-1">
@@ -590,9 +603,16 @@ const InsurancePlanManagementPage = () => {
                   filteredAndSortedPlans.map((plan) => (
                     <tr
                       key={plan.id}
-                      className="hover:bg-gray-50 transition-colors"
+                      className="hover:bg-gray-200 transition-colors cursor-pointer"
+                      onClick={(e) => {
+                        // Only trigger if not clicking on action buttons
+                        if (!e.target.closest("button")) {
+                          setSelectedPlan(plan);
+                          setShowDetailModal(true);
+                        }
+                      }}
                     >
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="py-4 px-4 whitespace-nowrap">
                         <div className="font-medium text-gray-900">
                           {plan.name}
                         </div>
@@ -606,7 +626,7 @@ const InsurancePlanManagementPage = () => {
                           </span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="py-4 px-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <TbBuilding className="h-4 w-4 text-gray-400 mr-2" />
                           <span className="text-gray-900">
@@ -614,7 +634,7 @@ const InsurancePlanManagementPage = () => {
                           </span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="py-4 px-4 whitespace-nowrap">
                         <span
                           className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                             plan.planType === "Diamond"
@@ -631,7 +651,7 @@ const InsurancePlanManagementPage = () => {
                           {plan.planType}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="py-4 px-4 whitespace-nowrap text-sm text-gray-900">
                         <div>
                           In:{" "}
                           {plan.inpatientCoverageLimit
@@ -645,7 +665,7 @@ const InsurancePlanManagementPage = () => {
                             : "N/A"}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="py-4 px-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">
                           {plan.rawAnnualPremium
                             ? formatCurrency(plan.rawAnnualPremium)
@@ -655,37 +675,40 @@ const InsurancePlanManagementPage = () => {
                           {plan.premiumStructure} premium
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="py-4 px-4 whitespace-nowrap text-sm text-gray-500">
                         {new Date(plan.createdAt).toLocaleDateString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex justify-end space-x-2">
+                      <td
+                        className="py-4 px-4 whitespace-nowrap text-sm text-gray-500"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <div className="flex space-x-2">
                           <button
                             onClick={() => {
                               setSelectedPlan(plan);
                               setShowDetailModal(true);
                             }}
-                            className="text-green-600 hover:text-green-900 p-1"
+                            className="text-gray-400 hover:text-green-600"
                             title="View Details"
                           >
-                            <TbEye className="h-4 w-4" />
+                            <TbEye className="h-5 w-5" />
                           </button>
                           <button
                             onClick={() => {
                               setSelectedPlan(plan);
                               setShowEditModal(true);
                             }}
-                            className="text-blue-600 hover:text-blue-900 p-1"
+                            className="text-gray-400 hover:text-blue-600"
                             title="Edit Plan"
                           >
-                            <TbEdit className="h-4 w-4" />
+                            <TbEdit className="h-5 w-5" />
                           </button>
                           <button
                             onClick={() => setDeleteConfirmation(plan)}
-                            className="text-red-600 hover:text-red-900 p-1"
+                            className="text-gray-400 hover:text-red-600"
                             title="Delete Plan"
                           >
-                            <TbTrash className="h-4 w-4" />
+                            <TbTrash className="h-5 w-5" />
                           </button>
                         </div>
                       </td>
@@ -695,35 +718,111 @@ const InsurancePlanManagementPage = () => {
               </tbody>
             </table>
           </div>
-        </div>
 
-        {/* Pagination */}
-        {filteredAndSortedPlans.length > 0 && (
-          <div className="flex justify-center">
-            <div className="flex space-x-2">
-              <button
-                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-                className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 hover:bg-gray-50"
-              >
-                Previous
-              </button>
-              <span className="px-3 py-1 bg-primary-50 text-primary-600 rounded">
-                Page {currentPage}
-              </span>
-              <button
-                onClick={() => setCurrentPage(currentPage + 1)}
-                disabled={filteredAndSortedPlans.length < itemsPerPage}
-                className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 hover:bg-gray-50"
-              >
-                Next
-              </button>
+          {/* Pagination */}
+          <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+            <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm text-gray-700">
+                  Showing <span className="font-medium">1</span> to{" "}
+                  <span className="font-medium">
+                    {filteredAndSortedPlans.length}
+                  </span>{" "}
+                  of{" "}
+                  <span className="font-medium">
+                    {filteredAndSortedPlans.length}
+                  </span>{" "}
+                  results
+                </p>
+              </div>
+              <div>
+                <nav
+                  className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+                  aria-label="Pagination"
+                >
+                  <button
+                    className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                    disabled={currentPage === 1}
+                  >
+                    <span className="sr-only">Previous</span>
+                    <svg
+                      className="h-5 w-5"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </button>
+                  <button
+                    aria-current="page"
+                    className="z-10 bg-primary-50 border-primary-500 text-primary-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium"
+                  >
+                    {currentPage}
+                  </button>
+                  <button
+                    className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                    disabled={filteredAndSortedPlans.length < itemsPerPage}
+                  >
+                    <span className="sr-only">Next</span>
+                    <svg
+                      className="h-5 w-5"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </button>
+                </nav>
+              </div>
             </div>
           </div>
-        )}
+        </div>
 
-        {/* Modals */}
-        <AnimatePresence>
+        
+      </div>
+
+      {/* Footer */}
+      <div className="bg-white border-t border-gray-200 px-6 py-3">
+        <div className="flex flex-wrap justify-between items-center text-sm text-gray-600">
+          <div>Showing {filteredAndSortedPlans.length} plans</div>
+          <div className="flex space-x-4">
+            <button className="flex items-center hover:text-primary-600">
+              <TbReport className="mr-1 h-4 w-4" />
+              Generate Report
+            </button>
+            <button className="flex items-center hover:text-primary-600">
+              <TbDatabaseExport className="mr-1 h-4 w-4" />
+              Export Data
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Click outside handler for filter dropdown */}
+      {isFilterDropdownOpen && (
+        <div
+          className="fixed inset-0 z-0"
+          onClick={() => setIsFilterDropdownOpen(false)}
+        ></div>
+      )}
+    </div>
+
+    {/* Modals */}
+    <AnimatePresence>
           {showAddModal && (
             <AddPlanModal
               companies={companies}
@@ -799,16 +898,7 @@ const InsurancePlanManagementPage = () => {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
-
-      {/* Click outside handler for filter dropdown */}
-      {isFilterDropdownOpen && (
-        <div
-          className="fixed inset-0 z-0"
-          onClick={() => setIsFilterDropdownOpen(false)}
-        ></div>
-      )}
-    </div>
+    </>
   );
 };
 

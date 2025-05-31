@@ -30,6 +30,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { ComparisonProvider } from "./context/ComparisonContext";
 import { NotificationProvider } from "./context/NotificationContext";
 import ServiceDetailsPage from "./pages/public/ServiceDetailsPage";
+import ContactMessagesPage from "./pages/admin/ContactMessagesPage";
 
 function App() {
   return (
@@ -104,11 +105,19 @@ function App() {
                         </AuthGuard>
                       }
                     />
-                    <Route
+                    {/* <Route
                       path="renewals"
                       element={
                         <AuthGuard>
                           <RenewalsPage />
+                        </AuthGuard>
+                      }
+                    /> */}
+                    <Route
+                      path="messages"
+                      element={
+                        <AuthGuard>
+                          <ContactMessagesPage />
                         </AuthGuard>
                       }
                     />

@@ -29,8 +29,8 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import AddCompanyModal from "../../components/insurance/AddCompanyModal";
 import EditCompanyModal from "../../components/insurance/EditCompanyModal";
-import CompanyDetailModal from "../../components/insurance/CompanyDetailModal";
 import insuranceService from "../../services/insuranceService";
+import CompanyDetailModal from "../../components/insurance/CompanyDetailModal";
 
 const InsuranceCompanyManagementPage = () => {
   // State management
@@ -255,9 +255,25 @@ const InsuranceCompanyManagementPage = () => {
   };
 
   const renderStarRating = (rating) => {
+    // Ensure rating is a valid number
+    const numericRating =
+      typeof rating === "number" ? rating : parseFloat(rating);
+    if (isNaN(numericRating)) {
+      return (
+        <div className="flex items-center space-x-1">
+          <div className="flex">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <TbStar key={i} className="h-4 w-4 text-gray-300" />
+            ))}
+          </div>
+          <span className="text-sm text-gray-600 ml-1">No rating</span>
+        </div>
+      );
+    }
+
     const stars = [];
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 !== 0;
+    const fullStars = Math.floor(numericRating);
+    const hasHalfStar = numericRating % 1 !== 0;
 
     for (let i = 1; i <= 5; i++) {
       if (i <= fullStars) {
@@ -275,7 +291,7 @@ const InsuranceCompanyManagementPage = () => {
       <div className="flex items-center space-x-1">
         <div className="flex">{stars}</div>
         <span className="text-sm text-gray-600 ml-1">
-          ({rating.toFixed(1)})
+          ({numericRating.toFixed(1)})
         </span>
       </div>
     );
@@ -420,7 +436,7 @@ const InsuranceCompanyManagementPage = () => {
               className="bg-gradient-to-br from-primary-600 to-primary-700 text-white rounded-lg px-4 py-2 text-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary-500 flex items-center shadow-sm transition-all"
             >
               <TbBuildingBank className="h-4 w-4 mr-2" />
-              Add Company
+              New Insurance Company
             </button>
           </div>
         </div>
@@ -509,51 +525,61 @@ const InsuranceCompanyManagementPage = () => {
         )}
 
         {/* Companies Table */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="flex-1 bg-white rounded-[0.7rem] border border-gray-200">
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-secondary-200/40">
                 <tr>
                   <th
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                    scope="col"
+                    className="py-4 px-4 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                     onClick={() => handleSort("name")}
                   >
-                    <div className="flex items-center space-x-1">
+                    <div className="flex items-center">
                       <span>Company</span>
                       {getSortIcon("name")}
                     </div>
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    scope="col"
+                    className="py-4 px-4 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider"
+                  >
                     Contact Info
                   </th>
                   <th
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                    scope="col"
+                    className="py-4 px-4 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                     onClick={() => handleSort("rating")}
                   >
-                    <div className="flex items-center space-x-1">
+                    <div className="flex items-center">
                       <span>Rating</span>
                       {getSortIcon("rating")}
                     </div>
                   </th>
                   <th
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                    scope="col"
+                    className="py-4 px-4 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                     onClick={() => handleSort("plansCount")}
                   >
-                    <div className="flex items-center space-x-1">
+                    <div className="flex items-center">
                       <span>Plans</span>
                       {getSortIcon("plansCount")}
                     </div>
                   </th>
                   <th
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                    scope="col"
+                    className="py-4 px-4 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                     onClick={() => handleSort("createdAt")}
                   >
-                    <div className="flex items-center space-x-1">
+                    <div className="flex items-center">
                       <span>Created</span>
                       {getSortIcon("createdAt")}
                     </div>
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th
+                    scope="col"
+                    className="py-4 px-4 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider"
+                  >
                     Actions
                   </th>
                 </tr>
@@ -561,7 +587,7 @@ const InsuranceCompanyManagementPage = () => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {loading ? (
                   <tr>
-                    <td colSpan="6" className="px-6 py-12 text-center">
+                    <td colSpan="6" className="py-12 text-center">
                       <div className="flex justify-center">
                         <div className="h-8 w-8 border-4 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
                       </div>
@@ -569,10 +595,7 @@ const InsuranceCompanyManagementPage = () => {
                   </tr>
                 ) : filteredAndSortedCompanies.length === 0 ? (
                   <tr>
-                    <td
-                      colSpan="6"
-                      className="px-6 py-12 text-center text-gray-500"
-                    >
+                    <td colSpan="6" className="py-8 text-center text-gray-500">
                       <div className="flex flex-col items-center">
                         <TbBuilding className="h-12 w-12 text-gray-300 mb-3" />
                         <p className="text-lg font-medium text-gray-500 mb-1">
@@ -591,9 +614,16 @@ const InsuranceCompanyManagementPage = () => {
                   filteredAndSortedCompanies.map((company) => (
                     <tr
                       key={company.id}
-                      className="hover:bg-gray-50 transition-colors"
+                      className="hover:bg-gray-200 transition-colors cursor-pointer"
+                      onClick={(e) => {
+                        // Only trigger if not clicking on action buttons
+                        if (!e.target.closest("button")) {
+                          setSelectedCompany(company);
+                          setShowDetailModal(true);
+                        }
+                      }}
                     >
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="py-4 px-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="flex-shrink-0 h-10 w-10">
                             {company.logoUrl ? (
@@ -603,8 +633,8 @@ const InsuranceCompanyManagementPage = () => {
                                 alt={company.name}
                               />
                             ) : (
-                              <div className="h-10 w-10 rounded-lg bg-gray-200 flex items-center justify-center">
-                                <TbBuilding className="h-6 w-6 text-gray-400" />
+                              <div className="h-10 w-10 rounded-lg bg-primary-100 flex items-center justify-center text-primary-600 font-medium">
+                                {company.name.charAt(0)}
                               </div>
                             )}
                           </div>
@@ -618,7 +648,7 @@ const InsuranceCompanyManagementPage = () => {
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="py-4 px-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">
                           <div className="flex items-center mb-1">
                             <TbMail className="h-4 w-4 text-gray-400 mr-2" />
@@ -636,6 +666,7 @@ const InsuranceCompanyManagementPage = () => {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-primary-600 hover:text-primary-800"
+                                onClick={(e) => e.stopPropagation()}
                               >
                                 Website
                               </a>
@@ -643,47 +674,50 @@ const InsuranceCompanyManagementPage = () => {
                           )}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="py-4 px-4 whitespace-nowrap">
                         {company.rating
                           ? renderStarRating(company.rating)
                           : "No rating"}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="py-4 px-4 whitespace-nowrap">
                         <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
                           {company.plansCount} plans
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="py-4 px-4 whitespace-nowrap text-sm text-gray-500">
                         {new Date(company.createdAt).toLocaleDateString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex justify-end space-x-2">
+                      <td
+                        className="py-4 px-4 whitespace-nowrap text-sm text-gray-500"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <div className="flex space-x-2">
                           <button
                             onClick={() => {
                               setSelectedCompany(company);
                               setShowDetailModal(true);
                             }}
-                            className="text-green-600 hover:text-green-900 p-1"
+                            className="text-gray-400 hover:text-green-600"
                             title="View Details"
                           >
-                            <TbEye className="h-4 w-4" />
+                            <TbEye className="h-5 w-5" />
                           </button>
                           <button
                             onClick={() => {
                               setSelectedCompany(company);
                               setShowEditModal(true);
                             }}
-                            className="text-blue-600 hover:text-blue-900 p-1"
+                            className="text-gray-400 hover:text-blue-600"
                             title="Edit Company"
                           >
-                            <TbEdit className="h-4 w-4" />
+                            <TbEdit className="h-5 w-5" />
                           </button>
                           <button
                             onClick={() => setDeleteConfirmation(company)}
-                            className="text-red-600 hover:text-red-900 p-1"
+                            className="text-gray-400 hover:text-red-600"
                             title="Delete Company"
                           >
-                            <TbTrash className="h-4 w-4" />
+                            <TbTrash className="h-5 w-5" />
                           </button>
                         </div>
                       </td>
@@ -693,32 +727,79 @@ const InsuranceCompanyManagementPage = () => {
               </tbody>
             </table>
           </div>
-        </div>
 
-        {/* Pagination */}
-        {filteredAndSortedCompanies.length > 0 && (
-          <div className="flex justify-center">
-            <div className="flex space-x-2">
-              <button
-                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-                className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 hover:bg-gray-50"
-              >
-                Previous
-              </button>
-              <span className="px-3 py-1 bg-primary-50 text-primary-600 rounded">
-                Page {currentPage}
-              </span>
-              <button
-                onClick={() => setCurrentPage(currentPage + 1)}
-                disabled={filteredAndSortedCompanies.length < itemsPerPage}
-                className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 hover:bg-gray-50"
-              >
-                Next
-              </button>
+          {/* Pagination */}
+          <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+            <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm text-gray-700">
+                  Showing <span className="font-medium">1</span> to{" "}
+                  <span className="font-medium">
+                    {filteredAndSortedCompanies.length}
+                  </span>{" "}
+                  of{" "}
+                  <span className="font-medium">
+                    {filteredAndSortedCompanies.length}
+                  </span>{" "}
+                  results
+                </p>
+              </div>
+              <div>
+                <nav
+                  className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+                  aria-label="Pagination"
+                >
+                  <button
+                    className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                    disabled={currentPage === 1}
+                  >
+                    <span className="sr-only">Previous</span>
+                    <svg
+                      className="h-5 w-5"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </button>
+                  <button
+                    aria-current="page"
+                    className="z-10 bg-primary-50 border-primary-500 text-primary-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium"
+                  >
+                    {currentPage}
+                  </button>
+                  <button
+                    className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                    disabled={filteredAndSortedCompanies.length < itemsPerPage}
+                  >
+                    <span className="sr-only">Next</span>
+                    <svg
+                      className="h-5 w-5"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </button>
+                </nav>
+              </div>
             </div>
           </div>
-        )}
+        </div>
 
         {/* Modals */}
         <AnimatePresence>
@@ -796,6 +877,23 @@ const InsuranceCompanyManagementPage = () => {
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
+
+      {/* Footer */}
+      <div className="bg-white border-t border-gray-200 px-6 py-3">
+        <div className="flex flex-wrap justify-between items-center text-sm text-gray-600">
+          <div>Showing {filteredAndSortedCompanies.length} companies</div>
+          <div className="flex space-x-4">
+            <button className="flex items-center hover:text-primary-600">
+              <TbReport className="mr-1 h-4 w-4" />
+              Generate Report
+            </button>
+            <button className="flex items-center hover:text-primary-600">
+              <TbDatabaseExport className="mr-1 h-4 w-4" />
+              Export Data
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Click outside handler for filter dropdown */}

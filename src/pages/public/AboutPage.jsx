@@ -568,7 +568,7 @@ const AboutPage = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium bg-white/10 backdrop-blur-sm text-white border border-white/20 mb-4"
+              className="inline-flex items-center px-4 py-1.5 rounded-full text-[0.8rem] md:text-sm font-medium bg-white/10 backdrop-blur-sm text-white border border-white/20 mb-4"
             >
               <span className="flex h-2 w-2 rounded-full bg-secondary-500 mr-2"></span>
               Our Achievements
@@ -597,7 +597,7 @@ const AboutPage = () => {
             </motion.p>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6">
             {[
               {
                 number: "10+",
@@ -628,7 +628,7 @@ const AboutPage = () => {
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 className="text-center"
               >
-                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 lg:p-8 border border-white/20 hover:bg-white/20 transition-all duration-300">
+                <div className="bg-white/10 backdrop-blur-sm rounded-2xl px-2 py-6 lg:p-8 border border-white/20 hover:bg-white/20 transition-all duration-300">
                   <h3 className="text-3xl lg:text-4xl font-bold text-secondary-400 mb-2">
                     {stat.number}
                   </h3>
