@@ -31,6 +31,7 @@ import { ComparisonProvider } from "./context/ComparisonContext";
 import { NotificationProvider } from "./context/NotificationContext";
 import ServiceDetailsPage from "./pages/public/ServiceDetailsPage";
 import ContactMessagesPage from "./pages/admin/ContactMessagesPage";
+import FeatureFlagDemo from "./components/debug/FeatureFlagDemo";
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
                     <Route path="about" element={<AboutPage />} />
                     <Route path="contact" element={<ContactPage />} />
                     <Route path="buy-online" element={<BuyOnlinePage />} />
+                    <Route path="demo" element={<FeatureFlagDemo />} />
 
                     {/* Service Details Route - Using a dynamic parameter */}
                     <Route
