@@ -662,7 +662,7 @@ const AboutPage = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-white/90 text-lg mb-8"
+              className="text-white/90 text-[0.95rem] lg:text-lg mb-8"
             >
               Connect with our team today to discover how we can help safeguard
               your future with tailored insurance solutions.
@@ -681,7 +681,7 @@ const AboutPage = () => {
               >
                 <Link
                   to="/contact"
-                  className="px-8 py-3 bg-white text-primary-700 font-medium rounded-lg shadow-lg hover:bg-primary-50 transition-all duration-200 w-full sm:w-auto inline-block"
+                  className="px-8 py-3 bg-white text-sm md:text-base text-primary-700 font-medium rounded-lg shadow-lg hover:bg-primary-50 transition-all duration-200 w-full sm:w-auto inline-block"
                 >
                   Get an Expert Quote
                 </Link>
@@ -693,7 +693,7 @@ const AboutPage = () => {
               >
                 <Link
                   to="/buy-online"
-                  className="px-8 py-3 bg-secondary-500 text-white font-medium rounded-lg shadow-lg hover:bg-secondary-600 transition-all duration-200 w-full sm:w-auto inline-block"
+                  className="px-8 py-3 bg-secondary-500 text-sm md:text-base text-white font-medium rounded-lg shadow-lg hover:bg-secondary-600 transition-all duration-200 w-full sm:w-auto inline-block"
                 >
                   Compare Insurance Plans
                 </Link>

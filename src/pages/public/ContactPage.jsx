@@ -584,7 +584,7 @@ const ContactPage = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5 }}
-                className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium bg-white/10 backdrop-blur-sm text-white border border-white/20 mb-4"
+                className="inline-flex items-center px-4 py-1.5 rounded-full text-[0.78rem] md:text-sm font-medium bg-white/10 backdrop-blur-sm text-white border border-white/20 mb-4"
               >
                 <span className="flex h-2 w-2 rounded-full bg-secondary-500 mr-2"></span>
                 Insurance Comparison
@@ -607,7 +607,7 @@ const ContactPage = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="text-white/90 text-lg mb-8"
+                className="text-white/90 text-[0.95rem] md:text-lg mb-8"
               >
                 Use our comparison tool to discover insurance plans tailored to
                 your unique needs and budget. Get started today and find the
@@ -623,7 +623,7 @@ const ContactPage = () => {
               >
                 <Link
                   to="/compare"
-                  className="inline-flex items-center justify-center px-6 py-2 lg:py-3 bg-secondary-500 text-white font-medium rounded-lg shadow-xl hover:bg-secondary-600 transition-all duration-300"
+                  className="inline-flex items-center justify-center px-6 py-2 lg:py-3 bg-secondary-500 text-[0.89rem] md:text-base text-white font-medium rounded-lg shadow-xl hover:bg-secondary-600 transition-all duration-300"
                 >
                   Compare Plans
                   <TbChevronRight className="ml-2" />
@@ -631,7 +631,7 @@ const ContactPage = () => {
 
                 <Link
                   to="/quote"
-                  className="inline-flex items-center justify-center px-6 py-2 lg:py-3 bg-white/10 backdrop-blur-sm text-white font-medium rounded-lg border border-white/20 hover:bg-white/20 transition-all duration-300"
+                  className="inline-flex items-center justify-center px-6 py-2 lg:py-3 bg-white/10 backdrop-blur-sm text-[0.89rem] md:text-base text-white font-medium rounded-lg border border-white/20 hover:bg-white/20 transition-all duration-300"
                 >
                   Get a Quote
                 </Link>
