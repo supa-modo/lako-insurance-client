@@ -5,7 +5,7 @@ const isProduction = process.env.NODE_ENV === "production";
 // Define which insurance types are available in each environment
 const AVAILABLE_INSURANCE_TYPES = {
   development: {
-    health: true,
+    health: false,
     "personal-accident": false,
     property: false,
     motor: false,
