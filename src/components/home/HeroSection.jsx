@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   TbArrowRight,
   TbCalendarSmile,
+  TbCoins,
   TbPremiumRights,
   TbShieldCheckFilled,
 } from "react-icons/tb";
@@ -23,7 +24,7 @@ const HeroSection = ({ activeSlide, heroSlides }) => {
       text: "Age-Appropriate Benefits",
     },
     {
-      icon: TbPremiumRights,
+      icon: TbCoins,
       text: "Flexible Premium Options",
     },
 

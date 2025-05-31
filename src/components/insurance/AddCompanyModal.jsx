@@ -190,9 +190,9 @@ const AddCompanyModal = ({ onClose, onSave }) => {
         {/* Form Content */}
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col h-[calc(100vh-81px)]"
+          className="flex flex-col h-[calc(100vh-120px)] md:h-[calc(100vh-100px)]"
         >
-          <div className="overflow-y-auto flex-1 px-6 py-5">
+          <div className="overflow-y-auto flex-1 px-3 md:px-6 py-5">
             <div className="space-y-6">
               {/* Basic Information */}
               <div>
@@ -332,7 +332,7 @@ const AddCompanyModal = ({ onClose, onSave }) => {
                       Logo URL
                     </label>
                     <input
-                      type="url"
+                      type="text"
                       name="logoUrl"
                       value={formData.logoUrl}
                       onChange={handleInputChange}
@@ -354,7 +354,7 @@ const AddCompanyModal = ({ onClose, onSave }) => {
                   <label className="block text-sm font-medium text-gray-700">
                     Select Company Rating (Optional)
                   </label>
-                  <div className="grid grid-cols-1 gap-3">
+                  <div className="grid grid-cols-1 gap-3 text-gray-600 text-[0.93rem]">
                     {ratingOptions.map((option) => (
                       <label
                         key={option.value}
@@ -420,14 +420,14 @@ const AddCompanyModal = ({ onClose, onSave }) => {
               <button
                 type="button"
                 onClick={onClose}
-                className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors font-medium"
+                className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors font-medium"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-6 py-2.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center font-medium"
+                className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center font-medium"
               >
                 {isSubmitting ? (
                   <>

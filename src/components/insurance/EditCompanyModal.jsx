@@ -208,57 +208,61 @@ const EditCompanyModal = ({ company, onClose, onSave }) => {
         {/* Form Content */}
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col h-[calc(100vh-81px)]"
+          className="flex flex-col h-[calc(100vh-120px)] md:h-[calc(100vh-100px)]"
         >
-          <div className="overflow-y-auto flex-1 px-6 py-5">
+          <div className="overflow-y-auto flex-1 px-3 md:px-6 py-5">
             <div className="space-y-6">
-              {/* Logo Preview */}
-              {formData.logoUrl && (
-                <div className="text-center">
-                  <div className="inline-block p-4 bg-gray-50 rounded-lg border border-gray-200">
-                    <img
-                      src={formData.logoUrl}
-                      alt="Company logo preview"
-                      className="h-16 w-auto object-contain"
-                      onError={(e) => {
-                        e.target.style.display = "none";
-                      }}
-                    />
-                  </div>
-                  <p className="text-xs text-gray-500 mt-2">Current Logo</p>
-                </div>
-              )}
-
               {/* Basic Information */}
-              <div>
+              <div className="">
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
                   <TbBuilding size={20} className="mr-2 text-blue-600" />
                   Basic Information
                 </h3>
 
-                <div className="space-y-4">
-                  {/* Company Name */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Company Name <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      className={`w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border ${
-                        errors.name
-                          ? "border-red-300 bg-red-50"
-                          : "border-gray-300"
-                      } focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition-colors`}
-                      placeholder="Enter company name"
-                    />
-                    {errors.name && (
-                      <div className="text-red-500 text-xs mt-1 flex items-center">
-                        <TbAlertCircle className="mr-1" /> {errors.name}
+                <div className="space-y-6">
+                  <div className="flex space-x-4">
+                    {/* Logo Preview */}
+                    {formData.logoUrl && (
+                      <div className="text-center">
+                        <div className="inline-block p-4 bg-gray-50 rounded-lg border border-gray-200">
+                          <img
+                            src={formData.logoUrl}
+                            alt="Company logo preview"
+                            className="h-10 md:h-12 w-auto object-contain"
+                            onError={(e) => {
+                              e.target.style.display = "none";
+                            }}
+                          />
+                        </div>
+                        <p className="text-xs text-gray-500">
+                          Current Logo
+                        </p>
                       </div>
                     )}
+
+                    {/* Company Name */}
+                    <div className="flex-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Company Name <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        className={`w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border ${
+                          errors.name
+                            ? "border-red-300 bg-red-50"
+                            : "border-gray-300"
+                        } focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition-colors`}
+                        placeholder="Enter company name"
+                      />
+                      {errors.name && (
+                        <div className="text-red-500 text-xs mt-1 flex items-center">
+                          <TbAlertCircle className="mr-1" /> {errors.name}
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   {/* Description */}
@@ -367,7 +371,7 @@ const EditCompanyModal = ({ company, onClose, onSave }) => {
                       Logo URL
                     </label>
                     <input
-                      type="url"
+                      type="text"
                       name="logoUrl"
                       value={formData.logoUrl}
                       onChange={handleInputChange}
@@ -389,7 +393,7 @@ const EditCompanyModal = ({ company, onClose, onSave }) => {
                   <label className="block text-sm font-medium text-gray-700">
                     Select Company Rating (Optional)
                   </label>
-                  <div className="grid grid-cols-1 gap-3">
+                  <div className="grid grid-cols-1 gap-3 text-gray-600 text-[0.93rem]">
                     {ratingOptions.map((option) => (
                       <label
                         key={option.value}
@@ -455,14 +459,14 @@ const EditCompanyModal = ({ company, onClose, onSave }) => {
               <button
                 type="button"
                 onClick={onClose}
-                className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors font-medium"
+                className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors text-[0.93rem] font-medium"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center font-medium"
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center text-[0.93rem] font-medium"
               >
                 {isSubmitting ? (
                   <>

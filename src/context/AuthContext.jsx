@@ -10,41 +10,51 @@ const AuthContext = createContext(null);
  */
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Changed from true to false
   const [error, setError] = useState(null);
+  const [initialized, setInitialized] = useState(false);
 
-  // Initialize auth state from token on mount
-  useEffect(() => {
-    const initAuth = async () => {
-      try {
-        if (authService.isAuthenticated()) {
-          // Get user profile from token
-          const userData = authService.getCurrentAdmin();
-          console.log("Stored user data:", userData);
-          setUser(userData);
+  // Initialize auth state only when needed (lazy initialization)
+  const initializeAuth = async () => {
+    if (initialized) return; // Already initialized
 
-          // Optionally fetch fresh data from API
-          try {
-            const freshUserData = await authService.getAdminProfile();
-            console.log("Fresh user data:", freshUserData);
-            if (freshUserData) {
-              setUser(freshUserData);
-            }
-          } catch (profileError) {
-            console.warn("Could not fetch fresh profile data:", profileError);
-            // Continue with stored user data
+    setLoading(true);
+    setInitialized(true);
+
+    try {
+      if (authService.isAuthenticated()) {
+        // Get user profile from token
+        const userData = authService.getCurrentAdmin();
+        setUser(userData);
+
+        // Optionally fetch fresh data from API
+        try {
+          const freshUserData = await authService.getAdminProfile();
+          if (freshUserData) {
+            setUser(freshUserData);
           }
+        } catch (profileError) {
+          // Continue with stored user data
         }
-      } catch (err) {
-        console.error("Auth initialization error:", err);
-        authService.logoutAdmin();
-        setError("Authentication failed. Please log in again.");
-      } finally {
-        setLoading(false);
       }
-    };
+    } catch (err) {
+      authService.logoutAdmin();
+      setError("Authentication failed. Please log in again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    initAuth();
+  // Check if we're on an admin route to decide whether to initialize
+  useEffect(() => {
+    // Only initialize if we're on an admin route or if there's a token
+    const currentPath = window.location.pathname;
+    const isAdminRoute = currentPath.startsWith("/admin");
+    const hasToken = authService.isAuthenticated();
+
+    if (isAdminRoute || hasToken) {
+      initializeAuth();
+    }
   }, []);
 
   /**
@@ -110,6 +120,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     updateProfile,
     isAuthenticated: authService.isAuthenticated,
+    initializeAuth, // Add this for manual initialization
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

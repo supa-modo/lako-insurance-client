@@ -12,7 +12,6 @@ const authService = {
   loginAdmin: async (credentials) => {
     try {
       const response = await apiClient.post("/auth/login", credentials);
-      console.log("Login response:", response.data);
 
       // Extract data from the correct structure
       const { token, user } = response.data;
@@ -67,7 +66,6 @@ const authService = {
   getAdminProfile: async () => {
     try {
       const response = await apiClient.get("/auth/profile");
-      console.log("Profile response:", response.data);
 
       // Backend returns { success: true, user: {...} }
       return response.data.user || response.data;

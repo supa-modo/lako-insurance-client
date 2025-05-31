@@ -6,25 +6,16 @@ import {
   TbShieldHalfFilled,
   TbCoins,
   TbAward,
-  TbPremiumRights,
   TbArrowRight,
-  TbArrowLeft,
-  TbArrowNarrowRight,
-  TbArrowNarrowLeft,
-  TbHeartHandshake,
-  TbBuildingBank,
-  TbLifebuoy,
-  TbMessageShare,
   TbChevronRight,
   TbPhoneCall,
 } from "react-icons/tb";
 import {
-  PiUsersDuotone,
   PiSmileyDuotone,
-  PiShieldCheckDuotone,
 } from "react-icons/pi";
 import contactService from "../../services/contactService";
 import { useToast } from "../../hooks/useToast";
+import { BiSupport } from "react-icons/bi";
 
 const BenefitsSection = () => {
   const { toast } = useToast();
@@ -150,9 +141,9 @@ const BenefitsSection = () => {
   const benefits = [
     {
       id: 1,
-      title: "All Encompassing Coverage",
+      title: "All Encompassing Tailored Solutions",
       description:
-        "From everyday health needs, to unforeseen travel issues. Lako provides a full spectrum of insurance solutions.",
+        "From everyday health needs, to unforeseen travel issues. Lako provides a full spectrum of personalized insurance covers.",
       icon: <TbShieldHalfFilled className="h-6 w-6" />,
       color: "primary",
     },
@@ -166,17 +157,17 @@ const BenefitsSection = () => {
     },
     {
       id: 3,
-      title: "Customer-First Approach",
+      title: "Expert Client-Focused Guidance",
       description:
-        "We prioritize your needs with personalized service and support. Our dedicated team of insurance specialists is always ready to assist and guide you through decisions.",
-      icon: <PiUsersDuotone className="h-6 w-6" />,
+        "Our experienced team provides professional advice to help you make informed decisions about your insurance coverage.",
+      icon: <BiSupport className="h-6 w-6" />,
       color: "primary",
     },
     {
       id: 4,
-      title: "Tailored Solutions",
+      title: "Quick Claims Processing",
       description:
-        "We provide personalized insurance solutions to meet your unique needs and challenges.",
+        "Fast, efficient claims processing 24/7 with dedicated support to get you back on your feet when you need it most.",
       icon: <PiSmileyDuotone className="h-6 w-6" />,
       color: "secondary",
     },
@@ -318,11 +309,10 @@ const BenefitsSection = () => {
                       </p>
                       <div className="mt-4 flex flex-wrap gap-3">
                         {[
-                          "Medical Covers",
+                          "Medical Health Covers",
                           "Travel Insurance",
-                          "Property Insurance",
-                          "Motor Coverage",
-                          "Life Insurance",
+                          "Motor Insurance",
+                          "Personal Accident Covers",
                         ].map((item, i) => (
                           <span
                             key={i}
@@ -403,9 +393,8 @@ const BenefitsSection = () => {
                     </h3>
                   </div>
                   <p className="text-white/90 text-[0.89rem]">
-                    We've got you covered from Medical Plans, Travel,
-                    International Coverage, Liability Plans, Property Insurance,
-                    Motor Coverage, and various General Insurance options.
+                    We've got you covered from Medical Plans, Travel Insurance,
+                    Motor Insurance, Personal Accident, and many other General Insurance options.
                   </p>
                 </div>
               </div>

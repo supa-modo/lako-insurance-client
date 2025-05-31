@@ -4,20 +4,14 @@ import { Link } from "react-router-dom";
 import {
   TbArrowRight,
   TbCheck,
-  TbBuildingCommunity,
-  TbUsers,
   TbAward,
   TbHeartHandshake,
-  TbMapPin,
-  TbMail,
-  TbPhone,
   TbQuote,
   TbChevronRight,
   TbClock,
   TbMailFilled,
   TbPhoneCall,
   TbShieldCheck,
-  TbCurrencyDollar,
   TbMessage,
   TbCoins,
 } from "react-icons/tb";
@@ -26,7 +20,7 @@ import Footer from "../../components/layout/Footer";
 import { PiMapPinAreaDuotone, PiUsersDuotone, PiUsersThreeDuotone } from "react-icons/pi";
 import { FaLinkedinIn } from "react-icons/fa6";
 import { RiUserCommunityLine } from "react-icons/ri";
-import { MdSupportAgent } from "react-icons/md";
+import { BiSupport } from "react-icons/bi";
 
 const AboutPage = () => {
   // Values of the company
@@ -437,7 +431,7 @@ const AboutPage = () => {
                 highlight: "24/7 claims support",
               },
               {
-                icon: <MdSupportAgent className="h-8 w-8" />,
+                icon: <BiSupport className="h-8 w-8" />,
                 title: "Expert Guidance",
                 description:
                   "Our experienced team provides professional advice to help you make informed decisions about your insurance coverage.",
@@ -529,7 +523,7 @@ const AboutPage = () => {
                       to="/contact"
                       className="w-full md:w-auto inline-flex justify-center items-center px-6 py-3 bg-white text-primary-700 rounded-lg hover:bg-primary-50 transition-colors font-medium"
                     >
-                      <MdSupportAgent className="mr-2 h-5 w-5" />
+                      <BiSupport className="mr-2 h-5 w-5" />
                       Speak to an Expert
                     </Link>
                   </motion.div>

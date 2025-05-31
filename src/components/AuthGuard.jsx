@@ -7,7 +7,17 @@ import { useAuth } from "../context/AuthContext";
 const AuthGuard = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const location = useLocation();
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, initializeAuth } = useAuth();
+
+  useEffect(() => {
+    // Initialize auth when AuthGuard is accessed (admin routes)
+    const init = async () => {
+      await initializeAuth();
+      setLoading(false);
+    };
+
+    init();
+  }, [initializeAuth]);
 
   useEffect(() => {
     // If auth context is done loading, update our local loading state
