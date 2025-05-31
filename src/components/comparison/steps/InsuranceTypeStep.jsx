@@ -68,7 +68,7 @@ const InsuranceTypeStep = ({ formData, updateFormData, nextStep }) => {
 
   const getDisabledMessage = (type) => {
     if (type.comingSoon) return "Coming Soon";
-    if (isProductionMode()) return "Teporarily Unavailable";
+    if (isProductionMode()) return "Under Maintenance";
     return "Not Available";
   };
 
@@ -93,10 +93,10 @@ const InsuranceTypeStep = ({ formData, updateFormData, nextStep }) => {
       </p>
 
       {isProductionMode() && (
-        <div className="mb-6 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+        <div className="mb-6 py-2.5 px-2 md:p-3 bg-blue-50 border border-blue-200 rounded-lg">
           <div className="flex items-center">
-            <TbLock className="h-5 w-5 text-blue-600 mr-2" />
-            <p className="text-blue-700 text-sm">
+            <TbLock className="h-6 md:h-5 w-6 md:w-5 text-blue-600 mr-2" />
+            <p className="text-blue-700 text-[0.82rem] md:text-sm">
               This section is temporarily unavailable for maintenance. Please check back later.
             </p>
           </div>
