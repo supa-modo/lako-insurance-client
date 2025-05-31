@@ -16,6 +16,7 @@ import {
   TbLifebuoy,
   TbMessageShare,
   TbChevronRight,
+  TbPhoneCall,
 } from "react-icons/tb";
 import {
   PiUsersDuotone,
@@ -463,20 +464,34 @@ const BenefitsSection = () => {
                     ))}
                   </div>
                 </div>
-                <div className="lg:w-[25%]] flex justify-center lg:justify-end">
+                <div className="lg:w-[26%] w-full flex flex-col gap-2 lg:gap-3 justify-center lg:justify-end">
+                  
                   <motion.div
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.98 }}
                   >
                     <Link
                       to="/compare"
-                      className="inline-flex items-center px-6 py-2 lg:py-3.5 bg-white text-primary-700 font-medium rounded-lg shadow-xl hover:bg-primary-50 transition-all duration-200 text-center group"
+                      className="w-full md:w-auto justify-center inline-flex items-center px-6 py-2 lg:py-3.5 bg-white text-primary-700 font-medium rounded-lg shadow-xl hover:bg-primary-50 transition-all duration-200 text-center group"
                     >
                       Get a quote now
                       <TbArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
                     </Link>
                   </motion.div>
-                </div>
+                  <motion.div
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Link
+                      to="/contact"
+                      className="w-full md:w-auto justify-center inline-flex items-center px-5 py-2 lg:py-3.5 bg-secondary-500 text-white font-medium rounded-lg shadow-xl hover:bg-secondary-600 transition-all duration-200 text-center group"
+                    >
+                      <TbPhoneCall size={20} className="mr-2 group-hover:translate-x-1 transition-transform" />
+                      Talk to an expert
+                      </Link>
+                  </motion.div>
+                  </div>
+                 
               </div>
             </motion.div>
 

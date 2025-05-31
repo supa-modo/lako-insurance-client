@@ -66,7 +66,7 @@ const InsuranceTypeSelection = ({ onSelect, formData }) => {
 
   const getDisabledMessage = (type) => {
     if (type.comingSoon) return "Coming Soon";
-    if (isProductionMode()) return "Available in Development";
+    if (isProductionMode()) return "Temporarily Unavailable";
     return "Not Available";
   };
 
@@ -86,8 +86,7 @@ const InsuranceTypeSelection = ({ onSelect, formData }) => {
           <div className="flex items-center">
             <TbLock className="h-5 w-5 text-blue-600 mr-2" />
             <p className="text-blue-700 text-sm">
-              Some insurance types are currently available in development mode
-              only. Health Insurance is fully available.
+              This section is temporarily unavailable for maintenance. Please check back later.
             </p>
           </div>
         </div>

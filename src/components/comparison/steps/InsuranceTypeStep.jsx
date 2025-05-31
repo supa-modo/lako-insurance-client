@@ -68,7 +68,7 @@ const InsuranceTypeStep = ({ formData, updateFormData, nextStep }) => {
 
   const getDisabledMessage = (type) => {
     if (type.comingSoon) return "Coming Soon";
-    if (isProductionMode()) return "Available in Development";
+    if (isProductionMode()) return "Teporarily Unavailable";
     return "Not Available";
   };
 
@@ -97,8 +97,7 @@ const InsuranceTypeStep = ({ formData, updateFormData, nextStep }) => {
           <div className="flex items-center">
             <TbLock className="h-5 w-5 text-blue-600 mr-2" />
             <p className="text-blue-700 text-sm">
-              Some insurance types are currently available in development mode
-              only. Health Insurance is fully available for comparison.
+              This section is temporarily unavailable for maintenance and development. Please check back later.
             </p>
           </div>
         </div>

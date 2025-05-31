@@ -6,9 +6,9 @@ const isProduction = process.env.NODE_ENV === "production";
 const AVAILABLE_INSURANCE_TYPES = {
   development: {
     health: true,
-    "personal-accident": true,
-    property: true,
-    motor: true,
+    "personal-accident": false,
+    property: false,
+    motor: false,
   },
   production: {
     health: true,
