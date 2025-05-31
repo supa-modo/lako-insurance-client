@@ -525,7 +525,7 @@ const BenefitsSection = () => {
                         value={contactForm.name}
                         onChange={handleContactChange}
                         placeholder="Your Name"
-                        className="w-full px-3.5 lg:px-4 py-2.5 text-neutral-800 bg-neutral-100 rounded-lg border border-neutral-400 focus:border-secondary-600 focus:ring-1 focus:ring-secondary-600 focus:outline-none transition-all outline-none"
+                        className="w-full px-3.5 lg:px-4 py-2.5 text-[0.95rem] md:text-base text-neutral-800 bg-neutral-100 rounded-lg border border-neutral-400 focus:border-secondary-600 focus:ring-1 focus:ring-secondary-600 focus:outline-none transition-all outline-none"
                         required
                       />
                     </div>
@@ -535,8 +535,8 @@ const BenefitsSection = () => {
                         name="emailPhone"
                         value={contactForm.emailPhone}
                         onChange={handleContactChange}
-                        placeholder="Email Address/Phone No."
-                        className="w-full px-3 lg:px-4 py-2.5 text-neutral-800 bg-neutral-100 rounded-lg border border-neutral-400 focus:border-secondary-600 focus:ring-1 focus:ring-secondary-600 focus:outline-none transition-all outline-none"
+                        placeholder="Email/Phone Number"
+                        className="w-full px-3 lg:px-4 py-2.5 text-[0.95rem] md:text-base text-neutral-800 bg-neutral-100 rounded-lg border border-neutral-400 focus:border-secondary-600 focus:ring-1 focus:ring-secondary-600 focus:outline-none transition-all outline-none"
                         required
                       />
                     </div>
@@ -549,7 +549,7 @@ const BenefitsSection = () => {
                       onChange={handleContactChange}
                       placeholder="Your Message"
                       rows="3"
-                      className="w-full px-3.5 lg:px-4 py-2.5 text-neutral-800 bg-neutral-100 rounded-lg border border-neutral-400 focus:border-secondary-600 focus:ring-1 focus:ring-secondary-600 focus:outline-none transition-all outline-none"
+                      className="w-full px-3.5 lg:px-4 py-2.5 text-[0.95rem] md:text-base text-neutral-800 bg-neutral-100 rounded-lg border border-neutral-400 focus:border-secondary-600 focus:ring-1 focus:ring-secondary-600 focus:outline-none transition-all outline-none"
                       required
                     ></textarea>
                     <motion.button

@@ -396,7 +396,7 @@ const ContactPage = () => {
                           name="name"
                           value={formState.name}
                           onChange={handleChange}
-                          className="w-full px-4 py-2.5 bg-white text-gray-600 text-[1.05rem] rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                          className="w-full px-4 py-2.5 bg-white text-gray-600 text-[0.95rem] md:text-base rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 transition-all"
                           required
                         />
                       </div>
@@ -414,7 +414,7 @@ const ContactPage = () => {
                           name="emailPhone"
                           value={formState.emailPhone}
                           onChange={handleChange}
-                          className="w-full px-4 py-2.5 bg-white text-gray-600 text-[1.05rem] rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                          className="w-full px-4 py-2.5 bg-white text-gray-600 text-[0.95rem] md:text-base rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 transition-all"
                           required
                         />
                       </div>
@@ -433,7 +433,7 @@ const ContactPage = () => {
                         name="subject"
                         value={formState.subject}
                         onChange={handleChange}
-                        className="w-full px-4 py-2.5 bg-white text-gray-600 text-[1.05rem] rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                        className="w-full px-4 py-2.5 bg-white text-gray-600 text-[0.95rem] md:text-base rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 transition-all"
                         required
                       />
                     </div>
@@ -451,7 +451,7 @@ const ContactPage = () => {
                         rows="5"
                         value={formState.message}
                         onChange={handleChange}
-                        className="w-full px-4 py-2.5 bg-white text-gray-600 text-[1.05rem] rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 transition-all resize-none"
+                        className="w-full px-4 py-2.5 bg-white text-gray-600 text-[0.95rem] md:text-base rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 transition-all resize-none"
                         required
                       ></textarea>
                     </div>
