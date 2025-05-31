@@ -97,7 +97,7 @@ const InsuranceTypeStep = ({ formData, updateFormData, nextStep }) => {
           <div className="flex items-center">
             <TbLock className="h-5 w-5 text-blue-600 mr-2" />
             <p className="text-blue-700 text-sm">
-              This section is temporarily unavailable for maintenance and development. Please check back later.
+              This section is temporarily unavailable for maintenance. Please check back later.
             </p>
           </div>
         </div>
