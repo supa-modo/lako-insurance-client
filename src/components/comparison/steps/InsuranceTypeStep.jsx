@@ -68,7 +68,7 @@ const InsuranceTypeStep = ({ formData, updateFormData, nextStep }) => {
 
   const getDisabledMessage = (type) => {
     if (type.comingSoon) return <span className="bg-slate-200 text-slate-600 px-4 py-2 rounded-lg font-semibold text-sm shadow-sm">Coming Soon !</span>;
-    if (!isProductionMode()) return <span className="bg-secondary-200 text-primary-600 px-4 py-2 rounded-lg font-semibold text-sm shadow-sm">Under Maintenance🛠️</span>;
+    if (isProductionMode()) return <span className="bg-secondary-200 text-primary-600 px-4 py-2 rounded-lg font-semibold text-sm shadow-sm">Under Maintenance🛠️</span>;
     return <span className="bg-slate-200 text-slate-600 px-4 py-2 rounded-lg font-semibold text-sm shadow-sm">Not Available</span>;
   };
 
