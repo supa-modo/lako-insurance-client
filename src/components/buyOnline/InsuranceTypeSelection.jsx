@@ -65,9 +65,9 @@ const InsuranceTypeSelection = ({ onSelect, formData }) => {
   };
 
   const getDisabledMessage = (type) => {
-    if (type.comingSoon) return "Coming Soon";
-    if (isProductionMode()) return "Under Maintenance";
-    return "Not Available";
+    if (type.comingSoon) return <span className="bg-slate-200 text-slate-600 px-4 py-2 rounded-lg font-semibold text-sm shadow-sm">Coming Soon !</span>;
+    if (!isProductionMode()) return <span className="bg-secondary-200 text-primary-600 px-4 py-2 rounded-lg font-semibold text-sm shadow-sm">Under Maintenance🛠️</span>;
+    return <span className="bg-slate-200 text-slate-600 px-4 py-2 rounded-lg font-semibold text-sm shadow-sm">Not Available</span>;
   };
 
   return (
@@ -202,10 +202,9 @@ const InsuranceTypeSelection = ({ onSelect, formData }) => {
 
               {/* Environment-based or Coming soon overlay */}
               {isDisabled && (
-                <div className="absolute inset-0 bg-slate-100/50 flex items-center justify-center backdrop-blur-[0.5px]">
-                  <span className="bg-slate-200 text-slate-600 px-4 py-2 rounded-lg font-semibold text-sm shadow-sm">
-                    {getDisabledMessage(type)}
-                  </span>
+                <div className="absolute inset-0 bg-slate-100/50 flex items-center justify-center backdrop-blur-[0.9px]">
+                  {getDisabledMessage(type)}
+                  
                 </div>
               )}
             </motion.div>

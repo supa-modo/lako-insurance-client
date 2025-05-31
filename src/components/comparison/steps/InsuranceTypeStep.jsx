@@ -67,9 +67,9 @@ const InsuranceTypeStep = ({ formData, updateFormData, nextStep }) => {
   };
 
   const getDisabledMessage = (type) => {
-    if (type.comingSoon) return "Coming Soon";
-    if (isProductionMode()) return "Under Maintenance";
-    return "Not Available";
+    if (type.comingSoon) return <span className="bg-slate-200 text-slate-600 px-4 py-2 rounded-lg font-semibold text-sm shadow-sm">Coming Soon !</span>;
+    if (!isProductionMode()) return <span className="bg-secondary-200 text-primary-600 px-4 py-2 rounded-lg font-semibold text-sm shadow-sm">Under Maintenance🛠️</span>;
+    return <span className="bg-slate-200 text-slate-600 px-4 py-2 rounded-lg font-semibold text-sm shadow-sm">Not Available</span>;
   };
 
   const handleSelectType = (typeId) => {
@@ -212,10 +212,9 @@ const InsuranceTypeStep = ({ formData, updateFormData, nextStep }) => {
 
               {/* Environment-based or Coming soon overlay */}
               {isDisabled && (
-                <div className="absolute inset-0 bg-slate-100/50 flex items-center justify-center backdrop-blur-[0.5px]">
-                  <span className="bg-slate-200 text-slate-600 px-4 py-2 rounded-lg font-semibold text-sm shadow-sm">
-                    {getDisabledMessage(type)}
-                  </span>
+                <div className="absolute inset-0 bg-slate-100/50 flex items-center justify-center backdrop-blur-[0.9px]">
+                  {getDisabledMessage(type)}
+                  
                 </div>
               )}
 
@@ -254,8 +253,7 @@ const InsuranceTypeStep = ({ formData, updateFormData, nextStep }) => {
         <TbInfoCircle className="text-primary-600 h-6 w-6 mt-0.5 mr-3 flex-shrink-0" />
         <div>
           <p className="text-primary-700 text-sm">
-            Select an insurance type to continue. Only Health Insurance is
-            available for comparison for now.
+            Choose from the available insurance types above to proceed.
           </p>
         </div>
       </div>
