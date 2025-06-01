@@ -151,7 +151,7 @@ const BenefitsSection = () => {
       id: 2,
       title: "Flexible & Affordable Options",
       description:
-        "Find the perfect balance between comprehensive coverage and cost-effective insurance premiums witout compromizing on quality.",
+        "Find the perfect balance between comprehensive coverage and cost-effective insurance premiums without compromizing on quality.",
       icon: <TbCoins className="h-6 w-6" />,
       color: "secondary",
     },
@@ -167,7 +167,7 @@ const BenefitsSection = () => {
       id: 4,
       title: "Quick Claims Processing",
       description:
-        "Fast, efficient claims processing 24/7 with dedicated support to get you back on your feet when you need it most.",
+        "Fast, efficient claims processing with dedicated 24/7 support to get you back on your feet when you need it most.",
       icon: <PiSmileyDuotone className="h-6 w-6" />,
       color: "secondary",
     },

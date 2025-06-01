@@ -32,23 +32,24 @@ const ServicesSection = () => {
         "Comprehensive protection, covering a wide range of risks, including damage, theft, or unforeseen disasters. We tailor our insurance solutions to meet your specific needs.",
       delay: 0.3,
     },
-    {id: "health-insurance",
-    title: "Health Insurance",
-    image: "/health-insurance.jpg",
-    description:
-      "Rest easy, knowing that we safeguard your health and financial security. Wide-ranging coverage, access to premier healthcare, affordable premiums and flexible plans.",
-    
-    delay: 0.4,
-  },
-  {
-    id: "life-insurance",
-    title: "Life Insurance",
-    image: "/life-insurance.jpg",
-    description:
-      "Income replacement, debt protection, estate planning for wealth transfer, peace of mind for your loved ones' financial security, and flexible coverage plans.",
-    
-    delay: 0.5,
-  },
+    {
+      id: "health-insurance",
+      title: "Health Insurance",
+      image: "/health-insurance.jpg",
+      description:
+        "Rest easy, knowing that we safeguard your health and financial security. Wide-ranging coverage, access to premier healthcare, affordable premiums and flexible plans.",
+
+      delay: 0.4,
+    },
+    {
+      id: "life-insurance",
+      title: "Life Insurance",
+      image: "/life-insurance.jpg",
+      description:
+        "Income replacement, debt protection, estate planning for wealth transfer, peace of mind for your loved ones' financial security, and flexible coverage plans.",
+
+      delay: 0.5,
+    },
     {
       id: "education-policy",
       title: "Education Policy",
@@ -94,17 +95,16 @@ const ServicesSection = () => {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-3xl lg:text-4xl font-bold font-outfit text-primary-600 mt-3"
           >
-            We offer various services across{" "}
-            <span className="text-secondary-600">different fields</span>
+            Comprehensive Insurance Coverage {" "}
+            <span className="text-secondary-600">for All Your Needs</span>
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="max-w-2xl mx-auto mt-4 text-base lg:text-lg text-neutral-800 font-outfit"
+            className="max-w-6xl mx-auto mt-4 text-base lg:text-lg text-neutral-800 font-outfit"
           >
-            Developing the relationships that underpin the next phase in your
-            growth.
+            Building lasting partnerships through comprehensive coverage, competitive rates, and personalized service that grows with you.  From business liability to personal protection - we deliver customized insurance solutions with expert guidance every step of the way.
           </motion.p>
         </div>
 
@@ -168,7 +168,6 @@ const ServiceCard = ({ service }) => {
           } mb-2 flex items-center`}
         >
           {service.title}
-         
         </h3>
         <p className="text-neutral-800 text-[0.95rem] lg:text-base mb-4">
           {service.description}

@@ -193,11 +193,11 @@ const Header = () => {
             </a>
 
             <Link
-              to="/compare"
+              to="/buy-online"
               className="relative overflow-hidden px-6 py-2.5 font-medium rounded-lg bg-secondary-500 text-white hover:text-white hover:bg-primary-600 border-0 shadow-lg hover:shadow-xl group  transition-all duration-300 hover:translate-y-[-2px]"
             >
               <span className="relative z-10 flex items-center font-outfit">
-                Get Started{" "}
+                Buy Online
                 <TbArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
               </span>
               <div className="absolute inset-0 bg-gradient-to-r from-secondary-600 to-secondary-500 transform translate-y-full hover:translate-y-0 transition-transform duration-300"></div>

@@ -314,9 +314,9 @@ const InsuranceCompanyManagementPage = () => {
 
   return (
     <>
-      <div className="space-y-6">
+      <div className="h-[calc(100vh-64px)] flex flex-col overflow-hidden">
         {/* Page Header */}
-        <div className="bg-white px-8 py-3 border-b border-gray-200">
+        <div className="bg-white px-8 py-3 border-b border-gray-200 flex-shrink-0">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
             <div>
               <h1 className="text-[1.3rem] font-bold text-secondary-700">
@@ -460,7 +460,7 @@ const InsuranceCompanyManagementPage = () => {
           </div>
         </div>
 
-        <div className="px-6 space-y-6">
+        <div className=" overflow-y-auto flex-1 px-6 py-4 space-y-6">
           {/* Statistics Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="bg-white px-6 py-4 rounded-xl border border-gray-200 border-l-4 border-l-blue-500 shadow-md">
@@ -831,9 +831,9 @@ const InsuranceCompanyManagementPage = () => {
         </div>
 
         {/* Footer */}
-        <div className="bg-white border-t border-gray-200 px-6 py-3">
+        <div className=" bg-white border-t border-gray-200 px-6 py-3">
           <div className="flex flex-wrap justify-between items-center text-sm text-gray-600">
-            <div>Showing {filteredAndSortedCompanies.length} companies</div>
+            <div>{filteredAndSortedCompanies.length} Companies Available</div>
             <div className="flex space-x-4">
               <button className="flex items-center hover:text-primary-600">
                 <TbReport className="mr-1 h-4 w-4" />

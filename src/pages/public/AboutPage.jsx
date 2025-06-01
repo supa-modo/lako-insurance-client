@@ -14,13 +14,20 @@ import {
   TbShieldCheck,
   TbMessage,
   TbCoins,
+  TbInfoCircle,
 } from "react-icons/tb";
 import Header from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
-import { PiMapPinAreaDuotone, PiUsersDuotone, PiUsersThreeDuotone } from "react-icons/pi";
+import {
+  PiMapPinAreaDuotone,
+  PiUsersDuotone,
+  PiUsersThreeDuotone,
+} from "react-icons/pi";
 import { FaLinkedinIn } from "react-icons/fa6";
 import { RiUserCommunityLine } from "react-icons/ri";
 import { BiSupport } from "react-icons/bi";
+import { LuGoal } from "react-icons/lu";
+import { HiMiniUserGroup } from "react-icons/hi2";
 
 const AboutPage = () => {
   // Values of the company
@@ -139,13 +146,12 @@ const AboutPage = () => {
               transition={{ duration: 0.7, delay: 0.2 }}
               className="px-4 lg:px-0"
             >
-
               <h2 className="text-3xl md:text-4xl font-bold text-primary-600 mb-3 lg:mb-6">
                 A decade of excellence in{" "}
                 <span className="text-secondary-500">insurance solutions</span>
               </h2>
 
-              <p className="text-gray-600 mb-6  text-[0.97rem] lg:text-[1.1rem]">
+              <p className="text-gray-600 mb-4  text-[0.95rem] md:text-[0.97rem] lg:text-[1.1rem]">
                 Founded in 2015, Lako Insurance Agency began with a simple
                 mission: to provide affordable, accessible insurance products
                 that truly serve the needs of our community. What started as a
@@ -154,47 +160,89 @@ const AboutPage = () => {
                 across Kenya.
               </p>
 
-              <p className="text-gray-600 mb-6  text-[0.97rem] lg:text-[1.1rem]">
+              <p className="text-gray-600 mb-6  text-[0.95rem] md:text-[0.97rem] lg:text-[1.1rem]">
                 Our growth is a testament to the trust our clients place in us
                 and our dedication to exceeding expectations.
               </p>
 
-              <div className="flex flex-wrap gap-3 mt-5 mb-6">
-                {[
-                  "Financial Security",
-                  "Peace of Mind",
-                  "Expert Support",
-                  "Personalized Solutions",
-                ].map((item, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center bg-primary-100 border border-primary-300 px-3 py-1 lg:py-2 rounded-lg"
-                  >
-                    <div className="w-4 h-4 rounded-full bg-primary-500 flex items-center justify-center mr-2">
-                      <TbCheck className="text-white h-2.5 w-2.5" />
+              {/* Mission & Vision Cards */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+                {/* Mission */}
+                <div className="bg-primary-50 rounded-xl p-4 border border-primary-200">
+                  <div className="flex items-center mb-3">
+                    <div className="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center mr-3">
+                      <LuGoal className="h-5 w-5 text-white" />
                     </div>
-                    <span className="text-primary-700 text-xs lg:text-[0.85rem]">
-                      {item}
-                    </span>
+                    <h3 className="font-bold text-primary-700">Our Mission</h3>
                   </div>
-                ))}
+                  <p className="text-gray-600 text-sm lg:text-[0.95rem] leading-relaxed">
+                    To redefine the insurance experience by delivering tailored,
+                    trustworthy, and innovative solutions that safeguard what
+                    matters most to our clients.
+                  </p>
+                </div>
+
+                {/* Vision */}
+                <div className="bg-secondary-50 rounded-xl p-4 border border-secondary-200">
+                  <div className="flex items-center mb-3">
+                    <div className="w-8 h-8 bg-secondary-500 rounded-lg flex items-center justify-center mr-3">
+                      <TbAward className="h-5 w-5 text-white" />
+                    </div>
+                    <h3 className="font-bold text-secondary-700">Our Vision</h3>
+                  </div>
+                  <p className="text-gray-600 text-sm lg:text-[0.95rem] leading-relaxed">
+                    To become the world's most trusted and innovative insurance
+                    provider, offering personalized solutions that protect
+                    lives, assets, and futures globally.
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-2xl font-bold text-primary-600 mb-2 lg:mb-4">
+                  Join Us in building a more secure future
+                </h3>
+                <p className="text-gray-600 mb-6  text-[0.97rem] lg:text-[1.1rem]">
+                  Experience the difference of working with a trusted partner
+                  that truly understands your needs and is committed to your
+                  protection.
+                </p>
               </div>
 
               <motion.div
                 whileHover={{ scale: 1.005 }}
                 whileTap={{ scale: 0.99 }}
-                className="mt-8"
+                className="mt-8 flex flex-col md:flex-row gap-2.5 md:gap-4"
               >
                 <Link
                   to="/contact"
                   className="w-full md:w-auto inline-flex px-6 py-3 bg-gradient-to-r from-primary-500 via-primary-600 to-primary-700 text-secondary-100 rounded-lg shadow-xl hover:shadow-2xl group"
-                > 
-                <div className="flex items-center mx-auto">
-                  <span className="text-white">Get in Touch With Us </span>
-                  <TbArrowRight size={18} className="text-white ml-1 group-hover:translate-x-1 transition-transform" />
-                  <TbPhoneCall size={20} className="ml-2 animate-pulse-fast group-hover:translate-x-1 transition-transform" />
-                  <TbMessage size={20} className="ml-2 animate-pulse-fast group-hover:translate-x-1 transition-transform" />
-                </div>
+                >
+                  <div className="flex items-center mx-auto">
+                    <span className="text-white">Get in Touch With Us </span>
+                    <TbArrowRight
+                      size={18}
+                      className="text-white ml-1 group-hover:translate-x-1 transition-transform"
+                    />
+                    <TbPhoneCall
+                      size={20}
+                      className="ml-2 animate-pulse-fast group-hover:translate-x-1 transition-transform"
+                    />
+                    <TbMessage
+                      size={20}
+                      className="ml-2 animate-pulse-fast group-hover:translate-x-1 transition-transform"
+                    />
+                  </div>
+                </Link>
+
+                <Link
+                  to="/contact"
+                  className="w-full md:w-auto inline-flex px-6 py-3 border-2 border-secondary-500 text-secondary-600  font-lexend rounded-lg shadow-xl hover:shadow-2xl group"
+                >
+                  <div className="flex items-center mx-auto">
+                    <HiMiniUserGroup size={20} />
+                    <span className="ml-2">Partner with Us</span>
+                  </div>
                 </Link>
               </motion.div>
             </motion.div>
@@ -203,7 +251,7 @@ const AboutPage = () => {
       </section>
 
       {/* Company Values Section */}
-      <section className="py-6 bg-white">
+      <section className="pt-6 bg-white">
         <div className="lg:container mx-auto px-4">
           <div className="text-center md:text-left max-w-4xl mb-6 md:mb-8">
             <motion.span
@@ -254,24 +302,47 @@ const AboutPage = () => {
                   <div className="text-primary-600">{value.icon}</div>
                 </div>
                 <div className="w-[80%] md:w-auto">
-                <h3 className="text-lg font-bold text-primary-700 mb-1 md:mb-2">
-                  {value.title}
-                </h3>
-                <p className="text-gray-600 text-[0.95rem] md:text-base md:leading-relaxed">
-                  {value.description}
-                </p>
+                  <h3 className="text-lg font-bold text-primary-700 mb-1 md:mb-2">
+                    {value.title}
+                  </h3>
+                  <p className="text-gray-600 text-[0.95rem] md:text-base md:leading-relaxed">
+                    {value.description}
+                  </p>
                 </div>
-               
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
+      {/* Regulatory Compliance Note */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.5 }}
+        className="mt-10 lg:container mx-auto text-center"
+      >
+        <div className=" mx-auto bg-gradient-to-br from-primary-50 to-secondary-50 md:rounded-2xl p-3 lg:p-8 border border-primary-200/50 shadow-sm">
+          <h3 className="text-lg lg:text-xl font-bold text-secondary-500 mb-3 flex items-center gap-2 justify-center">
+            <TbInfoCircle className="h-6 w-6 text-secondary-500" />
+            Regulated & Authorized
+          </h3>
+          <p className="text-gray-600 text-sm lg:text-base leading-relaxed">
+            Lako Insurance Agency is regulated and is authorized by{" "}
+            <span className="font-semibold text-primary-700">
+              IRA (the Insurance Regulatory Authority)
+            </span>{" "}
+            to handle all forms of general insurance business. Your trust and
+            protection are our top priorities.
+          </p>
+        </div>
+      </motion.div>
+
       {/* CEO Message Section */}
       <section className="py-16 md:py-20 bg-neutral-50">
         <div className="lg:container mx-auto px-2 lg:px-4">
-          <div className="bg-white rounded-2xl border-t border-neutral-200 overflow-hidden shadow-lg relative">
+          <div className="bg-white max-h-[34rem] rounded-2xl border-t border-neutral-200 overflow-hidden shadow-lg relative">
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
               <div className="absolute top-0 left-0 w-32 h-32 rounded-full bg-primary-100 blur-xl opacity-70 transform -translate-x-1/3 -translate-y-1/3"></div>
               <div className="absolute bottom-0 right-0 w-40 h-40 rounded-full bg-secondary-100 blur-xl opacity-70 transform translate-x-1/3 translate-y-1/3"></div>
@@ -279,7 +350,7 @@ const AboutPage = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 relative z-10">
               <div className="lg:col-span-4 relative">
-                <div className="h-64 lg:h-full relative">
+                <div className="h-[18.5rem] lg:h-full relative">
                   <img
                     src="/kola.jpg"
                     alt="CEO of Lako Insurance"
@@ -321,9 +392,10 @@ const AboutPage = () => {
                     I've witnessed the ever-evolving needs of our clients. Lako
                     is here to provide safety, reliability, and convenience. Our
                     commitment to you is unwavering, and our promise is simple:
-                    To safeguard what's 'Lako' in every way possible. As you explore our services, you'll discover how we turn promises into
-                    realities, how we make insurance a partnership, and how,
-                    together, we secure a brighter future.
+                    To safeguard what's 'Lako' in every way possible. As you
+                    explore our services, you'll discover how we turn promises
+                    into realities, how we make insurance a partnership, and
+                    how, together, we secure a brighter future.
                   </p>
 
                   <p className="text-gray-600 mb-4 pl-6">
@@ -372,8 +444,6 @@ const AboutPage = () => {
           </div>
         </div>
       </section>
-
-      
 
       {/* Why Choose Us Section */}
       <section className="py-16 md:py-20 bg-neutral-50">
@@ -469,17 +539,15 @@ const AboutPage = () => {
               >
                 <div className="bg-white rounded-2xl px-4 py-6 lg:p-8 shadow-sm border border-neutral-200 hover:shadow-xl hover:border-primary-200 transition-all duration-300 h-full">
                   <div className="flex flex-col items-center justify-center mb-2 md:mb-3">
- {/* Icon */}
- <div className="flex items-center justify-center w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-primary-100 to-secondary-100 rounded-xl md:rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <div className="text-primary-600">{feature.icon}</div>
-                  </div>
+                    {/* Icon */}
+                    <div className="flex items-center justify-center w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-primary-100 to-secondary-100 rounded-xl md:rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                      <div className="text-primary-600">{feature.icon}</div>
+                    </div>
 
-                  
-                  <h3 className="text-lg md:text-xl font-bold text-primary-700">
-                    {feature.title}
-                  </h3>
+                    <h3 className="text-lg md:text-xl font-bold text-primary-700">
+                      {feature.title}
+                    </h3>
                   </div>
-                 
 
                   <p className="text-gray-600 text-[0.95rem] lg:text-base leading-relaxed mb-4">
                     {feature.description}
@@ -494,56 +562,6 @@ const AboutPage = () => {
               </motion.div>
             ))}
           </div>
-
-          
-
-          {/* Call to Action */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-            className="text-center mt-12"
-          >
-            <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl p-6 lg:p-8 text-white relative overflow-hidden">
-              {/* Background decoration */}
-              <div className="absolute inset-0 bg-gradient-to-r from-primary-500/20 to-secondary-500/20"></div>
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full transform translate-x-16 -translate-y-16"></div>
-              <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full transform -translate-x-12 translate-y-12"></div>
-
-              <div className="relative z-10">
-               
-
-                <div className="flex flex-col sm:flex-row gap-2.5 md:gap-4 justify-center">
-                  <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <Link
-                      to="/contact"
-                      className="w-full md:w-auto inline-flex justify-center items-center px-6 py-3 bg-white text-primary-700 rounded-lg hover:bg-primary-50 transition-colors font-medium"
-                    >
-                      <BiSupport className="mr-2 h-5 w-5" />
-                      Speak to an Expert
-                    </Link>
-                  </motion.div>
-
-                  <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <Link
-                      to="/buy-online"
-                      className="w-full md:w-auto inline-flex justify-center items-center px-6 py-3 bg-secondary-500 text-white rounded-lg hover:bg-secondary-600 transition-colors font-medium"
-                    >
-                      <TbChevronRight className="mr-2 h-5 w-5" />
-                      Buy Cover Online
-                    </Link>
-                  </motion.div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
         </div>
       </section>
 
@@ -681,8 +699,9 @@ const AboutPage = () => {
               >
                 <Link
                   to="/contact"
-                  className="px-8 py-3 bg-white text-sm md:text-base text-primary-700 font-medium rounded-lg shadow-lg hover:bg-primary-50 transition-all duration-200 w-full sm:w-auto inline-block"
+                  className="inline-flex items-center justify-center font-semibold px-8 py-3 bg-white text-sm md:text-base text-primary-700 rounded-lg shadow-lg hover:bg-primary-50 transition-all duration-200 w-full sm:w-auto"
                 >
+                  <BiSupport className="mr-2 h-5 w-5" />
                   Get an Expert Quote
                 </Link>
               </motion.div>
@@ -693,9 +712,10 @@ const AboutPage = () => {
               >
                 <Link
                   to="/buy-online"
-                  className="px-8 py-3 bg-secondary-500 text-sm md:text-base text-white font-medium rounded-lg shadow-lg hover:bg-secondary-600 transition-all duration-200 w-full sm:w-auto inline-block"
+                  className="inline-flex items-center justify-center font-medium px-5 py-3 bg-secondary-500 text-sm md:text-base text-white rounded-lg shadow-lg hover:bg-secondary-600 transition-all duration-200 w-full sm:w-auto"
                 >
                   Compare Insurance Plans
+                  <TbArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </motion.div>
             </motion.div>

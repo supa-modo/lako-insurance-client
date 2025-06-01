@@ -7,13 +7,21 @@ const PartnershipLogos = () => {
   const partners = [
     "jubilee.png",
     "icea.png",
+    "gaKenya.png",
     "britam.png",
+    "fassurance.png",
     "apa.png",
     "cic.png",
     "aar.png",
+    "amref.png",
     "oldmutual.png",
+    "fidelity.png",
+    "aetna.png",
     "madison.png",
-    "germinia.png"
+    "heritage.png",
+    "mua.png",
+    "kAlliance.png",
+    "germinia.png",
   ];
 
   // Start infinite animation on component mount

@@ -1,4 +1,11 @@
 {
+  "redirects": [
+    {
+      "source": "/webmail",
+      "destination": "https://webmail.lako.co.ke",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/(.*)",
