@@ -65,7 +65,7 @@ const HeroSection = ({ activeSlide, heroSlides }) => {
               alt={`Slide ${index + 1}`}
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-primary-900/75"></div>
+            <div className="absolute inset-0 bg-primary-900/80"></div>
           </motion.div>
         ))}
       </AnimatePresence>

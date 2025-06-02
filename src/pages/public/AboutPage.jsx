@@ -121,20 +121,20 @@ const AboutPage = () => {
               <div className="relative">
                 <div className="relative lg:rounded-2xl overflow-hidden shadow-xl">
                   <img
-                    src="/slider01.png"
+                    src="/slider00.png"
                     alt="Lako Insurance Team"
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="absolute -bottom-10 -right-10 bg-white px-4 py-2 lg:p-4 rounded-xl shadow-lg border border-primary-100 max-w-[280px]">
+                <div className="absolute -bottom-8 -right-4 md:-right-10 bg-white px-4 py-1.5 lg:px-4 lg:py-2 rounded-[0.7rem] shadow-lg border border-primary-100 max-w-[280px]">
                   <div className="flex items-center mb-0.5 lg:mb-1">
                     <PiUsersThreeDuotone className="h-6 lg:h-7 w-6 lg:w-7 text-secondary-500 mr-2" />
-                    <h4 className="font-semibold text-primary-700">
+                    <h4 className="font-semibold text-sm md:text-[0.95rem] text-primary-700">
                       Trusted by thousands
                     </h4>
                   </div>
-                  <p className="text-neutral-700 text-[0.9rem] lg:text-sm">
-                    We've served thousands of clients since our founding.
+                  <p className="text-neutral-700 text-sm">
+                    5000+ clients since our founding.
                   </p>
                 </div>
               </div>
@@ -315,29 +315,6 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Regulatory Compliance Note */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6, delay: 0.5 }}
-        className="mt-10 lg:container mx-auto text-center"
-      >
-        <div className=" mx-auto bg-gradient-to-br from-primary-50 to-secondary-50 md:rounded-2xl p-3 lg:p-8 border border-primary-200/50 shadow-sm">
-          <h3 className="text-lg lg:text-xl font-bold text-secondary-500 mb-3 flex items-center gap-2 justify-center">
-            <TbInfoCircle className="h-6 w-6 text-secondary-500" />
-            Regulated & Authorized
-          </h3>
-          <p className="text-gray-600 text-sm lg:text-base leading-relaxed">
-            Lako Insurance Agency is regulated and is authorized by{" "}
-            <span className="font-semibold text-primary-700">
-              IRA (the Insurance Regulatory Authority)
-            </span>{" "}
-            to handle all forms of general insurance business. Your trust and
-            protection are our top priorities.
-          </p>
-        </div>
-      </motion.div>
 
       {/* CEO Message Section */}
       <section className="py-16 md:py-20 bg-neutral-50">
@@ -465,7 +442,7 @@ const AboutPage = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-3xl md:text-4xl font-bold text-primary-600 mb-4 md:mb-6"
+              className="text-3xl md:text-4xl font-bold text-left md:text-center text-primary-600 mb-4 md:mb-6"
             >
               Your <span className="text-secondary-500">trusted partner</span>{" "}
               in protection
@@ -476,7 +453,7 @@ const AboutPage = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-gray-600 text-base lg:text-[1.1rem]"
+              className="text-gray-600 text-left md:text-center text-base lg:text-[1.1rem]"
             >
               We go beyond just providing insurance coverage. We build lasting
               relationships, offer personalized solutions, and ensure your peace
@@ -564,6 +541,30 @@ const AboutPage = () => {
           </div>
         </div>
       </section>
+
+      {/* Regulatory Compliance Note */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.5 }}
+        className="mt-10 lg:container mx-auto text-center"
+      >
+        <div className=" mx-auto bg-gradient-to-br from-primary-50 to-secondary-50 md:rounded-t-2xl p-3 lg:p-8 border border-primary-200/50 shadow-sm">
+          <h3 className="text-lg lg:text-xl font-bold text-secondary-500 mb-3 flex items-center gap-2 justify-center">
+            <TbInfoCircle className="h-6 w-6 text-secondary-500" />
+            Regulated & Authorized
+          </h3>
+          <p className="text-gray-600 text-sm lg:text-base leading-relaxed">
+            Lako Insurance Agency is regulated and is authorized by{" "}
+            <span className="font-semibold text-primary-700">
+              IRA (the Insurance Regulatory Authority)
+            </span>{" "}
+            to handle all forms of general insurance business. Your trust and
+            protection are our top priorities.
+          </p>
+        </div>
+      </motion.div>
 
       {/* Statistics & Achievements Section */}
       <section className="py-16 md:py-20 bg-primary-600 relative overflow-hidden">
