@@ -4,6 +4,11 @@
       "source": "/webmail",
       "destination": "https://webmail.lako.co.ke",
       "permanent": true
+    },
+    {
+      "source": "/(.*)",
+      "destination": "https://www.lako.co.ke/$1",
+      "permanent": true
     }
   ],
   "rewrites": [

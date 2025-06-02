@@ -184,7 +184,7 @@ const BenefitsSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="lg:hidden inline-flex items-center ml-6 px-4 py-1.5 rounded-full text-sm font-medium bg-secondary-50 text-secondary-600 border border-secondary-200 mb-4"
+          className="lg:hidden inline-flex items-center ml-6 px-4 py-1.5 rounded-full text-xs md:text-sm font-medium bg-secondary-50 text-secondary-600 border border-secondary-200 mb-4"
         >
           <span className="flex h-2 w-2 rounded-full bg-secondary-500 mr-2"></span>
           Why Choose Us

@@ -84,7 +84,7 @@ const ServicesSection = () => {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center px-4 py-1 lg:py-1.5 rounded-full text-[0.78rem] lg:text-sm font-medium font-outfit bg-primary-50 text-primary-600 border border-primary-100"
+            className="inline-flex items-center px-4 py-1 lg:py-1.5 rounded-full text-xs md:text-sm font-medium font-outfit bg-primary-50 text-primary-600 border border-primary-100"
           >
             <span className="flex h-2 w-2 rounded-full bg-primary-500 mr-2"></span>
             Our Insurance Services

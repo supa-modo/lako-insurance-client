@@ -87,7 +87,7 @@ const HomePage = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5 }}
-                  className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium bg-primary-100 text-primary-600 border border-primary-200 mb-4"
+                  className="inline-flex items-center px-4 py-1.5 rounded-full text-xs md:text-sm font-medium bg-primary-100 text-primary-600 border border-primary-200 mb-4"
                 >
                   <span className="flex h-2 w-2 rounded-full bg-primary-500 mr-2"></span>
                   Our Growing Footprint
@@ -98,7 +98,7 @@ const HomePage = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.1 }}
-                  className="text-3xl md:text-4xl font-bold text-gray-700 mb-6"
+                  className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-700 mb-6"
                 >
                   Expanding Across{" "}
                   <span className="text-secondary-500">Eastern Africa</span>
