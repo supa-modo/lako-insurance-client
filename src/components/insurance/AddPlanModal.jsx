@@ -179,7 +179,7 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
         className="w-[800px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-xl border border-gray-200"
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-purple-600 to-purple-700 px-6 py-4 relative">
+        <div className="bg-gradient-to-r from-primary-600 to-primary-700 px-6 py-4 relative">
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
             <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
@@ -236,14 +236,14 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
         {/* Form Content */}
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col h-[calc(100vh-81px)]"
+          className="flex flex-col h-[calc(100vh-120px)] md:h-[calc(100vh-100px)]"
         >
-          <div className="overflow-y-auto flex-1 px-6 py-5">
+          <div className="overflow-y-auto flex-1 px-3 md:px-6 py-5">
             <div className="space-y-6">
               {/* Basic Information */}
               <div>
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <TbInfoCircle size={20} className="mr-2 text-purple-600" />
+                  <TbInfoCircle size={20} className="mr-2 text-primary-600" />
                   Basic Information
                 </h3>
 
@@ -259,7 +259,7 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
                         handleInputChange("companyId", e.target.value)
                       }
                       required
-                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-purple-500 focus:border-purple-500 transition-colors"
+                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-gray-600 font-medium rounded-md border border-neutral-300 px-4 py-2.5 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
                     >
                       <option value="">Select a company</option>
                       {companies.map((company) => (
@@ -311,7 +311,7 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
               {/* Plan Type Selection */}
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <TbShieldCheck size={20} className="mr-2 text-purple-600" />
+                  <TbShieldCheck size={20} className="mr-2 text-primary-600" />
                   Plan Type
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -357,7 +357,7 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
               {/* Insurance Type Selection */}
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <TbUsers size={20} className="mr-2 text-purple-600" />
+                  <TbUsers size={20} className="mr-2 text-primary-600" />
                   Insurance Type
                 </h3>
                 <div className="grid grid-cols-1 gap-3">
@@ -366,7 +366,7 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
                       key={option.value}
                       className={`relative flex items-center p-4 border rounded-lg cursor-pointer transition-all hover:bg-gray-50 ${
                         formData.insuranceType === option.value
-                          ? "text-purple-600 bg-purple-50 border-purple-200"
+                          ? "text-primary-600 bg-primary-50 border-primary-200"
                           : "border-gray-200 bg-white"
                       }`}
                     >
@@ -408,7 +408,7 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
               {/* Age Eligibility */}
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <TbUsers size={20} className="mr-2 text-purple-600" />
+                  <TbUsers size={20} className="mr-2 text-primary-600" />
                   Age Eligibility
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -468,7 +468,7 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
               {/* Coverage Limits */}
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <TbShieldCheck size={20} className="mr-2 text-purple-600" />
+                  <TbShieldCheck size={20} className="mr-2 text-primary-600" />
                   Coverage Limits
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -561,13 +561,13 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
                         onChange={(e) =>
                           handleInputChange("hasDental", e.target.checked)
                         }
-                        className="h-4 w-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                        className="h-4 w-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
                       />
                       <label
                         htmlFor="hasDental"
                         className="ml-3 text-sm font-medium text-gray-900 flex items-center"
                       >
-                        <PiTooth className="mr-2 h-5 w-5 text-purple-600" />
+                        <PiTooth className="mr-2 h-5 w-5 text-primary-600" />
                         Dental Coverage
                       </label>
                     </div>
@@ -646,7 +646,7 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
                         htmlFor="hasOptical"
                         className="ml-3 text-sm font-medium text-gray-900 flex items-center"
                       >
-                        <TbEyeglass2 className="mr-2 h-5 w-5 text-purple-600" />
+                        <TbEyeglass2 className="mr-2 h-5 w-5 text-primary-600" />
                         Optical Coverage
                       </label>
                     </div>
@@ -728,7 +728,7 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
                         htmlFor="hasMaternity"
                         className="ml-3 text-sm font-medium text-gray-900 flex items-center"
                       >
-                        <TbBabyCarriage className="mr-2 h-5 w-5 text-purple-600" />
+                        <TbBabyCarriage className="mr-2 h-5 w-5 text-primary-600" />
                         Maternity Coverage
                       </label>
                     </div>
@@ -779,7 +779,7 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
                   <TbCurrencyDollar
                     size={20}
-                    className="mr-2 text-purple-600"
+                    className="mr-2 text-primary-600"
                   />
                   Premium Information
                 </h3>
@@ -876,7 +876,7 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
               <button
                 type="submit"
                 disabled={loading}
-                className="px-6 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center font-medium"
+                className="px-6 py-2.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center font-medium"
               >
                 {loading ? (
                   <>

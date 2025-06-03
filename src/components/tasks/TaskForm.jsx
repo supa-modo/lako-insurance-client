@@ -281,7 +281,7 @@ const TaskForm = ({ task = null, onSave, onCancel }) => {
             onChange={handleChange}
             className={`block w-full bg-neutral-100 text-gray-600 font-medium rounded-md border placeholder:text-gray-400 placeholder:font-normal ${
               errors.title ? "border-red-300" : ""
-            } focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm p-2.5`}
+            } focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm p-2.5`}
             placeholder="Enter task title"
           />
           {errors.title && (
@@ -309,7 +309,7 @@ const TaskForm = ({ task = null, onSave, onCancel }) => {
               value={formData.description}
               onChange={handleChange}
               rows="3"
-              className="block w-full bg-neutral-100 text-gray-600 font-medium rounded-md border border-neutral-300 pl-10 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm p-2.5 placeholder:text-gray-400 placeholder:font-normal"
+              className="block w-full bg-neutral-100 text-gray-600 font-medium rounded-md border border-neutral-300 pl-10 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm p-2.5 placeholder:text-gray-400 placeholder:font-normal"
               placeholder="Enter task description"
             ></textarea>
           </div>
@@ -334,7 +334,7 @@ const TaskForm = ({ task = null, onSave, onCancel }) => {
                 name="dueDate"
                 value={formData.dueDate}
                 onChange={handleChange}
-                className="block w-full bg-neutral-100 text-gray-600 font-medium rounded-md border border-neutral-300 pl-10 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm p-2.5 placeholder:text-gray-400 placeholder:font-normal"
+                className="block w-full bg-neutral-100 text-gray-600 font-medium rounded-md border border-neutral-300 pl-10 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm p-2.5 placeholder:text-gray-400 placeholder:font-normal"
               />
             </div>
           </div>
@@ -352,7 +352,7 @@ const TaskForm = ({ task = null, onSave, onCancel }) => {
               name="dueTime"
               value={formData.dueTime}
               onChange={handleChange}
-              className="block w-full bg-neutral-100 text-gray-600 font-medium rounded-md border border-neutral-300 pl-5 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm p-2.5 placeholder:text-gray-400 placeholder:font-normal"
+              className="block w-full bg-neutral-100 text-gray-600 font-medium rounded-md border border-neutral-300 pl-5 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm p-2.5 placeholder:text-gray-400 placeholder:font-normal"
             />
           </div>
         </div>
@@ -365,7 +365,7 @@ const TaskForm = ({ task = null, onSave, onCancel }) => {
           <div className="flex space-x-4">
             {["low", "medium", "high"].map((priority) => (
               <label key={priority} className="flex items-center">
-                <div className={`relative flex items-center justify-center h-[1.1rem] w-[1.1rem] rounded-md border ${formData.priority === priority ? 'border-primary-500 bg-primary-50' : 'border-neutral-400'}`}>
+                <div className={`relative flex items-center justify-center h-[1.1rem] w-[1.1rem] rounded-md border focus:outline-none ${formData.priority === priority ? 'border-primary-500 bg-primary-50' : 'border-neutral-400'}`}>
                   <input
                     type="radio"
                     name="priority"
@@ -405,7 +405,7 @@ const TaskForm = ({ task = null, onSave, onCancel }) => {
               value={formData.category}
               onChange={handleChange}
               onClick={() => setShowCategoryOptions(!showCategoryOptions)}
-              className="block w-full bg-neutral-100 text-gray-600 font-medium rounded-md border border-neutral-300 pl-10 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm p-2.5 placeholder:text-gray-400 placeholder:font-normal"
+              className="block w-full bg-neutral-100 text-gray-600 font-medium rounded-md border border-neutral-300 pl-10 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm p-2.5 placeholder:text-gray-400 placeholder:font-normal"
               placeholder="Select or enter a category"
             />
             {showCategoryOptions && (
@@ -451,7 +451,7 @@ const TaskForm = ({ task = null, onSave, onCancel }) => {
               value={userSearchQuery}
               onChange={handleUserSearchChange}
               onFocus={() => setShowUserResults(true)}
-              className="block w-full bg-neutral-100 text-gray-600 font-medium rounded-md border border-neutral-300 pl-10 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm p-2.5 placeholder:text-gray-400 placeholder:font-normal"
+              className="block w-full bg-neutral-100 text-gray-600 font-medium rounded-md border border-neutral-300 pl-10 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-sm p-2.5 placeholder:text-gray-400 placeholder:font-normal"
               placeholder="Search for a user by name or email"
               autoComplete="off"
             />

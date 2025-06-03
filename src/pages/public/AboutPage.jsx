@@ -166,7 +166,7 @@ const AboutPage = () => {
               </p>
 
               {/* Mission & Vision Cards */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 {/* Mission */}
                 <div className="bg-primary-50 rounded-xl p-4 border border-primary-200">
                   <div className="flex items-center mb-3">
@@ -216,10 +216,10 @@ const AboutPage = () => {
               >
                 <Link
                   to="/contact"
-                  className="w-full md:w-auto inline-flex px-6 py-3 bg-gradient-to-r from-primary-500 via-primary-600 to-primary-700 text-secondary-100 rounded-lg shadow-xl hover:shadow-2xl group"
+                  className="w-full md:w-auto inline-flex px-6 py-3 bg-gradient-to-r from-primary-500 via-primary-600 to-primary-700 font-lexend text-secondary-100 rounded-lg shadow-xl hover:shadow-2xl group"
                 >
                   <div className="flex items-center mx-auto">
-                    <span className="text-white">Get in Touch With Us </span>
+                    <span className="text-white text-[0.93rem] md:text-base ">Get in Touch </span>
                     <TbArrowRight
                       size={18}
                       className="text-white ml-1 group-hover:translate-x-1 transition-transform"
@@ -241,7 +241,7 @@ const AboutPage = () => {
                 >
                   <div className="flex items-center mx-auto">
                     <HiMiniUserGroup size={20} />
-                    <span className="ml-2">Partner with Us</span>
+                    <span className="ml-2 text-[0.93rem] md:text-base font-medium">Partner with Us</span>
                   </div>
                 </Link>
               </motion.div>
@@ -288,7 +288,7 @@ const AboutPage = () => {
             </motion.p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-3 lg:gap-6">
             {values.map((value, index) => (
               <motion.div
                 key={index}
@@ -296,7 +296,7 @@ const AboutPage = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="flex md:flex-col gap-4 md:gap-3 bg-neutral-100 border border-neutral-300 rounded-xl p-3 md:p-6 hover:shadow-lg transition-all duration-300 group"
+                className="flex md:flex-col gap-4 md:gap-3 bg-neutral-100 border border-neutral-300 rounded-xl p-3 md:p-4 lg:p-6 hover:shadow-lg transition-all duration-300 group"
               >
                 <div className="flex items-center justify-center w-12 md:w-14 h-12 md:h-14 bg-primary-100 rounded-xl group-hover:bg-primary-200 transition-colors">
                   <div className="text-primary-600">{value.icon}</div>
@@ -305,7 +305,7 @@ const AboutPage = () => {
                   <h3 className="text-lg font-bold text-primary-700 mb-1 md:mb-2">
                     {value.title}
                   </h3>
-                  <p className="text-gray-600 text-[0.95rem] md:text-base md:leading-relaxed">
+                  <p className="text-gray-600 text-[0.95rem] lg:text-base lg:leading-relaxed">
                     {value.description}
                   </p>
                 </div>
@@ -319,19 +319,19 @@ const AboutPage = () => {
       {/* CEO Message Section */}
       <section className="py-16 md:py-20 bg-neutral-50">
         <div className="lg:container mx-auto px-2 lg:px-4">
-          <div className="bg-white max-h-[34rem] rounded-2xl border-t border-neutral-200 overflow-hidden shadow-lg relative">
+          <div className="bg-white max-h-full lg:max-h-[34rem] rounded-2xl border-t border-neutral-200 overflow-hidden shadow-lg relative">
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
               <div className="absolute top-0 left-0 w-32 h-32 rounded-full bg-primary-100 blur-xl opacity-70 transform -translate-x-1/3 -translate-y-1/3"></div>
               <div className="absolute bottom-0 right-0 w-40 h-40 rounded-full bg-secondary-100 blur-xl opacity-70 transform translate-x-1/3 translate-y-1/3"></div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 relative z-10">
-              <div className="lg:col-span-4 relative">
-                <div className="h-[18.5rem] lg:h-full relative">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-0 relative z-10">
+              <div className="md:col-span-4 relative">
+                <div className="h-[18.5rem] md:h-full relative">
                   <img
                     src="/kola.jpg"
                     alt="CEO of Lako Insurance"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover md:object-contain"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-primary-900/80 to-transparent"></div>
                   <div className="absolute bottom-0 left-0 w-full p-4 idden">
@@ -343,7 +343,7 @@ const AboutPage = () => {
                 </div>
               </div>
 
-              <div className="lg:col-span-8 p-6 lg:p-10">
+              <div className="md:col-span-8 p-6 lg:p-10">
                 <motion.span
                   initial={{ opacity: 0, y: -10 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -461,7 +461,7 @@ const AboutPage = () => {
             </motion.p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 lg:gap-8">
             {[
               {
                 icon: <TbHeartHandshake className="h-8 w-8" />,
@@ -488,7 +488,7 @@ const AboutPage = () => {
                 icon: <TbShieldCheck className="h-8 w-8" />,
                 title: "Comprehensive Coverage",
                 description:
-                  "Wide range of insurance products from top-rated providers to ensure complete protection for you and your family.",
+                  "Wide range of insurance products from top-rated providers to ensure complete protection for you and yours.",
                 highlight: "15+ insurance partners",
               },
               {
@@ -514,14 +514,14 @@ const AboutPage = () => {
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 className="group"
               >
-                <div className="bg-white rounded-2xl px-4 py-6 lg:p-8 shadow-sm border border-neutral-200 hover:shadow-xl hover:border-primary-200 transition-all duration-300 h-full">
+                <div className="bg-white rounded-2xl text-center px-4 md:px-2.5 py-6 lg:p-8 shadow-sm border border-neutral-200 hover:shadow-xl hover:border-primary-200 transition-all duration-300 h-full">
                   <div className="flex flex-col items-center justify-center mb-2 md:mb-3">
                     {/* Icon */}
-                    <div className="flex items-center justify-center w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-primary-100 to-secondary-100 rounded-xl md:rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <div className="flex items-center justify-center w-14 h-14 lg:w-16 lg:h-16 bg-gradient-to-br from-primary-100 to-secondary-100 rounded-xl lg:rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300">
                       <div className="text-primary-600">{feature.icon}</div>
                     </div>
 
-                    <h3 className="text-lg md:text-xl font-bold text-primary-700">
+                    <h3 className="text-lg lg:text-xl text-center font-bold text-primary-700">
                       {feature.title}
                     </h3>
                   </div>

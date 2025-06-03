@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  TbMail,
-  TbPhone,
   TbClock,
   TbCheck,
   TbX,
@@ -25,15 +23,11 @@ import {
   TbList,
   TbReport,
   TbDatabaseExport,
-  TbArrowUp,
-  TbArrowDown,
   TbMailFilled,
   TbArrowRight,
-  TbChevronLeft,
-  TbChevronRight,
-  TbCaretRight,
   TbChevronRightPipe,
   TbChevronLeftPipe,
+  TbMessage,
 } from "react-icons/tb";
 import contactService from "../../services/contactService";
 import { useAuth } from "../../context/AuthContext";
@@ -532,7 +526,7 @@ const ContactMessagesPage = () => {
                     </p>
                   </div>
                   <div className="p-3 bg-blue-100 rounded-lg">
-                    <TbMessageCircle className="h-6 w-6 text-blue-600" />
+                    <TbMessage className="h-6 w-6 text-blue-600" />
                   </div>
                 </div>
               </div>

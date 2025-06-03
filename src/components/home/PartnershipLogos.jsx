@@ -32,7 +32,7 @@ const PartnershipLogos = () => {
         x: {
           repeat: Infinity,
           repeatType: "loop",
-          duration: 60,
+          duration: 100,
           ease: "linear",
         },
       },

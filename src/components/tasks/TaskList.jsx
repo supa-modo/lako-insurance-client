@@ -14,6 +14,7 @@ import {
   TbSearch,
   TbCalendarDot,
 } from "react-icons/tb";
+import DeleteConfirmationModal from "../ui/DeleteConfirmationModal";
 
 const TaskList = ({
   tasks = [],
@@ -29,6 +30,7 @@ const TaskList = ({
   const [sortDirection, setSortDirection] = useState("asc");
   const [viewMode, setViewMode] = useState("all"); // all, active, completed
   const [showActionMenu, setShowActionMenu] = useState(null);
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, task: null });
 
   // Function to handle sorting
   const handleSort = (field) => {
@@ -305,7 +307,10 @@ const TaskList = ({
           <div className="text-sm text-secondary-500">
             {filteredTasks.length} task{filteredTasks.length !== 1 ? "s" : ""}
           </div>
-          <form onSubmit={(e) => setSearchQuery(e.target.value)} className="flex max-w-md">
+          <form
+            onSubmit={(e) => setSearchQuery(e.target.value)}
+            className="flex max-w-md"
+          >
             <div className="relative flex-1">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <TbSearch className="h-5 w-5 text-gray-400" />
@@ -329,7 +334,10 @@ const TaskList = ({
       </div>
 
       {/* Task list - Scrollable */}
-      <div className="overflow-y-auto" style={{ height: 'calc(100vh - 280px)', minHeight: '300px' }}>
+      <div
+        className="overflow-y-auto"
+        style={{ height: "calc(100vh - 280px)", minHeight: "300px" }}
+      >
         <div className="divide-y divide-neutral-200">
           {filteredTasks.length === 0 ? (
             <div className="p-8 text-center">
@@ -473,7 +481,7 @@ const TaskList = ({
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          onDeleteTask(task.id);
+                          setDeleteModal({ isOpen: true, task });
                         }}
                         title="Delete task"
                         className="text-red-400 hover:text-red-600"
@@ -488,6 +496,20 @@ const TaskList = ({
           )}
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        isOpen={deleteModal.isOpen}
+        onClose={() => setDeleteModal({ isOpen: false, task: null })}
+        onConfirm={() => {
+          onDeleteTask(deleteModal.task.id);
+          setDeleteModal({ isOpen: false, task: null });
+        }}
+        title="Delete Task"
+        itemName={deleteModal.task?.title}
+        message={`Are you sure you want to delete the task "${deleteModal.task?.title}"? This action cannot be undone.`}
+        confirmButtonText="Delete Task"
+      />
     </div>
   );
 };

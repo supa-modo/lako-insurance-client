@@ -256,25 +256,7 @@ const ComparisonTable = ({ plans, onDownload }) => {
             <TbBuildingHospital className="text-secondary-600 h-5 w-5 sm:h-5 sm:w-5" />
           ),
         },
-        // {
-        //   name: "Pre-existing Conditions",
-        //   accessor: (plan) => {
-        //     // Assuming pre-existing conditions are covered at 25% of the inpatient limit
-        //     const inpatientLimit = plan.inpatientCoverageLimit || 0;
-        //     const preExistingLimit = inpatientLimit * 0.25;
-
-        //     return {
-        //       value: preExistingLimit || 0,
-        //       display:
-        //         preExistingLimit > 0 ? "Covered (25% of limit)" : "Not Covered",
-        //       isAmount: false,
-        //       isIncluded: preExistingLimit > 0,
-        //     };
-        //   },
-        //   icon: (
-        //     <TbHeartRateMonitor className="text-secondary-600 h-5 w-5 sm:h-5 sm:w-5" />
-        //   ),
-        // },
+       
       ],
     },
   ];
@@ -287,11 +269,22 @@ const ComparisonTable = ({ plans, onDownload }) => {
             {/* <TbShieldHalfFilled className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />{" "} */}
             Insurance Plan Comparison
           </h3>
-          <div className="flex items-center space-x-1.5">
-            <div className="h-1.5 sm:h-2 w-1.5 sm:w-2 rounded-full bg-white/20"></div>
-            <div className="h-1.5 sm:h-2 w-1.5 sm:w-2 rounded-full bg-white/20"></div>
-            <div className="h-1.5 sm:h-2 w-1.5 sm:w-2 rounded-full bg-white/30"></div>
-          </div>
+          {onDownload && (
+      <motion.button
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => {
+              // Call both the original onDownload function and open the printable version
+              if (onDownload) onDownload();
+              openPrintableVersion();
+            }}
+            className="flex items-center px-4 sm:px-6 py-2 sm:py-3 border-2 border-white  text-white rounded-lg text-xs sm:text-sm font-medium shadow-lg font-lexend"
+          >
+            <TbDownload className="mr-1 sm:mr-2 h-3.5 w-3.5 sm:h-5 sm:w-5" />
+            Download Comparison Table
+            </motion.button>
+        
+      )}
         </div>
       </div>
 
@@ -420,24 +413,6 @@ const ComparisonTable = ({ plans, onDownload }) => {
         </table>
       </div>
 
-      {onDownload && (
-        <div className="p-3 sm:p-5 bg-gradient-to-br from-primary-50/50 to-white border-t border-gray-200 flex justify-center relative z-10">
-          <motion.button
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => {
-              // Call both the original onDownload function and open the printable version
-              if (onDownload) onDownload();
-              openPrintableVersion();
-            }}
-            className="flex items-center px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-secondary-500 to-secondary-600 hover:from-secondary-600 hover:to-secondary-700 text-white rounded-lg text-xs sm:text-sm font-medium shadow-lg hover:shadow-xl transition-all duration-300 group font-lexend"
-          >
-            <TbDownload className="mr-1 sm:mr-2 h-3.5 w-3.5 sm:h-5 sm:w-5" />
-            Download Comparison Table
-            <TbChevronRight className="ml-1 sm:ml-2 h-3.5 w-3.5 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
-          </motion.button>
-        </div>
-      )}
     </div>
   );
 };

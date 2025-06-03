@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { FaSave, FaSignOutAlt } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   TbUser,
   TbSettings,
@@ -17,43 +17,81 @@ import {
   TbTrash,
   TbRefresh,
   TbColorSwatch,
+  TbEye,
+  TbEyeOff,
+  TbMail,
+  TbPhone,
+  TbMapPin,
+  TbX,
+  TbChevronRight,
+  TbShieldCheck,
+  TbDatabase,
+  TbDownload,
+  TbUpload,
 } from "react-icons/tb";
+import { FaSave } from "react-icons/fa";
 
 const SettingsPage = () => {
-  // State for active tab
   const [activeTab, setActiveTab] = useState("profile");
+  const [isEditing, setIsEditing] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [saveStatus, setSaveStatus] = useState(null);
 
   // Mock user data
   const [userData, setUserData] = useState({
-    name: "Admin User",
-    email: "admin@lakoinsurance.com",
+    name: "John Anderson",
+    email: "john.anderson@lakoinsurance.com",
     phone: "+254 123 456 789",
     role: "Administrator",
     avatar: null,
     companyName: "Lako Insurance Brokers",
-    address: "123 Nairobi Way, Nairobi, Kenya",
+    address: "Westlands Business Park, Tower B, 14th Floor\nNairobi, Kenya",
     language: "English",
     timeZone: "Africa/Nairobi",
     notifications: {
       email: true,
       push: true,
       sms: false,
+      marketing: true,
     },
     theme: "light",
+    twoFactor: false,
   });
 
-  // Edit states
-  const [isEditing, setIsEditing] = useState(false);
   const [editedUserData, setEditedUserData] = useState(userData);
 
-  // Settings tabs
+  // Settings tabs with modern design
   const tabs = [
-    { id: "profile", label: "Profile Settings", icon: TbUser },
-    { id: "company", label: "Company Info", icon: TbBuilding },
-    { id: "security", label: "Security", icon: TbShield },
-    { id: "notifications", label: "Notifications", icon: TbBell },
-    { id: "appearance", label: "Appearance", icon: TbBrush },
-    { id: "system", label: "System", icon: TbSettings },
+    {
+      id: "profile",
+      label: "Profile",
+      icon: TbUser,
+      description: "Personal information and preferences",
+    },
+    {
+      id: "company",
+      label: "Company",
+      icon: TbBuilding,
+      description: "Business details and branding",
+    },
+    {
+      id: "security",
+      label: "Security",
+      icon: TbShield,
+      description: "Password and authentication settings",
+    },
+    {
+      id: "notifications",
+      label: "Notifications",
+      icon: TbBell,
+      description: "Communication preferences",
+    },
+    {
+      id: "system",
+      label: "System",
+      icon: TbSettings,
+      description: "Application settings and data",
+    },
   ];
 
   // Handle input change
@@ -61,7 +99,6 @@ const SettingsPage = () => {
     const { name, value, type, checked } = e.target;
 
     if (name.includes(".")) {
-      // Handle nested objects (like notifications.email)
       const [parent, child] = name.split(".");
       setEditedUserData({
         ...editedUserData,
@@ -71,7 +108,6 @@ const SettingsPage = () => {
         },
       });
     } else {
-      // Handle regular fields
       setEditedUserData({
         ...editedUserData,
         [name]: type === "checkbox" ? checked : value,
@@ -79,733 +115,606 @@ const SettingsPage = () => {
     }
   };
 
-  // Handle save
-  const handleSaveChanges = () => {
+  // Handle save with animation
+  const handleSaveChanges = async () => {
+    setSaveStatus("saving");
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1500));
     setUserData(editedUserData);
     setIsEditing(false);
+    setSaveStatus("success");
+    setTimeout(() => setSaveStatus(null), 3000);
   };
 
   // Handle cancel edit
   const handleCancelEdit = () => {
     setEditedUserData(userData);
     setIsEditing(false);
+    setSaveStatus(null);
   };
 
   return (
     <div className="h-[calc(100vh-64px)] flex flex-col overflow-hidden">
       {/* Page Header */}
-      <div className="bg-gradient-to-r from-primary-50 to-white px-8 py-3 border-b border-gray-200 flex-shrink-0">
+      <div className="bg-white px-8 py-3 border-b border-gray-200 flex-shrink-0">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
           <div>
-            <h1 className="text-[1.3rem] font-bold text-primary-600">
-              System Settings
+            <h1 className="text-[1.3rem] font-bold text-secondary-700">
+              Settings
             </h1>
             <p className="text-gray-500 text-sm">
-              Manage your account settings and preferences
+              Manage your account and system preferences
             </p>
           </div>
 
           <div className="flex flex-wrap mt-4 md:mt-0 space-x-2">
-            <button className="bg-white border border-gray-200 rounded-lg p-2 text-gray-500 hover:text-primary-600 hover:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-500 shadow-sm">
-              <TbRefresh />
-            </button>
-
-            {isEditing ? (
-              <div className="flex space-x-2">
-                <button
-                  onClick={handleSaveChanges}
-                  className="bg-gradient-to-br from-primary-600 to-primary-700 text-white rounded-lg px-4 py-2 text-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary-500 flex items-center shadow-sm"
+            {/* Save Status Indicator */}
+            <AnimatePresence>
+              {saveStatus && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  className={`flex items-center px-4 py-2 rounded-lg mr-2 ${
+                    saveStatus === "saving"
+                      ? "bg-blue-100 text-blue-700"
+                      : "bg-green-100 text-green-700"
+                  }`}
                 >
-                  <FaSave className="mr-2 h-5 w-5" /> Save Changes
-                </button>
-                <button
-                  onClick={handleCancelEdit}
-                  className="bg-white border border-gray-300 text-gray-700 rounded-lg px-4 py-2 text-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-neutral-500 flex items-center shadow-sm"
-                >
-                  Cancel
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={() => setIsEditing(true)}
-                className="bg-gradient-to-br from-primary-600 to-primary-700 text-white rounded-lg px-4 py-2 text-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary-500 flex items-center shadow-sm"
-              >
-                <TbEdit className="mr-2 h-5 w-5" /> Edit Settings
-              </button>
-            )}
+                  {saveStatus === "saving" ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-700 border-t-transparent mr-2"></div>
+                  ) : (
+                    <TbCheck className="w-4 h-4 mr-2" />
+                  )}
+                  <span className="text-sm font-medium">
+                    {saveStatus === "saving"
+                      ? "Saving changes..."
+                      : "Changes saved successfully"}
+                  </span>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>
 
-      {/* Main content */}
-      <div className="flex-1 flex overflow-hidden bg-neutral-50 px-8 py-4">
-        {/* Sidebar */}
-        <div className="w-64 flex-shrink-0 pr-6 overflow-y-auto">
-          <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-            <div className="p-5 border-b border-neutral-200 bg-gradient-to-r from-primary-50 to-white">
-              <div className="flex items-center">
-                <div className="h-14 w-14 bg-gradient-to-br from-primary-600 to-primary-700 text-white rounded-full flex items-center justify-center font-semibold text-xl shadow-sm">
-                  {userData.name ? userData.name.charAt(0) : "A"}
-                </div>
-                <div className="ml-3">
-                  <div className="font-medium text-neutral-900 text-base">
-                    {userData.name}
+      <div className="overflow-y-auto flex-1 px-6 py-4">
+        {/* Main Container */}
+
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Sidebar */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+              {/* User Profile Card */}
+              <div className="p-6 bg-gradient-to-r from-primary-500 to-primary-600 text-white">
+                <div className="flex items-center space-x-4">
+                  <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center text-2xl font-bold backdrop-blur-sm">
+                    {userData.name.charAt(0)}
                   </div>
-                  <div className="text-sm text-neutral-500">
-                    {userData.email}
+                  <div>
+                    <h3 className="font-semibold text-lg">{userData.name}</h3>
+                    <p className="text-primary-100 text-sm">{userData.role}</p>
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="p-3">
-              <ul className="space-y-1">
+
+              {/* Navigation */}
+              <div className="p-2">
                 {tabs.map((tab) => (
-                  <li key={tab.id}>
-                    <button
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`w-full flex items-center px-4 py-2.5 rounded-lg text-sm transition-colors ${
-                        activeTab === tab.id
-                          ? "bg-primary-50 text-primary-700 font-medium shadow-sm border border-primary-100"
-                          : "text-neutral-700 hover:bg-neutral-50"
-                      }`}
-                    >
-                      <tab.icon
-                        className={`h-5 w-5 mr-3 ${
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`w-full text-left p-4 rounded-lg transition-all duration-200 group ${
+                      activeTab === tab.id
+                        ? "bg-primary-50 border border-primary-200 text-primary-700"
+                        : "hover:bg-slate-50 text-slate-700"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <tab.icon
+                          className={`w-5 h-5 ${
+                            activeTab === tab.id
+                              ? "text-primary-600"
+                              : "text-slate-500"
+                          }`}
+                        />
+                        <div>
+                          <div className="font-medium">{tab.label}</div>
+                          <div className="text-xs text-slate-500 mt-0.5">
+                            {tab.description}
+                          </div>
+                        </div>
+                      </div>
+                      <TbChevronRight
+                        className={`w-4 h-4 transition-transform ${
                           activeTab === tab.id
-                            ? "text-primary-600"
-                            : "text-gray-500"
+                            ? "rotate-90 text-primary-600"
+                            : "text-slate-400"
                         }`}
                       />
-                      {tab.label}
-                    </button>
-                  </li>
+                    </div>
+                  </button>
                 ))}
-              </ul>
+              </div>
             </div>
           </div>
 
-          <div className="mt-6 bg-white rounded-lg shadow-sm p-4 border border-gray-200">
-            <h3 className="text-sm font-medium text-gray-700 mb-3">
-              Need Help?
-            </h3>
-            <p className="text-xs text-gray-500 mb-3">
-              If you need assistance with your settings, please contact our
-              support team.
-            </p>
-            <button className="w-full bg-neutral-100 text-gray-600 rounded-lg py-2 text-xs hover:bg-neutral-200 transition-colors flex items-center justify-center">
-              <TbPhotoUp className="mr-2 h-4 w-4" /> Contact Support
-            </button>
-          </div>
-        </div>
-
-        {/* Main settings content */}
-        <div className="flex-1 overflow-y-auto ml-2">
-          <div className="bg-white rounded-lg shadow-sm">
-            {/* Profile Tab */}
-            {activeTab === "profile" && (
-              <div className="p-6">
-                <h2 className="text-xl font-semibold text-primary-700 mb-4 flex items-center">
-                  <TbUser className="mr-2 h-6 w-6 text-primary-600" /> Profile
-                  Settings
-                </h2>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h3 className="text-sm font-medium text-neutral-900 mb-3 inline-block pb-1 border-b-2 border-primary-200">
-                      Personal Information
-                    </h3>
-                    <div className="space-y-4">
-                      <div>
-                        <label
-                          htmlFor="name"
-                          className="block text-sm font-medium text-neutral-700 mb-1"
-                        >
-                          Full Name
-                        </label>
-                        {isEditing ? (
-                          <input
-                            id="name"
-                            type="text"
-                            name="name"
-                            className="mt-1 block w-full rounded-lg border border-neutral-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                            value={editedUserData.name}
-                            onChange={handleInputChange}
-                          />
-                        ) : (
-                          <div className="text-neutral-900 py-2 px-3 bg-neutral-50 rounded-lg border border-neutral-200 shadow-sm">
-                            {userData.name}
-                          </div>
-                        )}
-                      </div>
-
-                      <div>
-                        <label
-                          htmlFor="email"
-                          className="block text-sm font-medium text-neutral-700 mb-1"
-                        >
-                          Email Address
-                        </label>
-                        {isEditing ? (
-                          <input
-                            id="email"
-                            type="email"
-                            name="email"
-                            className="mt-1 block w-full rounded-lg border border-neutral-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                            value={editedUserData.email}
-                            onChange={handleInputChange}
-                          />
-                        ) : (
-                          <div className="text-neutral-900 py-2 px-3 bg-neutral-50 rounded-lg border border-neutral-200 shadow-sm">
-                            {userData.email}
-                          </div>
-                        )}
-                      </div>
-
-                      <div>
-                        <label
-                          htmlFor="phone"
-                          className="block text-sm font-medium text-neutral-700 mb-1"
-                        >
-                          Phone Number
-                        </label>
-                        {isEditing ? (
-                          <input
-                            id="phone"
-                            type="text"
-                            name="phone"
-                            className="mt-1 block w-full rounded-lg border border-neutral-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                            value={editedUserData.phone}
-                            onChange={handleInputChange}
-                          />
-                        ) : (
-                          <div className="text-neutral-900 py-2 px-3 bg-neutral-50 rounded-lg border border-neutral-200 shadow-sm">
-                            {userData.phone}
-                          </div>
-                        )}
-                      </div>
+          {/* Main Content */}
+          <div className="lg:col-span-3">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200">
+              {/* Content Header */}
+              <div className="p-6 border-b border-slate-200">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    {(() => {
+                      const currentTab = tabs.find(
+                        (tab) => tab.id === activeTab
+                      );
+                      const IconComponent = currentTab?.icon;
+                      return IconComponent ? (
+                        <IconComponent className="w-6 h-6 text-primary-600" />
+                      ) : null;
+                    })()}
+                    <div>
+                      <h2 className="text-xl font-semibold text-slate-900">
+                        {tabs.find((tab) => tab.id === activeTab)?.label}{" "}
+                        Settings
+                      </h2>
+                      <p className="text-slate-600 text-sm">
+                        {tabs.find((tab) => tab.id === activeTab)?.description}
+                      </p>
                     </div>
                   </div>
 
-                  <div>
-                    <h3 className="text-sm font-medium text-neutral-900 mb-3 inline-block pb-1 border-b-2 border-primary-200">
-                      User Preferences
-                    </h3>
-                    <div className="space-y-4">
-                      <div>
-                        <label
-                          htmlFor="role"
-                          className="block text-sm font-medium text-neutral-700 mb-1"
+                  {/* Action Buttons */}
+                  <div className="flex items-center space-x-3">
+                    {isEditing ? (
+                      <>
+                        <button
+                          onClick={handleCancelEdit}
+                          className="px-4 py-2 text-slate-600 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
                         >
-                          Role
-                        </label>
-                        {isEditing ? (
-                          <select
-                            id="role"
-                            name="role"
-                            className="mt-1 block w-full rounded-lg border border-neutral-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                            value={editedUserData.role}
-                            onChange={handleInputChange}
-                          >
-                            <option value="Administrator">Administrator</option>
-                            <option value="Manager">Manager</option>
-                            <option value="Agent">Agent</option>
-                          </select>
-                        ) : (
-                          <div className="text-neutral-900 py-2 px-3 bg-neutral-50 rounded-lg border border-neutral-200 shadow-sm">
-                            {userData.role}
-                          </div>
-                        )}
-                      </div>
-
-                      <div>
-                        <label
-                          htmlFor="language"
-                          className="block text-sm font-medium text-neutral-700 mb-1"
+                          Cancel
+                        </button>
+                        <button
+                          onClick={handleSaveChanges}
+                          disabled={saveStatus === "saving"}
+                          className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 flex items-center space-x-2"
                         >
-                          Language
-                        </label>
-                        {isEditing ? (
-                          <select
-                            id="language"
-                            name="language"
-                            className="mt-1 block w-full rounded-lg border border-neutral-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                            value={editedUserData.language}
-                            onChange={handleInputChange}
-                          >
-                            <option value="English">English</option>
-                            <option value="Swahili">Swahili</option>
-                            <option value="French">French</option>
-                          </select>
-                        ) : (
-                          <div className="text-neutral-900 py-2 px-3 bg-neutral-50 rounded-lg border border-neutral-200 shadow-sm">
-                            {userData.language}
-                          </div>
-                        )}
-                      </div>
-
-                      <div>
-                        <label
-                          htmlFor="timeZone"
-                          className="block text-sm font-medium text-neutral-700 mb-1"
-                        >
-                          Time Zone
-                        </label>
-                        {isEditing ? (
-                          <select
-                            id="timeZone"
-                            name="timeZone"
-                            className="mt-1 block w-full rounded-lg border border-neutral-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                            value={editedUserData.timeZone}
-                            onChange={handleInputChange}
-                          >
-                            <option value="Africa/Nairobi">
-                              East Africa Time (EAT)
-                            </option>
-                            <option value="Africa/Lagos">
-                              West Africa Time (WAT)
-                            </option>
-                            <option value="Africa/Cairo">
-                              Eastern European Time (EET)
-                            </option>
-                          </select>
-                        ) : (
-                          <div className="text-neutral-900 py-2 px-3 bg-neutral-50 rounded-lg border border-neutral-200 shadow-sm">
-                            {userData.timeZone}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="md:col-span-2">
-                    <h3 className="text-sm font-medium text-neutral-900 mb-3 inline-block pb-1 border-b-2 border-primary-200">
-                      Profile Photo
-                    </h3>
-                    <div className="flex items-center mt-4">
-                      <div className="h-20 w-20 bg-gradient-to-br from-primary-600 to-primary-700 text-white rounded-full flex items-center justify-center font-semibold text-2xl shadow-md">
-                        {userData.name ? userData.name.charAt(0) : "A"}
-                      </div>
-                      {isEditing && (
-                        <div className="ml-5">
-                          <div className="space-y-2">
-                            <button
-                              type="button"
-                              className="bg-white border border-neutral-300 rounded-md shadow-sm py-2 px-3 text-sm font-medium text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                            >
-                              <TbPhotoUp className="mr-2 h-4 w-4 inline" />
-                              Upload Photo
-                            </button>
-                            <button
-                              type="button"
-                              className="bg-white border border-neutral-300 rounded-md shadow-sm py-2 px-3 text-sm font-medium text-red-700 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 block"
-                            >
-                              <TbTrash className="mr-2 h-4 w-4 inline" />
-                              Remove Photo
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Company Tab */}
-            {activeTab === "company" && (
-              <div className="p-6">
-                <h2 className="text-xl font-semibold text-primary-700 mb-4">
-                  Company Information
-                </h2>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <div className="space-y-4">
-                      <div>
-                        <label
-                          htmlFor="companyName"
-                          className="block text-sm font-medium text-neutral-700 mb-1"
-                        >
-                          Company Name
-                        </label>
-                        {isEditing ? (
-                          <input
-                            id="companyName"
-                            type="text"
-                            name="companyName"
-                            className="mt-1 block w-full rounded-md border border-neutral-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                            value={editedUserData.companyName}
-                            onChange={handleInputChange}
-                          />
-                        ) : (
-                          <div className="text-neutral-900 py-2 px-3 bg-neutral-50 rounded-md">
-                            {userData.companyName}
-                          </div>
-                        )}
-                      </div>
-
-                      <div>
-                        <label
-                          htmlFor="address"
-                          className="block text-sm font-medium text-neutral-700 mb-1"
-                        >
-                          Business Address
-                        </label>
-                        {isEditing ? (
-                          <textarea
-                            id="address"
-                            name="address"
-                            rows="3"
-                            className="mt-1 block w-full rounded-md border border-neutral-300 shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                            value={editedUserData.address}
-                            onChange={handleInputChange}
-                          ></textarea>
-                        ) : (
-                          <div className="text-neutral-900 py-2 px-3 bg-neutral-50 rounded-md">
-                            {userData.address}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-neutral-700 mb-1">
-                          Company Logo
-                        </label>
-                        <div className="border border-neutral-300 p-4 rounded-md">
-                          <div className="h-32 w-full bg-neutral-100 rounded flex items-center justify-center text-neutral-400 mb-2">
-                            <TbBuilding className="h-10 w-10" />
-                          </div>
-                          {isEditing && (
-                            <button className="w-full px-3 py-2 bg-neutral-100 text-neutral-700 rounded-md hover:bg-neutral-200 text-sm font-medium flex items-center justify-center">
-                              <TbPhotoUp className="mr-2 h-5 w-5" /> Upload Logo
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Security Tab */}
-            {activeTab === "security" && (
-              <div className="p-6">
-                <h2 className="text-xl font-semibold text-primary-700 mb-4">
-                  Security Settings
-                </h2>
-
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-sm font-medium text-neutral-900 mb-3">
-                      Password
-                    </h3>
-                    <button className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 text-sm font-medium flex items-center">
-                      <TbKey className="mr-2 h-5 w-5" /> Change Password
-                    </button>
-                  </div>
-
-                  <div className="border-t border-neutral-200 pt-6">
-                    <h3 className="text-sm font-medium text-neutral-900 mb-3">
-                      Two-Factor Authentication
-                    </h3>
-                    <p className="text-sm text-neutral-600 mb-3">
-                      Add an extra layer of security to your account by enabling
-                      two-factor authentication.
-                    </p>
-                    <button className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 text-sm font-medium flex items-center">
-                      <TbShield className="mr-2 h-5 w-5" /> Enable 2FA
-                    </button>
-                  </div>
-
-                  <div className="border-t border-neutral-200 pt-6">
-                    <h3 className="text-sm font-medium text-neutral-900 mb-3">
-                      Login Sessions
-                    </h3>
-                    <p className="text-sm text-neutral-600 mb-3">
-                      You're currently logged in on this device. If you notice
-                      any suspicious activity, you can log out of all sessions.
-                    </p>
-                    <button className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm font-medium flex items-center">
-                      <FaSignOutAlt className="mr-2 h-5 w-5" /> Logout From All
-                      Devices
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Notifications Tab */}
-            {activeTab === "notifications" && (
-              <div className="p-6">
-                <h2 className="text-xl font-semibold text-primary-700 mb-4">
-                  Notification Preferences
-                </h2>
-
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-sm font-medium text-neutral-900 mb-3">
-                      Email Notifications
-                    </h3>
-                    <div className="space-y-2">
-                      <div className="flex items-center">
-                        <input
-                          id="email-notifications"
-                          name="notifications.email"
-                          type="checkbox"
-                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-neutral-300 rounded"
-                          checked={
-                            isEditing
-                              ? editedUserData.notifications.email
-                              : userData.notifications.email
-                          }
-                          onChange={handleInputChange}
-                          disabled={!isEditing}
-                        />
-                        <label
-                          htmlFor="email-notifications"
-                          className="ml-2 block text-sm text-neutral-700"
-                        >
-                          Receive email notifications
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="border-t border-neutral-200 pt-6">
-                    <h3 className="text-sm font-medium text-neutral-900 mb-3">
-                      Push Notifications
-                    </h3>
-                    <div className="space-y-2">
-                      <div className="flex items-center">
-                        <input
-                          id="push-notifications"
-                          name="notifications.push"
-                          type="checkbox"
-                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-neutral-300 rounded"
-                          checked={
-                            isEditing
-                              ? editedUserData.notifications.push
-                              : userData.notifications.push
-                          }
-                          onChange={handleInputChange}
-                          disabled={!isEditing}
-                        />
-                        <label
-                          htmlFor="push-notifications"
-                          className="ml-2 block text-sm text-neutral-700"
-                        >
-                          Receive push notifications
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="border-t border-neutral-200 pt-6">
-                    <h3 className="text-sm font-medium text-neutral-900 mb-3">
-                      SMS Notifications
-                    </h3>
-                    <div className="space-y-2">
-                      <div className="flex items-center">
-                        <input
-                          id="sms-notifications"
-                          name="notifications.sms"
-                          type="checkbox"
-                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-neutral-300 rounded"
-                          checked={
-                            isEditing
-                              ? editedUserData.notifications.sms
-                              : userData.notifications.sms
-                          }
-                          onChange={handleInputChange}
-                          disabled={!isEditing}
-                        />
-                        <label
-                          htmlFor="sms-notifications"
-                          className="ml-2 block text-sm text-neutral-700"
-                        >
-                          Receive SMS notifications
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Appearance Tab */}
-            {activeTab === "appearance" && (
-              <div className="p-6">
-                <h2 className="text-xl font-semibold text-primary-700 mb-4">
-                  Appearance Settings
-                </h2>
-
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-sm font-medium text-neutral-900 mb-3">
-                      Theme
-                    </h3>
-                    <div className="grid grid-cols-3 gap-4">
-                      <div
-                        className={`border rounded-lg p-3 cursor-pointer ${
-                          (isEditing
-                            ? editedUserData.theme
-                            : userData.theme) === "light"
-                            ? "border-primary-500 ring-2 ring-primary-200"
-                            : "border-neutral-200"
-                        }`}
-                        onClick={() =>
-                          isEditing &&
-                          setEditedUserData({
-                            ...editedUserData,
-                            theme: "light",
-                          })
-                        }
+                          <FaSave className="w-4 h-4" />
+                          <span>
+                            {saveStatus === "saving"
+                              ? "Saving..."
+                              : "Save Changes"}
+                          </span>
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        onClick={() => setIsEditing(true)}
+                        className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors flex items-center space-x-2"
                       >
-                        <div className="h-20 bg-white border border-neutral-200 rounded-md mb-2 flex items-center justify-center">
-                          <TbColorSwatch className="h-8 w-8 text-primary-500" />
-                        </div>
-                        <div className="text-center text-sm font-medium">
-                          Light
-                        </div>
-                      </div>
-
-                      <div
-                        className={`border rounded-lg p-3 cursor-pointer ${
-                          (isEditing
-                            ? editedUserData.theme
-                            : userData.theme) === "dark"
-                            ? "border-primary-500 ring-2 ring-primary-200"
-                            : "border-neutral-200"
-                        }`}
-                        onClick={() =>
-                          isEditing &&
-                          setEditedUserData({
-                            ...editedUserData,
-                            theme: "dark",
-                          })
-                        }
-                      >
-                        <div className="h-20 bg-neutral-800 border border-neutral-700 rounded-md mb-2 flex items-center justify-center">
-                          <TbColorSwatch className="h-8 w-8 text-primary-400" />
-                        </div>
-                        <div className="text-center text-sm font-medium">
-                          Dark
-                        </div>
-                      </div>
-
-                      <div
-                        className={`border rounded-lg p-3 cursor-pointer ${
-                          (isEditing
-                            ? editedUserData.theme
-                            : userData.theme) === "system"
-                            ? "border-primary-500 ring-2 ring-primary-200"
-                            : "border-neutral-200"
-                        }`}
-                        onClick={() =>
-                          isEditing &&
-                          setEditedUserData({
-                            ...editedUserData,
-                            theme: "system",
-                          })
-                        }
-                      >
-                        <div className="h-20 bg-gradient-to-r from-white to-neutral-800 border border-neutral-200 rounded-md mb-2 flex items-center justify-center">
-                          <TbDevices className="h-8 w-8 text-primary-500" />
-                        </div>
-                        <div className="text-center text-sm font-medium">
-                          System
-                        </div>
-                      </div>
-                    </div>
+                        <TbEdit className="w-4 h-4" />
+                        <span>Edit</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
-            )}
 
-            {/* System Tab */}
-            {activeTab === "system" && (
+              {/* Tab Content */}
               <div className="p-6">
-                <h2 className="text-xl font-semibold text-primary-700 mb-4">
-                  System Settings
-                </h2>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeTab}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    {/* Profile Tab */}
+                    {activeTab === "profile" && (
+                      <div className="space-y-8">
+                        {/* Personal Information */}
+                        <div>
+                          <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center">
+                            <TbUser className="w-5 h-5 mr-2 text-primary-600" />
+                            Personal Information
+                          </h3>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                              <label className="block text-sm font-medium text-slate-700 mb-2">
+                                Full Name
+                              </label>
+                              {isEditing ? (
+                                <input
+                                  type="text"
+                                  name="name"
+                                  value={editedUserData.name}
+                                  onChange={handleInputChange}
+                                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
+                                />
+                              ) : (
+                                <div className="px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-900">
+                                  {userData.name}
+                                </div>
+                              )}
+                            </div>
 
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-sm font-medium text-neutral-900 mb-3">
-                      System Information
-                    </h3>
-                    <div className="bg-neutral-50 rounded-md p-4">
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <span className="text-neutral-500">
-                            System Version:
-                          </span>
-                          <span className="text-neutral-900 ml-2">1.0.0</span>
+                            <div>
+                              <label className="block text-sm font-medium text-slate-700 mb-2">
+                                Email Address
+                              </label>
+                              {isEditing ? (
+                                <input
+                                  type="email"
+                                  name="email"
+                                  value={editedUserData.email}
+                                  onChange={handleInputChange}
+                                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
+                                />
+                              ) : (
+                                <div className="px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 flex items-center">
+                                  <TbMail className="w-4 h-4 mr-2 text-slate-500" />
+                                  {userData.email}
+                                </div>
+                              )}
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium text-slate-700 mb-2">
+                                Phone Number
+                              </label>
+                              {isEditing ? (
+                                <input
+                                  type="tel"
+                                  name="phone"
+                                  value={editedUserData.phone}
+                                  onChange={handleInputChange}
+                                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
+                                />
+                              ) : (
+                                <div className="px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 flex items-center">
+                                  <TbPhone className="w-4 h-4 mr-2 text-slate-500" />
+                                  {userData.phone}
+                                </div>
+                              )}
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium text-slate-700 mb-2">
+                                Role
+                              </label>
+                              {isEditing ? (
+                                <select
+                                  name="role"
+                                  value={editedUserData.role}
+                                  onChange={handleInputChange}
+                                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
+                                >
+                                  <option value="Administrator">
+                                    Administrator
+                                  </option>
+                                  <option value="Manager">Manager</option>
+                                  <option value="Agent">Agent</option>
+                                </select>
+                              ) : (
+                                <div className="px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-900">
+                                  {userData.role}
+                                </div>
+                              )}
+                            </div>
+                          </div>
                         </div>
+
+                        {/* Profile Picture */}
                         <div>
-                          <span className="text-neutral-500">
-                            Last Updated:
-                          </span>
-                          <span className="text-neutral-900 ml-2">
-                            August 15, 2023
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-neutral-500">
-                            Database Status:
-                          </span>
-                          <span className="text-green-600 ml-2 flex items-center">
-                            <TbCheck className="h-4 w-4 mr-1" /> Connected
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-neutral-500">
-                            Email Service:
-                          </span>
-                          <span className="text-green-600 ml-2 flex items-center">
-                            <TbCheck className="h-4 w-4 mr-1" /> Active
-                          </span>
+                          <h3 className="text-lg font-semibold text-slate-900 mb-4">
+                            Profile Picture
+                          </h3>
+                          <div className="flex items-center space-x-6">
+                            <div className="w-24 h-24 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center text-white text-2xl font-bold shadow-lg">
+                              {userData.name.charAt(0)}
+                            </div>
+                            {isEditing && (
+                              <div className="space-y-2">
+                                <button className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
+                                  <TbUpload className="w-4 h-4 mr-2" />
+                                  Upload Photo
+                                </button>
+                                <button className="flex items-center px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors">
+                                  <TbTrash className="w-4 h-4 mr-2" />
+                                  Remove
+                                </button>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
+                    )}
 
-                  <div className="border-t border-neutral-200 pt-6">
-                    <h3 className="text-sm font-medium text-neutral-900 mb-3">
-                      Data Management
-                    </h3>
-                    <div className="space-y-3">
-                      <button className="px-4 py-2 border border-neutral-300 text-neutral-700 rounded-md hover:bg-neutral-50 text-sm font-medium flex items-center">
-                        <TbRefresh className="mr-2 h-5 w-5" /> Sync Data
-                      </button>
-                      <button className="px-4 py-2 border border-neutral-300 text-neutral-700 rounded-md hover:bg-neutral-50 text-sm font-medium flex items-center">
-                        <TbTrash className="mr-2 h-5 w-5 text-red-500" /> Clear
-                        Cache
-                      </button>
-                    </div>
-                  </div>
+                    {/* Company Tab */}
+                    {activeTab === "company" && (
+                      <div className="space-y-8">
+                        <div>
+                          <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center">
+                            <TbBuilding className="w-5 h-5 mr-2 text-primary-600" />
+                            Company Details
+                          </h3>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="md:col-span-2">
+                              <label className="block text-sm font-medium text-slate-700 mb-2">
+                                Company Name
+                              </label>
+                              {isEditing ? (
+                                <input
+                                  type="text"
+                                  name="companyName"
+                                  value={editedUserData.companyName}
+                                  onChange={handleInputChange}
+                                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
+                                />
+                              ) : (
+                                <div className="px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-900">
+                                  {userData.companyName}
+                                </div>
+                              )}
+                            </div>
 
-                  <div className="border-t border-neutral-200 pt-6">
-                    <h3 className="text-sm font-medium text-neutral-900 mb-3">
-                      Legal
-                    </h3>
-                    <div className="space-y-3">
-                      <button className="px-4 py-2 border border-neutral-300 text-neutral-700 rounded-md hover:bg-neutral-50 text-sm font-medium w-full text-left">
-                        Terms of Service
-                      </button>
-                      <button className="px-4 py-2 border border-neutral-300 text-neutral-700 rounded-md hover:bg-neutral-50 text-sm font-medium w-full text-left">
-                        Privacy Policy
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                            <div className="md:col-span-2">
+                              <label className="block text-sm font-medium text-slate-700 mb-2">
+                                Business Address
+                              </label>
+                              {isEditing ? (
+                                <textarea
+                                  name="address"
+                                  value={editedUserData.address}
+                                  onChange={handleInputChange}
+                                  rows="3"
+                                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
+                                />
+                              ) : (
+                                <div className="px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 flex items-start">
+                                  <TbMapPin className="w-4 h-4 mr-2 text-slate-500 mt-0.5" />
+                                  <span className="whitespace-pre-line">
+                                    {userData.address}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Security Tab */}
+                    {activeTab === "security" && (
+                      <div className="space-y-8">
+                        <div>
+                          <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center">
+                            <TbShieldCheck className="w-5 h-5 mr-2 text-primary-600" />
+                            Security Settings
+                          </h3>
+                          <div className="space-y-6">
+                            <div className="p-6 border border-slate-200 rounded-lg">
+                              <h4 className="font-medium text-slate-900 mb-2">
+                                Change Password
+                              </h4>
+                              <p className="text-sm text-slate-600 mb-4">
+                                Update your password to keep your account secure
+                              </p>
+                              <button className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
+                                Change Password
+                              </button>
+                            </div>
+
+                            <div className="p-6 border border-slate-200 rounded-lg">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <h4 className="font-medium text-slate-900">
+                                    Two-Factor Authentication
+                                  </h4>
+                                  <p className="text-sm text-slate-600 mt-1">
+                                    Add an extra layer of security to your
+                                    account
+                                  </p>
+                                </div>
+                                <label className="relative inline-flex items-center cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    name="twoFactor"
+                                    checked={
+                                      isEditing
+                                        ? editedUserData.twoFactor
+                                        : userData.twoFactor
+                                    }
+                                    onChange={handleInputChange}
+                                    disabled={!isEditing}
+                                    className="sr-only peer"
+                                  />
+                                  <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Notifications Tab */}
+                    {activeTab === "notifications" && (
+                      <div className="space-y-8">
+                        <div>
+                          <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center">
+                            <TbBell className="w-5 h-5 mr-2 text-primary-600" />
+                            Notification Preferences
+                          </h3>
+                          <div className="space-y-4">
+                            {[
+                              {
+                                key: "email",
+                                label: "Email Notifications",
+                                description: "Receive notifications via email",
+                              },
+                              {
+                                key: "push",
+                                label: "Push Notifications",
+                                description:
+                                  "Browser and mobile push notifications",
+                              },
+                              {
+                                key: "sms",
+                                label: "SMS Notifications",
+                                description:
+                                  "Text message notifications for urgent matters",
+                              },
+                              {
+                                key: "marketing",
+                                label: "Marketing Communications",
+                                description:
+                                  "Product updates and marketing content",
+                              },
+                            ].map((item) => (
+                              <div
+                                key={item.key}
+                                className="p-6 border border-slate-200 rounded-lg"
+                              >
+                                <div className="flex items-center justify-between">
+                                  <div>
+                                    <h4 className="font-medium text-slate-900">
+                                      {item.label}
+                                    </h4>
+                                    <p className="text-sm text-slate-600 mt-1">
+                                      {item.description}
+                                    </p>
+                                  </div>
+                                  <label className="relative inline-flex items-center cursor-pointer">
+                                    <input
+                                      type="checkbox"
+                                      name={`notifications.${item.key}`}
+                                      checked={
+                                        isEditing
+                                          ? editedUserData.notifications[
+                                              item.key
+                                            ]
+                                          : userData.notifications[item.key]
+                                      }
+                                      onChange={handleInputChange}
+                                      disabled={!isEditing}
+                                      className="sr-only peer"
+                                    />
+                                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+                                  </label>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* System Tab */}
+                    {activeTab === "system" && (
+                      <div className="space-y-8">
+                        <div>
+                          <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center">
+                            <TbDatabase className="w-5 h-5 mr-2 text-primary-600" />
+                            System Preferences
+                          </h3>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                              <label className="block text-sm font-medium text-slate-700 mb-2">
+                                Language
+                              </label>
+                              {isEditing ? (
+                                <select
+                                  name="language"
+                                  value={editedUserData.language}
+                                  onChange={handleInputChange}
+                                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
+                                >
+                                  <option value="English">English</option>
+                                  <option value="Swahili">Swahili</option>
+                                  <option value="French">French</option>
+                                </select>
+                              ) : (
+                                <div className="px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-900">
+                                  {userData.language}
+                                </div>
+                              )}
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium text-slate-700 mb-2">
+                                Time Zone
+                              </label>
+                              {isEditing ? (
+                                <select
+                                  name="timeZone"
+                                  value={editedUserData.timeZone}
+                                  onChange={handleInputChange}
+                                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
+                                >
+                                  <option value="Africa/Nairobi">
+                                    East Africa Time (EAT)
+                                  </option>
+                                  <option value="Africa/Lagos">
+                                    West Africa Time (WAT)
+                                  </option>
+                                  <option value="Africa/Cairo">
+                                    Eastern European Time (EET)
+                                  </option>
+                                </select>
+                              ) : (
+                                <div className="px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-900">
+                                  {userData.timeZone}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div>
+                          <h3 className="text-lg font-semibold text-slate-900 mb-4">
+                            Data Management
+                          </h3>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <button className="p-4 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors text-left">
+                              <div className="flex items-center space-x-3">
+                                <TbDownload className="w-5 h-5 text-primary-600" />
+                                <div>
+                                  <div className="font-medium text-slate-900">
+                                    Export Data
+                                  </div>
+                                  <div className="text-sm text-slate-600">
+                                    Download your account data
+                                  </div>
+                                </div>
+                              </div>
+                            </button>
+
+                            <button className="p-4 border border-red-200 rounded-lg hover:bg-red-50 transition-colors text-left">
+                              <div className="flex items-center space-x-3">
+                                <TbTrash className="w-5 h-5 text-red-600" />
+                                <div>
+                                  <div className="font-medium text-red-900">
+                                    Delete Account
+                                  </div>
+                                  <div className="text-sm text-red-600">
+                                    Permanently delete your account
+                                  </div>
+                                </div>
+                              </div>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </motion.div>
+                </AnimatePresence>
               </div>
-            )}
+            </div>
           </div>
         </div>
       </div>

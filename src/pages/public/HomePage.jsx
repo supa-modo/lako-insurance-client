@@ -14,7 +14,7 @@ const HomePage = () => {
   // Hero slider state
   const [activeSlide, setActiveSlide] = useState(0);
 
-  // Define hero slides
+  // hero slides content
   const heroSlides = [
     {
       image: "/slider01.png",
@@ -112,7 +112,7 @@ const HomePage = () => {
                   className="text-gray-600 text-base lg:text-lg mb-6"
                 >
                   Lako Insurance Agency is based in Kenya but with adequate
-                  footprint in four countries in the Eastern Africa region,
+                  footprint in four countries within the Eastern Africa region,
                   including Uganda, Tanzania, South Sudan - Juba and Rwanda.
                 </motion.p>
 

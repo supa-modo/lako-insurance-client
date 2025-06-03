@@ -22,6 +22,8 @@ import TaskDetail from "../../components/tasks/TaskDetail";
 // Import task service
 import taskService from "../../services/taskService";
 
+import { useToast } from "../../hooks/useToast";
+
 const TaskManagementPage = () => {
   const [tasks, setTasks] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -36,6 +38,8 @@ const TaskManagementPage = () => {
     upcoming: 0,
     overdue: 0,
   });
+
+  const { toasts, toast, removeToast } = useToast();
 
   // Fetch tasks on component mount
   useEffect(() => {
@@ -111,6 +115,7 @@ const TaskManagementPage = () => {
         // Update existing task
         const response = await taskService.updateTask(taskData.id, taskData);
         if (response.success) {
+          toast.success("Task Saved successfully")
           // Refresh tasks to get the updated list
           await fetchTasks();
           await fetchTaskStats();
@@ -118,6 +123,7 @@ const TaskManagementPage = () => {
           setEditingTask(null);
         } else {
           console.error("Failed to update task:", response.message);
+          
         }
       } else {
         // Create new task
@@ -194,8 +200,7 @@ const TaskManagementPage = () => {
 
   // Delete a task
   const handleDeleteTask = async (taskId) => {
-    // Confirm before deletion
-    if (window.confirm("Are you sure you want to delete this task?")) {
+    
       try {
         const response = await taskService.deleteTask(taskId);
         if (response.success) {
@@ -213,7 +218,6 @@ const TaskManagementPage = () => {
       } catch (error) {
         console.error("Error deleting task:", error);
       }
-    }
   };
 
   // Go back to task list

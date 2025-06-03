@@ -622,42 +622,42 @@ const ResultsPage = () => {
                           <h3 className="text-base sm:text-lg font-bold text-primary-600 mb-2">
                             Need Help Choosing a Plan?
                           </h3>
-                          <p className="text-neutral-700 text-[0.8rem] sm:text-sm md:text-base">
+                          <p className="text-neutral-700 text-[0.83rem] sm:text-sm md:text-base">
                             Our insurance experts are ready to answer any
                             questions and help you get enrolled into the best
                             option.
                           </p>
                         </div>
-                        <div className="flex flex-col sm:flex-row gap-3">
+                        <div className="flex flex-col lg:flex-row gap-3">
+                          <div>
                           <motion.a
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             href={`tel:+2547206363638`}
-                            className="btn inline-flex items-center justify-center px-4 sm:px-6 py-3 bg-secondary-500 hover:bg-secondary-600 text-white font-medium rounded-lg shadow-md transition-all text-[0.8rem] sm:text-sm md:text-base"
+                            className="w-full lg:w-auto flex items-center justify-center px-4 sm:px-6 py-3 bg-secondary-500 hover:bg-secondary-600 text-white font-medium rounded-lg shadow-md transition-all text-[0.8rem] sm:text-sm md:text-base"
                           >
                             <TbPhoneCall className="mr-2" size={20} /> Call
                             Expert
                           </motion.a>
+                          </div>
+                          
+                          <div>
+
+                         
                           <motion.button
                             whileHover={{ scale: 1.01 }}
                             whileTap={{ scale: 0.99 }}
-                            className="btn inline-flex items-center justify-center px-4 sm:px-6 py-3 border-2 border-secondary-400 text-secondary-700 hover:bg-secondary-100 font-medium rounded-lg transition-all text-[0.8rem] sm:text-sm md:text-base"
+                            className="w-full lg:w-auto flex items-center justify-center px-4 sm:px-6 py-3 border-2 border-secondary-400 text-secondary-700 hover:bg-secondary-100 font-medium rounded-lg transition-all text-[0.8rem] sm:text-sm md:text-base"
                             onClick={handleRequestCallback}
                           >
                             <TbMailFilled className="mr-2" size={20} /> Request
                             Callback
                           </motion.button>
-                        </div>
+                        </div> </div>
                       </div>
                     </div>
                   </motion.div>
 
-                  {/* <DownloadReport
-                    onDownloadPdf={handleDownloadPdf}
-                    onDownloadCsv={handleDownloadCsv}
-                    onDownloadText={handleDownloadText}
-                    downloadStatus={downloadStatus}
-                  /> */}
                 </motion.div>
               </div>
 
@@ -698,33 +698,23 @@ const ResultsPage = () => {
                   />
                 </motion.div>
 
-                {/* Download Report
-                <motion.div variants={itemVariants}>
-                  <DownloadReport
-                    onDownloadPdf={handleDownloadPdf}
-                    onDownloadCsv={handleDownloadCsv}
-                    onDownloadText={handleDownloadText}
-                    downloadStatus={downloadStatus}
-                  />
-                </motion.div> */}
-
                 <motion.div
                   variants={itemVariants}
                   className="bg-secondary-50 mx-2 border border-secondary-100 rounded-xl overflow-hidden"
                 >
                   <div className="p-4 sm:p-6">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                      <div className="mb-6 md:mb-0 md:mr-6 md:max-w-[50%]">
+                      <div className="mb-6 md:mb-0 md:mr-6 lg:max-w-[50%]">
                         <h3 className="text-base sm:text-lg font-bold text-primary-600 mb-2">
                           Need Help With choosing a Plan?
                         </h3>
-                        <p className="text-neutral-700 text-[0.8rem] sm:text-sm md:text-base">
+                        <p className="text-neutral-700 text-[0.83rem] sm:text-sm md:text-base">
                           Our insurance experts are ready to answer any
                           questions and help you get enrolled into the best
                           option.
                         </p>
                       </div>
-                      <div className="flex flex-col sm:flex-row gap-3">
+                      <div className="w-full flex flex-col lg:flex-row gap-3">
                         <motion.a
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}

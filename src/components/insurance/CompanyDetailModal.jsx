@@ -20,7 +20,11 @@ import {
   TbMessage2Star,
   TbExternalLink,
   TbBuildingBank,
+  TbAddressBook,
+  TbPhoneCall,
+  TbMailFilled,
 } from "react-icons/tb";
+import { PiUserDuotone } from "react-icons/pi";
 
 const CompanyDetailModal = ({ company, onClose, onEdit, onDelete }) => {
   const renderStarRating = (rating) => {
@@ -179,15 +183,15 @@ const CompanyDetailModal = ({ company, onClose, onEdit, onDelete }) => {
               {/* Contact Information */}
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <TbMail size={20} className="mr-2 text-primary-600" />
+                  <TbAddressBook size={20} className="mr-2 text-primary-600" />
                   Contact Information
                 </h3>
 
-                <div className="grid grid-cols-1 gap-4 text-sm">
-                  <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div className="grid grid-cols-1 gap-3 text-sm bg-gray-50 rounded-lg px-8 border border-gray-200">
+                  <div className="py-4 px-3 border-b border-gray-200">
                     <div className="flex items-start">
                       <div className="mt-0.5 text-gray-400">
-                        <TbMail className="h-5 w-5" />
+                        <TbMailFilled className="h-5 w-5" />
                       </div>
                       <div className="ml-3">
                         <div className="text-xs text-gray-500">
@@ -200,10 +204,10 @@ const CompanyDetailModal = ({ company, onClose, onEdit, onDelete }) => {
                     </div>
                   </div>
 
-                  <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                  <div className="pb-4 px-3 border-b border-gray-200">
                     <div className="flex items-start">
                       <div className="mt-0.5 text-gray-400">
-                        <TbPhone className="h-5 w-5" />
+                        <TbPhoneCall className="h-5 w-5" />
                       </div>
                       <div className="ml-3">
                         <div className="text-xs text-gray-500">
@@ -217,7 +221,7 @@ const CompanyDetailModal = ({ company, onClose, onEdit, onDelete }) => {
                   </div>
 
                   {company.website && (
-                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <div className="pb-4 px-3">
                       <div className="flex items-start">
                         <div className="mt-0.5 text-gray-400">
                           <TbWorld className="h-5 w-5" />

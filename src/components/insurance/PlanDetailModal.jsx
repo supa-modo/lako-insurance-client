@@ -102,7 +102,7 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
         className="w-[750px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-xl border border-gray-200"
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-teal-600 to-teal-700 px-6 py-4 relative">
+        <div className="bg-gradient-to-r from-primary-600 to-primary-700 px-6 py-4 relative">
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
             <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
@@ -115,7 +115,7 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                   Plan Details
                 </h2>
                 <p className="text-white/80 text-sm">
-                  {plan?.name || "Insurance Plan"}
+                  View complete insurance plan information
                 </p>
               </div>
             </div>
@@ -129,8 +129,8 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
         </div>
 
         {/* Content */}
-        <div className="flex flex-col h-[calc(100vh-81px)]">
-          <div className="overflow-y-auto flex-1 px-6 py-5">
+        <div className="h-[calc(100vh-100px)] md:h-[calc(100vh-110px)] flex flex-col">
+          <div className="overflow-y-auto flex-1 px-3 md:px-6 py-5">
             {/* Plan Overview Section */}
             <div className="mb-6">
               <div
@@ -673,29 +673,11 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
           </div>
 
           {/* Sticky Footer */}
-          <div className="border-t border-gray-200 bg-white px-6 py-4">
-            <div className="flex justify-end space-x-3">
-              {onEdit && (
-                <button
-                  onClick={() => onEdit(plan)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors text-sm font-medium flex items-center"
-                >
-                  <TbEdit className="w-4 h-4 mr-2" />
-                  Edit Plan
-                </button>
-              )}
-              {onDelete && (
-                <button
-                  onClick={() => onDelete(plan)}
-                  className="px-4 py-2 border border-red-300 rounded-lg text-red-700 bg-white hover:bg-red-50 transition-colors text-sm font-medium flex items-center"
-                >
-                  <TbTrash className="w-4 h-4 mr-2" />
-                  Delete Plan
-                </button>
-              )}
+          <div className="border-t border-gray-200 bg-white px-6 py-3">
+            <div className="flex justify-start">
               <button
                 onClick={onClose}
-                className="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-medium"
+                className="px-8 py-2.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium text-[0.93rem]"
               >
                 Close
               </button>

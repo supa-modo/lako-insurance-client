@@ -226,7 +226,7 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
         className="w-[800px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-xl border border-gray-200"
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-orange-600 to-orange-700 px-6 py-4 relative">
+        <div className="bg-gradient-to-r from-primary-600 to-primary-700 px-6 py-4 relative">
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
             <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
@@ -239,7 +239,7 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
                   Edit Insurance Plan
                 </h2>
                 <p className="text-white/80 text-sm">
-                  Update plan details for {plan?.name}
+                  Update plan details and settings
                 </p>
               </div>
             </div>
@@ -283,14 +283,14 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
         {/* Form Content */}
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col h-[calc(100vh-81px)]"
+          className="flex flex-col h-[calc(100vh-120px)] md:h-[calc(100vh-100px)]"
         >
-          <div className="overflow-y-auto flex-1 px-6 py-5">
+          <div className="overflow-y-auto flex-1 px-3 md:px-6 py-5">
             <div className="space-y-6">
               {/* Basic Information */}
               <div>
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <TbInfoCircle size={20} className="mr-2 text-orange-600" />
+                  <TbInfoCircle size={20} className="mr-2 text-primary-600" />
                   Basic Information
                 </h3>
 
@@ -923,7 +923,7 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
               <button
                 type="submit"
                 disabled={loading}
-                className="px-6 py-2.5 bg-orange-600 text-white rounded-lg hover:bg-orange-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center font-medium"
+                className="px-6 py-2.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center font-medium"
               >
                 {loading ? (
                   <>
