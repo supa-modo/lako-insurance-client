@@ -28,14 +28,15 @@ const ComparisonTable = ({ plans, onDownload }) => {
   console.log(plans);
   // Get user query from context
   const { userQuery } = useComparison();
-  
+
   // Ensure plans are properly formatted
   if (!plans || !plans.length) return null;
-  
-  // Initialize the printable table functionality
-  const { openPrintableVersion } = PrintableComparisonTable({ plans, userQuery });
 
-  
+  // Initialize the printable table functionality
+  const { openPrintableVersion } = PrintableComparisonTable({
+    plans,
+    userQuery,
+  });
 
   // Define rows for comparison
   const comparisonRows = [
@@ -224,10 +225,9 @@ const ComparisonTable = ({ plans, onDownload }) => {
             <TbBabyCarriage className="text-secondary-600 h-5 w-5 sm:h-5 sm:w-5" />
           ),
         },
-       
       ],
     },
-    
+
     {
       category: "Additional Benefits",
       items: [
@@ -256,7 +256,6 @@ const ComparisonTable = ({ plans, onDownload }) => {
             <TbBuildingHospital className="text-secondary-600 h-5 w-5 sm:h-5 sm:w-5" />
           ),
         },
-       
       ],
     },
   ];
@@ -270,21 +269,27 @@ const ComparisonTable = ({ plans, onDownload }) => {
             Insurance Plan Comparison
           </h3>
           {onDownload && (
-      <motion.button
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => {
-              // Call both the original onDownload function and open the printable version
-              if (onDownload) onDownload();
-              openPrintableVersion();
-            }}
-            className="flex items-center px-4 sm:px-6 py-2 sm:py-3 border-2 border-white  text-white rounded-lg text-xs sm:text-sm font-medium shadow-lg font-lexend"
-          >
-            <TbDownload className="mr-1 sm:mr-2 h-3.5 w-3.5 sm:h-5 sm:w-5" />
-            Download Comparison Table
+            <motion.button
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => {
+                // Call both the original onDownload function and open the printable version
+                if (onDownload) onDownload();
+                openPrintableVersion();
+              }}
+              className="px-3 md:px-6 py-1.5 md:py-3 border md:border-2 border-white  text-white rounded-[0.4rem] md:rounded-lg text-xs md:text-sm font-medium shadow-lg font-lexend"
+            >
+               <div className="md:hidden flex items-center ">
+              <TbDownload className="mr-1 sm:mr-2 h-3.5 w-3.5 sm:h-5 sm:w-5" />
+              <span>Print Comparison</span>
+              </div>
+              <div className="hidden md:flex items-center ">
+              <TbDownload className="mr-1 sm:mr-2 h-3.5 w-3.5 sm:h-5 sm:w-5" />
+              <span>Print Comparison Table</span>
+              </div>
+              
             </motion.button>
-        
-      )}
+          )}
         </div>
       </div>
 
@@ -412,7 +417,6 @@ const ComparisonTable = ({ plans, onDownload }) => {
           </tbody>
         </table>
       </div>
-
     </div>
   );
 };

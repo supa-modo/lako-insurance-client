@@ -36,6 +36,7 @@ import ToastContainer from "../../components/ui/ToastContainer";
 import DeleteConfirmationModal from "../../components/ui/DeleteConfirmationModal";
 import MessageDetailModal from "../../components/ui/MessageDetailModal";
 import { formatDateWithTime } from "../../utils/formatDate";
+import { PiUserDuotone } from "react-icons/pi";
 
 const ContactMessagesPage = () => {
   const { user } = useAuth();
@@ -801,7 +802,7 @@ const ContactMessagesPage = () => {
                                   {message.processedBy && (
                                     <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
                                       <div className="flex items-center text-sm text-green-700">
-                                        <TbUser className="h-4 w-4 mr-2" />
+                                        <PiUserDuotone className="h-4 w-4 mr-2" />
                                         <span>
                                           Processed by {message.processedByName}{" "}
                                           on{" "}

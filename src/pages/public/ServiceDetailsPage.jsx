@@ -16,6 +16,7 @@ import {
   TbMessageShare,
   TbArrowLeft,
 } from "react-icons/tb";
+import {BiSupport} from "react-icons/bi";
 import Header from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
 import { serviceDetails } from "../../data/serviceDetails";
@@ -321,21 +322,24 @@ const ServiceDetailsPage = () => {
               coverage for your needs.
             </p>
             <div className="flex flex-col sm:flex-row gap-2 md:gap-4 text-[0.9rem] md:text-base justify-center">
+              
               <Link
+                  to="/contact"
+                  className="flex items-center px-8 py-3 bg-white text-primary-700 font-medium rounded-lg shadow-xl hover:bg-primary-50 transition-all duration-200"
+              >
+                  <BiSupport className="mr-2 h-5 w-5" />
+                  Get an Expert Quote
+                </Link>
+                <Link
                 to="/get-quote"
                 className="px-8 py-3 bg-primary-500 text-white font-medium rounded-lg shadow-xl hover:bg-primary-600 transition-all duration-200"
               >
                 <div className="flex items-center justify-center">
-                  <span>Get a Quote</span>
+                  <span>Compare Plans</span>
                   <TbArrowRight className="ml-2" />
                 </div>
               </Link>
-              <Link
-                to="/contact"
-                className="px-8 py-3 bg-white text-primary-700 font-medium rounded-lg shadow-xl hover:bg-primary-50 transition-all duration-200"
-              >
-                Contact Us
-              </Link>
+              
             </div>
           </div>
         </div>

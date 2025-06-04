@@ -194,7 +194,7 @@ const TestimonialsSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className={`text-left p-4 rounded-lg border transition-all duration-200 ${
+                className={`text-left p-4 rounded-lg border ${
                   activeIndex === index
                     ? "bg-primary-50 border-primary-200 shadow-sm"
                     : "bg-white border-gray-200 hover:border-gray-300 hover:shadow-sm"

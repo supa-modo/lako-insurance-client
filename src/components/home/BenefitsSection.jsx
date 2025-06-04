@@ -289,11 +289,11 @@ const BenefitsSection = () => {
               >
                 <div className="h-[560px] overflow-hidden">
                   <img
-                    src="/slider01.png"
+                    src="/group2.jpg"
                     alt="Insurance Experience"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full "
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary-900/80 to-primary-900/0"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary-900/90 to-primary-900/20"></div>
                   <div className="absolute bottom-0 left-0 right-0 p-8">
                     <div className="text-white">
                       <div className="flex items-center mb-3">
@@ -312,7 +312,7 @@ const BenefitsSection = () => {
                           "Medical Health Covers",
                           "Travel Insurance",
                           "Motor Insurance",
-                          "Personal Accident Covers",
+                          "Personal Accident",
                         ].map((item, i) => (
                           <span
                             key={i}
@@ -322,6 +322,11 @@ const BenefitsSection = () => {
                             {item}
                           </span>
                         ))}
+                        <span
+                            className="inline-flex items-center text-[0.83rem] px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-white"
+                          >
+                            + more
+                          </span>
                       </div>
                     </div>
                   </div>
@@ -378,21 +383,21 @@ const BenefitsSection = () => {
           <div className="">
             <div className="bg-white overflow-hidden shadow-lg relative">
               <img
-                src="/slider01.png"
+                src="/group2.jpg"
                 alt="Insurance Experience"
-                className="w-full h-[20rem] object-cover"
+                className="w-full h-[19rem] md:h-[28rem] object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-primary-900/90 to-primary-900/20"></div>
-              <div className="absolute bottom-0 left-0 right-0 p-5">
+              <div className="absolute inset-0 bg-gradient-to-t from-primary-900/95 to-primary-900/20"></div>
+              <div className="absolute bottom-0 left-0 right-0 px-4 pb-3 md:pb-6">
                 <div className="text-white">
-                  <div className="flex items-center mb-3">
+                  <div className="flex items-center mb-2">
                     <TbAward className="h-8 w-8 text-secondary-500 mr-2" />
 
-                    <h3 className="text-2xl font-bold text-secondary-500">
+                    <h3 className="text-2xl md:text-3xl font-bold text-secondary-500">
                       10+ Years of Excellence
                     </h3>
                   </div>
-                  <p className="text-white/90 text-[0.89rem]">
+                  <p className="text-white/90 text-[0.89rem] md:text-base">
                     We've got you covered from Medical Plans, Travel Insurance,
                     Motor Insurance, Personal Accident, and many other General Insurance options.
                   </p>
@@ -418,9 +423,9 @@ const BenefitsSection = () => {
                 <div className="absolute bottom-1/3 -right-10 w-60 h-60 rounded-full bg-primary-600/40 blur-3xl group-hover:w-64 group-hover:h-64 transition-all duration-700"></div>
                 <div className="absolute bottom-0 right-0 w-32 h-32 rounded-full bg-white/5 backdrop-blur-xl transform translate-x-1/2 translate-y-1/2"></div>
               </div>
-              <div className="p-5 lg:p-8 md:p-10 relative z-10 flex flex-col lg:flex-row items-center">
-                <div className="lg:w-[75%] mb-6 lg:mb-0 lg:pr-8">
-                  <div className="hidden lg:inline-block mb-4">
+              <div className="p-5 lg:p-8 relative z-10 flex flex-col md:flex-row items-center">
+                <div className="lg:w-[75%] md:w-[70%] mb-6 lg:mb-0 lg:pr-4">
+                  <div className="hidden md:inline-block mb-4">
                     <span className="bg-white/10 backdrop-blur-sm text-secondary-100 text-sm px-4 py-1.5 rounded-full">
                       Comprehensive Coverage
                     </span>
@@ -453,7 +458,7 @@ const BenefitsSection = () => {
                     ))}
                   </div>
                 </div>
-                <div className="lg:w-[26%] w-full flex flex-col gap-2 lg:gap-3 justify-center lg:justify-end">
+                <div className="md:w-[30%] lg:w-[26%] w-full flex flex-col gap-2 lg:gap-3 justify-center lg:justify-end">
                   
                   <motion.div
                     whileHover={{ scale: 1.03 }}
@@ -461,7 +466,7 @@ const BenefitsSection = () => {
                   >
                     <Link
                       to="/compare"
-                      className="w-full md:w-auto justify-center inline-flex items-center px-6 py-2 lg:py-3.5 bg-white text-primary-700 font-medium rounded-lg shadow-xl hover:bg-primary-50 transition-all duration-200 text-center group"
+                      className="w-full justify-center inline-flex items-center px-6 py-2 lg:py-3.5 bg-white text-primary-700 font-medium rounded-lg shadow-xl hover:bg-primary-50 transition-all duration-200 text-center group"
                     >
                       Get a quote now
                       <TbArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
@@ -473,7 +478,7 @@ const BenefitsSection = () => {
                   >
                     <Link
                       to="/contact"
-                      className="w-full md:w-auto justify-center inline-flex items-center px-5 py-2 lg:py-3.5 bg-secondary-500 text-white font-medium rounded-lg shadow-xl hover:bg-secondary-600 transition-all duration-200 text-center group"
+                      className="w-full justify-center inline-flex items-center px-5 py-2 lg:py-3.5 bg-secondary-500 text-white font-medium rounded-lg shadow-xl hover:bg-secondary-600 transition-all duration-200 text-center group"
                     >
                       <TbPhoneCall size={20} className="mr-2 group-hover:translate-x-1 transition-transform" />
                       Talk to an expert

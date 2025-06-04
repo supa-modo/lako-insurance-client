@@ -544,10 +544,10 @@ const ResultsPage = () => {
         <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-primary-400/60 rounded-full filter blur-xl opacity-30 animate-float"></div>
 
         {/* Main content */}
-        <div className="mx-auto px-0 sm:px-3 md:px-6 lg:px-10  pt-24 lg:pt-32 py-4 sm:py-6 relative z-10 font-outfit">
+        <div className="mx-auto px-0 sm:px-3 md:px-6 lg:px-10  pt-24 md:pt-28 lg:pt-32 py-4 sm:py-6 relative z-10 font-outfit">
           <header className="text-center mb-8">
             <motion.h1
-              className="text-xl sm:text-3xl md:text-4xl font-bold text-gradient bg-gradient-to-r from-white via-secondary-200 to-white bg-clip-text text-transparent mb-2 font-lexend"
+              className="text-xl sm:text-3xl lg:text-4xl font-bold text-gradient bg-gradient-to-r from-white via-secondary-200 to-white bg-clip-text text-transparent mb-2 font-lexend"
               initial={{ y: -50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.5 }}
@@ -555,7 +555,7 @@ const ResultsPage = () => {
               Your Insurance Comparison Results
             </motion.h1>
             <motion.p
-              className="text-sm sm:text-base md:text-lg text-neutral-300 max-w-3xl mx-auto font-outfit"
+              className="text-sm sm:text-base lg:text-lg text-neutral-300 max-w-3xl mx-auto font-outfit"
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.1 }}
@@ -619,7 +619,7 @@ const ResultsPage = () => {
                     <div className="p-4 sm:p-6">
                       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                         <div className="mb-6 md:mb-0 md:mr-6 md:max-w-[50%]">
-                          <h3 className="text-base sm:text-lg font-bold text-primary-600 mb-2">
+                          <h3 className="text-base md:text-lg font-bold text-primary-600 mb-2">
                             Need Help Choosing a Plan?
                           </h3>
                           <p className="text-neutral-700 text-[0.83rem] sm:text-sm md:text-base">
@@ -634,7 +634,7 @@ const ResultsPage = () => {
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             href={`tel:+2547206363638`}
-                            className="w-full lg:w-auto flex items-center justify-center px-4 sm:px-6 py-3 bg-secondary-500 hover:bg-secondary-600 text-white font-medium rounded-lg shadow-md transition-all text-[0.8rem] sm:text-sm md:text-base"
+                            className="w-full lg:w-auto flex items-center justify-center px-4 sm:px-6 py-3 bg-secondary-500 hover:bg-secondary-600 text-white font-medium rounded-lg shadow-md transition-all text-[0.8rem] md:text-sm lg:text-base"
                           >
                             <TbPhoneCall className="mr-2" size={20} /> Call
                             Expert
@@ -647,7 +647,7 @@ const ResultsPage = () => {
                           <motion.button
                             whileHover={{ scale: 1.01 }}
                             whileTap={{ scale: 0.99 }}
-                            className="w-full lg:w-auto flex items-center justify-center px-4 sm:px-6 py-3 border-2 border-secondary-400 text-secondary-700 hover:bg-secondary-100 font-medium rounded-lg transition-all text-[0.8rem] sm:text-sm md:text-base"
+                            className="w-full lg:w-auto flex items-center justify-center px-4 sm:px-6 py-3 border-2 border-secondary-400 text-secondary-700 hover:bg-secondary-100 font-medium rounded-lg transition-all text-[0.8rem] md:text-sm lg:text-base"
                             onClick={handleRequestCallback}
                           >
                             <TbMailFilled className="mr-2" size={20} /> Request
@@ -704,29 +704,29 @@ const ResultsPage = () => {
                 >
                   <div className="p-4 sm:p-6">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                      <div className="mb-6 md:mb-0 md:mr-6 lg:max-w-[50%]">
-                        <h3 className="text-base sm:text-lg font-bold text-primary-600 mb-2">
+                      <div className="mb-4 md:mb-0 md:mr-6 lg:max-w-[50%]">
+                        <h3 className="text-base font-bold text-primary-600 mb-2">
                           Need Help With choosing a Plan?
                         </h3>
-                        <p className="text-neutral-700 text-[0.83rem] sm:text-sm md:text-base">
+                        <p className="text-neutral-700 text-[0.83rem] md:text-sm lg:text-base">
                           Our insurance experts are ready to answer any
                           questions and help you get enrolled into the best
                           option.
                         </p>
                       </div>
-                      <div className="w-full flex flex-col lg:flex-row gap-3">
+                      <div className="w-full flex flex-col lg:flex-row gap-2">
                         <motion.a
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                           href={`tel:+2547206363638`}
-                          className="btn inline-flex items-center justify-center px-4 sm:px-6 py-3 bg-secondary-500 hover:bg-secondary-600 text-white font-medium rounded-lg shadow-md transition-all text-[0.8rem] sm:text-sm md:text-base"
+                          className="btn inline-flex items-center justify-center px-4 sm:px-5 py-2.5 bg-secondary-500 hover:bg-secondary-600 text-white font-medium rounded-lg shadow-md transition-all text-[0.8rem] md:text-sm"
                         >
                           <TbPhoneCall className="mr-2" size={20} /> Call Expert
                         </motion.a>
                         <motion.button
                           whileHover={{ scale: 1.01 }}
                           whileTap={{ scale: 0.99 }}
-                          className="btn inline-flex items-center justify-center px-4 sm:px-6 py-3 border-2 border-secondary-400 text-secondary-700 hover:bg-secondary-100 font-medium rounded-lg transition-all text-[0.8rem] sm:text-sm md:text-base"
+                          className="btn inline-flex items-center justify-center px-4 sm:px-5 py-2.5 border-2 border-secondary-400 text-secondary-700 hover:bg-secondary-100 font-medium rounded-lg transition-all text-[0.8rem] md:text-sm"
                           onClick={handleRequestCallback}
                         >
                           <TbMailFilled className="mr-2" size={20} /> Request

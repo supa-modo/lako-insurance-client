@@ -64,6 +64,7 @@ function App() {
 
                   {/* Admin Login Page (Outside Admin Layout) */}
                   <Route path="/admin" exact element={<AdminLoginPage />} />
+                  <Route path="/login" exact element={<AdminLoginPage />} />
 
                   {/* Admin Routes with Layout */}
                   <Route path="/admin/*" element={<AdminLayout />}>

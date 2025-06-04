@@ -149,7 +149,7 @@ const CallbackModal = ({ isOpen, onClose }) => {
           });
           setSubmitStatus(null);
           onClose();
-        }, 5000);
+        }, 8000);
       } else {
         throw new Error(
           response.message || "Failed to submit callback request"
@@ -166,7 +166,7 @@ const CallbackModal = ({ isOpen, onClose }) => {
       setTimeout(() => {
         setSubmitStatus(null);
         onClose();
-      }, 5000);
+      }, 8000);
     } finally {
       setIsSubmitting(false);
     }
@@ -238,7 +238,7 @@ const CallbackModal = ({ isOpen, onClose }) => {
                   contact you shortly.
                 </p>
                 <div className="text-xs text-gray-500 font-outfit">
-                  This window will close in 5 seconds...
+                  This window will close in 8 seconds...
                 </div>
               </div>
             )}
@@ -250,14 +250,14 @@ const CallbackModal = ({ isOpen, onClose }) => {
                   <TbAlertTriangle className="h-9 w-9 text-white" />
                 </div>
                 <h3 className="text-xl font-bold text-red-700 font-outfit mb-2">
-                  Submission Failed💥
+                  💥 Submission Failed !
                 </h3>
                 <p className="text-gray-600 text-sm font-outfit mb-4">
                   Sorry, there was an error submitting your request. Please try
                   again or contact us directly.
                 </p>
                 <div className="text-xs text-gray-500 font-outfit">
-                  This window will close in 5 seconds...
+                  This window will close in 8 seconds...
                 </div>
               </div>
             )}

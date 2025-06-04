@@ -10,6 +10,7 @@ import {
   TbChevronRight,
   TbAlertTriangle,
   TbMailFilled,
+  TbArrowRight,
 } from "react-icons/tb";
 import { motion } from "framer-motion";
 import { PiPasswordBold, PiPasswordDuotone } from "react-icons/pi";
@@ -224,6 +225,22 @@ const AdminLoginPage = () => {
             admin@lako.com / admin123
           </code>
         </motion.div> */}
+
+        {/* Back to Homepage */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.7 }}
+          className="mt-6 p-4 flex items-center justify-center"
+        >
+          <a
+            href="/"
+            className="flex items-center gap-1 text-secondary-300 text-[0.8rem] md:text-sm font-semibold font-outfit underline underline-offset-4 hover:text-secondary-500 transition-colors"
+          >
+            <span>Back to Homepage</span>
+            <TbArrowRight/>
+          </a>
+        </motion.div>
 
         {/* Footer */}
         <div className="mt-6 text-center text-white/50 text-sm font-outfit">

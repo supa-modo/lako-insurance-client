@@ -320,7 +320,7 @@ const InsuranceCompanyManagementPage = () => {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
             <div>
               <h1 className="text-[1.3rem] font-bold text-secondary-700">
-                Insurance Companies Management
+                Insurance Companies
               </h1>
               <p className="text-gray-500 text-sm">
                 Manage insurance companies and their details
