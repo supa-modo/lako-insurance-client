@@ -16,6 +16,7 @@ import { motion } from "framer-motion";
 import { PiPasswordBold, PiPasswordDuotone } from "react-icons/pi";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useAuth } from "../../context/AuthContext";
+import ForgotPasswordModal from "../../components/auth/ForgotPasswordModal";
 
 const AdminLoginPage = () => {
   const [email, setEmail] = useState("");
@@ -23,6 +24,7 @@ const AdminLoginPage = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -39,7 +41,7 @@ const AdminLoginPage = () => {
       setError(
         err.response?.data?.message ||
           err.response?.data?.error ||
-          "Login failed. Please check your credentials."
+          "Login failed. Please check your credentials & try again."
       );
     } finally {
       setLoading(false);
@@ -82,7 +84,7 @@ const AdminLoginPage = () => {
           <motion.div
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
-            className="mb-4 bg-red-500/40 border border-red-500/50 text-red-200 text-sm lg:text-base mx-2 lg:mx-10 px-6 py-3 rounded-lg flex items-center gap-2"
+            className="mb-4 bg-red-500/40 border border-red-500/50 text-red-200 text-[0.85rem] md:text-sm lg:text-[0.93rem] mx-2 lg:mx-10 px-3 md:px-4 py-2.5 md:py-3 rounded-lg flex items-center gap-2"
           >
             <TbAlertTriangle className="h-5 w-5" />
             <span>{error}</span>
@@ -129,12 +131,13 @@ const AdminLoginPage = () => {
                 >
                   Password
                 </label>
-                <a
-                  href="#"
+                <button
+                  type="button"
+                  onClick={() => setShowForgotPasswordModal(true)}
                   className="text-sm text-neutral-500 hover:text-secondary-300 transition-colors font-outfit"
                 >
                   Forgot password?
-                </a>
+                </button>
               </div>
               <div className="relative">
                 <div className="absolute inset-y-0 z-10 left-4 flex items-center pointer-events-none">
@@ -238,7 +241,7 @@ const AdminLoginPage = () => {
             className="flex items-center gap-1 text-secondary-300 text-[0.8rem] md:text-sm font-semibold font-outfit underline underline-offset-4 hover:text-secondary-500 transition-colors"
           >
             <span>Back to Homepage</span>
-            <TbArrowRight/>
+            <TbArrowRight />
           </a>
         </motion.div>
 
@@ -249,6 +252,12 @@ const AdminLoginPage = () => {
             reserved.
           </p>
         </div>
+
+        {/* Forgot Password Modal */}
+        <ForgotPasswordModal
+          isOpen={showForgotPasswordModal}
+          onClose={() => setShowForgotPasswordModal(false)}
+        />
       </div>
     </div>
   );

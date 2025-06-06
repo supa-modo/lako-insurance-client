@@ -32,6 +32,15 @@ import { NotificationProvider } from "./context/NotificationContext";
 import ServiceDetailsPage from "./pages/public/ServiceDetailsPage";
 import ContactMessagesPage from "./pages/admin/ContactMessagesPage";
 import FeatureFlagDemo from "./components/debug/FeatureFlagDemo";
+import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
+import {
+  SuperAdminDashboard,
+  UserManagement,
+  SecurityAnalytics,
+  AuditLogs,
+  UserActivities,
+  SystemMetrics,
+} from "./components/SuperAdmin";
 
 function App() {
   return (
@@ -63,8 +72,13 @@ function App() {
                   </Route>
 
                   {/* Admin Login Page (Outside Admin Layout) */}
-                  <Route path="/admin" exact element={<AdminLoginPage />} />
-                  <Route path="/login" exact element={<AdminLoginPage />} />
+                  <Route path="/admin/login" exact element={<AdminLoginPage />} />
+
+                  {/* Password Reset Page */}
+                  <Route
+                    path="/reset-password"
+                    element={<ResetPasswordPage />}
+                  />
 
                   {/* Admin Routes with Layout */}
                   <Route path="/admin/*" element={<AdminLayout />}>
@@ -116,6 +130,55 @@ function App() {
                         </AuthGuard>
                       }
                     /> */}
+
+                    <Route
+                      path="superAdmin"
+                      element={
+                        <AuthGuard>
+                          <SuperAdminDashboard />
+                        </AuthGuard>
+                      }
+                    />
+                    <Route
+                      path="users"
+                      element={
+                        <AuthGuard>
+                          <UserManagement />
+                        </AuthGuard>
+                      }
+                    />
+                    <Route
+                      path="security"
+                      element={
+                        <AuthGuard>
+                          <SecurityAnalytics />
+                        </AuthGuard>
+                      }
+                    />
+                    <Route
+                      path="audit-logs"
+                      element={
+                        <AuthGuard>
+                          <AuditLogs />
+                        </AuthGuard>
+                      }
+                    />
+                    <Route
+                      path="user-activities"
+                      element={
+                        <AuthGuard>
+                          <UserActivities />
+                        </AuthGuard>
+                      }
+                    />
+                    <Route
+                      path="system-metrics"
+                      element={
+                        <AuthGuard>
+                          <SystemMetrics />
+                        </AuthGuard>
+                      }
+                    />
                     <Route
                       path="messages"
                       element={

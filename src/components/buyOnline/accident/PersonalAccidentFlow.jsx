@@ -1,41 +1,79 @@
 import React, { useState } from "react";
-import AccidentTypeSelectionStep from "./AccidentTypeSelectionStep";
-import PersonalDetailsForm from "../common/PersonalDetailsForm";
-import DocumentUpload from "../common/DocumentUpload";
-import PaymentConfirmation from "../common/PaymentConfirmation";
-import PurchaseSuccess from "../common/PurchaseSuccess";
-import AccidentPlanSelectionStep from "./AccidentPlanSelectionStep";
+import { motion } from "framer-motion";
+import CoverTypeSelection from "./CoverTypeSelection";
+import PlanSelection from "./PlanSelection";
+import PersonalDetailsForm from "./PersonalDetailsForm";
+import DocumentUpload from "./DocumentUpload";
+import ReviewAndSubmit from "./ReviewAndSubmit";
+import ApplicationSuccess from "../common/ApplicationSuccess";
 
-const PersonalAccidentFlow = ({ currentStep, formData, updateFormData, nextStep, prevStep, resetFlow }) => {
-  const [isComplete, setIsComplete] = useState(false);
+const PersonalAccidentFlow = ({
+  currentStep,
+  formData,
+  updateFormData,
+  nextStep,
+  prevStep,
+  resetFlow,
+}) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submittedApplication, setSubmittedApplication] = useState(null);
 
-  // Handle completion of purchase
-  const handleComplete = () => {
-    setIsComplete(true);
-  };
+  const steps = [
+    {
+      title: "Cover Type",
+      description: "Choose your coverage type",
+      component: "coverType",
+    },
+    {
+      title: "Plan Selection",
+      description: "Compare and select a plan",
+      component: "planSelection",
+    },
+    {
+      title: "Personal Details",
+      description: "Provide your information",
+      component: "personalDetails",
+    },
+    {
+      title: "Documents",
+      description: "Upload required documents",
+      component: "documents",
+    },
+    {
+      title: "Review & Submit",
+      description: "Review and submit application",
+      component: "review",
+    },
+    {
+      title: "Success",
+      description: "Application submitted",
+      component: "success",
+    },
+  ];
 
-  // Determine which documents are required based on accident type
-  const getRequiredDocuments = () => {
-    switch (formData.accidentType) {
-      case "student":
-        return ["nationalId", "kraPin", "passportPhoto"];
-      case "workplace":
-        return ["nationalId", "kraPin", "proofOfAddress"];
-      default:
-        return ["nationalId", "kraPin"];
+  const handleSubmit = async (applicationData) => {
+    setIsSubmitting(true);
+    try {
+      // API call to submit application will go here
+      console.log("Submitting application:", applicationData);
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // Store the submitted application data
+      setSubmittedApplication(applicationData);
+      nextStep(); // Go to success page
+    } catch (error) {
+      console.error("Error submitting application:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  // Render the current step
   const renderStep = () => {
-    if (isComplete) {
-      return <PurchaseSuccess formData={formData} />;
-    }
-
     switch (currentStep) {
       case 1:
         return (
-          <AccidentTypeSelectionStep
+          <CoverTypeSelection
             formData={formData}
             updateFormData={updateFormData}
             nextStep={nextStep}
@@ -44,7 +82,7 @@ const PersonalAccidentFlow = ({ currentStep, formData, updateFormData, nextStep,
         );
       case 2:
         return (
-          <AccidentPlanSelectionStep
+          <PlanSelection
             formData={formData}
             updateFormData={updateFormData}
             nextStep={nextStep}
@@ -67,16 +105,23 @@ const PersonalAccidentFlow = ({ currentStep, formData, updateFormData, nextStep,
             updateFormData={updateFormData}
             nextStep={nextStep}
             prevStep={prevStep}
-            requiredDocuments={getRequiredDocuments()}
           />
         );
       case 5:
         return (
-          <PaymentConfirmation
+          <ReviewAndSubmit
             formData={formData}
             updateFormData={updateFormData}
+            onSubmit={handleSubmit}
             prevStep={prevStep}
-            onComplete={handleComplete}
+            isSubmitting={isSubmitting}
+          />
+        );
+      case 6:
+        return (
+          <ApplicationSuccess
+            applicationData={submittedApplication}
+            onStartNew={resetFlow}
           />
         );
       default:
@@ -85,27 +130,70 @@ const PersonalAccidentFlow = ({ currentStep, formData, updateFormData, nextStep,
   };
 
   return (
-    <div>
-      {/* Progress indicator */}
-      {!isComplete && (
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="text-lg font-semibold text-primary-600">Personal Accident Insurance</h3>
-            <span className="text-sm font-medium text-slate-600">
-              Step {currentStep} of 5
-            </span>
-          </div>
-          
-          <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-primary-600 rounded-full transition-all duration-300"
-              style={{ width: `${(currentStep / 5) * 100}%` }}
-            ></div>
+    <div className="">
+      {/* Progress Bar */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-[1.05rem] md:text-xl font-semibold text-gray-700">
+            Personal Accident Insurance
+          </h2>
+          <span className="text-sm text-gray-500">
+            Step {currentStep} of {steps.length}
+          </span>
+        </div>
+
+        <div className="relative hidden lg:block">
+          <div className="flex items-center">
+            {steps.map((step, index) => (
+              <React.Fragment key={index}>
+                <div className="flex items-center">
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                      index + 1 <= currentStep
+                        ? "bg-primary-600 text-white"
+                        : "bg-gray-200 text-gray-600"
+                    }`}
+                  >
+                    {index + 1}
+                  </div>
+                  <div className="ml-2">
+                    <div
+                      className={`text-sm font-bold ${
+                        index + 1 <= currentStep
+                          ? "text-primary-600"
+                          : "text-gray-700"
+                      }`}
+                    >
+                      {step.title}
+                    </div>
+                    <div className="text-xs text-gray-500 font-medium">
+                      {step.description}
+                    </div>
+                  </div>
+                </div>
+                {index < steps.length - 1 && (
+                  <div
+                    className={`flex-1 h-0.5 mx-4 ${
+                      index + 1 < currentStep ? "bg-primary-600" : "bg-gray-200"
+                    }`}
+                  />
+                )}
+              </React.Fragment>
+            ))}
           </div>
         </div>
-      )}
-      
-      {renderStep()}
+      </div>
+
+      {/* Current Step Content */}
+      <motion.div
+        key={currentStep}
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -20 }}
+        transition={{ duration: 0.3 }}
+      >
+        {renderStep()}
+      </motion.div>
     </div>
   );
 };

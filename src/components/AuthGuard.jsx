@@ -64,7 +64,7 @@ const AuthGuard = ({ children }) => {
 
   if (!user) {
     // Redirect to login with return path
-    return <Navigate to="/admin" state={{ from: location.pathname }} replace />;
+    return <Navigate to="/admin/login" state={{ from: location.pathname }} replace />;
   }
 
   return <>{children}</>;

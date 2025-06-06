@@ -115,6 +115,36 @@ const authService = {
   },
 
   /**
+   * Request password reset
+   * @param {string} email - Email address
+   * @returns {Promise<Object>} Response data
+   */
+  forgotPassword: async (email) => {
+    try {
+      const response = await apiClient.post("/auth/forgot-password", { email });
+      return response.data;
+    } catch (error) {
+      console.error("Error requesting password reset:", error);
+      throw error;
+    }
+  },
+
+  /**
+   * Reset password with token
+   * @param {Object} resetData - Reset data containing token and new password
+   * @returns {Promise<Object>} Response data
+   */
+  resetPassword: async (resetData) => {
+    try {
+      const response = await apiClient.post("/auth/reset-password", resetData);
+      return response.data;
+    } catch (error) {
+      console.error("Error resetting password:", error);
+      throw error;
+    }
+  },
+
+  /**
    * Wrapper for API calls to handle common error scenarios
    * @param {Function} apiCall - The API call function to execute
    * @param {any} defaultValue - Default value to return on error

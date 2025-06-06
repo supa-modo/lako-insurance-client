@@ -182,7 +182,7 @@ const AdminSidebar = ({ collapsed }) => {
 
   const handleLogout = () => {
     logout();
-    navigate("/admin");
+    navigate("/admin/login");
   };
 
   // Reset submenu state when sidebar expands - only "Clients & Leads" is open

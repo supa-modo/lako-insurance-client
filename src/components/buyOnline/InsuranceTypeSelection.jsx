@@ -19,7 +19,7 @@ const insuranceTypes = [
   {
     id: "health",
     name: "Health Insurance",
-    icon: <TbHeartPlus className="h-7 w-7" />,
+    icon: <TbHeartPlus className="h-6 w-6 md:h-7 md:w-7" />,
     description: "Comprehensive medical coverage for individuals and families",
     comingSoon: false,
     popular: true,
@@ -28,16 +28,16 @@ const insuranceTypes = [
   {
     id: "personal-accident",
     name: "Personal Accident",
-    icon: <FaUserInjured className="h-7 w-7" />,
+    icon: <FaUserInjured className="h-6 w-6 md:h-7 md:w-7" />,
     description:
       "Protection against accidents and injuries in various situations",
     comingSoon: false,
-    benefits: ["Workplace Accidents", "Student Cover", "Travel Insurance"],
+    benefits: ["Individual Personal Accidents", "Student Cover"],
   },
   {
     id: "property",
     name: "Business/SMEs Cover",
-    icon: <TbBuildingBank className="h-7 w-7" />,
+    icon: <TbBuildingBank className="h-6 w-6 md:h-7 md:w-7" />,
     description:
       "Comprehensive protection for your business and valuable assets",
     comingSoon: true,
@@ -46,7 +46,7 @@ const insuranceTypes = [
   {
     id: "motor",
     name: "Motor Insurance",
-    icon: <FaCarCrash className="h-7 w-7" />,
+    icon: <FaCarCrash className="h-6 w-6 md:h-7 md:w-7" />,
     description:
       "Reliable coverage for your vehicles and third-party liability",
     comingSoon: true,
@@ -65,18 +65,32 @@ const InsuranceTypeSelection = ({ onSelect, formData }) => {
   };
 
   const getDisabledMessage = (type) => {
-    if (type.comingSoon) return <span className="bg-slate-200 text-slate-600 px-4 py-2 rounded-lg font-semibold text-sm shadow-sm">Coming Soon !</span>;
-    if (isProductionMode()) return <span className="bg-secondary-200 text-primary-600 px-4 py-2 rounded-lg font-semibold text-[0.78rem] md:text-sm shadow-sm">Under Maintenance🛠️</span>;
-    return <span className="bg-slate-200 text-slate-600 px-4 py-2 rounded-lg font-semibold text-sm shadow-sm">Not Available</span>;
+    if (type.comingSoon)
+      return (
+        <span className="bg-slate-200 text-slate-600 px-4 py-2 rounded-lg font-semibold text-sm shadow-sm">
+          Coming Soon !
+        </span>
+      );
+    if (isProductionMode())
+      return (
+        <span className="bg-secondary-200 text-primary-600 px-4 py-2 rounded-lg font-semibold text-[0.78rem] md:text-sm shadow-sm">
+          Under Maintenance🛠️
+        </span>
+      );
+    return (
+      <span className="bg-slate-200 text-slate-600 px-4 py-2 rounded-lg font-semibold text-sm shadow-sm">
+        Not Available
+      </span>
+    );
   };
 
   return (
-    <div>
-      <h2 className="text-xl md:text-2xl font-bold text-primary-600 mb-4">
+    <div className="">
+      <h2 className="text-lg md:text-xl font-bold text-primary-600 mb-2 lg:mb-4">
         Select Insurance Type
       </h2>
 
-      <p className="text-slate-600 text-[0.9rem] md:text-[1.1rem] mb-6">
+      <p className="text-slate-600 text-[0.9rem] md:text-[1.1rem] mb-4 lg:mb-6">
         Select the insurance category you'd like to purchase. We'll guide you
         through the rest of the process.
       </p>
@@ -118,10 +132,10 @@ const InsuranceTypeSelection = ({ onSelect, formData }) => {
               } transition-all duration-300`}
               onClick={() => !isDisabled && onSelect(type.id)}
             >
-              <div className="px-3 py-5 md:p-5">
+              <div className="px-3 py-4 md:p-5">
                 <div className="flex items-center mb-3">
                   <div
-                    className={`flex-shrink-0 h-14 w-14 rounded-full flex items-center justify-center ${
+                    className={`flex-shrink-0 h-12 w-12 md:h-14 md:w-14 rounded-full flex items-center justify-center ${
                       isDisabled
                         ? "bg-slate-200 text-slate-400"
                         : type.id === formData.insuranceType
@@ -204,7 +218,6 @@ const InsuranceTypeSelection = ({ onSelect, formData }) => {
               {isDisabled && (
                 <div className="absolute inset-0 bg-slate-100/50 flex items-center justify-center backdrop-blur-[0.9px]">
                   {getDisabledMessage(type)}
-                  
                 </div>
               )}
             </motion.div>

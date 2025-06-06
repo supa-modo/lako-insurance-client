@@ -16,15 +16,13 @@ import {
 } from "react-icons/tb";
 import { motion, AnimatePresence } from "framer-motion";
 import { PiSignOutBold, PiUserDuotone } from "react-icons/pi";
-import { FiLogOut } from "react-icons/fi";
 import { useAuth } from "../../context/AuthContext";
 
 const AdminHeader = ({ toggleSidebarCollapse, sidebarCollapsed }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth();
 
   const profileRef = useRef(null);
   const notificationRef = useRef(null);
@@ -49,15 +47,11 @@ const AdminHeader = ({ toggleSidebarCollapse, sidebarCollapsed }) => {
     };
   }, []);
 
-  const userData = user?.user || {};
+  const userData = user || {};
   const firstName = userData.firstName || "";
   const lastName = userData.lastName || "";
   const username = firstName && lastName ? `${firstName} ${lastName}` : "Admin";
-
-  const handleLogout = () => {
-    logout();
-    navigate("/admin");
-  };
+  console.log(userData);
 
   // Mock notifications data
   const notifications = [
@@ -276,9 +270,7 @@ const AdminHeader = ({ toggleSidebarCollapse, sidebarCollapsed }) => {
 
           {/* Profile */}
           <div className="relative" ref={profileRef}>
-            <div
-              className="pr-6 text-white/90 flex items-center space-x-3"
-            >
+            <div className="pr-6 text-white/90 flex items-center space-x-3">
               <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white shadow-lg overflow-hidden">
                 {user?.profileImage ? (
                   <img
@@ -291,53 +283,10 @@ const AdminHeader = ({ toggleSidebarCollapse, sidebarCollapsed }) => {
                 )}
               </div>
               <div className="hidden md:block text-left">
-              
                 <div className="text-sm text-white font-medium">{username}</div>
                 <div className="text-xs text-white/50">{userData?.email}</div>
               </div>
-             
             </div>
-
-            {/* Profile dropdown menu */}
-            <AnimatePresence>
-              {isProfileOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  transition={{ duration: 0.15, ease: "easeOut" }}
-                  className="absolute right-0 mt-1 w-60 bg-primary-800/95 backdrop-blur-sm rounded-xl shadow-2xl border border-white/10 overflow-hidden z-50"
-                >
-                  <div className="py-1.5">
-                    <Link
-                      to="/admin/profile"
-                      className=" px-4 py-2 text-sm text-white/80 hover:bg-white/10 transition-colors flex items-center font-lexend"
-                    >
-                      <TbUser className="mr-2.5 h-4 w-4 text-secondary-400" />
-                      Profile Settings
-                    </Link>
-                    <Link
-                      to="/admin/settings"
-                      className=" px-4 py-2 text-sm text-white/80 hover:bg-white/10 transition-colors flex items-center font-lexend"
-                    >
-                      <TbSettings className="mr-2.5 h-4 w-4 text-secondary-400" />
-                      System Settings
-                    </Link>
-                  </div>
-
-                  <div className="border-t border-white/10 mt-1 p-2">
-                    <Link
-                      // to="/admin"
-                      onClick={handleLogout}
-                      className=" px-3 py-2 text-sm text-white/90 bg-white/10 hover:bg-red-500/60 group rounded-lg transition-colors flex items-center font-lexend"
-                    >
-                      <FiLogOut className="mr-2.5 h-5 w-5 text-red-400 group-hover:text-white/90" />
-                      Sign Out
-                    </Link>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </div>
         </div>
       </div>

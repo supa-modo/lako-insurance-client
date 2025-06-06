@@ -13,41 +13,55 @@ const BuyOnlinePage = () => {
   const [formData, setFormData] = useState({
     insuranceType: "",
     coverType: "",
-    age: "",
     selectedPlan: null,
-    personalDetails: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      idNumber: "",
-      dateOfBirth: "",
-      address: "",
-    },
-    documents: {
-      nationalId: null,
-      kraPin: null,
-      medicalReport: null,
-    }
+
+    // Personal Details
+    firstName: "",
+    middleName: "",
+    lastName: "",
+    dateOfBirth: "",
+    gender: "",
+    universityCollegeSchool: "",
+
+    // Proposer Details
+    kraPin: "",
+    idNumber: "",
+    mobileNumber: "",
+    emailAddress: "",
+    postalAddress: "",
+    town: "",
+
+    // Next of Kin & Beneficiary
+    nextOfKinName: "",
+    nextOfKinContacts: "",
+    beneficiaryName: "",
+    beneficiaryContacts: "",
+
+    // Medical History (for accident insurance)
+    previousAccidents: false,
+    physicalDisability: false,
+    chronicIllness: false,
+    medicalHistoryDetails: "",
+
+    // Policy Details
+    policyStartDate: "",
+
+    // Agent Information
+    isAgentPurchase: false,
+    agentName: "",
+    agentEmail: "",
+    agentPhone: "",
+
+    // Documents
+    documents: {},
   });
 
   // Update form data
   const updateFormData = (field, value) => {
-    if (field.includes(".")) {
-      const [section, key] = field.split(".");
-      setFormData(prev => ({
-        ...prev,
-        [section]: {
-          ...prev[section],
-          [key]: value
-        }
-      }));
-    } else {
-      setFormData(prev => ({
-        ...prev,
-        [field]: value
-      }));
-    }
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
   };
 
   // Handle insurance type selection
@@ -59,12 +73,12 @@ const BuyOnlinePage = () => {
 
   // Navigation functions
   const nextStep = () => {
-    setCurrentStep(prev => prev + 1);
+    setCurrentStep((prev) => prev + 1);
     window.scrollTo(0, 0);
   };
 
   const prevStep = () => {
-    setCurrentStep(prev => Math.max(prev - 1, 1));
+    setCurrentStep((prev) => Math.max(prev - 1, 1));
     window.scrollTo(0, 0);
   };
 
@@ -75,12 +89,19 @@ const BuyOnlinePage = () => {
     window.scrollTo(0, 0);
   };
 
+  // Get max steps for current insurance type
+  const getMaxSteps = () => {
+    if (formData.insuranceType === "personal-accident") return 7; // 6 steps + success
+    if (formData.insuranceType === "health") return 6; // 5 steps + success
+    return 1;
+  };
+
   // Determine which flow to show based on selected insurance type and current step
   const renderContent = () => {
     if (currentStep === 1) {
       return (
-        <InsuranceTypeSelection 
-          onSelect={handleInsuranceTypeSelect} 
+        <InsuranceTypeSelection
+          onSelect={handleInsuranceTypeSelect}
           formData={formData}
         />
       );
@@ -138,13 +159,14 @@ const BuyOnlinePage = () => {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="text-sm md:text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed"
             >
-              Purchase premium insurance plans tailored to your specific needs with just a few clicks.
+              Purchase premium insurance plans tailored to your specific needs
+              with just a few clicks.
             </motion.p>
           </div>
 
-          {/* Back button if not on first step */}
-          {currentStep > 1 && (
-            <div className="px-2.5 mb-6">
+          {/* Back button if not on first step and not on success page */}
+          {currentStep > 1 && currentStep < getMaxSteps() && (
+            <div className="px-2.5 mb-3 md:mb-4 lg:mb-6 max-w-[85rem] mx-auto">
               <button
                 onClick={resetFlow}
                 className="inline-flex items-center text-primary-600 hover:text-primary-700 font-medium"
@@ -156,7 +178,7 @@ const BuyOnlinePage = () => {
           )}
 
           {/* Main Content */}
-          <div className="bg-white rounded-2xl md:rounded-xl shadow-sm border border-slate-200 px-4 py-6 md:p-8">
+          <div className="bg-white max-w-[85rem] mx-auto rounded-2xl lg:rounded-xl shadow-sm border border-slate-200 px-2.5 py-5 md:p-5 lg:p-8">
             {renderContent()}
           </div>
         </div>

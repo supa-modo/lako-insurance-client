@@ -48,6 +48,10 @@ const HomePage = () => {
       description:
         "We can help you with that. With our 10 years plus of experience dealing with insurance options, we've got you covered.",
     },
+    {
+      image: "/workplaceaccident.png",
+       
+    },
   ];
 
   // Auto-rotate hero slider

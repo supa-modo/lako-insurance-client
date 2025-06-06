@@ -4,10 +4,12 @@ import axios from "axios";
 export const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 // Enable mock data based on environment variable
-export const ENABLE_MOCK_DATA = import.meta.env.VITE_ENABLE_MOCK_DATA === "true";
+export const ENABLE_MOCK_DATA =
+  import.meta.env.VITE_ENABLE_MOCK_DATA === "true";
 
 // Enable debug logging based on environment variable
-export const ENABLE_DEBUG_LOGGING = import.meta.env.VITE_ENABLE_DEBUG_LOGGING === "true";
+export const ENABLE_DEBUG_LOGGING =
+  import.meta.env.VITE_ENABLE_DEBUG_LOGGING === "true";
 
 // Token storage keys
 export const TOKEN_KEY = "kola_auth_token";
@@ -35,7 +37,9 @@ apiClient.interceptors.request.use(
 
     // Debug logging
     if (ENABLE_DEBUG_LOGGING) {
-      console.debug(`API Request: ${config.method?.toUpperCase()} ${config.url}`);
+      console.debug(
+        `API Request: ${config.method?.toUpperCase()} ${config.url}`
+      );
     }
 
     return config;
@@ -61,7 +65,9 @@ apiClient.interceptors.response.use(
       // that falls out of the range of 2xx
       if (ENABLE_DEBUG_LOGGING) {
         console.error(
-          `API Error ${error.response.status}: ${error.response.data?.message || JSON.stringify(error.response.data)}`
+          `API Error ${error.response.status}: ${
+            error.response.data?.message || JSON.stringify(error.response.data)
+          }`
         );
       }
 
@@ -70,10 +76,10 @@ apiClient.interceptors.response.use(
         // Clear auth data from localStorage
         localStorage.removeItem(TOKEN_KEY);
         localStorage.removeItem(USER_KEY);
-        
+
         // Redirect to login page if not already there
-        if (!window.location.pathname.includes('/login')) {
-          window.location.href = '/login';
+        if (!window.location.pathname.includes("/admin/login")) {
+          window.location.href = "/admin/login";
         }
       }
     } else if (error.request) {
@@ -99,16 +105,16 @@ export const safeApiCall = async (apiCall, defaultValue = null) => {
     return result;
   } catch (error) {
     console.error("API call failed:", error);
-    
+
     // If we have a response with validation errors, return them properly
     if (error.response && error.response.data) {
       return {
         success: false,
-        message: error.response.data.message || 'Operation failed',
+        message: error.response.data.message || "Operation failed",
         errors: error.response.data.errors || [],
       };
     }
-    
+
     return defaultValue;
   }
 };

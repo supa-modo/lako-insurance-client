@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     // Only initialize if we're on an admin route or if there's a token
     const currentPath = window.location.pathname;
-    const isAdminRoute = currentPath.startsWith("/admin");
+    const isAdminRoute = currentPath.startsWith("/admin/login");
     const hasToken = authService.isAuthenticated();
 
     if (isAdminRoute || hasToken) {

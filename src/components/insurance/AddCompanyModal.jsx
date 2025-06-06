@@ -10,6 +10,8 @@ import {
   TbCheck,
   TbAlertCircle,
   TbStar,
+  TbMailFilled,
+  TbPhoneCall,
 } from "react-icons/tb";
 import insuranceService from "../../services/insuranceService";
 
@@ -249,7 +251,7 @@ const AddCompanyModal = ({ onClose, onSave }) => {
               {/* Contact Information */}
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <TbMail size={20} className="mr-2 text-primary-600" />
+                  <TbMailFilled size={20} className="mr-2 text-primary-600" />
                   Contact Information
                 </h3>
 
@@ -260,7 +262,7 @@ const AddCompanyModal = ({ onClose, onSave }) => {
                       Contact Email <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
-                      <TbMail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <TbMailFilled className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                       <input
                         type="email"
                         name="contactEmail"
@@ -287,7 +289,7 @@ const AddCompanyModal = ({ onClose, onSave }) => {
                       Contact Phone <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
-                      <TbPhone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <TbPhoneCall className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                       <input
                         type="tel"
                         name="contactPhone"

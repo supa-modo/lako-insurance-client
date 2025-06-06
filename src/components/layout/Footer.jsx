@@ -56,7 +56,7 @@ const Footer = () => {
       { label: "Property Insurance", to: "/services/property-insurance" },
       { label: "Health Insurance", to: "/services/health-insurance" },
       { label: "Seniors Cover", to: "/services/seniors-cover" },
-      { label: "Admin Login", to: "/admin" },
+      { label: "Admin Login", to: "/admin/login" },
     ],
   };
 
