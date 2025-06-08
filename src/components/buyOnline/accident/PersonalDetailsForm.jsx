@@ -12,7 +12,12 @@ import {
   TbHeart,
   TbAlertCircle,
   TbInfoCircle,
+  TbClockHeart,
+  TbActivity,
+  TbPhoneCall,
 } from "react-icons/tb";
+import { MdEmergency } from "react-icons/md";
+import { PiUserDuotone } from "react-icons/pi";
 
 const PersonalDetailsForm = ({
   formData,
@@ -26,7 +31,7 @@ const PersonalDetailsForm = ({
   const sections = [
     {
       title: "Personal Information",
-      icon: <TbUser className="w-5 h-5" />,
+      icon: <PiUserDuotone className="w-5 h-5" />,
       fields: [
         "firstName",
         "middleName",
@@ -34,12 +39,6 @@ const PersonalDetailsForm = ({
         "dateOfBirth",
         "gender",
         "universityCollegeSchool",
-      ],
-    },
-    {
-      title: "Contact Details",
-      icon: <TbMail className="w-5 h-5" />,
-      fields: [
         "kraPin",
         "idNumber",
         "mobileNumber",
@@ -50,7 +49,7 @@ const PersonalDetailsForm = ({
     },
     {
       title: "Emergency Contacts",
-      icon: <TbUsers className="w-5 h-5" />,
+      icon: <MdEmergency className="w-5 h-5" />,
       fields: [
         "nextOfKinName",
         "nextOfKinContacts",
@@ -60,7 +59,7 @@ const PersonalDetailsForm = ({
     },
     {
       title: "Medical History",
-      icon: <TbHeart className="w-5 h-5" />,
+      icon: <TbActivity className="w-5 h-5" />,
       fields: [
         "previousAccidents",
         "physicalDisability",
@@ -122,9 +121,24 @@ const PersonalDetailsForm = ({
         } else {
           const birthDate = new Date(value);
           const today = new Date();
-          const age = today.getFullYear() - birthDate.getFullYear();
-          if (age < 18 || age > 70) {
-            newErrors[name] = "Age must be between 18 and 70 years";
+
+          // Calculate age more accurately
+          let age = today.getFullYear() - birthDate.getFullYear();
+          const monthDiff = today.getMonth() - birthDate.getMonth();
+
+          if (
+            monthDiff < 0 ||
+            (monthDiff === 0 && today.getDate() < birthDate.getDate())
+          ) {
+            age--;
+          }
+
+          if (birthDate >= today) {
+            newErrors[name] = "Date of birth cannot be in the future";
+          } else if (age < 18) {
+            newErrors[name] = "You must be at least 18 years old";
+          } else if (age > 70) {
+            newErrors[name] = "Maximum age for coverage is 70 years";
           } else {
             delete newErrors[name];
           }
@@ -143,8 +157,11 @@ const PersonalDetailsForm = ({
         } else {
           const startDate = new Date(value);
           const today = new Date();
+          today.setHours(0, 0, 0, 0); // Reset time to start of day for comparison
+
           if (startDate < today) {
-            newErrors[name] = "Policy start date cannot be in the past";
+            newErrors[name] =
+              "Policy start date must be today or in the future";
           } else {
             delete newErrors[name];
           }
@@ -178,6 +195,36 @@ const PersonalDetailsForm = ({
   };
 
   const handleNextSection = () => {
+    // Validate current section before proceeding
+    const currentSectionFields = sections[currentSection].fields;
+    let hasErrors = false;
+
+    // Check required fields in current section
+    const requiredFieldsInSection = currentSectionFields.filter((field) => {
+      const isRequired = [
+        "firstName",
+        "lastName",
+        "dateOfBirth",
+        "gender",
+        "idNumber",
+        "mobileNumber",
+        "emailAddress",
+        "policyStartDate",
+      ].includes(field);
+      return isRequired;
+    });
+
+    requiredFieldsInSection.forEach((field) => {
+      if (!validateField(field, formData[field])) {
+        hasErrors = true;
+      }
+    });
+
+    if (hasErrors) {
+      // Stay on current section and show errors
+      return;
+    }
+
     if (currentSection < sections.length - 1) {
       setCurrentSection(currentSection + 1);
     } else {
@@ -207,6 +254,8 @@ const PersonalDetailsForm = ({
     ];
 
     let isValid = true;
+    const newErrors = { ...errors };
+
     requiredFields.forEach((field) => {
       if (!validateField(field, formData[field])) {
         isValid = false;
@@ -220,6 +269,15 @@ const PersonalDetailsForm = ({
       for (let i = 0; i < sections.length; i++) {
         if (!validateSection(i)) {
           setCurrentSection(i);
+          // Show a notification about errors in this section
+          const sectionErrors = sections[i].fields
+            .filter((field) => errors[field])
+            .map((field) => errors[field]);
+
+          if (sectionErrors.length > 0) {
+            // You could add a toast notification here if needed
+            console.log(`Please complete the ${sections[i].title} section`);
+          }
           break;
         }
       }
@@ -227,17 +285,17 @@ const PersonalDetailsForm = ({
   };
 
   const renderPersonalInfo = () => (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="space-y-4 lg:space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3   gap-4 md:gap-5 lg:gap-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-neutral-800/90 mb-2">
             First Name *
           </label>
           <input
             type="text"
             value={formData.firstName || ""}
             onChange={(e) => handleInputChange("firstName", e.target.value)}
-            className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 ${
+            className={`w-full px-3 py-2.5 bg-neutral-100 border rounded-lg text-gray-600 font-medium placeholder:font-normal focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 ${
               errors.firstName ? "border-red-500" : "border-gray-300"
             }`}
             placeholder="Enter your first name"
@@ -248,27 +306,27 @@ const PersonalDetailsForm = ({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-neutral-800/90 mb-2">
             Middle Name
           </label>
           <input
             type="text"
             value={formData.middleName || ""}
             onChange={(e) => handleInputChange("middleName", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full px-3 py-2.5 bg-neutral-100 border border-gray-300 rounded-lg text-gray-600 font-medium placeholder:font-normal focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
             placeholder="Enter your middle name (optional)"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-neutral-800/90 mb-2">
             Last Name *
           </label>
           <input
             type="text"
             value={formData.lastName || ""}
             onChange={(e) => handleInputChange("lastName", e.target.value)}
-            className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 ${
+            className={`w-full px-3 py-2.5 bg-neutral-100 border rounded-lg text-gray-600 font-medium placeholder:font-normal focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 ${
               errors.lastName ? "border-red-500" : "border-gray-300"
             }`}
             placeholder="Enter your last name"
@@ -279,30 +337,35 @@ const PersonalDetailsForm = ({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-neutral-800/90 mb-2">
             Date of Birth *
           </label>
-          <input
-            type="date"
-            value={formData.dateOfBirth || ""}
-            onChange={(e) => handleInputChange("dateOfBirth", e.target.value)}
-            className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 ${
-              errors.dateOfBirth ? "border-red-500" : "border-gray-300"
-            }`}
-          />
+          <div className="relative">
+            <TbCalendar className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 w-5 h-5 pointer-events-none" />
+
+            <input
+              type="date"
+              value={formData.dateOfBirth || ""}
+              onChange={(e) => handleInputChange("dateOfBirth", e.target.value)}
+              className={`w-full px-3 py-2.5 pr-10 decoration-slate-600 bg-neutral-100 border border-gray-300 rounded-lg text-gray-600 font-medium placeholder:font-normal focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:w-10 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer ${
+                errors.dateOfBirth ? "border-red-500" : "border-gray-300"
+              }`}
+            />
+          </div>
+
           {errors.dateOfBirth && (
             <p className="text-red-500 text-xs mt-1">{errors.dateOfBirth}</p>
           )}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-neutral-800/90 mb-2">
             Gender *
           </label>
           <select
             value={formData.gender || ""}
             onChange={(e) => handleInputChange("gender", e.target.value)}
-            className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 ${
+            className={`w-full px-3 py-2.5 bg-neutral-100 border rounded-lg text-gray-600 font-medium placeholder:font-normal focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 ${
               errors.gender ? "border-red-500" : "border-gray-300"
             }`}
           >
@@ -318,7 +381,7 @@ const PersonalDetailsForm = ({
 
         {formData.coverType === "student" && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-neutral-800/90 mb-2">
               University/College/School
             </label>
             <input
@@ -327,20 +390,16 @@ const PersonalDetailsForm = ({
               onChange={(e) =>
                 handleInputChange("universityCollegeSchool", e.target.value)
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-3 py-2.5 bg-neutral-100 border border-gray-300 rounded-lg text-gray-600 font-medium placeholder:font-normal focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
               placeholder="Enter your institution name"
             />
           </div>
         )}
       </div>
-    </div>
-  );
 
-  const renderContactDetails = () => (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-neutral-800/90 mb-2">
             KRA PIN No.
           </label>
           <input
@@ -349,20 +408,20 @@ const PersonalDetailsForm = ({
             onChange={(e) =>
               handleInputChange("kraPin", e.target.value.toUpperCase())
             }
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full px-3 py-2.5 bg-neutral-100 border border-gray-300 rounded-lg text-gray-600 font-medium placeholder:font-normal focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
             placeholder="Enter your KRA PIN"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-neutral-800/90 mb-2">
             ID No/Passport No. *
           </label>
           <input
             type="text"
             value={formData.idNumber || ""}
             onChange={(e) => handleInputChange("idNumber", e.target.value)}
-            className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 ${
+            className={`w-full px-3 py-2.5 bg-neutral-100 border rounded-lg text-gray-600 font-medium placeholder:font-normal focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 ${
               errors.idNumber ? "border-red-500" : "border-gray-300"
             }`}
             placeholder="Enter your ID or passport number"
@@ -373,14 +432,14 @@ const PersonalDetailsForm = ({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-neutral-800/90 mb-2">
             Mobile No. *
           </label>
           <input
             type="tel"
             value={formData.mobileNumber || ""}
             onChange={(e) => handleInputChange("mobileNumber", e.target.value)}
-            className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 ${
+            className={`w-full px-3 py-2.5 bg-neutral-100 border rounded-lg text-gray-600 font-medium placeholder:font-normal focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 ${
               errors.mobileNumber ? "border-red-500" : "border-gray-300"
             }`}
             placeholder="e.g., +254712345678"
@@ -391,14 +450,14 @@ const PersonalDetailsForm = ({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-neutral-800/90 mb-2">
             Email Address *
           </label>
           <input
             type="email"
             value={formData.emailAddress || ""}
             onChange={(e) => handleInputChange("emailAddress", e.target.value)}
-            className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 ${
+            className={`w-full px-3 py-2.5 bg-neutral-100 border rounded-lg text-gray-600 font-medium placeholder:font-normal focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 ${
               errors.emailAddress ? "border-red-500" : "border-gray-300"
             }`}
             placeholder="Enter your email address"
@@ -409,27 +468,27 @@ const PersonalDetailsForm = ({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Postal Address: P.O. Box
+          <label className="block text-sm font-semibold text-neutral-800/90 mb-2">
+            Postal Address
           </label>
           <input
             type="text"
             value={formData.postalAddress || ""}
             onChange={(e) => handleInputChange("postalAddress", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-            placeholder="e.g., P.O. Box 12345"
+            className="w-full px-3 py-2.5 bg-neutral-100 border border-gray-300 rounded-lg text-gray-600 font-medium placeholder:font-normal focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+            placeholder="e.g., P.O. Box 12345 - 00100"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-neutral-800/90 mb-2">
             Town
           </label>
           <input
             type="text"
             value={formData.town || ""}
             onChange={(e) => handleInputChange("town", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full px-3 py-2.5 bg-neutral-100 border border-gray-300 rounded-lg text-gray-600 font-medium placeholder:font-normal focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
             placeholder="Enter your town/city"
           />
         </div>
@@ -441,20 +500,20 @@ const PersonalDetailsForm = ({
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-neutral-800/90 mb-2">
             Next of Kin Name
           </label>
           <input
             type="text"
             value={formData.nextOfKinName || ""}
             onChange={(e) => handleInputChange("nextOfKinName", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full px-3 py-2.5 bg-neutral-100 border border-gray-300 rounded-lg text-gray-600 font-medium placeholder:font-normal focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
             placeholder="Enter next of kin full name"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-neutral-800/90 mb-2">
             Next of Kin Contacts
           </label>
           <input
@@ -463,13 +522,13 @@ const PersonalDetailsForm = ({
             onChange={(e) =>
               handleInputChange("nextOfKinContacts", e.target.value)
             }
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full px-3 py-2.5 bg-neutral-100 border border-gray-300 rounded-lg text-gray-600 font-medium placeholder:font-normal focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
             placeholder="Phone number or email"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-neutral-800/90 mb-2">
             Beneficiary Name
           </label>
           <input
@@ -478,13 +537,13 @@ const PersonalDetailsForm = ({
             onChange={(e) =>
               handleInputChange("beneficiaryName", e.target.value)
             }
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full px-3 py-2.5 bg-neutral-100 border border-gray-300 rounded-lg text-gray-600 font-medium placeholder:font-normal focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
             placeholder="Enter beneficiary full name"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-neutral-800/90 mb-2">
             Beneficiary Contacts
           </label>
           <input
@@ -493,7 +552,7 @@ const PersonalDetailsForm = ({
             onChange={(e) =>
               handleInputChange("beneficiaryContacts", e.target.value)
             }
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full px-3 py-2.5 bg-neutral-100 border border-gray-300 rounded-lg text-gray-600 font-medium placeholder:font-normal focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
             placeholder="Phone number or email"
           />
         </div>
@@ -505,7 +564,7 @@ const PersonalDetailsForm = ({
     <div className="space-y-6">
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
         <div className="flex items-start">
-          <TbAlertCircle className="w-5 h-5 text-yellow-600 mr-3 mt-0.5" />
+          <TbAlertCircle className="w-6 h-6 text-yellow-600 mr-3 mt-0.5" />
           <div className="text-sm text-yellow-800">
             <p className="font-medium">Medical History Declaration</p>
             <p>
@@ -518,91 +577,211 @@ const PersonalDetailsForm = ({
 
       <div className="space-y-4">
         <div className="border border-gray-200 rounded-lg p-4">
-          <label className="block text-sm font-medium text-gray-700 mb-3">
+          <label className="block text-sm md:text-[0.9rem] lg:text-base font-medium text-gray-700 mb-3">
             Have you suffered any accident(s) previously? *
           </label>
           <div className="flex space-x-4">
             <label className="flex items-center">
-              <input
-                type="radio"
-                name="previousAccidents"
-                value="true"
-                checked={formData.previousAccidents === true}
-                onChange={(e) => handleInputChange("previousAccidents", true)}
-                className="mr-2"
-              />
-              Yes
+              <div
+                className={`relative flex items-center justify-center h-[1.1rem] w-[1.1rem] rounded-md border focus:outline-none ${
+                  formData.previousAccidents === true
+                    ? "border-primary-500 bg-primary-50"
+                    : "border-neutral-400"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="previousAccidents"
+                  value="true"
+                  checked={formData.previousAccidents === true}
+                  onChange={(e) => handleInputChange("previousAccidents", true)}
+                  className="absolute opacity-0 h-full w-full cursor-pointer"
+                />
+                {formData.previousAccidents === true && (
+                  <div className="h-2 w-2 rounded-sm bg-primary-500"></div>
+                )}
+              </div>
+              <span
+                className={`ml-2 text-sm md:text-[0.9rem] lg:text-base ${
+                  formData.previousAccidents === true
+                    ? "text-primary-700"
+                    : "text-gray-600"
+                } font-medium capitalize`}
+              >
+                Yes
+              </span>
             </label>
             <label className="flex items-center">
-              <input
-                type="radio"
-                name="previousAccidents"
-                value="false"
-                checked={formData.previousAccidents === false}
-                onChange={(e) => handleInputChange("previousAccidents", false)}
-                className="mr-2"
-              />
-              No
+              <div
+                className={`relative flex items-center justify-center h-[1.1rem] w-[1.1rem] rounded-md border focus:outline-none ${
+                  formData.previousAccidents === false
+                    ? "border-primary-500 bg-primary-50"
+                    : "border-neutral-400"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="previousAccidents"
+                  value="false"
+                  checked={formData.previousAccidents === false}
+                  onChange={(e) =>
+                    handleInputChange("previousAccidents", false)
+                  }
+                  className="absolute opacity-0 h-full w-full cursor-pointer"
+                />
+                {formData.previousAccidents === false && (
+                  <div className="h-2 w-2 rounded-sm bg-primary-500"></div>
+                )}
+              </div>
+              <span
+                className={`ml-2 text-sm md:text-[0.9rem] lg:text-base ${
+                  formData.previousAccidents === false
+                    ? "text-primary-700 "
+                    : "text-gray-600"
+                } font-medium capitalize`}
+              >
+                No
+              </span>
             </label>
           </div>
         </div>
 
         <div className="border border-gray-200 rounded-lg p-4">
           <label className="block text-sm font-medium text-gray-700 mb-3">
-            Have you suffered any physical disability? *
+            Do you have any physical disability? *
           </label>
           <div className="flex space-x-4">
             <label className="flex items-center">
-              <input
-                type="radio"
-                name="physicalDisability"
-                value="true"
-                checked={formData.physicalDisability === true}
-                onChange={(e) => handleInputChange("physicalDisability", true)}
-                className="mr-2"
-              />
-              Yes
+              <div
+                className={`relative flex items-center justify-center h-[1.1rem] w-[1.1rem] rounded-md border focus:outline-none ${
+                  formData.physicalDisability === true
+                    ? "border-primary-500 bg-primary-50"
+                    : "border-neutral-400"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="physicalDisability"
+                  value="true"
+                  checked={formData.physicalDisability === true}
+                  onChange={(e) =>
+                    handleInputChange("physicalDisability", true)
+                  }
+                  className="absolute opacity-0 h-full w-full cursor-pointer"
+                />
+                {formData.physicalDisability === true && (
+                  <div className="h-2 w-2 rounded-sm bg-primary-500"></div>
+                )}
+              </div>
+              <span
+                className={`ml-2 text-sm md:text-[0.9rem] lg:text-base ${
+                  formData.physicalDisability === true
+                    ? "text-primary-700"
+                    : "text-gray-600"
+                } font-medium capitalize`}
+              >
+                Yes
+              </span>
             </label>
             <label className="flex items-center">
-              <input
-                type="radio"
-                name="physicalDisability"
-                value="false"
-                checked={formData.physicalDisability === false}
-                onChange={(e) => handleInputChange("physicalDisability", false)}
-                className="mr-2"
-              />
-              No
+              <div
+                className={`relative flex items-center justify-center h-[1.1rem] w-[1.1rem] rounded-md border focus:outline-none ${
+                  formData.physicalDisability === false
+                    ? "border-primary-500 bg-primary-50"
+                    : "border-neutral-400"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="physicalDisability"
+                  value="false"
+                  checked={formData.physicalDisability === false}
+                  onChange={(e) =>
+                    handleInputChange("physicalDisability", false)
+                  }
+                  className="absolute opacity-0 h-full w-full cursor-pointer"
+                />
+                {formData.physicalDisability === false && (
+                  <div className="h-2 w-2 rounded-sm bg-primary-500"></div>
+                )}
+              </div>
+              <span
+                className={`ml-2 text-sm md:text-[0.9rem] lg:text-base ${
+                  formData.physicalDisability === false
+                    ? "text-primary-700"
+                    : "text-gray-600"
+                } font-medium capitalize`}
+              >
+                No
+              </span>
             </label>
           </div>
         </div>
 
         <div className="border border-gray-200 rounded-lg p-4">
           <label className="block text-sm font-medium text-gray-700 mb-3">
-            Have you suffered from chronic or recurring illness? *
+            Do you have any chronic or recurring illness? *
           </label>
           <div className="flex space-x-4">
             <label className="flex items-center">
-              <input
-                type="radio"
-                name="chronicIllness"
-                value="true"
-                checked={formData.chronicIllness === true}
-                onChange={(e) => handleInputChange("chronicIllness", true)}
-                className="mr-2"
-              />
-              Yes
+              <div
+                className={`relative flex items-center justify-center h-[1.1rem] w-[1.1rem] rounded-md border focus:outline-none ${
+                  formData.chronicIllness === true
+                    ? "border-primary-500 bg-primary-50"
+                    : "border-neutral-400"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="chronicIllness"
+                  value="true"
+                  checked={formData.chronicIllness === true}
+                  onChange={(e) => handleInputChange("chronicIllness", true)}
+                  className="absolute opacity-0 h-full w-full cursor-pointer"
+                />
+                {formData.chronicIllness === true && (
+                  <div className="h-2 w-2 rounded-sm bg-primary-500"></div>
+                )}
+              </div>
+              <span
+                className={`ml-2 text-sm md:text-[0.9rem] lg:text-base ${
+                  formData.chronicIllness === true
+                    ? "text-primary-700"
+                    : "text-gray-600"
+                } font-medium capitalize`}
+              >
+                Yes
+              </span>
             </label>
             <label className="flex items-center">
-              <input
-                type="radio"
-                name="chronicIllness"
-                value="false"
-                checked={formData.chronicIllness === false}
-                onChange={(e) => handleInputChange("chronicIllness", false)}
-                className="mr-2"
-              />
-              No
+              <div
+                className={`relative flex items-center justify-center h-[1.1rem] w-[1.1rem] rounded-md border focus:outline-none ${
+                  formData.chronicIllness === false
+                    ? "border-primary-500 bg-primary-50"
+                    : "border-neutral-400"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="chronicIllness"
+                  value="false"
+                  checked={formData.chronicIllness === false}
+                  onChange={(e) => handleInputChange("chronicIllness", false)}
+                  className="absolute opacity-0 h-full w-full cursor-pointer"
+                />
+                {formData.chronicIllness === false && (
+                  <div className="h-2 w-2 rounded-sm bg-primary-500"></div>
+                )}
+              </div>
+              <span
+                className={`ml-2 text-sm md:text-[0.9rem] lg:text-base ${
+                  formData.chronicIllness === false
+                    ? "text-primary-700"
+                    : "text-gray-600"
+                } font-medium capitalize`}
+              >
+                No
+              </span>
             </label>
           </div>
         </div>
@@ -620,7 +799,7 @@ const PersonalDetailsForm = ({
                 handleInputChange("medicalHistoryDetails", e.target.value)
               }
               rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-3 py-2.5 bg-neutral-100 border border-gray-300 rounded-lg text-gray-600 font-medium placeholder:font-normal focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
               placeholder="Provide detailed information about your medical history..."
             />
           </div>
@@ -632,21 +811,24 @@ const PersonalDetailsForm = ({
   const renderPolicyDetails = () => (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
+        <div className="relative">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             When would you like the policy to begin? *
           </label>
-          <input
-            type="date"
-            value={formData.policyStartDate || ""}
-            onChange={(e) =>
-              handleInputChange("policyStartDate", e.target.value)
-            }
-            min={new Date().toISOString().split("T")[0]}
-            className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 ${
-              errors.policyStartDate ? "border-red-500" : "border-gray-300"
-            }`}
-          />
+          <div className="relative">
+            <input
+              type="date"
+              value={formData.policyStartDate || ""}
+              onChange={(e) =>
+                handleInputChange("policyStartDate", e.target.value)
+              }
+              min={new Date().toISOString().split("T")[0]}
+              className={`w-full px-3 py-2.5 pr-10 decoration-slate-600 bg-neutral-100 border border-gray-300 rounded-lg text-gray-600 font-medium placeholder:font-normal focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:w-10 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer ${
+                errors.policyStartDate ? "border-red-500" : "border-gray-300"
+              }`}
+            />
+            <TbCalendar className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 w-5 h-5 pointer-events-none" />
+          </div>
           {errors.policyStartDate && (
             <p className="text-red-500 text-xs mt-1">
               {errors.policyStartDate}
@@ -657,80 +839,7 @@ const PersonalDetailsForm = ({
             policy will commence on the payment date.
           </p>
         </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-3">
-            Purchasing through an agent? *
-          </label>
-          <div className="flex space-x-4">
-            <label className="flex items-center">
-              <input
-                type="radio"
-                name="isAgentPurchase"
-                value="true"
-                checked={formData.isAgentPurchase === true}
-                onChange={(e) => handleInputChange("isAgentPurchase", true)}
-                className="mr-2"
-              />
-              Yes
-            </label>
-            <label className="flex items-center">
-              <input
-                type="radio"
-                name="isAgentPurchase"
-                value="false"
-                checked={formData.isAgentPurchase === false}
-                onChange={(e) => handleInputChange("isAgentPurchase", false)}
-                className="mr-2"
-              />
-              No
-            </label>
-          </div>
-        </div>
       </div>
-
-      {formData.isAgentPurchase && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 p-4 bg-gray-50 rounded-lg">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Agent Name
-            </label>
-            <input
-              type="text"
-              value={formData.agentName || ""}
-              onChange={(e) => handleInputChange("agentName", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              placeholder="Enter agent name"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Agent Email
-            </label>
-            <input
-              type="email"
-              value={formData.agentEmail || ""}
-              onChange={(e) => handleInputChange("agentEmail", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              placeholder="Enter agent email"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Agent Phone
-            </label>
-            <input
-              type="tel"
-              value={formData.agentPhone || ""}
-              onChange={(e) => handleInputChange("agentPhone", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              placeholder="Enter agent phone"
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 
@@ -739,12 +848,10 @@ const PersonalDetailsForm = ({
       case 0:
         return renderPersonalInfo();
       case 1:
-        return renderContactDetails();
-      case 2:
         return renderEmergencyContacts();
-      case 3:
+      case 2:
         return renderMedicalHistory();
-      case 4:
+      case 3:
         return renderPolicyDetails();
       default:
         return null;
@@ -752,35 +859,71 @@ const PersonalDetailsForm = ({
   };
 
   return (
-    <div className="space-y-8">
-      <div className="text-center mb-8">
-        <h3 className="text-2xl font-bold text-gray-900 mb-2">
-          Personal Details
+    <div className="space-y-6 md:space-y-8">
+      <div className="text-center ">
+        <h3 className="flex items-center justify-center text-lg md:text-xl lg:text-2xl font-bold text-primary-700/90 mb-2">
+          <span className="block lg:hidden mr-1">3.</span>{" "}
+          <span className="">Your Personal Details</span>
         </h3>
-        <p className="text-gray-600 max-w-2xl mx-auto">
+        <p className="text-gray-600 text-sm md:text-base max-w-2xl mx-auto">
           Please provide your personal information to complete your insurance
           application.
         </p>
       </div>
 
+      {/* Error Summary */}
+      {Object.keys(errors).length > 0 && (
+        <div className="mb-6 py-3 px-2 md:p-4 bg-red-50 border border-red-200 rounded-lg">
+          <div className="flex items-start">
+            <TbAlertCircle className="text-red-600 h-5 w-5 mr-1.5 md:mr-3 flex-shrink-0" />
+            <div>
+              <h4 className="text-red-800 font-medium text-sm mb-1.5 md:mb-2">
+                Please correct the following errors to continue:
+              </h4>
+              <ul className="text-red-700 text-sm space-y-1">
+                {Object.entries(errors).map(([fieldName, error]) => (
+                  <li key={fieldName} className="flex items-start">
+                    <span className="w-1.5 h-1.5 bg-red-600 rounded-full mr-2 mt-2 flex-shrink-0"></span>
+                    <span>
+                      <strong className="capitalize">
+                        {fieldName.replace(/([A-Z])/g, " $1").toLowerCase()}:
+                      </strong>{" "}
+                      {error}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Section Navigation */}
-      <div className="flex flex-wrap justify-center gap-2 mb-8">
-        {sections.map((section, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentSection(index)}
-            className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-              index === currentSection
-                ? "bg-primary-600 text-white"
-                : index < currentSection
-                ? "bg-green-100 text-green-700"
-                : "bg-gray-100 text-gray-600"
-            }`}
-          >
-            {section.icon}
-            <span className="ml-2 hidden sm:inline">{section.title}</span>
-          </button>
-        ))}
+      <div className="flex flex-wrap justify-center gap-2 mb-4 md:mb-6 lg:mb-8">
+        {sections.map((section, index) => {
+          const sectionHasErrors = section.fields.some(
+            (field) => errors[field]
+          );
+          return (
+            <button
+              key={index}
+              onClick={() => setCurrentSection(index)}
+              className={`flex items-center px-4 md:px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                index === currentSection
+                  ? "bg-primary-600 text-white"
+                  : sectionHasErrors
+                  ? "bg-red-100 text-red-700 border border-red-300"
+                  : index < currentSection
+                  ? "bg-green-100 text-green-700"
+                  : "bg-gray-200 text-gray-600"
+              }`}
+            >
+              {sectionHasErrors && <TbAlertCircle className="w-4 h-4 mr-1" />}
+              {section.icon}
+              <span className="ml-2 hidden md:inline">{section.title}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Current Section Content */}
@@ -789,12 +932,12 @@ const PersonalDetailsForm = ({
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: -20 }}
-        transition={{ duration: 0.3 }}
-        className="bg-white rounded-lg border border-gray-200 p-6"
+        transition={{ duration: 0.5 }}
+        className="bg-white lg:rounded-xl lg:border border-gray-200 lg:p-6"
       >
-        <div className="flex items-center mb-6">
+        <div className="flex items-center mb-4 md:mb-6">
           {sections[currentSection].icon}
-          <h4 className="text-lg font-semibold text-gray-900 ml-2">
+          <h4 className="text-lg font-semibold text-secondary-700 ml-1">
             {sections[currentSection].title}
           </h4>
         </div>
@@ -820,18 +963,20 @@ const PersonalDetailsForm = ({
           onClick={handleNextSection}
           className="flex items-center px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
         >
-          {currentSection === sections.length - 1 ? "Continue" : "Next"}
+          {currentSection === sections.length - 1 ? "Proceed" : "Next"}
           <TbChevronRight className="w-4 h-4 ml-2" />
         </button>
       </div>
 
       {/* Progress indicator */}
       <div className="bg-gray-200 rounded-full h-2">
-        <div
-          className="bg-primary-600 h-2 rounded-full transition-all duration-300"
-          style={{
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{
             width: `${((currentSection + 1) / sections.length) * 100}%`,
           }}
+          transition={{ duration: 0.7 }}
+          className="bg-primary-600 h-2 rounded-full"
         />
       </div>
     </div>

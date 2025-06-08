@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   TbChevronLeft,
@@ -10,13 +10,52 @@ import {
   TbAlertCircle,
   TbDownload,
   TbEye,
+  TbFolderOpen,
+  TbFileCheck,
 } from "react-icons/tb";
+import { FaEye } from "react-icons/fa6";
 
 const DocumentUpload = ({ formData, updateFormData, nextStep, prevStep }) => {
   const [uploadedFiles, setUploadedFiles] = useState(formData.documents || {});
   const [dragActive, setDragActive] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileInputRefs = useRef({});
+
+  // Effect to handle external updates to formData.documents (like reset)
+  useEffect(() => {
+    if (formData.documents !== uploadedFiles) {
+      // Clean up existing file previews before updating
+      Object.values(uploadedFiles).forEach((fileData) => {
+        if (fileData?.preview) {
+          URL.revokeObjectURL(fileData.preview);
+        }
+      });
+
+      // Update state with new documents (could be empty object for reset)
+      setUploadedFiles(formData.documents || {});
+
+      // Clear file inputs when reset
+      if (!formData.documents || Object.keys(formData.documents).length === 0) {
+        Object.values(fileInputRefs.current).forEach((input) => {
+          if (input) {
+            input.value = "";
+          }
+        });
+      }
+    }
+  }, [formData.documents]);
+
+  // Cleanup effect for component unmount
+  useEffect(() => {
+    return () => {
+      // Clean up all object URLs when component unmounts
+      Object.values(uploadedFiles).forEach((fileData) => {
+        if (fileData?.preview) {
+          URL.revokeObjectURL(fileData.preview);
+        }
+      });
+    };
+  }, []);
 
   const documentTypes = [
     {
@@ -37,7 +76,7 @@ const DocumentUpload = ({ formData, updateFormData, nextStep, prevStep }) => {
     },
     {
       id: "attachment_letter",
-      name: "Upload Attachment Letter",
+      name: "Upload Internship/Attachment Letter",
       required: false,
       description: "Letter from institution (for students) or employer",
       acceptedFormats: "PDF, JPEG, PNG",
@@ -180,12 +219,13 @@ const DocumentUpload = ({ formData, updateFormData, nextStep, prevStep }) => {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5 md:space-y-8">
       <div className="text-center mb-8">
-        <h3 className="text-2xl font-bold text-gray-900 mb-2">
-          Upload Required Documents
+        <h3 className="flex items-center justify-center text-lg md:text-xl lg:text-2xl font-bold text-primary-700/90 mb-2">
+          <span className="block lg:hidden mr-1">4.</span>{" "}
+          <span className="">Upload Required Documents</span>
         </h3>
-        <p className="text-gray-600 max-w-2xl mx-auto">
+        <p className="text-gray-600 text-sm md:text-base max-w-2xl mx-auto">
           Please upload the required documents to complete your application. All
           files must be in PDF, JPEG, or PNG format and under 5MB.
         </p>
@@ -198,19 +238,19 @@ const DocumentUpload = ({ formData, updateFormData, nextStep, prevStep }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
-            className="border border-gray-200 rounded-lg p-6"
+            className="border-b pb-4 lg:border border-gray-200 lg:rounded-xl lg:p-6"
           >
             <div className="flex items-start justify-between mb-4">
               <div className="flex-1">
                 <div className="flex items-center mb-2">
-                  <h4 className="text-lg font-medium text-gray-900">
+                  <h4 className="text-base md:text-lg font-semibold text-secondary-600">
                     {docType.name}
                   </h4>
                   {docType.required && (
                     <span className="ml-2 text-red-500 text-sm">*</span>
                   )}
                   {uploadedFiles[docType.id] && (
-                    <TbCheck className="ml-2 w-5 h-5 text-green-500" />
+                    <TbFileCheck className="ml-2 w-5 h-5 text-green-600" />
                   )}
                 </div>
                 <p className="text-sm text-gray-600 mb-1">
@@ -225,7 +265,7 @@ const DocumentUpload = ({ formData, updateFormData, nextStep, prevStep }) => {
 
             {!uploadedFiles[docType.id] ? (
               <div
-                className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors ${
                   dragActive
                     ? "border-primary-500 bg-primary-50"
                     : "border-gray-300 hover:border-primary-400"
@@ -243,13 +283,13 @@ const DocumentUpload = ({ formData, updateFormData, nextStep, prevStep }) => {
                   className="hidden"
                 />
 
-                <TbUpload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600 mb-2">
+                <TbUpload className="w-8 md:w-12 h-8 md:h-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600 text-sm md:text-base mb-2">
                   Drag and drop your file here, or{" "}
                   <button
                     type="button"
                     onClick={() => fileInputRefs.current[docType.id]?.click()}
-                    className="text-primary-600 hover:text-primary-700 font-medium"
+                    className="text-primary-600 hover:text-primary-700 font-medium underline underline-offset-4"
                   >
                     browse
                   </button>
@@ -259,14 +299,14 @@ const DocumentUpload = ({ formData, updateFormData, nextStep, prevStep }) => {
                 </p>
               </div>
             ) : (
-              <div className="bg-gray-50 rounded-lg p-4">
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
                       <TbFile className="w-5 h-5 text-primary-600" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm font-medium text-gray-900 max-w-[250px] md:max-w-[300px] lg:max-w-none truncate">
                         {uploadedFiles[docType.id].name}
                       </p>
                       <p className="text-xs text-gray-500">
@@ -278,14 +318,17 @@ const DocumentUpload = ({ formData, updateFormData, nextStep, prevStep }) => {
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center md:space-x-2">
                     <button
                       type="button"
                       onClick={() => previewFile(uploadedFiles[docType.id])}
                       className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
                       title="Preview file"
                     >
-                      <TbEye className="w-4 h-4" />
+                      <span className="hidden md:block text-sm text-primary-600 underline underline-offset-2">
+                        Preview
+                      </span>
+                      <TbFolderOpen className="w-5 h-5 md:hidden" />
                     </button>
                     <button
                       type="button"
@@ -293,7 +336,7 @@ const DocumentUpload = ({ formData, updateFormData, nextStep, prevStep }) => {
                       className="p-2 text-red-500 hover:text-red-700 transition-colors"
                       title="Remove file"
                     >
-                      <TbTrash className="w-4 h-4" />
+                      <TbTrash className="w-5 h-5" />
                     </button>
                   </div>
                 </div>
@@ -341,12 +384,12 @@ const DocumentUpload = ({ formData, updateFormData, nextStep, prevStep }) => {
       </div>
 
       {/* Important Notice */}
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 md:p-4">
         <div className="flex items-start">
-          <TbAlertCircle className="w-5 h-5 text-yellow-600 mr-3 mt-0.5" />
-          <div className="text-sm text-yellow-800">
+          <TbAlertCircle className="w-5 md:w-6 h-5 md:h-6 text-yellow-600 mr-3" />
+          <div className="text-sm md:text-[0.95rem] text-yellow-800">
             <p className="font-medium mb-1">Important Notice:</p>
-            <ul className="list-disc list-inside space-y-1 text-xs">
+            <ul className="list-disc list-inside space-y-1 text-xs md:text-sm lg:text-[0.9rem]">
               <li>Ensure all documents are clear and legible</li>
               <li>Documents should be recent and valid</li>
               <li>File names should not contain special characters</li>

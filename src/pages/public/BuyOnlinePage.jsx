@@ -16,41 +16,41 @@ const BuyOnlinePage = () => {
     selectedPlan: null,
 
     // Personal Details
-    firstName: "",
-    middleName: "",
-    lastName: "",
-    dateOfBirth: "",
-    gender: "",
-    universityCollegeSchool: "",
+    firstName: "John",
+    middleName: "Doe",
+    lastName: "Smith",
+    dateOfBirth: "1990-01-01",
+    gender: "Male",
+    universityCollegeSchool: "University of Nairobi",
 
     // Proposer Details
-    kraPin: "",
-    idNumber: "",
-    mobileNumber: "",
-    emailAddress: "",
-    postalAddress: "",
-    town: "",
+    kraPin: "1234567890",
+    idNumber: "1234567890",
+    mobileNumber: "+254722345678",
+    emailAddress: "john.doe@example.com",
+    postalAddress: "1234567890",
+    town: "Nairobi",
 
     // Next of Kin & Beneficiary
-    nextOfKinName: "",
-    nextOfKinContacts: "",
-    beneficiaryName: "",
-    beneficiaryContacts: "",
+    nextOfKinName: "Jane Doe",
+    nextOfKinContacts: "1234567890",
+    beneficiaryName: "John Doe",
+    beneficiaryContacts: "1234567890",
 
     // Medical History (for accident insurance)
     previousAccidents: false,
     physicalDisability: false,
-    chronicIllness: false,
-    medicalHistoryDetails: "",
+    chronicIllness: true,
+    medicalHistoryDetails: "I have a history of heart disease",
 
     // Policy Details
-    policyStartDate: "",
+    policyStartDate: "2025-01-01",
 
     // Agent Information
-    isAgentPurchase: false,
-    agentName: "",
-    agentEmail: "",
-    agentPhone: "",
+    isAgentPurchase: true,
+    agentName: "Yvonne Kola",
+    agentEmail: "ykola@lako.co.ke",
+    agentPhone: "0722345678",
 
     // Documents
     documents: {},

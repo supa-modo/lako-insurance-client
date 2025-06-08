@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import CoverTypeSelection from "./CoverTypeSelection";
 import PlanSelection from "./PlanSelection";
 import PersonalDetailsForm from "./PersonalDetailsForm";
 import DocumentUpload from "./DocumentUpload";
 import ReviewAndSubmit from "./ReviewAndSubmit";
 import ApplicationSuccess from "../common/ApplicationSuccess";
+import PaymentComponent from "../common/PaymentComponent";
+import applicationService from "../../../services/applicationService";
 
 const PersonalAccidentFlow = ({
   currentStep,
@@ -17,6 +19,10 @@ const PersonalAccidentFlow = ({
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedApplication, setSubmittedApplication] = useState(null);
+  const [draftApplication, setDraftApplication] = useState(null);
+  const [paymentCompleted, setPaymentCompleted] = useState(false);
+  const [showApplicationSuccess, setShowApplicationSuccess] = useState(false);
+  const [isCreatingDraft, setIsCreatingDraft] = useState(false);
 
   const steps = [
     {
@@ -45,28 +51,283 @@ const PersonalAccidentFlow = ({
       component: "review",
     },
     {
-      title: "Success",
-      description: "Application submitted",
-      component: "success",
+      title: "Payment & Success",
+      description: "Complete payment and confirmation",
+      component: "payment-success",
     },
   ];
 
-  const handleSubmit = async (applicationData) => {
+  // Function to reset all form data to default values
+  const resetFormData = () => {
+    updateFormData("coverType", "");
+    updateFormData("selectedPlan", null);
+    updateFormData("firstName", "");
+    updateFormData("middleName", "");
+    updateFormData("lastName", "");
+    updateFormData("dateOfBirth", "");
+    updateFormData("gender", "");
+    updateFormData("universityCollegeSchool", "");
+    updateFormData("kraPin", "");
+    updateFormData("idNumber", "");
+    updateFormData("mobileNumber", "");
+    updateFormData("emailAddress", "");
+    updateFormData("postalAddress", "");
+    updateFormData("town", "");
+    updateFormData("nextOfKinName", "");
+    updateFormData("nextOfKinContacts", "");
+    updateFormData("beneficiaryName", "");
+    updateFormData("beneficiaryContacts", "");
+    updateFormData("previousAccidents", false);
+    updateFormData("physicalDisability", false);
+    updateFormData("chronicIllness", false);
+    updateFormData("medicalHistoryDetails", "");
+    updateFormData("policyStartDate", "");
+    updateFormData("premiumAmount", null);
+    updateFormData("insuranceProvider", "");
+    updateFormData("isAgentPurchase", false);
+    updateFormData("agentName", "");
+    updateFormData("agentEmail", "");
+    updateFormData("agentPhone", "");
+    updateFormData("documents", {});
+  };
+
+  // Create draft application before payment
+  const createDraftApplication = async () => {
+    if (draftApplication) {
+      return draftApplication; // Return existing draft if already created
+    }
+
+    setIsCreatingDraft(true);
+    try {
+      console.log("Creating draft application for payment...");
+
+      // Create draft application payload
+      const draftPayload = {
+        // Basic application info
+        insuranceType: "personal-accident",
+        coverType: formData.coverType,
+        status: "pending_payment", // Set as pending payment
+
+        // Personal details
+        firstName: formData.firstName,
+        middleName: formData.middleName || null,
+        lastName: formData.lastName,
+        dateOfBirth: formData.dateOfBirth,
+        gender: formData.gender,
+        idNumber: formData.idNumber,
+        mobileNumber: formData.mobileNumber,
+        emailAddress: formData.emailAddress,
+
+        // Address details
+        postalAddress: formData.postalAddress || null,
+        town: formData.town || null,
+
+        // Educational details (for students)
+        universityCollegeSchool: formData.universityCollegeSchool || null,
+        kraPin: formData.kraPin || null,
+
+        // Next of kin and beneficiary
+        nextOfKinName: formData.nextOfKinName || null,
+        nextOfKinContacts: formData.nextOfKinContacts || null,
+        beneficiaryName: formData.beneficiaryName || null,
+        beneficiaryContacts: formData.beneficiaryContacts || null,
+
+        // Health and medical history
+        previousAccidents: formData.previousAccidents || false,
+        physicalDisability: formData.physicalDisability || false,
+        chronicIllness: formData.chronicIllness || false,
+        medicalHistoryDetails: formData.medicalHistoryDetails || null,
+
+        // Policy details
+        policyStartDate:
+          formData.policyStartDate || new Date().toISOString().split("T")[0],
+        selectedPlanId: formData.selectedPlan?.id || null,
+        premiumAmount: formData.premiumAmount || null,
+        insuranceProvider: formData.insuranceProvider || null,
+
+        // Agent details if applicable
+        isAgentPurchase: formData.isAgentPurchase || false,
+        agentName: formData.agentName || null,
+        agentEmail: formData.agentEmail || null,
+        agentPhone: formData.agentPhone || null,
+      };
+
+      console.log("Draft application payload:", draftPayload);
+
+      // Create the draft application
+      const response = await applicationService.createApplication(draftPayload);
+
+      if (!response.success) {
+        throw new Error(
+          response.message || "Failed to create draft application"
+        );
+      }
+
+      const createdDraft = response.data;
+      console.log("Created draft application:", createdDraft);
+
+      setDraftApplication(createdDraft);
+      return createdDraft;
+    } catch (error) {
+      console.error("Error creating draft application:", error);
+      throw error;
+    } finally {
+      setIsCreatingDraft(false);
+    }
+  };
+
+  // Handle moving to payment step - create draft application first
+  const handleProceedToPayment = async () => {
+    try {
+      await createDraftApplication();
+      nextStep(); // Move to payment step
+    } catch (error) {
+      console.error("Error proceeding to payment:", error);
+      alert("Failed to prepare application for payment. Please try again.");
+    }
+  };
+
+  // Handle payment completion - update draft application to submitted
+  const handlePaymentComplete = async (paymentData) => {
+    console.log("Payment completed:", paymentData);
+    setPaymentCompleted(true);
+
+    try {
+      // Update the draft application to submitted status
+      await updateDraftApplicationAfterPayment(paymentData);
+      setShowApplicationSuccess(true);
+    } catch (error) {
+      console.error("Error updating application after payment:", error);
+      // Handle application update error - payment succeeded but app update failed
+      alert(
+        "Payment successful but application update failed. Please contact support with your payment reference: " +
+          paymentData.paymentReference
+      );
+    }
+  };
+
+  // Update draft application after successful payment
+  const updateDraftApplicationAfterPayment = async (paymentData) => {
     setIsSubmitting(true);
     try {
-      // API call to submit application will go here
-      console.log("Submitting application:", applicationData);
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      console.log("Updating draft application after successful payment...");
 
-      // Store the submitted application data
-      setSubmittedApplication(applicationData);
-      nextStep(); // Go to success page
+      if (!draftApplication) {
+        throw new Error("Draft application not found");
+      }
+
+      // Update application status and add payment reference
+      const updatePayload = {
+        status: "submitted",
+        paymentReference:
+          paymentData.paymentReference || paymentData.mpesaReceiptNumber,
+        paymentDate: new Date().toISOString(),
+      };
+
+      const updateResponse = await applicationService.updateApplication(
+        draftApplication.id,
+        updatePayload
+      );
+
+      if (!updateResponse.success) {
+        throw new Error(
+          updateResponse.message || "Failed to update application"
+        );
+      }
+
+      const updatedApplication = updateResponse.data;
+      console.log("Updated application:", updatedApplication);
+      setSubmittedApplication(updatedApplication);
+
+      // Upload documents to the now-submitted application
+      console.log("Checking documents for upload:", formData.documents);
+      if (formData.documents && Object.keys(formData.documents).length > 0) {
+        console.log("Documents found, starting upload...");
+        await uploadDocumentsToApplication(updatedApplication.id);
+      } else {
+        console.log("No documents to upload or documents object is empty");
+      }
+
+      return updatedApplication;
     } catch (error) {
-      console.error("Error submitting application:", error);
+      console.error("Error updating application:", error);
+      throw error;
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Upload documents to application
+  const uploadDocumentsToApplication = async (applicationId) => {
+    try {
+      console.log("Uploading documents to application:", applicationId);
+      console.log("Form data documents:", formData.documents);
+
+      const uploadPromises = [];
+      const documentTypes = [];
+
+      Object.entries(formData.documents).forEach(([docType, fileData]) => {
+        console.log(
+          `Processing document type: ${docType}, fileData:`,
+          fileData
+        );
+        if (fileData && fileData.file) {
+          console.log("Adding file to upload:", fileData.name);
+          uploadPromises.push(fileData.file);
+          documentTypes.push(docType);
+        }
+      });
+
+      console.log("Total files to upload:", uploadPromises.length);
+
+      if (uploadPromises.length > 0) {
+        // Create FormData for upload
+        const uploadFormData = new FormData();
+
+        uploadPromises.forEach((file, index) => {
+          uploadFormData.append("files", file);
+          uploadFormData.append("documentTypes", documentTypes[index]);
+        });
+
+        console.log("Calling applicationService.uploadDocuments with:", {
+          applicationId,
+          formDataEntries: Array.from(uploadFormData.entries()),
+        });
+
+        const uploadResponse = await applicationService.uploadDocuments(
+          applicationId,
+          uploadFormData
+        );
+
+        console.log("Upload response:", uploadResponse);
+
+        if (uploadResponse.success) {
+          console.log("Documents uploaded successfully:", uploadResponse.data);
+        } else {
+          console.error("Document upload failed:", uploadResponse.message);
+        }
+      }
+    } catch (error) {
+      console.error("Error uploading documents:", error);
+      // Don't throw here - documents can be uploaded later
+    }
+  };
+
+  // Handle payment cancellation or going back
+  const handlePaymentCancel = () => {
+    // Reset payment states and go back to review step
+    setPaymentCompleted(false);
+    setShowApplicationSuccess(false);
+    prevStep();
+  };
+
+  // Reset flow completely
+  const handleStartNewApplication = () => {
+    setPaymentCompleted(false);
+    setShowApplicationSuccess(false);
+    setSubmittedApplication(null);
+    setDraftApplication(null); // Clear draft application
+    resetFlow();
   };
 
   const renderStep = () => {
@@ -112,18 +373,40 @@ const PersonalAccidentFlow = ({
           <ReviewAndSubmit
             formData={formData}
             updateFormData={updateFormData}
-            onSubmit={handleSubmit}
+            nextStep={handleProceedToPayment}
             prevStep={prevStep}
-            isSubmitting={isSubmitting}
+            isSubmitting={isSubmitting || isCreatingDraft}
           />
         );
       case 6:
-        return (
-          <ApplicationSuccess
-            applicationData={submittedApplication}
-            onStartNew={resetFlow}
-          />
-        );
+        // For personal-accident insurance, payment is mandatory
+        // Show payment component first, then success component after payment
+        if (!paymentCompleted && !showApplicationSuccess) {
+          return (
+            <PaymentComponent
+              applicationData={{
+                id: draftApplication?.id,
+                applicationNumber: draftApplication?.applicationNumber,
+                premiumAmount:
+                  formData.premiumAmount ||
+                  formData.selectedPlan?.annualPremium,
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                coverType: formData.coverType,
+              }}
+              onPaymentComplete={handlePaymentComplete}
+              onCancel={handlePaymentCancel}
+            />
+          );
+        } else {
+          return (
+            <ApplicationSuccess
+              applicationData={submittedApplication}
+              onStartNew={handleStartNewApplication}
+              paymentCompleted={paymentCompleted}
+            />
+          );
+        }
       default:
         return null;
     }
@@ -133,11 +416,11 @@ const PersonalAccidentFlow = ({
     <div className="">
       {/* Progress Bar */}
       <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-[1.05rem] md:text-xl font-semibold text-gray-700">
+        <div className="flex items-center justify-between mb-2.5 md:mb-4">
+          <h2 className="text-[1.05rem] md:text-xl font-semibold text-neutral-700">
             Personal Accident Insurance
           </h2>
-          <span className="text-sm text-gray-500">
+          <span className="text-[0.83rem] md:text-sm font-medium text-gray-500">
             Step {currentStep} of {steps.length}
           </span>
         </div>
@@ -148,10 +431,10 @@ const PersonalAccidentFlow = ({
               <React.Fragment key={index}>
                 <div className="flex items-center">
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-lexend font-medium ${
                       index + 1 <= currentStep
                         ? "bg-primary-600 text-white"
-                        : "bg-gray-200 text-gray-600"
+                        : "bg-gray-200 text-neutral-700"
                     }`}
                   >
                     {index + 1}
@@ -166,14 +449,14 @@ const PersonalAccidentFlow = ({
                     >
                       {step.title}
                     </div>
-                    <div className="text-xs text-gray-500 font-medium">
+                    <div className="text-xs text-neutral-700 font-medium">
                       {step.description}
                     </div>
                   </div>
                 </div>
                 {index < steps.length - 1 && (
                   <div
-                    className={`flex-1 h-0.5 mx-4 ${
+                    className={`flex-1 h-0.5 mx-3.5 ${
                       index + 1 < currentStep ? "bg-primary-600" : "bg-gray-200"
                     }`}
                   />
@@ -185,15 +468,17 @@ const PersonalAccidentFlow = ({
       </div>
 
       {/* Current Step Content */}
-      <motion.div
-        key={currentStep}
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -20 }}
-        transition={{ duration: 0.3 }}
-      >
-        {renderStep()}
-      </motion.div>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentStep}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.5 }}
+        >
+          {renderStep()}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 };

@@ -4,7 +4,8 @@ import PlanSelectionStep from "./PlanSelectionStep";
 import PersonalDetailsForm from "../common/PersonalDetailsForm";
 import DocumentUpload from "../common/DocumentUpload";
 import PaymentConfirmation from "../common/PaymentConfirmation";
-import PurchaseSuccess from "../common/PurchaseSuccess";
+import ApplicationSuccess from "../common/ApplicationSuccess";
+// import PurchaseSuccess from "../common/PurchaseSuccess";
 
 const HealthInsuranceFlow = ({ currentStep, formData, updateFormData, nextStep, prevStep, resetFlow }) => {
   const [isComplete, setIsComplete] = useState(false);
@@ -29,7 +30,7 @@ const HealthInsuranceFlow = ({ currentStep, formData, updateFormData, nextStep, 
   // Render the current step
   const renderStep = () => {
     if (isComplete) {
-      return <PurchaseSuccess formData={formData} />;
+      return <ApplicationSuccess formData={formData} />;
     }
 
     switch (currentStep) {

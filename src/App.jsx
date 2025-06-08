@@ -41,6 +41,7 @@ import {
   UserActivities,
   SystemMetrics,
 } from "./components/SuperAdmin";
+import InsuranceApplicationManagementPage from "./pages/admin/InsuranceApplicationManagementPage";
 
 function App() {
   return (
@@ -144,6 +145,14 @@ function App() {
                       element={
                         <AuthGuard>
                           <UserManagement />
+                        </AuthGuard>
+                      }
+                    />
+                    <Route
+                      path="applications"
+                      element={
+                        <AuthGuard>
+                          <InsuranceApplicationManagementPage />
                         </AuthGuard>
                       }
                     />

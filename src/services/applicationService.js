@@ -15,6 +15,16 @@ const applicationService = {
       return response.data;
     } catch (error) {
       console.error("Error creating application:", error);
+
+      // Enhance error information for better frontend handling
+      if (error.response && error.response.data) {
+        const enhancedError = new Error(
+          error.response.data.message || "Failed to create application"
+        );
+        enhancedError.response = error.response;
+        throw enhancedError;
+      }
+
       throw error;
     }
   },
@@ -109,10 +119,11 @@ const applicationService = {
     try {
       const params = new URLSearchParams({
         insuranceType: "personal-accident",
+        limit: 20, // Get more plans for selection
         ...filters,
       });
 
-      const response = await apiClient.get(`/public/insurance-plans?${params}`);
+      const response = await apiClient.get(`/applications/plans?${params}`);
       return response.data;
     } catch (error) {
       console.error("Error fetching personal accident plans:", error);

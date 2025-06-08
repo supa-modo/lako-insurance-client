@@ -9,7 +9,7 @@ const coverTypes = [
     description:
       "Special coverage for students during their internships and industrial attachments",
 
-    eligibility: "Full-time students aged 18-30",
+    eligibility: "Students aged 18-30",
     premium: "From KSh 492 annually",
   },
   {
@@ -36,10 +36,11 @@ const CoverTypeSelection = ({
   };
 
   return (
-    <div className="space-y-6 md:space-y-8">
+    <div className="space-y-4 md:space-y-8">
       <div className="text-center mb-6 md:mb-8">
-        <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-primary-700/90 mb-2">
-          Choose Your Coverage Type
+        <h3 className="flex items-center justify-center text-lg md:text-xl lg:text-2xl font-bold text-primary-700/90 mb-2">
+          <span className="block lg:hidden mr-1">1.</span>{" "}
+          <span className="">Choose Your Coverage Type</span>
         </h3>
         <p className="text-gray-600 text-sm md:text-base max-w-2xl mx-auto">
           Select the type of personal accident coverage you are looking for.
@@ -50,9 +51,6 @@ const CoverTypeSelection = ({
         {coverTypes.map((coverType) => (
           <motion.div
             key={coverType.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
             className={`relative rounded-xl border-2 p-3 lg:p-4 cursor-pointer transition-all duration-200 hover:shadow-lg ${
               formData.coverType === coverType.id
                 ? "border-primary-500 bg-primary-50"
@@ -83,7 +81,7 @@ const CoverTypeSelection = ({
               <div className="pt-4 border-t border-gray-200">
                 <div className="flex justify-between items-center text-[0.83rem] md:text-sm">
                   <span className="text-gray-600">Eligibility:</span>
-                  <span className="font-medium text-gray-900">
+                  <span className="font-medium text-neutral-800">
                     {coverType.eligibility}
                   </span>
                 </div>
@@ -107,7 +105,7 @@ const CoverTypeSelection = ({
               >
                 {formData.coverType === coverType.id
                   ? "Selected. Click to continue"
-                  : "Select This Plan"}
+                  : "Select This Cover"}
                 <TbChevronRight className="w-4 h-4 ml-2" />
               </button>
             </div>

@@ -14,6 +14,7 @@ import {
   TbLogout,
   TbBuildingBank,
   TbMessage,
+  TbShieldPlus,
 } from "react-icons/tb";
 import { MdSpaceDashboard } from "react-icons/md";
 import { useState, useEffect } from "react";
@@ -36,43 +37,29 @@ const navItems = [
     ],
   },
   {
-    category: "Client Management",
+    category: "Insurance Applications",
     items: [
       {
-        name: "Clients & Leads",
+        name: "All Applications",
         icon: PiUsersDuotone,
-        path: "/admin/clients",
-        badge: 7,
-        badgeColor: "bg-secondary-500",
+        path: "/admin/applications",
         submenu: [
           {
-            name: "Client Management",
-            path: "/admin/clients/converted",
+            name: "Applications",
+            path: "/admin/applications",
             icon: RiUserFollowLine,
           },
           {
-            name: "Lead Pipeline",
-            path: "/admin/clients/leads",
+            name: "Processed Applications",
+            path: "/admin/applications/processed",
             icon: RiUserShared2Line,
           },
         ],
       },
       {
-        name: "Insurance Queries",
-        icon: TbShieldQuestion,
-        path: "/admin/queries",
-        submenu: [
-          {
-            name: "All Queries",
-            path: "/admin/queries/all",
-            badge: "5",
-            badgeColor: "bg-secondary-500",
-          },
-          {
-            name: "Processed Queries",
-            path: "/admin/queries/processed",
-          },
-        ],
+        name: "Approved Applications",
+        icon: TbShieldCheckFilled,
+        path: "/admin/applications/approved",
       },
     ],
   },
