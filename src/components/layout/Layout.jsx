@@ -34,7 +34,7 @@ const Layout = () => {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen bg-neutral-50 font-sans relative">
+    <div className="flex flex-col min-h-screen bg-slate-50 font-sans relative">
       {/* Background decorative elements */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-secondary-100 rounded-full opacity-30 blur-3xl"></div>

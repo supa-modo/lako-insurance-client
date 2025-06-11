@@ -12,9 +12,11 @@ import {
   TbStar,
   TbLoader2,
   TbRefresh,
+  TbDownload,
 } from "react-icons/tb";
 import applicationService from "../../../services/applicationService";
 import { formatCurrency } from "../../../utils/formatCurrency";
+import { FaFilePdf, FaRegFilePdf } from "react-icons/fa";
 
 const PlanSelection = ({ formData, updateFormData, nextStep, prevStep }) => {
   const [plans, setPlans] = useState([]);
@@ -80,6 +82,67 @@ const PlanSelection = ({ formData, updateFormData, nextStep, prevStep }) => {
     if (selectedPlan) {
       nextStep();
     }
+  };
+
+  const handleDownloadPlanDetails = (plan) => {
+    // Create a detailed plan information object
+    const planDetails = {
+      planName: plan.name,
+      company: plan.company?.name || "Insurance Company",
+      description: plan.description || "No description available",
+      coverageAmount: formatCurrency(plan.inpatientCoverageLimit),
+      annualPremium: formatCurrency(parseFloat(plan.annualPremium)),
+      coverType: formData.coverType,
+      // Add more details as needed
+      benefits: plan.benefits || [],
+      terms:
+        plan.terms ||
+        "Please contact the insurance company for detailed terms and conditions",
+    };
+
+    // Create a simple text content for download
+    const content = `
+PERSONAL ACCIDENT INSURANCE PLAN DETAILS
+
+Plan Name: ${planDetails.planName}
+Insurance Company: ${planDetails.company}
+Coverage Type: ${
+      planDetails.coverType.charAt(0).toUpperCase() +
+      planDetails.coverType.slice(1)
+    }
+
+COVERAGE DETAILS:
+- Coverage Amount: ${planDetails.coverageAmount}
+- Annual Premium: ${planDetails.annualPremium}
+
+DESCRIPTION:
+${planDetails.description}
+
+TERMS & CONDITIONS:
+${planDetails.terms}
+
+Generated on: ${new Date().toLocaleDateString(
+      "en-GB"
+    )} at ${new Date().toLocaleTimeString("en-GB")}
+
+Note: This is a summary document. Please contact ${
+      planDetails.company
+    } directly for complete terms, conditions, and policy documents.
+    `.trim();
+
+    // Create and download the file
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${planDetails.planName.replace(
+      /[^a-zA-Z0-9]/g,
+      "_"
+    )}_Plan_Details.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
   };
 
   if (loading) {
@@ -155,7 +218,7 @@ const PlanSelection = ({ formData, updateFormData, nextStep, prevStep }) => {
         </p>
       </div>
 
-      <div className="grid gap-6">
+      <div className="grid lg:grid-cols-2 gap-6">
         {Array.isArray(plans) && plans.length > 0 ? (
           plans.map((plan, index) => (
             <motion.div
@@ -185,9 +248,9 @@ const PlanSelection = ({ formData, updateFormData, nextStep, prevStep }) => {
                 </div>
               )}
 
-              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+              <div className="flex flex-col md:flex-row md:items-start md:justify-between">
                 {/* Plan Info */}
-                <div className="flex-1 mb-3">
+                <div className="flex-1">
                   <div className="flex items-start space-x-4 mb-2 md:mb-3 lg:mb-4">
                     <div className="flex-shrink-0">
                       <img
@@ -200,25 +263,23 @@ const PlanSelection = ({ formData, updateFormData, nextStep, prevStep }) => {
                       />
                     </div>
                     <div className="flex-1">
-                      <div className="flex items-center space-x-2">
+                      <div className="">
                         <h4 className="text-lg font-semibold text-secondary-600">
                           {plan.name}
                         </h4>
                       </div>
-                      <p className="text-sm font-medium text-neutral-700 mb-1">
+                      <p className="text-sm font-medium text-neutral-700">
                         {plan.company?.name || "Insurance Company"}
                       </p>
                     </div>
                   </div>
 
-                  <p className="text-sm font-medium text-gray-600 mb-1">
-                    {plan.description ||
-                      "No description available for this plan"}
-                  </p>
+                  
                 </div>
+                
 
                 <div className="min-w-[23%] flex flex-row items-center justify-between border-t md:border-none border-gray-200">
-                  <div className="rounded-lg p-2">
+                  <div className="rounded-lg px-2 py-2.5 md:py-0">
                     <div className="text-sm font-medium text-neutral-700 md:mb-1">
                       Coverage Amount
                     </div>
@@ -227,33 +288,44 @@ const PlanSelection = ({ formData, updateFormData, nextStep, prevStep }) => {
                     </div>
                   </div>
 
-                  <div className=" rounded-lg p-2">
+                  <div className=" rounded-lg px-2 py-2.5 md:py-0">
                     <div className="text-sm font-medium text-primary-600 md:mb-1">
-                      Annual Premium
+                      Plan Premium
                     </div>
                     <div className="text-xl lg:text-2xl font-lexend font-bold text-primary-600">
                       {formatCurrency(parseFloat(plan.annualPremium))}
                     </div>
                   </div>
                 </div>
+
+                
               </div>
 
-              <button
-                type="button"
-                className={`w-full px-6 py-2.5 mt-2  rounded-lg font-medium transition-colors ${
-                  selectedPlan?.id === plan.id
-                    ? "bg-primary-600 text-white"
-                    : "bg-gray-200 border border-gray-300 text-gray-600 hover:bg-gray-200"
-                }`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleSelectPlan(plan);
-                }}
-              >
-                {selectedPlan?.id === plan.id
-                  ? "Selected. Click Continue to proceed"
-                  : "Select this Plan"}
-              </button>
+              <p className="text-sm pl-2 font-medium text-gray-600 pt-1 mb-2 lg:mb-3.5">
+                    Download plan details for more information <button onClick={(e) => {
+                    e.stopPropagation();
+                    handleDownloadPlanDetails(plan);
+                  }} className="text-primary-600 underline underline-offset-4 font-medium transition-colors hover:bg-primary-50">here</button>
+                  </p>
+
+              
+                <button
+                  type="button"
+                  className={`w-full px-6 py-2 mt-2  rounded-lg font-medium transition-colors ${
+                    selectedPlan?.id === plan.id
+                      ? "bg-primary-600 text-white"
+                      : "bg-gray-200 border border-gray-300 text-gray-600 hover:bg-gray-200"
+                  }`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSelectPlan(plan);
+                  }}
+                >
+                  {selectedPlan?.id === plan.id
+                    ? "Selected. Click Continue to proceed"
+                    : "Select this Plan"}
+                </button>
+
             </motion.div>
           ))
         ) : (

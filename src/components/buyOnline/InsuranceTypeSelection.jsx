@@ -23,7 +23,7 @@ const insuranceTypes = [
     description: "Comprehensive medical coverage for individuals and families",
     comingSoon: false,
     popular: true,
-    benefits: ["Seniors Cover", "Adult Cover", "Child Cover"],
+    benefits: ["Seniors Cover", "Adult Insurance", "Child Cover"],
   },
   {
     id: "personal-accident",
@@ -32,7 +32,7 @@ const insuranceTypes = [
     description:
       "Protection against accidents and injuries in various situations",
     comingSoon: false,
-    benefits: ["Individual Personal Accidents", "Student Cover"],
+    benefits: ["Individual Cover", "Student Cover"],
   },
   {
     id: "property",

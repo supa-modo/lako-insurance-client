@@ -16,6 +16,8 @@ import {
   TbArrowRight,
   TbHomeDot,
   TbCreditCard,
+  TbCopy,
+  TbCopyCheck,
 } from "react-icons/tb";
 import { Link } from "react-router-dom";
 import { FiCheckCircle } from "react-icons/fi";
@@ -26,10 +28,436 @@ const ApplicationSuccess = ({
   onStartNew,
   paymentCompleted = false,
 }) => {
+  const [isCopied, setIsCopied] = React.useState(false);
+
   const formatDate = (dateString) => {
     if (!dateString) return "Not specified";
     return new Date(dateString).toLocaleDateString("en-GB");
   };
+
+  const handleCopyApplicationNumber = async () => {
+    const applicationNumber = applicationData?.applicationNumber || " ";
+
+    try {
+      await navigator.clipboard.writeText(applicationNumber);
+      setIsCopied(true);
+
+      // Revert back to copy icon after 2 seconds
+      setTimeout(() => {
+        setIsCopied(false);
+      }, 2000);
+    } catch (err) {
+      // Fallback for browsers that don't support clipboard API
+      const textArea = document.createElement("textarea");
+      textArea.value = applicationNumber;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+
+      setIsCopied(true);
+      setTimeout(() => {
+        setIsCopied(false);
+      }, 2000);
+    }
+  };
+
+  const handlePrintSummary = () => {
+    const printContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Insurance Application Summary - ${
+            applicationData?.applicationNumber || "PA202412010001"
+          }</title>
+          <style>
+            * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+            }
+            
+            body {
+              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              line-height: 1.5;
+              color: #333;
+              background: white;
+              min-height: 100vh;
+              display: flex;
+              flex-direction: column;
+            }
+            
+            .page-container {
+              max-width: 820px;
+              margin: 0 auto;
+              padding: 20px;
+              flex: 1;
+              display: flex;
+              flex-direction: column;
+            }
+            
+            /* Header Styles */
+            .header {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              margin-bottom: 30px;
+              padding-bottom: 15px;
+              border-bottom: 1px solid #e0e0e0;
+            }
+            
+            .header-left {
+              display: flex;
+              align-items: center;
+              gap: 15px;
+            }
+            
+            .logo {
+              max-width: 80px;
+              height: auto;
+            }
+            
+            .header-center {
+              text-align: center;
+              flex: 1;
+            }
+            
+            .header-center h1 {
+              color: #2d3748;
+              margin: 0 0 5px 0;
+              font-size: 22px;
+              font-weight: 600;
+            }
+            
+            .header-center h2 {
+              color: #4a5568;
+              margin: 0;
+              font-size: 16px;
+              font-weight: 500;
+            }
+            
+            /* Application Details Section */
+            .application-details {
+              border: 1px solid #e0e0e0;
+              border-radius: 4px;
+              margin-bottom: 30px;
+            }
+            
+            .section-header {
+              background: #f7fafc;
+              padding: 12px 20px;
+              border-bottom: 1px solid #e0e0e0;
+              color: #2d3748;
+              font-size: 16px;
+              font-weight: 600;
+            }
+            
+            .section-body {
+              padding: 20px;
+            }
+            
+            .detail-grid {
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+              gap: 20px;
+            }
+            
+            .detail-item {
+              margin-bottom: 15px;
+            }
+            
+            .detail-label {
+              font-size: 13px;
+              color: #718096;
+              font-weight: 500;
+              margin-bottom: 4px;
+            }
+            
+            .detail-value {
+              font-size: 14px;
+              color: #2d3748;
+              font-weight: 500;
+            }
+            
+            .highlight-value {
+              color: #2c5282;
+              font-weight: 600;
+            }
+            
+            /* Important Information Section - No Border */
+            .important-info {
+              margin-bottom: 30px;
+            }
+            
+            .info-title {
+              font-size: 16px;
+              color: #2d3748;
+              font-weight: 600;
+              margin-bottom: 15px;
+            }
+            
+            .info-content {
+              font-size: 14px;
+              color: #4a5568;
+              line-height: 1.6;
+            }
+            
+            .info-item {
+              margin-bottom: 15px;
+            }
+            
+            .info-item strong {
+              color: #2d3748;
+            }
+            
+            /* Contact Information Section - Corporate Letter Style */
+            .contact-section {
+              margin-top: 40px;
+              border-top: 1px solid #e0e0e0;
+              padding-top: 20px;
+            }
+            
+            .contact-title {
+              font-size: 16px;
+              color: #2d3748;
+              font-weight: 600;
+              margin-bottom: 15px;
+            }
+            
+            .contact-info {
+              font-size: 14px;
+              color: #4a5568;
+              line-height: 1.8;
+            }
+            
+            .contact-row {
+              display: flex;
+              margin-bottom: 8px;
+            }
+            
+            .contact-label {
+              min-width: 120px;
+              font-weight: 500;
+            }
+            
+            /* Footer - Always at bottom */
+            .footer {
+              margin-top: auto;
+              text-align: center;
+              padding: 20px 0 0 0;
+              border-top: 1px solid #e0e0e0;
+              color: #718096;
+              font-size: 12px;
+            }
+            
+            .footer-logo {
+              width: 40px;
+              height: auto;
+              margin: 0 auto 10px auto;
+              display: block;
+              opacity: 0.8;
+            }
+            
+            /* Print-specific adjustments */
+            @media print {
+              body { 
+                font-size: 12px;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+              }
+              
+              .page-container { 
+                padding: 15px;
+              }
+              
+              .application-details {
+                border: 1px solid #e0e0e0;
+              }
+              
+              .section-header {
+                padding: 10px 15px;
+              }
+              
+              .section-body {
+                padding: 15px;
+              }
+              
+              .footer { 
+                margin-top: 20px;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="page-container">
+            <!-- Header -->
+            <div class="header">
+              <div class="header-left">
+                <img src="/lako-logo.png" alt="Lako Insurance" class="logo" />
+              </div>
+              <div class="header-center">
+                <h1>Insurance Application Summary</h1>
+                <h2>Personal Accident Insurance</h2>
+              </div>
+            </div>
+  
+            <!-- Application Details Section -->
+            <div class="application-details">
+              <div class="section-header">
+                Application Details
+              </div>
+              <div class="section-body">
+                <div class="detail-grid">
+                  <div class="detail-item">
+                    <div class="detail-label">Application Number</div>
+                    <div class="detail-value highlight-value">${
+                      applicationData?.applicationNumber || "N/A"
+                    }</div>
+                  </div>
+                  
+                  <div class="detail-item">
+                    <div class="detail-label">Applicant Name</div>
+                    <div class="detail-value">${[
+                      applicationData?.firstName,
+                      applicationData?.middleName,
+                      applicationData?.lastName,
+                    ]
+                      .filter(Boolean)
+                      .join(" ")}</div>
+                  </div>
+                  
+                  <div class="detail-item">
+                    <div class="detail-label">Email Address</div>
+                    <div class="detail-value">${
+                      applicationData?.emailAddress || "N/A"
+                    }</div>
+                  </div>
+                  
+                  <div class="detail-item">
+                    <div class="detail-label">Mobile Number</div>
+                    <div class="detail-value">${
+                      applicationData?.mobileNumber || "N/A"
+                    }</div>
+                  </div>
+                  
+                  <div class="detail-item">
+                    <div class="detail-label">Insurance Type</div>
+                    <div class="detail-value">${
+                      applicationData?.insuranceType
+                        ? applicationData.insuranceType
+                            .charAt(0)
+                            .toUpperCase() +
+                          applicationData.insuranceType.slice(1)
+                        : "N/A"
+                    } - ${
+                      applicationData?.coverType
+                        ? applicationData.coverType.charAt(0).toUpperCase() +
+                          applicationData.coverType.slice(1)
+                        : "N/A"
+                    }</div>
+                  </div>
+                  
+                  <div class="detail-item">
+                    <div class="detail-label">Insurance Provider</div>
+                    <div class="detail-value">${
+                      applicationData?.insuranceProvider || "N/A"
+                    }</div>
+                  </div>
+                  
+                  <div class="detail-item">
+                    <div class="detail-label">Annual Premium</div>
+                    <div class="detail-value highlight-value">${formatCurrency(
+                      applicationData?.premiumAmount || 0
+                    )}</div>
+                  </div>
+                  
+                  <div class="detail-item">
+                    <div class="detail-label">Policy Start Date</div>
+                    <div class="detail-value">${formatDate(
+                      applicationData?.policyStartDate
+                    )}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Important Information Section - No Border -->
+            <div class="important-info">
+              <div class="info-title">Important Information</div>
+              <div class="info-content">
+                <div class="info-item">
+                  <strong>Application:</strong> A confirmation email will be sent shortly while your application is being reviewed.
+                </div>
+                
+                <div class="info-item">
+                  <strong>Payment:</strong> ${
+                    paymentCompleted
+                      ? "Payment completed as part of the application process. Policy documents will be shared to your email after approval."
+                      : "Payment for this policy was part of your application process."
+                  }
+                </div>
+                
+                <div class="info-item">
+                  <strong>Follow-Up:</strong> If further documents are needed, we'll contact you via our official channels.
+                </div>
+                
+                <div class="info-item">
+                  <strong>Questions:</strong> Reach out to us via the contact details below if you need any help.
+                </div>
+              </div>
+            </div>
+            
+            <!-- Contact Information Section - Corporate Letter Style -->
+            <div class="contact-section">
+              <div class="contact-title">Contact Information</div>
+              <div class="contact-info">
+                <div class="contact-row">
+                  <div class="contact-label">Telephone:</div>
+                  <div>+254 712 345678</div>
+                </div>
+                <div class="contact-row">
+                  <div class="contact-label">Email:</div>
+                  <div>support@lakoinsurance.co.ke</div>
+                </div>
+                <div class="contact-row">
+                  <div class="contact-label">Website:</div>
+                  <div>www.lakoinsurance.co.ke</div>
+                </div>
+                <div class="contact-row">
+                  <div class="contact-label">Address:</div>
+                  <div>Lako Insurance House, Westlands, Nairobi, Kenya</div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Footer - Always at bottom -->
+            <div class="footer">
+              <img src="/lako-logo.png" alt="Lako Insurance" class="footer-logo" />
+              <p><strong>This is an automatically generated document. Please retain this for your records.</strong></p>
+              <p>Generated on ${new Date().toLocaleDateString(
+                "en-GB"
+              )} at ${new Date().toLocaleTimeString("en-GB")}</p>
+              <p>© ${new Date().getFullYear()} Lako Insurance. All rights reserved.</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+  
+    // Open print content in new window
+    const printWindow = window.open("", "_blank");
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+  
+    // Wait for content to load, then print
+    printWindow.onload = () => {
+      printWindow.print();
+      printWindow.close();
+    };
+  };
+
+
 
   return (
     <div className="">
@@ -115,7 +543,7 @@ const ApplicationSuccess = ({
               Insurance Type
             </label>
             <p className="text-sm md:text-[0.93rem] lg:text-base font-semibold font-lexend text-primary-700 capitalize">
-              Personal Accident - {applicationData?.coverType}
+              {applicationData?.insuranceType} - {applicationData?.coverType}
             </p>
           </div>
 
@@ -164,8 +592,7 @@ const ApplicationSuccess = ({
             <p>
               <strong>Application:</strong> An email with confirmation of your
               application will be sent to you within 2 minutes as our
-              underwriting team reviews your application & documents. Once
-              approved, your policy documents will be sent via email.
+              underwriting team reviews your application & documents.
             </p>
           </div>
 
@@ -174,7 +601,7 @@ const ApplicationSuccess = ({
             <p>
               <strong>Payment:</strong>{" "}
               {paymentCompleted
-                ? "Your payment has been processed successfully and your policy is now active. You will receive your policy documents via email within 24 hours."
+                ? "Payment for this policy has been completed as part of the application process. Once the application is approved, your policy documents will be sent via email."
                 : "Payment for this policy has been completed as part of the application process."}
             </p>
           </div>
@@ -182,14 +609,15 @@ const ApplicationSuccess = ({
             <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
             <p>
               <strong>Additional Information:</strong> If we need any additional
-              documents or information, we'll contact you via email or phone.
+              documents or information, we'll contact you via email or phone
+              only through our communication channels below.
             </p>
           </div>
           <div className="flex items-start">
             <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
             <p>
               <strong>Questions:</strong> If you have any questions about your
-              application, please contact us using the information below.
+              application, please contact us using the contact details below.
             </p>
           </div>
         </div>
@@ -234,35 +662,6 @@ const ApplicationSuccess = ({
         </div>
       </motion.div>
 
-      {/* Payment Status - Only show if payment was completed */}
-      {paymentCompleted && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.9 }}
-          className="mb-6"
-        >
-          <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <TbCheck className="w-8 h-8 text-green-600" />
-            </div>
-            <h3 className="text-lg font-semibold text-green-800 mb-2">
-              Payment Successful!
-            </h3>
-            <p className="text-green-700 mb-2 text-sm">
-              Your premium payment of{" "}
-              <span className="font-bold">
-                {formatCurrency(applicationData?.premiumAmount || 0)}
-              </span>{" "}
-              has been successfully processed via M-Pesa.
-            </p>
-            <p className="text-green-600 text-xs">
-              Your insurance policy is now active and in effect.
-            </p>
-          </div>
-        </motion.div>
-      )}
-
       {/* Action Buttons */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -287,7 +686,7 @@ const ApplicationSuccess = ({
         </Link>
 
         <button
-          onClick={() => window.print()}
+          onClick={handlePrintSummary}
           className="flex items-center justify-center px-6 py-2.5 border border-gray-300 text-sm lg:text-base text-secondary-600 rounded-lg hover:bg-gray-50 transition-colors font-semibold"
         >
           <TbDownload className="w-5 h-5 mr-2" />
@@ -304,9 +703,18 @@ const ApplicationSuccess = ({
       >
         <p className="text-[0.83rem] md:text-sm text-gray-600">
           Please save your application number:
-          <span className="font-mono text-[0.9rem] font-bold text-primary-700 ml-2">
+          <span className="font-lexend text-[0.9rem] font-semibold text-primary-600 ml-2">
             {applicationData?.applicationNumber || "PA202412010001"}
           </span>
+          <button
+            onClick={handleCopyApplicationNumber}
+            className={`ml-2 transition-colors cursor-pointer ${
+              isCopied ? " text-green-600" : " text-gray-600"
+            }`}
+            title={isCopied ? "Copied!" : "Copy application number"}
+          >
+            {isCopied ? <TbCheck size={16} /> : <TbCopy size={16} />}
+          </button>
         </p>
       </motion.div>
     </div>

@@ -23,6 +23,17 @@ const PersonalAccidentFlow = ({
   const [paymentCompleted, setPaymentCompleted] = useState(false);
   const [showApplicationSuccess, setShowApplicationSuccess] = useState(false);
   const [isCreatingDraft, setIsCreatingDraft] = useState(false);
+  const [validationErrors, setValidationErrors] = useState({});
+
+  // Scroll to top when validation errors are set
+  React.useEffect(() => {
+    if (Object.keys(validationErrors).length > 0 && currentStep === 5) {
+      // Small delay to ensure the component has rendered
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }, 100);
+    }
+  }, [validationErrors, currentStep]);
 
   const steps = [
     {
@@ -59,6 +70,7 @@ const PersonalAccidentFlow = ({
 
   // Function to reset all form data to default values
   const resetFormData = () => {
+    updateFormData("insuranceType", "personal-accident");
     updateFormData("coverType", "");
     updateFormData("selectedPlan", null);
     updateFormData("firstName", "");
@@ -178,12 +190,37 @@ const PersonalAccidentFlow = ({
 
   // Handle moving to payment step - create draft application first
   const handleProceedToPayment = async () => {
+    // Clear previous validation errors
+    setValidationErrors({});
+
     try {
       await createDraftApplication();
       nextStep(); // Move to payment step
     } catch (error) {
       console.error("Error proceeding to payment:", error);
-      alert("Failed to prepare application for payment. Please try again.");
+
+      // Check if this is a validation error from the server
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.errorType === "validation"
+      ) {
+        const serverValidationErrors = error.response.data.errors || {};
+        setValidationErrors(serverValidationErrors);
+
+        // Show a more specific error message
+        const errorFields = Object.keys(serverValidationErrors);
+        const errorMessage =
+          errorFields.length > 0
+            ? `Please correct the following errors: ${errorFields.join(", ")}`
+            : "Please check your information and try again.";
+
+        // Don't show alert, let the validation errors display in the UI
+        console.log("Validation errors set:", serverValidationErrors);
+      } else {
+        // For non-validation errors, show generic alert
+        alert("Failed to prepare application for payment. Please try again.");
+      }
     }
   };
 
@@ -203,6 +240,62 @@ const PersonalAccidentFlow = ({
         "Payment successful but application update failed. Please contact support with your payment reference: " +
           paymentData.paymentReference
       );
+    }
+  };
+
+  // Upload documents to application
+  const uploadDocumentsToApplication = async (applicationId) => {
+    try {
+      console.log("Uploading documents to application:", applicationId);
+      console.log("Form data documents:", formData.documents);
+
+      const uploadPromises = [];
+      const documentTypes = [];
+
+      Object.entries(formData.documents).forEach(([docType, fileData]) => {
+        console.log(
+          `Processing document type: ${docType}, fileData:`,
+          fileData
+        );
+        if (fileData && fileData.file) {
+          console.log("Adding file to upload:", fileData.name);
+          uploadPromises.push(fileData.file);
+          documentTypes.push(docType);
+        }
+      });
+
+      console.log("Total files to upload:", uploadPromises.length);
+
+      if (uploadPromises.length > 0) {
+        // Create FormData for upload
+        const uploadFormData = new FormData();
+
+        uploadPromises.forEach((file, index) => {
+          uploadFormData.append("documents", file);
+          uploadFormData.append("documentTypes", documentTypes[index]);
+        });
+
+        console.log("Calling applicationService.uploadDocuments with:", {
+          applicationId,
+          formDataEntries: Array.from(uploadFormData.entries()),
+        });
+
+        const uploadResponse = await applicationService.uploadDocuments(
+          applicationId,
+          uploadFormData
+        );
+
+        console.log("Upload response:", uploadResponse);
+
+        if (uploadResponse.success) {
+          console.log("Documents uploaded successfully:", uploadResponse.data);
+        } else {
+          console.error("Document upload failed:", uploadResponse.message);
+        }
+      }
+    } catch (error) {
+      console.error("Error uploading documents:", error);
+      // Don't throw here - documents can be uploaded later
     }
   };
 
@@ -239,7 +332,7 @@ const PersonalAccidentFlow = ({
       console.log("Updated application:", updatedApplication);
       setSubmittedApplication(updatedApplication);
 
-      // Upload documents to the now-submitted application
+      // Upload documents to the now-submitted application (only once)
       console.log("Checking documents for upload:", formData.documents);
       if (formData.documents && Object.keys(formData.documents).length > 0) {
         console.log("Documents found, starting upload...");
@@ -254,62 +347,6 @@ const PersonalAccidentFlow = ({
       throw error;
     } finally {
       setIsSubmitting(false);
-    }
-  };
-
-  // Upload documents to application
-  const uploadDocumentsToApplication = async (applicationId) => {
-    try {
-      console.log("Uploading documents to application:", applicationId);
-      console.log("Form data documents:", formData.documents);
-
-      const uploadPromises = [];
-      const documentTypes = [];
-
-      Object.entries(formData.documents).forEach(([docType, fileData]) => {
-        console.log(
-          `Processing document type: ${docType}, fileData:`,
-          fileData
-        );
-        if (fileData && fileData.file) {
-          console.log("Adding file to upload:", fileData.name);
-          uploadPromises.push(fileData.file);
-          documentTypes.push(docType);
-        }
-      });
-
-      console.log("Total files to upload:", uploadPromises.length);
-
-      if (uploadPromises.length > 0) {
-        // Create FormData for upload
-        const uploadFormData = new FormData();
-
-        uploadPromises.forEach((file, index) => {
-          uploadFormData.append("files", file);
-          uploadFormData.append("documentTypes", documentTypes[index]);
-        });
-
-        console.log("Calling applicationService.uploadDocuments with:", {
-          applicationId,
-          formDataEntries: Array.from(uploadFormData.entries()),
-        });
-
-        const uploadResponse = await applicationService.uploadDocuments(
-          applicationId,
-          uploadFormData
-        );
-
-        console.log("Upload response:", uploadResponse);
-
-        if (uploadResponse.success) {
-          console.log("Documents uploaded successfully:", uploadResponse.data);
-        } else {
-          console.error("Document upload failed:", uploadResponse.message);
-        }
-      }
-    } catch (error) {
-      console.error("Error uploading documents:", error);
-      // Don't throw here - documents can be uploaded later
     }
   };
 
@@ -376,6 +413,8 @@ const PersonalAccidentFlow = ({
             nextStep={handleProceedToPayment}
             prevStep={prevStep}
             isSubmitting={isSubmitting || isCreatingDraft}
+            validationErrors={validationErrors}
+            setValidationErrors={setValidationErrors}
           />
         );
       case 6:
@@ -393,6 +432,7 @@ const PersonalAccidentFlow = ({
                 firstName: formData.firstName,
                 lastName: formData.lastName,
                 coverType: formData.coverType,
+                insuranceType: formData.insuranceType,
               }}
               onPaymentComplete={handlePaymentComplete}
               onCancel={handlePaymentCancel}

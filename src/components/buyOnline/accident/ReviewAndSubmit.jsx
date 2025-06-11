@@ -26,10 +26,22 @@ const ReviewAndSubmit = ({
   nextStep,
   prevStep,
   isSubmitting = false,
+  validationErrors: serverValidationErrors = {},
+  setValidationErrors: setServerValidationErrors,
 }) => {
   const [agreed, setAgreed] = useState(false);
   const [errors, setErrors] = useState({});
-  const [validationErrors, setValidationErrors] = useState({});
+  const [clientValidationErrors, setClientValidationErrors] = useState({});
+
+  // Clear validation errors when form data changes
+  React.useEffect(() => {
+    // Clear both client and server validation errors when form data changes
+    setClientValidationErrors({});
+    setErrors({});
+    if (setServerValidationErrors) {
+      setServerValidationErrors({});
+    }
+  }, [formData, setServerValidationErrors]);
 
   // Navigation functions for edit buttons
   const goToStep = (stepNumber) => {
@@ -67,7 +79,12 @@ const ReviewAndSubmit = ({
     }
 
     setErrors({});
-    setValidationErrors({});
+    setClientValidationErrors({});
+
+    // Clear server validation errors when trying to submit again
+    if (setServerValidationErrors) {
+      setServerValidationErrors({});
+    }
 
     // Basic client-side validation
     const requiredFields = {
@@ -80,16 +97,16 @@ const ReviewAndSubmit = ({
       emailAddress: "Email address is required",
     };
 
-    const clientValidationErrors = {};
+    const newClientValidationErrors = {};
 
     Object.entries(requiredFields).forEach(([field, message]) => {
       if (!formData[field] || formData[field].toString().trim() === "") {
-        clientValidationErrors[field] = message;
+        newClientValidationErrors[field] = message;
       }
     });
 
-    if (Object.keys(clientValidationErrors).length > 0) {
-      setValidationErrors(clientValidationErrors);
+    if (Object.keys(newClientValidationErrors).length > 0) {
+      setClientValidationErrors(newClientValidationErrors);
       setErrors({
         submit:
           "Please fill in all required fields before proceeding to payment.",
@@ -101,14 +118,25 @@ const ReviewAndSubmit = ({
     nextStep();
   };
 
-  // Helper function to get field error message
+  // Helper function to get field error message (combining client and server errors)
   const getFieldError = (fieldName) => {
-    return validationErrors[fieldName] || null;
+    return (
+      clientValidationErrors[fieldName] ||
+      serverValidationErrors[fieldName] ||
+      null
+    );
   };
 
-  // Helper function to check if field has error
+  // Helper function to check if field has error (combining client and server errors)
   const hasFieldError = (fieldName) => {
-    return !!validationErrors[fieldName];
+    return !!(
+      clientValidationErrors[fieldName] || serverValidationErrors[fieldName]
+    );
+  };
+
+  // Get all validation errors (combining client and server errors)
+  const getAllValidationErrors = () => {
+    return { ...clientValidationErrors, ...serverValidationErrors };
   };
 
   const personalInfoSection = (
@@ -542,7 +570,7 @@ const ReviewAndSubmit = ({
       </div>
 
       {/* Validation Errors Summary */}
-      {Object.keys(validationErrors).length > 0 && (
+      {Object.keys(getAllValidationErrors()).length > 0 && (
         <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
           <div className="flex items-start">
             <TbExclamationCircle className="text-red-600 h-5 w-5 mr-3 flex-shrink-0 mt-0.5" />
@@ -551,21 +579,24 @@ const ReviewAndSubmit = ({
                 Please correct the following errors before submitting:
               </h4>
               <ul className="text-red-700 text-sm space-y-1">
-                {Object.entries(validationErrors).map(([fieldName, error]) => (
-                  <li key={fieldName} className="flex items-start">
-                    <span className="w-1.5 h-1.5 bg-red-600 rounded-full mr-2 mt-2 flex-shrink-0"></span>
-                    <span>
-                      <strong className="capitalize">
-                        {fieldName
-                          .replace(/([A-Z])/g, " $1")
-                          .toLowerCase()
-                          .replace("email address", "email")}
-                        :
-                      </strong>{" "}
-                      {error}
-                    </span>
-                  </li>
-                ))}
+                {Object.entries(getAllValidationErrors()).map(
+                  ([fieldName, error]) => (
+                    <li key={fieldName} className="flex items-start">
+                      <span className="w-1.5 h-1.5 bg-red-600 rounded-full mr-2 mt-2 flex-shrink-0"></span>
+                      <span>
+                        <strong className="capitalize">
+                          {fieldName
+                            .replace(/([A-Z])/g, " $1")
+                            .toLowerCase()
+                            .replace("email address", "email")
+                            .replace("kra pin", "KRA PIN")}
+                          :
+                        </strong>{" "}
+                        {error}
+                      </span>
+                    </li>
+                  )
+                )}
               </ul>
             </div>
           </div>

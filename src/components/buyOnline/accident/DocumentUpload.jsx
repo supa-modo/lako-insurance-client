@@ -383,21 +383,7 @@ const DocumentUpload = ({ formData, updateFormData, nextStep, prevStep }) => {
         </div>
       </div>
 
-      {/* Important Notice */}
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 md:p-4">
-        <div className="flex items-start">
-          <TbAlertCircle className="w-5 md:w-6 h-5 md:h-6 text-yellow-600 mr-3" />
-          <div className="text-sm md:text-[0.95rem] text-yellow-800">
-            <p className="font-medium mb-1">Important Notice:</p>
-            <ul className="list-disc list-inside space-y-1 text-xs md:text-sm lg:text-[0.9rem]">
-              <li>Ensure all documents are clear and legible</li>
-              <li>Documents should be recent and valid</li>
-              <li>File names should not contain special characters</li>
-              <li>All required documents must be uploaded to proceed</li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      
 
       {/* Navigation */}
       <div className="flex justify-between items-center pt-6 border-t border-gray-200">

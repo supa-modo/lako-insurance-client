@@ -237,7 +237,7 @@ const NewComparisonPage = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-b from-neutral-50 to-neutral-100 font-outfit">
+      <div className="min-h-screen bg-slate-50 font-outfit">
         <Header />
 
         <main className="pt-24 md:pt-28 pb-20 relative z-10">

@@ -25,7 +25,7 @@ const authService = {
       console.error("Login failed:", error);
       throw error;
     }
-  },
+  }, 
 
   /**
    * Logout the current admin user

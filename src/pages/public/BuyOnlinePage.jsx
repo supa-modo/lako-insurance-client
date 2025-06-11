@@ -24,8 +24,8 @@ const BuyOnlinePage = () => {
     universityCollegeSchool: "University of Nairobi",
 
     // Proposer Details
-    kraPin: "1234567890",
-    idNumber: "1234567890",
+    kraPin: "A23456789S",
+    idNumber: "38353499",
     mobileNumber: "+254722345678",
     emailAddress: "john.doe@example.com",
     postalAddress: "1234567890",
@@ -137,7 +137,7 @@ const BuyOnlinePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-neutral-50 to-neutral-100 font-outfit">
+    <div className="min-h-screen bg-slate-50 from-neutral-50 to-neutral-100 font-outfit">
       <Header />
 
       <main className="pt-24 md:pt-28 pb-20 relative z-10">
@@ -178,7 +178,7 @@ const BuyOnlinePage = () => {
           )}
 
           {/* Main Content */}
-          <div className="bg-white max-w-[85rem] mx-auto rounded-2xl lg:rounded-xl shadow-sm border border-slate-200 px-2.5 py-5 md:p-5 lg:p-8">
+          <div className="bg-white max-w-[85rem] mx-auto rounded-t-2xl lg:rounded-[1.2rem] md:shadow-sm border-t md:border border-slate-200 px-2.5 py-5 md:p-5 lg:p-8">
             {renderContent()}
           </div>
         </div>
