@@ -113,6 +113,14 @@ const PersonalAccidentFlow = ({
     try {
       console.log("Creating draft application for payment...");
 
+      // Helper function to convert empty strings to null
+      const sanitizeField = (value) => {
+        if (typeof value === "string" && value.trim() === "") {
+          return null;
+        }
+        return value || null;
+      };
+
       // Create draft application payload
       const draftPayload = {
         // Basic application info
@@ -122,7 +130,7 @@ const PersonalAccidentFlow = ({
 
         // Personal details
         firstName: formData.firstName,
-        middleName: formData.middleName || null,
+        middleName: sanitizeField(formData.middleName),
         lastName: formData.lastName,
         dateOfBirth: formData.dateOfBirth,
         gender: formData.gender,
@@ -131,37 +139,39 @@ const PersonalAccidentFlow = ({
         emailAddress: formData.emailAddress,
 
         // Address details
-        postalAddress: formData.postalAddress || null,
-        town: formData.town || null,
+        postalAddress: sanitizeField(formData.postalAddress),
+        town: sanitizeField(formData.town),
 
         // Educational details (for students)
-        universityCollegeSchool: formData.universityCollegeSchool || null,
-        kraPin: formData.kraPin || null,
+        universityCollegeSchool: sanitizeField(
+          formData.universityCollegeSchool
+        ),
+        kraPin: sanitizeField(formData.kraPin),
 
         // Next of kin and beneficiary
-        nextOfKinName: formData.nextOfKinName || null,
-        nextOfKinContacts: formData.nextOfKinContacts || null,
-        beneficiaryName: formData.beneficiaryName || null,
-        beneficiaryContacts: formData.beneficiaryContacts || null,
+        nextOfKinName: sanitizeField(formData.nextOfKinName),
+        nextOfKinContacts: sanitizeField(formData.nextOfKinContacts),
+        beneficiaryName: sanitizeField(formData.beneficiaryName),
+        beneficiaryContacts: sanitizeField(formData.beneficiaryContacts),
 
         // Health and medical history
         previousAccidents: formData.previousAccidents || false,
         physicalDisability: formData.physicalDisability || false,
         chronicIllness: formData.chronicIllness || false,
-        medicalHistoryDetails: formData.medicalHistoryDetails || null,
+        medicalHistoryDetails: sanitizeField(formData.medicalHistoryDetails),
 
         // Policy details
         policyStartDate:
           formData.policyStartDate || new Date().toISOString().split("T")[0],
         selectedPlanId: formData.selectedPlan?.id || null,
         premiumAmount: formData.premiumAmount || null,
-        insuranceProvider: formData.insuranceProvider || null,
+        insuranceProvider: sanitizeField(formData.insuranceProvider),
 
         // Agent details if applicable
         isAgentPurchase: formData.isAgentPurchase || false,
-        agentName: formData.agentName || null,
-        agentEmail: formData.agentEmail || null,
-        agentPhone: formData.agentPhone || null,
+        agentName: sanitizeField(formData.agentName),
+        agentEmail: sanitizeField(formData.agentEmail),
+        agentPhone: sanitizeField(formData.agentPhone),
       };
 
       console.log("Draft application payload:", draftPayload);
