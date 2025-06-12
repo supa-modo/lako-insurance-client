@@ -33,13 +33,14 @@ const HomePage = () => {
         "Discover tailored insurance plans designed specifically for your needs. Secure your future with confidence.",
     },
     {
-      image: "/slider02.png",
-      title: "Personalized Solutions",
-      titleBreak: "For",
-      titleHighlight: "Every Stage of Life",
+      image: "/workplace.png",
+      title: "Because Safety",
+      titleBreak: "Isn't Optional.",
+      titleHighlight: "Protect Your Workforce.",
       description:
-        "From health and life insurance to property protection, our experts provide plans that evolve with your changing needs.",
+        "Empower your workforce with the confidence that they’re covered. Support your team where it matters most, because a secure team is a stronger team.",
     },
+
     {
       image: "/slider03.png",
       title: "Investments.",
@@ -49,8 +50,12 @@ const HomePage = () => {
         "We can help you with that. With our 10 years plus of experience dealing with insurance options, we've got you covered.",
     },
     {
-      image: "/workplaceaccident.png",
-       
+      image: "/slider02.png",
+      title: "Personalized Solutions",
+      titleBreak: "For",
+      titleHighlight: "Every Stage of Life",
+      description:
+        "From health and life insurance to property protection, our experts provide plans that evolve with your changing needs.",
     },
   ];
 

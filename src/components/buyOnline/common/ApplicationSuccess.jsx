@@ -68,6 +68,7 @@ const ApplicationSuccess = ({
       <html>
         <head>
           <meta charset="utf-8">
+          <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
           <title>Insurance Application Summary - ${
             applicationData?.applicationNumber || "PA202412010001"
           }</title>
@@ -79,7 +80,7 @@ const ApplicationSuccess = ({
             }
             
             body {
-              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              font-family: 'Outfit', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
               line-height: 1.5;
               color: #333;
               background: white;
@@ -114,7 +115,7 @@ const ApplicationSuccess = ({
             }
             
             .logo {
-              max-width: 80px;
+              max-width: 100px;
               height: auto;
             }
             
@@ -124,14 +125,14 @@ const ApplicationSuccess = ({
             }
             
             .header-center h1 {
-              color: #2d3748;
+              color: #247f7c;
               margin: 0 0 5px 0;
               font-size: 22px;
               font-weight: 600;
             }
             
             .header-center h2 {
-              color: #4a5568;
+              color: #e07b13;
               margin: 0;
               font-size: 16px;
               font-weight: 500;
@@ -145,12 +146,12 @@ const ApplicationSuccess = ({
             }
             
             .section-header {
-              background: #f7fafc;
+              background: #3d66651a;
               padding: 12px 20px;
               border-bottom: 1px solid #e0e0e0;
-              color: #2d3748;
+              color: #e07b13;
               font-size: 16px;
-              font-weight: 600;
+              font-weight: 500;
             }
             
             .section-body {
@@ -159,8 +160,8 @@ const ApplicationSuccess = ({
             
             .detail-grid {
               display: grid;
-              grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-              gap: 20px;
+              grid-template-columns: repeat(3, 1fr);
+              gap: 10px;
             }
             
             .detail-item {
@@ -170,70 +171,71 @@ const ApplicationSuccess = ({
             .detail-label {
               font-size: 13px;
               color: #718096;
-              font-weight: 500;
+              font-weight: 400;
               margin-bottom: 4px;
             }
             
             .detail-value {
               font-size: 14px;
               color: #2d3748;
-              font-weight: 500;
+              font-weight: 400;
             }
             
             .highlight-value {
-              color: #2c5282;
-              font-weight: 600;
+              color: #1b5f5d;
+              font-weight: 500;
             }
             
             /* Important Information Section - No Border */
             .important-info {
-              margin-bottom: 30px;
+              margin-bottom: 25px;
             }
             
             .info-title {
               font-size: 16px;
-              color: #2d3748;
-              font-weight: 600;
-              margin-bottom: 15px;
+              color: #e07b13;
+              font-weight: 500;
+              margin-bottom: 12px;
             }
             
             .info-content {
-              font-size: 14px;
+              font-size: 13px;
               color: #4a5568;
-              line-height: 1.6;
+              line-height: 1.5;
+              font-weight: 400;
             }
             
             .info-item {
-              margin-bottom: 15px;
+              margin-bottom: 6px;
             }
             
             .info-item strong {
-              color: #2d3748;
+              color: #247f7c;
             }
             
             /* Contact Information Section - Corporate Letter Style */
             .contact-section {
-              margin-top: 40px;
+              margin-top: 0px;
               border-top: 1px solid #e0e0e0;
-              padding-top: 20px;
+              padding-top: 15px;
             }
             
             .contact-title {
-              font-size: 16px;
-              color: #2d3748;
-              font-weight: 600;
-              margin-bottom: 15px;
+              font-size: 14px;
+              color: #e07b13;
+              font-weight: 500;
+              margin-bottom: 10px;
             }
             
             .contact-info {
-              font-size: 14px;
+              font-size: 13px;
               color: #4a5568;
               line-height: 1.8;
             }
             
             .contact-row {
               display: flex;
-              margin-bottom: 8px;
+              margin-bottom: 4px;
             }
             
             .contact-label {
@@ -251,10 +253,16 @@ const ApplicationSuccess = ({
               font-size: 12px;
             }
             
+            .footer-text {
+              font-size: 12px;
+              color: #182928;
+              font-weight: 500;
+            }
+            
             .footer-logo {
-              width: 40px;
+              width: 70px;
               height: auto;
-              margin: 0 auto 10px auto;
+              margin: 0 auto 5px auto;
               display: block;
               opacity: 0.8;
             }
@@ -298,7 +306,12 @@ const ApplicationSuccess = ({
               </div>
               <div class="header-center">
                 <h1>Insurance Application Summary</h1>
-                <h2>Personal Accident Insurance</h2>
+                <h2>${
+                  applicationData?.insuranceType
+                    ? applicationData.insuranceType.charAt(0).toUpperCase() +
+                      applicationData.insuranceType.slice(1)
+                    : "N/A"
+                } Insurance</h2>
               </div>
             </div>
   
@@ -351,11 +364,11 @@ const ApplicationSuccess = ({
                           applicationData.insuranceType.slice(1)
                         : "N/A"
                     } - ${
-                      applicationData?.coverType
-                        ? applicationData.coverType.charAt(0).toUpperCase() +
-                          applicationData.coverType.slice(1)
-                        : "N/A"
-                    }</div>
+      applicationData?.coverType
+        ? applicationData.coverType.charAt(0).toUpperCase() +
+          applicationData.coverType.slice(1)
+        : "N/A"
+    }</div>
                   </div>
                   
                   <div class="detail-item">
@@ -387,46 +400,44 @@ const ApplicationSuccess = ({
               <div class="info-title">Important Information</div>
               <div class="info-content">
                 <div class="info-item">
-                  <strong>Application:</strong> A confirmation email will be sent shortly while your application is being reviewed.
+                  <strong>Application:</strong> A confirmation email for your application will be sent shortly as our underwriting team reviews your details & documents.
                 </div>
                 
                 <div class="info-item">
                   <strong>Payment:</strong> ${
                     paymentCompleted
-                      ? "Payment completed as part of the application process. Policy documents will be shared to your email after approval."
+                      ? "Payment completed as part of the application process. The policy documents will be shared to your email after application approval."
                       : "Payment for this policy was part of your application process."
                   }
                 </div>
                 
                 <div class="info-item">
-                  <strong>Follow-Up:</strong> If further documents are needed, we'll contact you via our official channels.
+                  <strong>Follow-Up:</strong> If we need any additional
+              documents or information, we'll contact you via email or phone
+              only through our communication channels below.
                 </div>
                 
                 <div class="info-item">
-                  <strong>Questions:</strong> Reach out to us via the contact details below if you need any help.
+                  <strong>Questions:</strong> If you have any queries about your application, please reach out to us through any of our contact options below.
                 </div>
               </div>
             </div>
             
             <!-- Contact Information Section - Corporate Letter Style -->
             <div class="contact-section">
-              <div class="contact-title">Contact Information</div>
+              <div class="contact-title">Contact Us Through</div>
               <div class="contact-info">
                 <div class="contact-row">
                   <div class="contact-label">Telephone:</div>
-                  <div>+254 712 345678</div>
+                  <div>+254 720 636363 / +254 769 868686 / +254 726 581487</div>
                 </div>
                 <div class="contact-row">
                   <div class="contact-label">Email:</div>
-                  <div>support@lakoinsurance.co.ke</div>
+                  <div>info@lako.co.ke or ykola@lako.co.ke</div>
                 </div>
                 <div class="contact-row">
                   <div class="contact-label">Website:</div>
-                  <div>www.lakoinsurance.co.ke</div>
-                </div>
-                <div class="contact-row">
-                  <div class="contact-label">Address:</div>
-                  <div>Lako Insurance House, Westlands, Nairobi, Kenya</div>
+                  <div>www.lako.co.ke</div>
                 </div>
               </div>
             </div>
@@ -434,7 +445,7 @@ const ApplicationSuccess = ({
             <!-- Footer - Always at bottom -->
             <div class="footer">
               <img src="/lako-logo.png" alt="Lako Insurance" class="footer-logo" />
-              <p><strong>This is an automatically generated document. Please retain this for your records.</strong></p>
+              <p class="footer-text">This is an automatically generated document. Please retain this for your records.</p>
               <p>Generated on ${new Date().toLocaleDateString(
                 "en-GB"
               )} at ${new Date().toLocaleTimeString("en-GB")}</p>
@@ -444,20 +455,18 @@ const ApplicationSuccess = ({
         </body>
       </html>
     `;
-  
+
     // Open print content in new window
     const printWindow = window.open("", "_blank");
     printWindow.document.write(printContent);
     printWindow.document.close();
-  
+
     // Wait for content to load, then print
     printWindow.onload = () => {
       printWindow.print();
       printWindow.close();
     };
   };
-
-
 
   return (
     <div className="">

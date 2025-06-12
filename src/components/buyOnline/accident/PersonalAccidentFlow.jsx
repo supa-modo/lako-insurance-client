@@ -24,6 +24,7 @@ const PersonalAccidentFlow = ({
   const [showApplicationSuccess, setShowApplicationSuccess] = useState(false);
   const [isCreatingDraft, setIsCreatingDraft] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   // Scroll to top when validation errors are set
   React.useEffect(() => {
@@ -236,6 +237,13 @@ const PersonalAccidentFlow = ({
 
   // Handle payment completion - update draft application to submitted
   const handlePaymentComplete = async (paymentData) => {
+    // Prevent duplicate processing
+    if (isProcessingPayment || paymentCompleted) {
+      console.log("Payment already being processed or completed, skipping...");
+      return;
+    }
+
+    setIsProcessingPayment(true);
     console.log("Payment completed:", paymentData);
     setPaymentCompleted(true);
 
@@ -245,6 +253,9 @@ const PersonalAccidentFlow = ({
       setShowApplicationSuccess(true);
     } catch (error) {
       console.error("Error updating application after payment:", error);
+      // Reset flags on error
+      setIsProcessingPayment(false);
+      setPaymentCompleted(false);
       // Handle application update error - payment succeeded but app update failed
       alert(
         "Payment successful but application update failed. Please contact support with your payment reference: " +
@@ -257,6 +268,25 @@ const PersonalAccidentFlow = ({
   const uploadDocumentsToApplication = async (applicationId) => {
     try {
       console.log("Uploading documents to application:", applicationId);
+
+      // First, check if documents already exist for this application
+      console.log("Checking for existing documents...");
+      const existingDocsResponse =
+        await applicationService.getApplicationDocuments(applicationId);
+
+      if (
+        existingDocsResponse.success &&
+        existingDocsResponse.data &&
+        existingDocsResponse.data.length > 0
+      ) {
+        console.log(
+          "Documents already uploaded for this application, skipping upload..."
+        );
+        console.log("Existing documents:", existingDocsResponse.data);
+        return; // Skip upload if documents already exist
+      }
+
+      console.log("No existing documents found, proceeding with upload...");
       console.log("Form data documents:", formData.documents);
 
       const uploadPromises = [];
@@ -302,6 +332,8 @@ const PersonalAccidentFlow = ({
         } else {
           console.error("Document upload failed:", uploadResponse.message);
         }
+      } else {
+        console.log("No files to upload");
       }
     } catch (error) {
       console.error("Error uploading documents:", error);
@@ -342,7 +374,7 @@ const PersonalAccidentFlow = ({
       console.log("Updated application:", updatedApplication);
       setSubmittedApplication(updatedApplication);
 
-      // Upload documents to the now-submitted application (only once)
+      // Upload documents to the now-submitted application (with duplicate check)
       console.log("Checking documents for upload:", formData.documents);
       if (formData.documents && Object.keys(formData.documents).length > 0) {
         console.log("Documents found, starting upload...");
@@ -357,6 +389,7 @@ const PersonalAccidentFlow = ({
       throw error;
     } finally {
       setIsSubmitting(false);
+      setIsProcessingPayment(false); // Reset the processing flag
     }
   };
 
