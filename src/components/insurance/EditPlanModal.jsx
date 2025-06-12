@@ -14,8 +14,11 @@ import {
   TbAmbulance,
   TbVirus,
   TbEyeglass2,
+  TbShieldHalfFilled,
 } from "react-icons/tb";
-import { PiTooth } from "react-icons/pi";
+import { PiTooth, PiUsersDuotone } from "react-icons/pi";
+import insuranceService from "../../services/insuranceService";
+import { FaCarCrash } from "react-icons/fa";
 
 const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
   const [loading, setLoading] = useState(false);
@@ -27,7 +30,7 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
     // Basic Information
     companyId: "",
     name: "",
-    planType: "",
+    coverType: "",
     insuranceType: "",
     description: "",
 
@@ -73,7 +76,7 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
       setFormData({
         companyId: plan.companyId || "",
         name: plan.name || "",
-        planType: plan.planType || "",
+        coverType: plan.coverType || "",
         insuranceType: plan.insuranceType || "",
         description: plan.description || "",
         eligibilityAgeMin: plan.eligibilityAgeMin || "",
@@ -114,28 +117,79 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
     setError(null);
 
     try {
-      const response = await fetch(`/api/public/insurance-plans/${plan.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      // Validate required fields
+      if (!formData.companyId || !formData.name || !formData.coverType) {
+        setError("Please fill in all required fields");
+        return;
+      }
 
-      const data = await response.json();
+      // Process the form data
+      const processedData = {
+        ...formData,
+        eligibilityAgeMin: parseInt(formData.eligibilityAgeMin) || 0,
+        eligibilityAgeMax: parseInt(formData.eligibilityAgeMax) || 100,
+        inpatientCoverageLimit:
+          parseFloat(formData.inpatientCoverageLimit) || 0,
+        outpatientCoverageLimit:
+          parseFloat(formData.outpatientCoverageLimit) || 0,
+        lastExpenseCover: formData.lastExpenseCover
+          ? parseFloat(formData.lastExpenseCover)
+          : null,
+        renewalAgeLimit: formData.renewalAgeLimit
+          ? parseInt(formData.renewalAgeLimit)
+          : null,
+        annualPremium:
+          formData.premiumStructure === "fixed" && formData.annualPremium
+            ? parseFloat(formData.annualPremium)
+            : null,
+        premiumsByAgeRange:
+          formData.premiumStructure === "age-based" &&
+          formData.premiumsByAgeRange
+            ? formData.premiumsByAgeRange
+            : null,
+        dentalCoverageLimit:
+          formData.hasDental && formData.dentalCoverageLimit
+            ? parseFloat(formData.dentalCoverageLimit)
+            : null,
+        dentalPremium:
+          formData.hasDental && formData.dentalPremium
+            ? parseFloat(formData.dentalPremium)
+            : null,
+        opticalCoverageLimit:
+          formData.hasOptical && formData.opticalCoverageLimit
+            ? parseFloat(formData.opticalCoverageLimit)
+            : null,
+        opticalPremium:
+          formData.hasOptical && formData.opticalPremium
+            ? parseFloat(formData.opticalPremium)
+            : null,
+        maternityCoverageLimit:
+          formData.hasMaternity && formData.maternityCoverageLimit
+            ? parseFloat(formData.maternityCoverageLimit)
+            : null,
+        maternityPremium:
+          formData.hasMaternity && formData.maternityPremium
+            ? parseFloat(formData.maternityPremium)
+            : null,
+      };
 
-      if (data.success) {
+      const response = await insuranceService.updatePlan(
+        plan.id,
+        processedData
+      );
+
+      if (response && response.success) {
         setSuccess(true);
         setTimeout(() => {
           onSave();
           onClose();
         }, 1500);
       } else {
-        setError(data.message || "Failed to update plan");
+        setError(response?.message || "Failed to update plan");
       }
     } catch (err) {
-      setError("Failed to update plan");
-      console.error(err);
+      setError("Failed to update plan. Please try again.");
+      console.error("Error updating plan:", err);
     } finally {
       setLoading(false);
     }
@@ -147,35 +201,29 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
     }
   };
 
-  const planTypeOptions = [
+  const coverTypeOptions = [
     {
-      value: "Bronze",
-      label: "Bronze Plan",
-      color: "text-orange-600 bg-orange-50 border-orange-200",
+      value: "student",
+      label: "Student Cover",
+      color: "text-pink-600 bg-pink-50 border-pink-300",
       icon: <TbShieldCheck className="w-5 h-5" />,
     },
     {
-      value: "Silver",
-      label: "Silver Plan",
-      color: "text-gray-600 bg-gray-50 border-gray-200",
+      value: "individual",
+      label: "Individual Cover",
+      color: "text-indigo-600 bg-indigo-50 border-indigo-300",
       icon: <TbShieldCheck className="w-5 h-5" />,
     },
     {
-      value: "Gold",
-      label: "Gold Plan",
-      color: "text-yellow-600 bg-yellow-50 border-yellow-200",
+      value: "family",
+      label: "Family Cover",
+      color: "text-secondary-600 bg-secondary-50 border-secondary-300",
       icon: <TbShieldCheck className="w-5 h-5" />,
     },
     {
-      value: "Platinum",
-      label: "Platinum Plan",
-      color: "text-purple-600 bg-purple-50 border-purple-200",
-      icon: <TbShieldCheck className="w-5 h-5" />,
-    },
-    {
-      value: "Diamond",
-      label: "Diamond Plan",
-      color: "text-blue-600 bg-blue-50 border-blue-200",
+      value: "group",
+      label: "Group Cover",
+      color: "text-green-600 bg-green-50 border-green-300",
       icon: <TbShieldCheck className="w-5 h-5" />,
     },
   ];
@@ -184,20 +232,14 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
     {
       value: "seniors",
       label: "Seniors Insurance",
-      description: "For individuals aged 55+",
+      description: "Medical coverage for individuals aged 55+",
       icon: <TbUsers className="w-5 h-5" />,
     },
     {
-      value: "family",
-      label: "Family Insurance",
-      description: "Coverage for entire family",
+      value: "health",
+      label: "Health Insurance",
+      description: "Medical coverage for individuals and families",
       icon: <TbHeartRateMonitor className="w-5 h-5" />,
-    },
-    {
-      value: "individual",
-      label: "Individual Insurance",
-      description: "Personal coverage",
-      icon: <TbStethoscope className="w-5 h-5" />,
     },
     {
       value: "personal-accident",
@@ -211,6 +253,12 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
       description: "Travel protection",
       icon: <TbBuildingBank className="w-5 h-5" />,
     },
+    {
+      value: "motor",
+      label: "Motor Insurance",
+      description: "Motor vehicle protection",
+      icon: <FaCarCrash className="w-5 h-5" />,
+    },
   ];
 
   return (
@@ -223,10 +271,10 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
         animate={{ x: 0 }}
         exit={{ x: "100%" }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="w-[800px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-xl border border-gray-200"
+        className="w-[750px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-xl border border-gray-200"
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-primary-600 to-primary-700 px-6 py-4 relative">
+        <div className="bg-gradient-to-r from-secondary-600 to-secondary-700 px-6 py-4 relative">
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
             <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
@@ -358,43 +406,44 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
               {/* Plan Type Selection */}
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <TbShieldCheck size={20} className="mr-2 text-orange-600" />
-                  Plan Type
+                  <PiUsersDuotone size={20} className="mr-2 text-primary-600" />
+                  Cover Type
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {planTypeOptions.map((option) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-gray-600">
+                  {coverTypeOptions.map((option) => (
                     <label
                       key={option.value}
-                      className={`relative flex items-center p-4 border rounded-lg cursor-pointer transition-all hover:bg-gray-50 ${
-                        formData.planType === option.value
-                          ? option.color
-                          : "border-gray-200 bg-white"
+                      className={`relative flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-50 ${
+                        formData.coverType === option.value
+                          ? option.color + " border-current"
+                          : "border-gray-200 bg-white hover:border-gray-300"
                       }`}
                     >
                       <input
                         type="radio"
-                        name="planType"
+                        name="coverType"
                         value={option.value}
-                        checked={formData.planType === option.value}
+                        checked={formData.coverType === option.value}
                         onChange={(e) =>
-                          handleInputChange("planType", e.target.value)
+                          handleInputChange("coverType", e.target.value)
                         }
                         className="sr-only"
                       />
                       <div
                         className={`flex items-center justify-center w-5 h-5 border-2 rounded-full mr-3 ${
-                          formData.planType === option.value
+                          formData.coverType === option.value
                             ? "border-current bg-current"
                             : "border-gray-300"
                         }`}
                       >
-                        {formData.planType === option.value && (
+                        {formData.coverType === option.value && (
                           <div className="w-2 h-2 bg-white rounded-full"></div>
                         )}
                       </div>
                       <div className="flex items-center">
-                        {option.icon}
-                        <span className="font-medium ml-2">{option.label}</span>
+                        <span className="font-medium text-[0.95rem] ml-2">
+                          {option.label}
+                        </span>
                       </div>
                     </label>
                   ))}
@@ -404,10 +453,13 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
               {/* Insurance Type Selection */}
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <TbUsers size={20} className="mr-2 text-orange-600" />
+                  <TbShieldHalfFilled
+                    size={20}
+                    className="mr-2 text-primary-600"
+                  />
                   Insurance Type
                 </h3>
-                <div className="grid grid-cols-1 gap-3">
+                <div className="grid grid-cols-1 gap-3 text-gray-600">
                   {insuranceTypeOptions.map((option) => (
                     <label
                       key={option.value}
@@ -923,7 +975,7 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
               <button
                 type="submit"
                 disabled={loading}
-                className="px-6 py-2.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center font-medium"
+                className="px-6 py-2.5 bg-secondary-600 text-white rounded-lg hover:bg-secondary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center font-medium"
               >
                 {loading ? (
                   <>

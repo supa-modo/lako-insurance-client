@@ -221,10 +221,10 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
         animate={{ x: 0 }}
         exit={{ x: "100%" }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="w-[850px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-xl border border-gray-200"
+        className="w-[750px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-xl border border-gray-200"
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 relative">
+        <div className="bg-gradient-to-r from-secondary-600 to-secondary-700 px-6 py-4 relative">
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
             <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
@@ -261,7 +261,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
               {/* Application Status */}
               <div>
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <TbShieldStar size={20} className="mr-2 text-blue-600" />
+                  <TbShieldStar size={20} className="mr-2 text-secondary-600" />
                   Application Status
                 </h3>
 
@@ -274,7 +274,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
                       name="status"
                       value={formData.status}
                       onChange={handleInputChange}
-                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors"
                     >
                       <option value="draft">Draft</option>
                       <option value="submitted">Submitted</option>
@@ -301,7 +301,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
                   <TbShieldHalfFilled
                     size={20}
-                    className="mr-2 text-blue-600"
+                    className="mr-2 text-secondary-600"
                   />
                   Insurance Details
                 </h3>
@@ -315,7 +315,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
                       name="insuranceType"
                       value={formData.insuranceType}
                       onChange={handleInputChange}
-                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors"
                     >
                       <option value="personal-accident">
                         Personal Accident
@@ -334,7 +334,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
                       name="coverType"
                       value={formData.coverType}
                       onChange={handleInputChange}
-                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors"
                     >
                       <option value="">Select cover type</option>
                       <option value="individual">Individual</option>
@@ -349,7 +349,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
               {/* Personal Information */}
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <PiUserDuotone size={20} className="mr-2 text-blue-600" />
+                  <PiUserDuotone size={20} className="mr-2 text-secondary-600" />
                   Personal Information
                 </h3>
 
@@ -368,7 +368,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
                           errors.firstName
                             ? "border-red-300 bg-red-50"
                             : "border-gray-300"
-                        } focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition-colors`}
+                        } focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors`}
                         placeholder="Enter first name"
                       />
                       {errors.firstName && (
@@ -387,7 +387,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
                         name="middleName"
                         value={formData.middleName}
                         onChange={handleInputChange}
-                        className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors"
                         placeholder="Enter middle name"
                       />
                     </div>
@@ -405,7 +405,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
                           errors.lastName
                             ? "border-red-300 bg-red-50"
                             : "border-gray-300"
-                        } focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition-colors`}
+                        } focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors`}
                         placeholder="Enter last name"
                       />
                       {errors.lastName && (
@@ -430,7 +430,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
                           errors.dateOfBirth
                             ? "border-red-300 bg-red-50"
                             : "border-gray-300"
-                        } focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition-colors`}
+                        } focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors`}
                       />
                       {errors.dateOfBirth && (
                         <div className="text-red-500 text-xs mt-1 flex items-center">
@@ -452,7 +452,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
                           errors.gender
                             ? "border-red-300 bg-red-50"
                             : "border-gray-300"
-                        } focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition-colors`}
+                        } focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors`}
                       >
                         <option value="">Select gender</option>
                         <option value="male">Male</option>
@@ -479,7 +479,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
                           errors.idNumber
                             ? "border-red-300 bg-red-50"
                             : "border-gray-300"
-                        } focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition-colors`}
+                        } focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors`}
                         placeholder="Enter ID number"
                       />
                       {errors.idNumber && (
@@ -495,7 +495,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
               {/* Contact Information */}
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <TbMailFilled size={20} className="mr-2 text-blue-600" />
+                  <TbMailFilled size={20} className="mr-2 text-secondary-600" />
                   Contact Information
                 </h3>
 
@@ -513,7 +513,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
                         errors.mobileNumber
                           ? "border-red-300 bg-red-50"
                           : "border-gray-300"
-                      } focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition-colors`}
+                      } focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors`}
                       placeholder="+254712345678"
                     />
                     {errors.mobileNumber && (
@@ -536,7 +536,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
                         errors.emailAddress
                           ? "border-red-300 bg-red-50"
                           : "border-gray-300"
-                      } focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition-colors`}
+                      } focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors`}
                       placeholder="john@example.com"
                     />
                     {errors.emailAddress && (
@@ -555,7 +555,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
                       name="postalAddress"
                       value={formData.postalAddress}
                       onChange={handleInputChange}
-                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors"
                       placeholder="P.O. Box 123-00100"
                     />
                   </div>
@@ -569,7 +569,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
                       name="town"
                       value={formData.town}
                       onChange={handleInputChange}
-                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors"
                       placeholder="Nairobi"
                     />
                   </div>
@@ -579,7 +579,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
               {/* Emergency Contacts */}
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <MdEmergency size={20} className="mr-2 text-blue-600" />
+                  <MdEmergency size={20} className="mr-2 text-secondary-600" />
                   Emergency Contacts & Beneficiaries
                 </h3>
 
@@ -593,7 +593,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
                       name="nextOfKinName"
                       value={formData.nextOfKinName}
                       onChange={handleInputChange}
-                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors"
                       placeholder="Enter next of kin name"
                     />
                   </div>
@@ -607,7 +607,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
                       name="nextOfKinContacts"
                       value={formData.nextOfKinContacts}
                       onChange={handleInputChange}
-                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors"
                       placeholder="Phone number or email"
                     />
                   </div>
@@ -621,7 +621,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
                       name="beneficiaryName"
                       value={formData.beneficiaryName}
                       onChange={handleInputChange}
-                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors"
                       placeholder="Enter beneficiary name"
                     />
                   </div>
@@ -635,7 +635,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
                       name="beneficiaryContacts"
                       value={formData.beneficiaryContacts}
                       onChange={handleInputChange}
-                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors"
                       placeholder="Phone number or email"
                     />
                   </div>
@@ -645,7 +645,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
               {/* Medical History */}
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <TbFileText size={20} className="mr-2 text-blue-600" />
+                  <TbFileText size={20} className="mr-2 text-secondary-600" />
                   Medical History
                 </h3>
 
@@ -756,7 +756,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
                       value={formData.medicalHistoryDetails}
                       onChange={handleInputChange}
                       rows="3"
-                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors"
                       placeholder="Provide any relevant medical history details..."
                     />
                   </div>
@@ -790,7 +790,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center text-[0.93rem] font-medium"
+                className="px-6 py-2 bg-secondary-600 text-white rounded-lg hover:bg-secondary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center text-[0.93rem] font-medium"
               >
                 {isSubmitting ? (
                   <>

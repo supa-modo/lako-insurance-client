@@ -129,12 +129,12 @@ const CompanyDetailModal = ({ company, onClose, onEdit, onDelete }) => {
                 <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center">
-                      <div className="h-14 md:h-20 p-2 rounded-lg overflow-hidden bg-gray-100 border border-gray-200 flex-shrink-0">
+                      <div className="h-14 md:h-20 w-48 overflow-hidden flex-shrink-0">
                         {company.logoUrl ? (
                           <img
                             src={company.logoUrl}
                             alt={company.name}
-                            className="h-full w-full object-cover"
+                            className="h-full w-full object-contain"
                           />
                         ) : (
                           <div className="h-full w-full flex items-center justify-center text-gray-400">

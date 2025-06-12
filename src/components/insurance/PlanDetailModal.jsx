@@ -32,6 +32,7 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
   const [activeTab, setActiveTab] = useState("overview");
 
   const formatCurrency = (amount) => {
+    if (!amount) return "N/A";
     return new Intl.NumberFormat("en-KE", {
       style: "currency",
       currency: "KES",
@@ -45,44 +46,50 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
     }
   };
 
-  // Plan type configuration for color coding
+  // Plan type configuration for styling
   const getPlanTypeConfig = (type) => {
-    switch (type) {
-      case "Bronze":
+    switch (type?.toLowerCase()) {
+      case "bronze":
         return {
           color: "text-orange-600",
           bgColor: "bg-orange-50",
           borderColor: "border-orange-200",
+          icon: "🥉",
         };
-      case "Silver":
+      case "silver":
         return {
           color: "text-gray-600",
           bgColor: "bg-gray-50",
           borderColor: "border-gray-200",
+          icon: "🥈",
         };
-      case "Gold":
+      case "gold":
         return {
           color: "text-yellow-600",
           bgColor: "bg-yellow-50",
           borderColor: "border-yellow-200",
+          icon: "🥇",
         };
-      case "Platinum":
+      case "platinum":
         return {
           color: "text-purple-600",
           bgColor: "bg-purple-50",
           borderColor: "border-purple-200",
+          icon: "💎",
         };
-      case "Diamond":
+      case "diamond":
         return {
           color: "text-blue-600",
           bgColor: "bg-blue-50",
           borderColor: "border-blue-200",
+          icon: "💍",
         };
       default:
         return {
-          color: "text-teal-600",
-          bgColor: "bg-teal-50",
-          borderColor: "border-teal-200",
+          color: "text-primary-600",
+          bgColor: "bg-primary-50",
+          borderColor: "border-primary-200",
+          icon: "🛡️",
         };
     }
   };
@@ -91,14 +98,14 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-[1.5px] flex items-start justify-end z-50 p-3 font-outfit"
+      className="fixed inset-0 bg-black/50 backdrop-blur-[1.5px] transition-all duration-300 flex items-start justify-end z-50 p-3 font-outfit"
       onClick={handleBackdropClick}
     >
       <motion.div
         initial={{ x: "100%" }}
         animate={{ x: 0 }}
         exit={{ x: "100%" }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
+        transition={{ duration: 0.3 }}
         className="w-[750px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-xl border border-gray-200"
       >
         {/* Header */}
@@ -112,10 +119,10 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
               <TbEye className="h-6 w-6 text-white mr-3" />
               <div>
                 <h2 className="text-white font-semibold text-lg font-lexend">
-                  Plan Details
+                  Insurance Plan Details
                 </h2>
                 <p className="text-white/80 text-sm">
-                  View complete insurance plan information
+                  Complete plan information and coverage details
                 </p>
               </div>
             </div>
@@ -130,8 +137,8 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
 
         {/* Content */}
         <div className="h-[calc(100vh-100px)] md:h-[calc(100vh-110px)] flex flex-col">
-          <div className="overflow-y-auto flex-1 px-3 md:px-6 py-5">
-            {/* Plan Overview Section */}
+          <div className="overflow-y-auto flex-1 px-6 py-5">
+            {/* Plan Overview Header */}
             <div className="mb-6">
               <div
                 className={`p-6 rounded-xl border ${planConfig.borderColor} ${planConfig.bgColor}`}
@@ -139,80 +146,106 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center">
                     <div
-                      className={`p-3 rounded-lg ${planConfig.bgColor} border ${planConfig.borderColor} mr-4`}
+                      className={`p-3 rounded-lg bg-white border ${planConfig.borderColor} mr-4`}
                     >
-                      <TbShieldCheck
-                        className={`h-8 w-8 ${planConfig.color}`}
-                      />
+                      <div className="text-2xl">{planConfig.icon}</div>
                     </div>
                     <div>
                       <h3 className="text-xl font-bold text-gray-900 font-lexend">
                         {plan?.name || "Insurance Plan"}
                       </h3>
-                      {plan?.planType && (
-                        <span
-                          className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${planConfig.color} ${planConfig.bgColor} border ${planConfig.borderColor} mt-2`}
-                        >
-                          <TbStar className="w-4 h-4 mr-1" />
-                          {plan.planType} Plan
-                        </span>
-                      )}
+                      <div className="flex items-center mt-2 space-x-3">
+                        {plan?.planType && (
+                          <span
+                            className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${planConfig.color} ${planConfig.bgColor} ${planConfig.borderColor}`}
+                          >
+                            {plan.planType} Plan
+                          </span>
+                        )}
+                        {plan?.insuranceType && (
+                          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-700 border border-gray-300">
+                            {plan.insuranceType === "seniors"
+                              ? "Seniors Insurance"
+                              : plan.insuranceType === "family"
+                              ? "Family Insurance"
+                              : plan.insuranceType === "individual"
+                              ? "Individual Insurance"
+                              : plan.insuranceType === "personal-accident"
+                              ? "Personal Accident"
+                              : plan.insuranceType === "travel"
+                              ? "Travel Insurance"
+                              : "Medical Insurance"}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm text-gray-500 mb-1">Premium</div>
-                    <div className="text-2xl font-bold text-teal-600 font-lexend">
-                      {plan?.annualPremium
-                        ? formatCurrency(plan.annualPremium)
+                    <div className="text-sm text-gray-500 mb-1">
+                      Annual Premium
+                    </div>
+                    <div className="text-2xl font-bold text-primary-600 font-lexend">
+                      {plan?.rawAnnualPremium
+                        ? formatCurrency(plan.rawAnnualPremium)
+                        : plan?.premiumStructure === "age-based"
+                        ? "Age-based"
                         : "Contact for pricing"}
                     </div>
-                    <div className="text-sm text-gray-500">per year</div>
+                    <div className="text-sm text-gray-500">
+                      {plan?.premiumStructure === "age-based"
+                        ? "Varies by age"
+                        : "per year"}
+                    </div>
                   </div>
                 </div>
 
-                {/* Quick Stats */}
+                {/* Quick Stats Grid */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
                   <div className="bg-white rounded-lg p-4 border border-gray-200">
-                    <div className="flex items-center justify-center w-10 h-10 bg-blue-100 rounded-lg mb-2">
+                    <div className="flex items-center justify-center w-10 h-10 bg-blue-100 rounded-lg mb-3">
                       <TbBuildingHospital className="w-5 h-5 text-blue-600" />
                     </div>
-                    <div className="text-sm text-gray-500">Inpatient Limit</div>
-                    <div className="font-bold text-gray-900 font-lexend">
+                    <div className="text-xs text-gray-500 mb-1">
+                      Inpatient Limit
+                    </div>
+                    <div className="font-semibold text-gray-900 text-sm">
                       {plan?.inpatientCoverageLimit
                         ? formatCurrency(plan.inpatientCoverageLimit)
                         : "N/A"}
                     </div>
                   </div>
                   <div className="bg-white rounded-lg p-4 border border-gray-200">
-                    <div className="flex items-center justify-center w-10 h-10 bg-green-100 rounded-lg mb-2">
+                    <div className="flex items-center justify-center w-10 h-10 bg-green-100 rounded-lg mb-3">
                       <FaUserDoctor className="w-5 h-5 text-green-600" />
                     </div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-xs text-gray-500 mb-1">
                       Outpatient Limit
                     </div>
-                    <div className="font-bold text-gray-900 font-lexend">
+                    <div className="font-semibold text-gray-900 text-sm">
                       {plan?.outpatientCoverageLimit
                         ? formatCurrency(plan.outpatientCoverageLimit)
                         : "N/A"}
                     </div>
                   </div>
                   <div className="bg-white rounded-lg p-4 border border-gray-200">
-                    <div className="flex items-center justify-center w-10 h-10 bg-yellow-100 rounded-lg mb-2">
-                      <TbCoffin className="w-5 h-5 text-yellow-600" />
+                    <div className="flex items-center justify-center w-10 h-10 bg-amber-100 rounded-lg mb-3">
+                      <TbCoffin className="w-5 h-5 text-amber-600" />
                     </div>
-                    <div className="text-sm text-gray-500">Last Expense</div>
-                    <div className="font-bold text-gray-900 font-lexend">
+                    <div className="text-xs text-gray-500 mb-1">
+                      Last Expense
+                    </div>
+                    <div className="font-semibold text-gray-900 text-sm">
                       {plan?.lastExpenseCover
                         ? formatCurrency(plan.lastExpenseCover)
                         : "N/A"}
                     </div>
                   </div>
                   <div className="bg-white rounded-lg p-4 border border-gray-200">
-                    <div className="flex items-center justify-center w-10 h-10 bg-purple-100 rounded-lg mb-2">
+                    <div className="flex items-center justify-center w-10 h-10 bg-purple-100 rounded-lg mb-3">
                       <TbCalendarTime className="w-5 h-5 text-purple-600" />
                     </div>
-                    <div className="text-sm text-gray-500">Age Range</div>
-                    <div className="font-bold text-gray-900 font-lexend">
+                    <div className="text-xs text-gray-500 mb-1">Age Range</div>
+                    <div className="font-semibold text-gray-900 text-sm">
                       {plan?.eligibilityAgeMin || "0"}-
                       {plan?.eligibilityAgeMax || "∞"}
                     </div>
@@ -227,15 +260,19 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                 {[
                   { id: "overview", label: "Overview", icon: TbInfoCircle },
                   { id: "benefits", label: "Benefits", icon: TbShieldCheck },
-                  { id: "coverage", label: "Coverage", icon: TbBuilding },
+                  {
+                    id: "coverage",
+                    label: "Coverage",
+                    icon: TbBuildingHospital,
+                  },
                   { id: "premium", label: "Premium", icon: TbCurrencyDollar },
                 ].map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
+                    className={`flex items-center py-3 px-1 border-b-2 font-medium text-sm transition-colors ${
                       activeTab === tab.id
-                        ? "border-teal-500 text-teal-600"
+                        ? "border-primary-500 text-primary-600"
                         : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                     }`}
                   >
@@ -257,26 +294,50 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                   transition={{ duration: 0.2 }}
                   className="space-y-6"
                 >
+                  {/* Company Information */}
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-4 flex items-center">
+                      <TbBuilding className="w-5 h-5 mr-2 text-primary-600" />
+                      Insurance Company
+                    </h4>
+                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                      <div className="flex items-center">
+                        {plan?.companyLogo && (
+                          <img
+                            src={plan.companyLogo}
+                            alt={plan.companyName}
+                            className="w-12 h-12 rounded-lg object-cover mr-4"
+                          />
+                        )}
+                        <div>
+                          <div className="font-medium text-gray-900">
+                            {plan?.companyName || "N/A"}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            Insurance Provider
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   {/* Basic Information */}
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-4 flex items-center">
-                      <TbInfoCircle className="w-5 h-5 mr-2 text-teal-600" />
-                      Basic Information
+                      <TbInfoCircle className="w-5 h-5 mr-2 text-primary-600" />
+                      Plan Information
                     </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Insurance Company
+                          Plan Type
                         </label>
-                        <div className="flex items-center">
-                          <TbBuilding className="h-4 w-4 text-gray-400 mr-2" />
-                          <span className="text-gray-900">
-                            {plan?.InsuranceCompany?.name || "N/A"}
-                          </span>
-                        </div>
+                        <span className="text-gray-900 font-medium">
+                          {plan?.planType || "N/A"}
+                        </span>
                       </div>
 
-                      <div className="bg-gray-50 rounded-lg p-4">
+                      <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                           Insurance Type
                         </label>
@@ -295,7 +356,7 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                         </span>
                       </div>
 
-                      <div className="bg-gray-50 rounded-lg p-4">
+                      <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                           Created Date
                         </label>
@@ -309,7 +370,7 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                         </div>
                       </div>
 
-                      <div className="bg-gray-50 rounded-lg p-4">
+                      <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                           Geographical Coverage
                         </label>
@@ -326,11 +387,11 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                   {/* Age Eligibility */}
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-4 flex items-center">
-                      <TbUsers className="w-5 h-5 mr-2 text-teal-600" />
+                      <TbUsers className="w-5 h-5 mr-2 text-primary-600" />
                       Age Eligibility
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="bg-gray-50 rounded-lg p-4">
+                      <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                           Minimum Age
                         </label>
@@ -339,7 +400,7 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                         </span>
                       </div>
 
-                      <div className="bg-gray-50 rounded-lg p-4">
+                      <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                           Maximum Age
                         </label>
@@ -348,7 +409,7 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                         </span>
                       </div>
 
-                      <div className="bg-gray-50 rounded-lg p-4">
+                      <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                           Renewal Age Limit
                         </label>
@@ -375,10 +436,10 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                   {/* Additional Benefits */}
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-4 flex items-center">
-                      <TbPlus className="w-5 h-5 mr-2 text-teal-600" />
+                      <TbPlus className="w-5 h-5 mr-2 text-primary-600" />
                       Additional Benefits
                     </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 gap-4">
                       {/* Dental Coverage */}
                       <div
                         className={`p-4 rounded-lg border ${
@@ -387,42 +448,52 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                             : "bg-gray-50 border-gray-200"
                         }`}
                       >
-                        <div className="flex items-center mb-2">
-                          <TbCheck
-                            className={`h-4 w-4 mr-2 ${
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center">
+                            <PiTooth
+                              className={`h-5 w-5 mr-3 ${
+                                plan?.hasDental
+                                  ? "text-green-600"
+                                  : "text-gray-400"
+                              }`}
+                            />
+                            <span className="font-medium text-gray-900">
+                              Dental Coverage
+                            </span>
+                          </div>
+                          <span
+                            className={`text-sm font-medium ${
                               plan?.hasDental
-                                ? "text-green-500"
-                                : "text-gray-400"
+                                ? "text-green-600"
+                                : "text-gray-500"
                             }`}
-                          />
-                          <label className="text-sm font-medium text-gray-700">
-                            Dental Coverage
-                          </label>
+                          >
+                            {plan?.hasDental ? "Available" : "Not Available"}
+                          </span>
                         </div>
-                        {plan?.hasDental ? (
-                          <div className="space-y-1">
-                            <div className="text-sm text-gray-600">
-                              Limit:{" "}
-                              {plan?.dentalCoverageLimit
-                                ? formatCurrency(plan.dentalCoverageLimit)
-                                : "N/A"}
+                        {plan?.hasDental && (
+                          <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                              <span className="text-gray-600">
+                                Coverage Limit:
+                              </span>
+                              <div className="font-medium text-gray-900">
+                                {plan?.dentalCoverageLimit
+                                  ? formatCurrency(plan.dentalCoverageLimit)
+                                  : "N/A"}
+                              </div>
                             </div>
-                            <div className="text-sm text-gray-600">
-                              Premium:{" "}
-                              {plan?.dentalPremium
-                                ? formatCurrency(plan.dentalPremium)
-                                : "N/A"}
-                            </div>
-                            <div className="text-xs text-gray-500">
-                              {plan?.dentalCoveredInBase
-                                ? "Covered in base premium"
-                                : "Additional premium required"}
+                            <div>
+                              <span className="text-gray-600">
+                                Additional Premium:
+                              </span>
+                              <div className="font-medium text-gray-900">
+                                {plan?.dentalPremium
+                                  ? formatCurrency(plan.dentalPremium)
+                                  : "Included"}
+                              </div>
                             </div>
                           </div>
-                        ) : (
-                          <span className="text-sm text-gray-500">
-                            Not available
-                          </span>
                         )}
                       </div>
 
@@ -434,42 +505,52 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                             : "bg-gray-50 border-gray-200"
                         }`}
                       >
-                        <div className="flex items-center mb-2">
-                          <TbCheck
-                            className={`h-4 w-4 mr-2 ${
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center">
+                            <TbEyeglass2
+                              className={`h-5 w-5 mr-3 ${
+                                plan?.hasOptical
+                                  ? "text-green-600"
+                                  : "text-gray-400"
+                              }`}
+                            />
+                            <span className="font-medium text-gray-900">
+                              Optical Coverage
+                            </span>
+                          </div>
+                          <span
+                            className={`text-sm font-medium ${
                               plan?.hasOptical
-                                ? "text-green-500"
-                                : "text-gray-400"
+                                ? "text-green-600"
+                                : "text-gray-500"
                             }`}
-                          />
-                          <label className="text-sm font-medium text-gray-700">
-                            Optical Coverage
-                          </label>
+                          >
+                            {plan?.hasOptical ? "Available" : "Not Available"}
+                          </span>
                         </div>
-                        {plan?.hasOptical ? (
-                          <div className="space-y-1">
-                            <div className="text-sm text-gray-600">
-                              Limit:{" "}
-                              {plan?.opticalCoverageLimit
-                                ? formatCurrency(plan.opticalCoverageLimit)
-                                : "N/A"}
+                        {plan?.hasOptical && (
+                          <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                              <span className="text-gray-600">
+                                Coverage Limit:
+                              </span>
+                              <div className="font-medium text-gray-900">
+                                {plan?.opticalCoverageLimit
+                                  ? formatCurrency(plan.opticalCoverageLimit)
+                                  : "N/A"}
+                              </div>
                             </div>
-                            <div className="text-sm text-gray-600">
-                              Premium:{" "}
-                              {plan?.opticalPremium
-                                ? formatCurrency(plan.opticalPremium)
-                                : "N/A"}
-                            </div>
-                            <div className="text-xs text-gray-500">
-                              {plan?.opticalCoveredInBase
-                                ? "Covered in base premium"
-                                : "Additional premium required"}
+                            <div>
+                              <span className="text-gray-600">
+                                Additional Premium:
+                              </span>
+                              <div className="font-medium text-gray-900">
+                                {plan?.opticalPremium
+                                  ? formatCurrency(plan.opticalPremium)
+                                  : "Included"}
+                              </div>
                             </div>
                           </div>
-                        ) : (
-                          <span className="text-sm text-gray-500">
-                            Not available
-                          </span>
                         )}
                       </div>
 
@@ -481,37 +562,52 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                             : "bg-gray-50 border-gray-200"
                         }`}
                       >
-                        <div className="flex items-center mb-2">
-                          <TbCheck
-                            className={`h-4 w-4 mr-2 ${
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center">
+                            <TbHeartRateMonitor
+                              className={`h-5 w-5 mr-3 ${
+                                plan?.hasMaternity
+                                  ? "text-green-600"
+                                  : "text-gray-400"
+                              }`}
+                            />
+                            <span className="font-medium text-gray-900">
+                              Maternity Coverage
+                            </span>
+                          </div>
+                          <span
+                            className={`text-sm font-medium ${
                               plan?.hasMaternity
-                                ? "text-green-500"
-                                : "text-gray-400"
+                                ? "text-green-600"
+                                : "text-gray-500"
                             }`}
-                          />
-                          <label className="text-sm font-medium text-gray-700">
-                            Maternity Coverage
-                          </label>
+                          >
+                            {plan?.hasMaternity ? "Available" : "Not Available"}
+                          </span>
                         </div>
-                        {plan?.hasMaternity ? (
-                          <div className="space-y-1">
-                            <div className="text-sm text-gray-600">
-                              Limit:{" "}
-                              {plan?.maternityCoverageLimit
-                                ? formatCurrency(plan.maternityCoverageLimit)
-                                : "N/A"}
+                        {plan?.hasMaternity && (
+                          <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                              <span className="text-gray-600">
+                                Coverage Limit:
+                              </span>
+                              <div className="font-medium text-gray-900">
+                                {plan?.maternityCoverageLimit
+                                  ? formatCurrency(plan.maternityCoverageLimit)
+                                  : "N/A"}
+                              </div>
                             </div>
-                            <div className="text-sm text-gray-600">
-                              Premium:{" "}
-                              {plan?.maternityPremium
-                                ? formatCurrency(plan.maternityPremium)
-                                : "N/A"}
+                            <div>
+                              <span className="text-gray-600">
+                                Additional Premium:
+                              </span>
+                              <div className="font-medium text-gray-900">
+                                {plan?.maternityPremium
+                                  ? formatCurrency(plan.maternityPremium)
+                                  : "Included"}
+                              </div>
                             </div>
                           </div>
-                        ) : (
-                          <span className="text-sm text-gray-500">
-                            Not available
-                          </span>
                         )}
                       </div>
                     </div>
@@ -531,12 +627,12 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                   {/* Coverage Limits */}
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-4 flex items-center">
-                      <TbShieldCheck className="w-5 h-5 mr-2 text-teal-600" />
+                      <TbShieldCheck className="w-5 h-5 mr-2 text-primary-600" />
                       Coverage Limits
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="bg-gray-50 rounded-lg p-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                           Inpatient Coverage
                         </label>
                         <span className="text-gray-900 text-lg font-semibold">
@@ -546,8 +642,8 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                         </span>
                       </div>
 
-                      <div className="bg-gray-50 rounded-lg p-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                           Outpatient Coverage
                         </label>
                         <span className="text-gray-900 text-lg font-semibold">
@@ -557,8 +653,8 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                         </span>
                       </div>
 
-                      <div className="bg-gray-50 rounded-lg p-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                           Last Expense Cover
                         </label>
                         <span className="text-gray-900 text-lg font-semibold">
@@ -568,8 +664,8 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                         </span>
                       </div>
 
-                      <div className="bg-gray-50 rounded-lg p-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                           Bed Limit
                         </label>
                         <span className="text-gray-900 text-lg font-semibold">
@@ -582,27 +678,22 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                   {/* Other Settings */}
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-4">
-                      Other Settings
+                      Additional Settings
                     </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="bg-gray-50 rounded-lg p-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          NHIF Benefits
-                        </label>
-                        <div className="flex items-center">
-                          <TbCheck
-                            className={`h-4 w-4 mr-2 ${
-                              plan?.isNhifApplicable
-                                ? "text-green-500"
-                                : "text-gray-400"
-                            }`}
-                          />
-                          <span className="text-gray-900">
-                            {plan?.isNhifApplicable
-                              ? "Applicable"
-                              : "Not applicable"}
-                          </span>
-                        </div>
+                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-700">NHIF Benefits</span>
+                        <span
+                          className={`text-sm font-medium ${
+                            plan?.isNhifApplicable
+                              ? "text-green-600"
+                              : "text-gray-500"
+                          }`}
+                        >
+                          {plan?.isNhifApplicable
+                            ? "Applicable"
+                            : "Not applicable"}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -621,13 +712,13 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                   {/* Premium Information */}
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-4 flex items-center">
-                      <TbCurrencyDollar className="w-5 h-5 mr-2 text-teal-600" />
-                      Premium Information
+                      <TbCurrencyDollar className="w-5 h-5 mr-2 text-primary-600" />
+                      Premium Structure
                     </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="bg-gray-50 rounded-lg p-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Premium Structure
+                    <div className="space-y-4">
+                      <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Premium Type
                         </label>
                         <span className="text-gray-900 text-lg font-semibold capitalize">
                           {plan?.premiumStructure || "N/A"}
@@ -635,34 +726,34 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                       </div>
 
                       {plan?.premiumStructure === "fixed" ? (
-                        <div className="bg-gray-50 rounded-lg p-4">
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
                             Annual Premium
                           </label>
-                          <span className="text-gray-900 text-lg font-semibold">
-                            {plan?.annualPremium
-                              ? formatCurrency(plan.annualPremium)
+                          <span className="text-gray-900 text-2xl font-bold">
+                            {plan?.rawAnnualPremium
+                              ? formatCurrency(plan.rawAnnualPremium)
                               : "N/A"}
                           </span>
                         </div>
                       ) : (
-                        <div className="bg-gray-50 rounded-lg p-4">
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Age-Based Premiums
+                        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                          <label className="block text-sm font-medium text-gray-700 mb-3">
+                            Age-Based Premium Structure
                           </label>
-                          <div className="text-sm text-gray-600">
-                            {plan?.premiumsByAgeRange ? (
-                              <pre className="whitespace-pre-wrap font-mono text-xs">
+                          {plan?.premiumsByAgeRange ? (
+                            <div className="bg-white border border-gray-200 rounded p-3">
+                              <pre className="text-sm text-gray-700 whitespace-pre-wrap">
                                 {JSON.stringify(
                                   JSON.parse(plan.premiumsByAgeRange),
                                   null,
                                   2
                                 )}
                               </pre>
-                            ) : (
-                              "Not specified"
-                            )}
-                          </div>
+                            </div>
+                          ) : (
+                            <span className="text-gray-500">Not specified</span>
+                          )}
                         </div>
                       )}
                     </div>
@@ -673,8 +764,9 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
           </div>
 
           {/* Sticky Footer */}
-          <div className="border-t border-gray-200 bg-white px-6 py-3">
-            <div className="flex justify-start">
+          <div className="border-t border-gray-200 bg-white px-6 py-4">
+            <div className="flex justify-between">
+              <div className="text-xs text-gray-500">Plan ID: {plan?.id}</div>
               <button
                 onClick={onClose}
                 className="px-8 py-2.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium text-[0.93rem]"

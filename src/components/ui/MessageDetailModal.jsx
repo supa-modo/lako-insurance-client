@@ -15,6 +15,7 @@ import {
   TbAlertCircle,
   TbMailFilled,
   TbExternalLink,
+  TbEye,
 } from "react-icons/tb";
 import { formatDateWithTime } from "../../utils/formatDate";
 
@@ -47,26 +48,26 @@ const MessageDetailModal = ({
   const getPriorityColor = (priority) => {
     switch (priority) {
       case "high":
-        return "bg-red-100 border border-red-300 text-red-800";
+        return "text-red-600 bg-red-50 border-red-200";
       case "medium":
-        return "bg-yellow-100 border border-yellow-300 text-yellow-800";
+        return "text-amber-600 bg-amber-50 border-amber-200";
       case "low":
-        return "bg-green-100 border border-green-300 text-green-800";
+        return "text-green-600 bg-green-50 border-green-200";
       default:
-        return "bg-gray-100 border border-gray-300 text-gray-800";
+        return "text-gray-600 bg-gray-50 border-gray-200";
     }
   };
 
   const getStatusColor = (status) => {
     switch (status) {
       case "pending":
-        return "bg-orange-100 border border-orange-300 text-orange-800";
+        return "text-orange-600 bg-orange-50 border-orange-200";
       case "processed":
-        return "bg-green-100 border border-green-300 text-green-800";
+        return "text-green-600 bg-green-50 border-green-200";
       case "closed":
-        return "bg-gray-100 border border-gray-300 text-gray-800";
+        return "text-gray-600 bg-gray-50 border-gray-200";
       default:
-        return "bg-gray-100 border border-gray-300 text-gray-800";
+        return "text-gray-600 bg-gray-50 border-gray-200";
     }
   };
 
@@ -75,208 +76,288 @@ const MessageDetailModal = ({
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-[1.5px] transition-all duration-300 flex items-start justify-end z-50 p-3 font-outfit"
           onClick={handleBackdropClick}
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-            className="bg-white rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-hidden"
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ duration: 0.3 }}
+            className="w-[700px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-xl border border-gray-200"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="px-6 py-4 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-900">
-                  Message Details
-                </h2>
+            <div className="bg-gradient-to-r from-primary-600 to-primary-700 px-6 py-4 relative">
+              <div className="absolute inset-0 overflow-hidden">
+                <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
+                <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
+              </div>
+              <div className="relative flex justify-between items-center z-10">
+                <div className="flex items-center">
+                  <TbEye className="h-6 w-6 text-white mr-3" />
+                  <div>
+                    <h2 className="text-white font-semibold text-lg font-lexend">
+                      Message Details
+                    </h2>
+                    <p className="text-white/80 text-sm">
+                      Review customer inquiry details
+                    </p>
+                  </div>
+                </div>
                 <button
                   onClick={onClose}
-                  className="p-1 text-gray-400 hover:text-gray-600 rounded"
+                  className="text-white/80 hover:text-white transition-colors rounded-full p-1 hover:bg-white/10"
                 >
-                  <TbX className="h-5 w-5" />
+                  <TbX className="w-5 h-5" />
                 </button>
               </div>
             </div>
 
             {/* Content */}
-            <div className="overflow-y-auto flex-1 p-6 space-y-6">
-              {/* Basic Info */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Name
-                  </label>
-                  <p className="text-gray-900">{message.name}</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Type
-                  </label>
-                  <p className="text-gray-900 capitalize">{message.type}</p>
-                </div>
-              </div>
+            <div className="h-[calc(100vh-100px)] md:h-[calc(100vh-110px)] flex flex-col">
+              <div className="overflow-y-auto flex-1 px-6 py-5">
+                <div className="space-y-6">
+                  {/* Message Overview */}
+                  <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center">
+                        <div
+                          className={`p-3 rounded-lg border ${
+                            message.type === "callback"
+                              ? "bg-red-50 border-red-200 text-red-600"
+                              : "bg-blue-50 border-blue-200 text-blue-600"
+                          }`}
+                        >
+                          {message.type === "callback" ? (
+                            <TbPhoneCall className="h-6 w-6" />
+                          ) : (
+                            <TbMailFilled className="h-6 w-6" />
+                          )}
+                        </div>
+                        <div className="ml-4">
+                          <h3 className="text-lg font-semibold text-gray-900 font-lexend">
+                            {message.name}
+                          </h3>
+                          <p className="text-sm text-gray-500 capitalize">
+                            {message.type === "callback"
+                              ? "Callback Request"
+                              : "Contact Message"}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex space-x-2">
+                        <span
+                          className={`inline-flex px-3 py-1 text-xs font-medium rounded-full border ${getPriorityColor(
+                            message.priority
+                          )}`}
+                        >
+                          {message.priority}
+                        </span>
+                        <span
+                          className={`inline-flex px-3 py-1 text-xs font-medium rounded-full border ${getStatusColor(
+                            message.status
+                          )}`}
+                        >
+                          {message.status}
+                        </span>
+                      </div>
+                    </div>
 
-              {/* Contact Details */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {message.email && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Email
-                    </label>
-                    <a
-                      href={`mailto:${message.email}`}
-                      className="text-blue-600 hover:text-blue-700"
-                    >
-                      {message.email}
-                    </a>
+                    <div className="text-xs text-gray-500 flex items-center">
+                      <TbCalendar className="h-4 w-4 mr-1" />
+                      Created: {formatDateWithTime(message.createdAt, true)}
+                    </div>
                   </div>
-                )}
-                {message.phone && (
+
+                  {/* Contact Information */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Phone
-                    </label>
-                    <a
-                      href={`tel:${message.phone}`}
-                      className="text-blue-600 hover:text-blue-700"
-                    >
-                      {message.phone}
-                    </a>
+                    <h4 className="font-semibold text-gray-900 mb-4 flex items-center">
+                      <TbUser className="w-5 h-5 mr-2 text-primary-600" />
+                      Contact Information
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {message.email && (
+                        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Email Address
+                          </label>
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-900">
+                              {message.email}
+                            </span>
+                            <a
+                              href={`mailto:${message.email}`}
+                              className="text-primary-600 hover:text-primary-700 p-1 rounded"
+                              title="Send email"
+                            >
+                              <TbExternalLink className="h-4 w-4" />
+                            </a>
+                          </div>
+                        </div>
+                      )}
+                      {message.phone && (
+                        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Phone Number
+                          </label>
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-900">
+                              {message.phone}
+                            </span>
+                            <a
+                              href={`tel:${message.phone}`}
+                              className="text-primary-600 hover:text-primary-700 p-1 rounded"
+                              title="Call number"
+                            >
+                              <TbExternalLink className="h-4 w-4" />
+                            </a>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                )}
-              </div>
 
-              {/* Status and Priority */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Status
-                  </label>
-                  <span
-                    className={`inline-flex px-2 py-1 text-xs font-medium rounded ${getStatusColor(
-                      message.status
-                    )}`}
-                  >
-                    {message.status}
-                  </span>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Priority
-                  </label>
-                  <span
-                    className={`inline-flex px-2 py-1 text-xs font-medium rounded ${getPriorityColor(
-                      message.priority
-                    )}`}
-                  >
-                    {message.priority}
-                  </span>
-                </div>
-              </div>
+                  {/* Message Content */}
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-4 flex items-center">
+                      <TbMessage2 className="w-5 h-5 mr-2 text-primary-600" />
+                      Message Content
+                    </h4>
+                    <div className="space-y-4">
+                      {message.subject && (
+                        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Subject
+                          </label>
+                          <p className="text-gray-900 font-medium">
+                            {message.subject}
+                          </p>
+                        </div>
+                      )}
 
-              {/* Subject & Message */}
-              {message.subject && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Subject
-                  </label>
-                  <p className="text-gray-900">{message.subject}</p>
-                </div>
-              )}
+                      <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Message
+                        </label>
+                        <div className="bg-white border border-gray-200 rounded-lg p-4">
+                          <p className="text-gray-900 whitespace-pre-wrap leading-relaxed">
+                            {message.message}
+                          </p>
+                        </div>
+                      </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Message
-                </label>
-                <div className="bg-gray-50 rounded p-3 border">
-                  <p className="text-gray-900 whitespace-pre-wrap">
-                    {message.message}
-                  </p>
-                </div>
-              </div>
+                      {message.preferredTime && (
+                        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Preferred Contact Time
+                          </label>
+                          <p className="text-gray-900">
+                            {message.preferredTime}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
 
-              {/* Preferred Time */}
-              {message.preferredTime && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Preferred Time
-                  </label>
-                  <p className="text-gray-900">{message.preferredTime}</p>
-                </div>
-              )}
+                  {/* Processing Information */}
+                  {message.processedBy && (
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-4 flex items-center">
+                        <TbCheck className="w-5 h-5 mr-2 text-green-600" />
+                        Processing Information
+                      </h4>
+                      <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <div className="flex items-center text-sm text-green-700 mb-3">
+                          <TbUser className="h-4 w-4 mr-2" />
+                          <span>
+                            Processed by {message.processedByName} on{" "}
+                            {formatDateWithTime(message.processedAt, true)}
+                          </span>
+                        </div>
+                        {message.notes && (
+                          <div>
+                            <div className="flex items-center text-sm text-green-600 mb-2">
+                              <TbNotes className="h-4 w-4 mr-2" />
+                              <span className="font-medium">
+                                Processing Notes:
+                              </span>
+                            </div>
+                            <div className="bg-white border border-green-200 rounded-lg p-3">
+                              <p className="text-sm text-gray-900 whitespace-pre-wrap">
+                                {message.notes}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
 
-              {/* Processing Info */}
-              {message.processedBy && (
-                <div className="border-t pt-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Processing Information
-                  </label>
-                  <p className="text-sm text-gray-600 mb-1">
-                    Processed by {message.processedByName} on{" "}
-                    {formatDateWithTime(message.processedAt, true)}
-                  </p>
-                  {message.notes && (
-                    <div className="mt-2">
-                      <p className="text-sm font-medium text-gray-700">
-                        Notes:
-                      </p>
-                      <p className="text-sm text-gray-600 whitespace-pre-wrap">
-                        {message.notes}
-                      </p>
+                  {/* Processing Notes for pending messages */}
+                  {message.status === "pending" && (
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-4 flex items-center">
+                        <TbNotes className="w-5 h-5 mr-2 text-primary-600" />
+                        Processing Notes
+                      </h4>
+                      <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Add notes about how this message was handled
+                          (Optional)
+                        </label>
+                        <textarea
+                          value={processingNotes}
+                          onChange={(e) => setProcessingNotes(e.target.value)}
+                          placeholder="Add any notes about how this message was handled..."
+                          rows={4}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
+                        />
+                      </div>
                     </div>
                   )}
                 </div>
-              )}
-
-              {/* Processing Notes for pending */}
-              {message.status === "pending" && (
-                <div className="border-t pt-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Processing Notes (Optional)
-                  </label>
-                  <textarea
-                    value={processingNotes}
-                    onChange={(e) => setProcessingNotes(e.target.value)}
-                    placeholder="Add any notes about how this message was handled..."
-                    rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-              )}
-            </div>
-
-            {/* Footer */}
-            <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-              <div className="text-xs text-gray-500">
-                Created: {formatDateWithTime(message.createdAt, true)}
               </div>
-              <div className="flex items-center space-x-3">
-                <button
-                  onClick={onClose}
-                  className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50"
-                >
-                  Close
-                </button>
-                {message.status === "pending" && (
-                  <button
-                    onClick={handleProcess}
-                    disabled={isProcessing}
-                    className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isProcessing ? "Processing..." : "Mark as Processed"}
-                  </button>
-                )}
+
+              {/* Sticky Footer */}
+              <div className="border-t border-gray-200 bg-white px-6 py-4">
+                <div className="flex items-center justify-between">
+                  <div className="text-xs text-gray-500">
+                    Message ID: {message.id}
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <button
+                      onClick={onClose}
+                      className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors font-medium"
+                    >
+                      Close
+                    </button>
+                    {message.status === "pending" && (
+                      <button
+                        onClick={handleProcess}
+                        disabled={isProcessing}
+                        className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center font-medium"
+                      >
+                        {isProcessing ? (
+                          <>
+                            <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                            Processing...
+                          </>
+                        ) : (
+                          <>
+                            <TbCheck className="mr-2 h-4 w-4" />
+                            Mark as Processed
+                          </>
+                        )}
+                      </button>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </motion.div>
-        </motion.div>
+        </div>
       )}
     </AnimatePresence>
   );

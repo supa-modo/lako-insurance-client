@@ -179,7 +179,7 @@ const EditCompanyModal = ({ company, onClose, onSave }) => {
         className="w-[750px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-xl border border-gray-200"
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 relative">
+        <div className="bg-gradient-to-r from-secondary-600 to-secondary-700 px-6 py-4 relative">
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
             <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
@@ -215,7 +215,7 @@ const EditCompanyModal = ({ company, onClose, onSave }) => {
               {/* Basic Information */}
               <div className="">
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <TbBuilding size={20} className="mr-2 text-blue-600" />
+                  <TbBuilding size={20} className="mr-2 text-secondary-600" />
                   Basic Information
                 </h3>
 
@@ -254,7 +254,7 @@ const EditCompanyModal = ({ company, onClose, onSave }) => {
                           errors.name
                             ? "border-red-300 bg-red-50"
                             : "border-gray-300"
-                        } focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition-colors`}
+                        } focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors`}
                         placeholder="Enter company name"
                       />
                       {errors.name && (
@@ -277,7 +277,7 @@ const EditCompanyModal = ({ company, onClose, onSave }) => {
                         value={formData.description}
                         onChange={handleInputChange}
                         rows="3"
-                        className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors"
                         placeholder="Brief description of the company..."
                       />
                     </div>
@@ -288,7 +288,7 @@ const EditCompanyModal = ({ company, onClose, onSave }) => {
               {/* Contact Information */}
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <TbMail size={20} className="mr-2 text-blue-600" />
+                  <TbMail size={20} className="mr-2 text-secondary-600" />
                   Contact Information
                 </h3>
 
@@ -309,7 +309,7 @@ const EditCompanyModal = ({ company, onClose, onSave }) => {
                           errors.contactEmail
                             ? "border-red-300 bg-red-50"
                             : "border-gray-300"
-                        } focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition-colors`}
+                        } focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors`}
                         placeholder="contact@company.com"
                       />
                     </div>
@@ -336,7 +336,7 @@ const EditCompanyModal = ({ company, onClose, onSave }) => {
                           errors.contactPhone
                             ? "border-red-300 bg-red-50"
                             : "border-gray-300"
-                        } focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition-colors`}
+                        } focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors`}
                         placeholder="+254-20-1234567"
                       />
                     </div>
@@ -359,7 +359,7 @@ const EditCompanyModal = ({ company, onClose, onSave }) => {
                         name="website"
                         value={formData.website}
                         onChange={handleInputChange}
-                        className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors"
                         placeholder="https://www.company.com"
                       />
                     </div>
@@ -375,7 +375,7 @@ const EditCompanyModal = ({ company, onClose, onSave }) => {
                       name="logoUrl"
                       value={formData.logoUrl}
                       onChange={handleInputChange}
-                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors"
                       placeholder="https://www.company.com/logo.png"
                     />
                   </div>
@@ -385,7 +385,7 @@ const EditCompanyModal = ({ company, onClose, onSave }) => {
               {/* Rating */}
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <TbStar size={20} className="mr-2 text-blue-600" />
+                  <TbStar size={20} className="mr-2 text-secondary-600" />
                   Company Rating
                 </h3>
 
@@ -466,7 +466,7 @@ const EditCompanyModal = ({ company, onClose, onSave }) => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center text-[0.93rem] font-medium"
+                className="px-6 py-2 bg-secondary-600 text-white rounded-lg hover:bg-secondary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center text-[0.93rem] font-medium"
               >
                 {isSubmitting ? (
                   <>
