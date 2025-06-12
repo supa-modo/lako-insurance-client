@@ -733,7 +733,7 @@ const InsuranceCompanyManagementPage = () => {
                               title="Edit Company"
                             >
                               <TbEdit className="h-5 w-5 mr-1" />
-                              <span className="text-sm">Edit</span>
+                              <span className="text-[0.8rem] font-medium">Edit</span>
                             </button>
                             <button
                               onClick={() => setDeleteConfirmation(company)}
@@ -741,7 +741,9 @@ const InsuranceCompanyManagementPage = () => {
                               title="Delete Company"
                             >
                               <TbTrash className="h-5 w-5 mr-1" />
-                              <span className="text-sm">Delete</span>
+                              <span className="text-[0.8rem] font-medium">
+                                Delete
+                              </span>
                             </button>
                           </div>
                         </td>

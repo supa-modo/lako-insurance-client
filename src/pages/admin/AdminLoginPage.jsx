@@ -70,7 +70,7 @@ const AdminLoginPage = () => {
             <img
               src="/lako-logo.png"
               alt="Lako Insurance Logo"
-              className="w-36 object-contain"
+              className="w-32 md:w-36 object-contain"
             />
           </div>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gradient bg-gradient-to-r from-white via-primary-300 to-white bg-clip-text text-transparent -mt-1 mb-3 font-paytone">

@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { TbX, TbMail, TbCheck, TbAlertTriangle, TbMailFilled } from "react-icons/tb";
+import {
+  TbX,
+  TbMail,
+  TbCheck,
+  TbAlertTriangle,
+  TbMailFilled,
+} from "react-icons/tb";
 import authService from "../../services/authService";
 
 const ForgotPasswordModal = ({ isOpen, onClose }) => {
@@ -55,12 +61,12 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative w-full max-w-lg bg-white/90 rounded-2xl shadow-2xl"
+            className="relative w-full max-w-lg bg-white/90 rounded-[1.3rem] md:rounded-2xl shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h2 className="text-xl font-semibold text-secondary-700 font-outfit">
+            <div className="flex items-center justify-between p-4 md:p-6 border-b border-gray-200">
+              <h2 className="text-base md:text-lg lg:text-xl font-semibold text-secondary-700 font-outfit">
                 Reset Account Password
               </h2>
               <button
@@ -72,11 +78,11 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
             </div>
 
             {/* Content */}
-            <div className="px-6 pb-6">
+            <div className="px-4 md:px-4 lg:px-6 pb-4 lg:pb-6">
               {!success ? (
                 <>
-                  <div className="mb-6 text-center">
-                    <p className="text-gray-600 font-outfit">
+                  <div className="mb-4 text-center">
+                    <p className="text-[0.85rem] md:text-[0.93rem] lg:text-base font-medium text-gray-600 font-outfit">
                       Enter your email address and we'll send you a link to
                       reset your password.
                     </p>
@@ -86,7 +92,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
                     <motion.div
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
-                      className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-center gap-2"
+                      className="mb-4 bg-red-50 border border-red-200 text-red-700 px-2.5 md:px-4 py-2.5 md:py-3 rounded-lg flex items-center gap-2"
                     >
                       <TbAlertTriangle className="h-5 w-5 flex-shrink-0" />
                       <span className="text-sm">{error}</span>
@@ -97,7 +103,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
                     <div>
                       <label
                         htmlFor="reset-email"
-                        className="block text-sm font-semibold text-primary-700 mb-2 font-outfit"
+                        className="block text-[0.85rem] md:text-sm font-semibold text-primary-700 mb-2 font-outfit"
                       >
                         Account Email Address
                       </label>
@@ -108,7 +114,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
                         <input
                           id="reset-email"
                           type="email"
-                          className="w-full pl-10 pr-4 py-3 bg-white text-gray-600 border border-gray-400 rounded-lg focus:ring-1 focus:ring-primary-600 focus:border-primary-600 focus:outline-none  transition-colors font-medium placeholder:font-normal"
+                          className="w-full pl-10 pr-4 py-2.5 bg-white text-gray-600 border border-gray-400 rounded-lg focus:ring-1 focus:ring-primary-600 focus:border-primary-600 focus:outline-none  transition-colors font-medium placeholder:font-normal"
                           placeholder="email@example.com"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
@@ -118,18 +124,18 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
                       </div>
                     </div>
 
-                    <div className="flex gap-3 pt-2">
+                    <div className="flex gap-3 pt-1 md:pt-2">
                       <button
                         type="button"
                         onClick={handleClose}
-                        className="flex-1 px-4 py-3 text-gray-700 bg-gray-100 border border-gray-400 hover:bg-gray-200 rounded-lg transition-colors font-outfit font-medium"
+                        className="flex-1 px-4 py-2.5 text-gray-700 bg-gray-100 border border-gray-400 hover:bg-gray-200 rounded-lg transition-colors font-outfit font-medium"
                         disabled={loading}
                       >
                         Cancel
                       </button>
                       <button
                         type="submit"
-                        className="flex-1 px-4 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors font-outfit font-medium flex items-center justify-center gap-2"
+                        className="flex-1 px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors font-outfit font-medium flex items-center justify-center gap-2"
                         disabled={loading || !email.trim()}
                       >
                         {loading ? (
@@ -165,19 +171,19 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
                 </>
               ) : (
                 <div className="text-center">
-                  <div className="w-16 h-16 mx-auto mb-4 bg-primary-600 rounded-full flex items-center justify-center">
-                    <TbCheck className="h-8 w-8 text-white" />
+                  <div className="w-14 h-14 md:w-16 md:h-16 mx-auto mb-2 md:mb-4 bg-primary-600 rounded-full flex items-center justify-center">
+                    <TbCheck className="h-7 md:h-8 w-7 md:w-8 text-white" />
                   </div>
-                  <h3 className="text-lg font-semibold text-primary-700 mb-2 font-outfit">
+                  <h3 className="text-base md:text-lg font-semibold text-primary-700 mb-1 md:mb-2 font-outfit">
                     Check Your Email
                   </h3>
-                  <p className="text-gray-600 mb-6 font-outfit">
+                  <p className="text-gray-600 text-sm md:text-base mb-4 md:mb-6 font-outfit">
                     If an account with that email exists, you will receive a
                     password reset link shortly.
                   </p>
                   <button
                     onClick={handleClose}
-                    className="w-full px-4 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors font-outfit font-medium"
+                    className="w-full px-4 py-2.5 lg:py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors font-outfit font-medium"
                   >
                     Done
                   </button>

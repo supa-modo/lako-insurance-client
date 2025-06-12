@@ -76,16 +76,16 @@ const ResetPasswordPage = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-md w-full mx-4 text-center"
+          className="relative w-full max-w-lg bg-white/90 rounded-[1.3rem] md:rounded-2xl shadow-2xl mx-2.5 text-center"
         >
-          <div className="bg-white rounded-2xl p-8 shadow-2xl">
-            <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+          <div className="bg-white rounded-2xl p-5 md:p-7 shadow-2xl">
+            <div className="w-16 h-16 mx-auto mb-2.5 md:mb-4 bg-red-100 rounded-full flex items-center justify-center">
               <TbAlertTriangle className="h-8 w-8 text-red-600" />
             </div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2 font-outfit">
+            <h2 className="text-lg md:text-xl font-semibold text-red-600 mb-2 font-outfit">
               Invalid Reset Link
             </h2>
-            <p className="text-gray-600 mb-6 font-outfit">
+            <p className="text-gray-600 text-sm md:text-base font-medium mb-4 md:mb-6 font-outfit">
               This password reset link is invalid or has expired. Please request
               a new password reset.
             </p>
@@ -123,14 +123,14 @@ const ResetPasswordPage = () => {
             <img
               src="/lako-logo.png"
               alt="Lako Insurance Logo"
-              className="w-36 object-contain"
+              className="w-32 md:w-36 object-contain"
             />
           </div>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gradient bg-gradient-to-r from-white via-primary-300 to-white bg-clip-text text-transparent -mt-1 mb-3 font-paytone">
             Reset Password
           </h2>
           <p className="text-white/80 font-outfit">
-            Enter your new password below
+            Enter your new password below to Continue
           </p>
         </motion.div>
 

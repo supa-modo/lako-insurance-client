@@ -37,6 +37,8 @@ import EditPlanModal from "../../components/insurance/EditPlanModal";
 import PlanDetailModal from "../../components/insurance/PlanDetailModal";
 import insuranceService from "../../services/insuranceService";
 import DeleteConfirmationModal from "../../components/ui/DeleteConfirmationModal";
+import { formatCurrency } from "../../utils/formatCurrency";
+import { PiMapPinAreaDuotone, PiUsersDuotone } from "react-icons/pi";
 
 const InsurancePlanManagementPage = () => {
   // State management
@@ -83,6 +85,7 @@ const InsurancePlanManagementPage = () => {
 
       if (response && response.success) {
         setPlans(response.data || []);
+        console.log(response.data);
       } else {
         setError(response?.message || "Failed to fetch plans");
       }
@@ -262,14 +265,6 @@ const InsurancePlanManagementPage = () => {
     setSearchTerm("");
   };
 
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("en-KE", {
-      style: "currency",
-      currency: "KES",
-      minimumFractionDigits: 0,
-    }).format(amount);
-  };
-
   const getSortIcon = (field) => {
     if (sortBy !== field) return null;
     return sortOrder === "asc" ? (
@@ -279,37 +274,18 @@ const InsurancePlanManagementPage = () => {
     );
   };
 
-  const getInsuranceTypeBadgeColor = (type) => {
+  const getCoverTypeBadgeColor = (type) => {
     switch (type) {
-      case "seniors":
-        return "bg-blue-100 text-blue-800 border-blue-200";
       case "family":
-        return "bg-green-100 text-green-800 border-green-200";
-      case "individual":
-        return "bg-purple-100 text-purple-800 border-purple-200";
+        return "bg-secondary-100 text-secondary-800 border-secondary-300";
       case "group":
-        return "bg-orange-100 text-orange-800 border-orange-200";
+        return "bg-green-100 text-green-800 border-green-300";
+      case "individual":
+        return "bg-indigo-100 text-indigo-800 border-indigo-300";
+      case "student":
+        return "bg-pink-100 text-pink-800 border-pink-300";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
-    }
-  };
-
-  const getPlanTypeBadgeColor = (type) => {
-    switch (type?.toLowerCase()) {
-      case "diamond":
-        return "bg-purple-100 text-purple-800 border-purple-200";
-      case "platinum":
         return "bg-gray-100 text-gray-800 border-gray-300";
-      case "gold":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case "silver":
-        return "bg-gray-50 text-gray-600 border-gray-200";
-      case "bronze":
-        return "bg-orange-100 text-orange-800 border-orange-200";
-      case "copper":
-        return "bg-red-100 text-red-800 border-red-200";
-      default:
-        return "bg-blue-100 text-blue-800 border-blue-200";
     }
   };
 
@@ -481,7 +457,7 @@ const InsurancePlanManagementPage = () => {
                               }
                               className={`px-3 py-1 text-xs rounded-full capitalize ${
                                 activeFilters.insuranceType === type
-                                  ? getInsuranceTypeBadgeColor(type) +
+                                  ? getCoverTypeBadgeColor(type) +
                                     " font-medium"
                                   : "bg-gray-200/70 border border-gray-300 text-gray-700"
                               }`}
@@ -629,7 +605,16 @@ const InsurancePlanManagementPage = () => {
                       onClick={() => handleSort("name")}
                     >
                       <div className="flex items-center">
-                        <span>Plan Details</span>
+                        <span>#</span>
+                      </div>
+                    </th>
+                    <th
+                      scope="col"
+                      className="py-4 px-4 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
+                      onClick={() => handleSort("name")}
+                    >
+                      <div className="flex items-center">
+                        <span>Insurance Plan</span>
                         {getSortIcon("name")}
                       </div>
                     </th>
@@ -637,19 +622,25 @@ const InsurancePlanManagementPage = () => {
                       scope="col"
                       className="py-4 px-4 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider"
                     >
-                      Company & Type
+                      Insurance Type
                     </th>
                     <th
                       scope="col"
                       className="py-4 px-4 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider"
                     >
-                      Eligibility & Coverage
+                      Eligibility & Limits
                     </th>
                     <th
                       scope="col"
                       className="py-4 px-4 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider"
                     >
-                      Benefits
+                      Inpatient
+                    </th>
+                    <th
+                      scope="col"
+                      className="py-4 px-4 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider"
+                    >
+                      Outpatient
                     </th>
                     <th
                       scope="col"
@@ -657,7 +648,7 @@ const InsurancePlanManagementPage = () => {
                       onClick={() => handleSort("annualPremium")}
                     >
                       <div className="flex items-center">
-                        <span>Premium</span>
+                        <span>Plan Premium</span>
                         {getSortIcon("annualPremium")}
                       </div>
                     </th>
@@ -699,7 +690,7 @@ const InsurancePlanManagementPage = () => {
                       </td>
                     </tr>
                   ) : (
-                    filteredAndSortedPlans.map((plan) => (
+                    filteredAndSortedPlans.map((plan, index) => (
                       <tr
                         key={plan.id}
                         className="hover:bg-gray-50 transition-colors cursor-pointer"
@@ -711,25 +702,19 @@ const InsurancePlanManagementPage = () => {
                           }
                         }}
                       >
+                        <td className="py-5 pl-4 text-center text-sm text-gray-500 whitespace-nowrap">
+                          {index + 1}.
+                        </td>
                         {/* Plan Details */}
                         <td className="py-5 px-4 whitespace-nowrap">
                           <div className="flex items-center">
-                            <div className="flex-shrink-0 h-10 w-10">
-                              <div className="h-10 w-10 rounded-lg bg-primary-100 flex items-center justify-center text-primary-600 font-medium">
-                                <TbShieldCheck className="h-5 w-5" />
-                              </div>
-                            </div>
                             <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">
+                              <div className="text-sm font-semibold text-primary-700">
                                 {plan.name}
                               </div>
-                              <div className="text-sm text-gray-500 mt-1">
-                                <span
-                                  className={`inline-flex px-2 py-1 text-xs font-medium rounded-full border ${getInsuranceTypeBadgeColor(
-                                    plan.insuranceType
-                                  )}`}
-                                >
-                                  {plan.insuranceType}
+                              <div className="text-[0.83rem] text-gray-500 mt-1">
+                                <span className="font-medium">
+                                  {plan.companyName || "N/A"}
                                 </span>
                               </div>
                             </div>
@@ -738,19 +723,21 @@ const InsurancePlanManagementPage = () => {
 
                         {/* Company & Type */}
                         <td className="py-5 px-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">
-                            <div className="flex items-center mb-1">
-                              <TbBuilding className="h-4 w-4 text-gray-400 mr-2" />
+                          <div className="text-sm text-gray-700">
+                            <div className="mb-1">
                               <span className="font-medium">
-                                {plan.companyName || "N/A"}
+                                {plan.insuranceType.charAt(0).toUpperCase() +
+                                  plan.insuranceType.slice(1) || "N/A"}
                               </span>
                             </div>
+
                             <span
-                              className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full border ${getPlanTypeBadgeColor(
-                                plan.planType
+                              className={`inline-flex px-4 py-1 text-xs font-semibold rounded-full border ${getCoverTypeBadgeColor(
+                                plan.coverType
                               )}`}
                             >
-                              {plan.planType}
+                              {plan.coverType.charAt(0).toUpperCase() +
+                                plan.coverType.slice(1) || "N/A"}
                             </span>
                           </div>
                         </td>
@@ -759,70 +746,62 @@ const InsurancePlanManagementPage = () => {
                         <td className="py-5 px-4 whitespace-nowrap text-sm text-gray-900">
                           <div className="space-y-1">
                             <div className="flex items-center">
-                              <TbUsers className="h-3 w-3 text-gray-400 mr-1" />
-                              <span className="text-xs text-gray-600">
-                                Ages {plan.eligibilityAgeMin}-
-                                {plan.eligibilityAgeMax}
+                              <PiUsersDuotone className="h-4 w-4 text-gray-500 mr-2" />
+                              <span className="text-sm font-medium text-gray-600">
+                                {plan.ageRange}
                               </span>
                             </div>
-                            <div className="text-xs">
-                              <div className="text-gray-700">
-                                <strong>In:</strong>{" "}
-                                {plan.inpatientCoverageLimit
-                                  ? formatCurrency(plan.inpatientCoverageLimit)
-                                  : "N/A"}
-                              </div>
-                              <div className="text-gray-600">
-                                <strong>Out:</strong>{" "}
-                                {plan.outpatientCoverageLimit
-                                  ? formatCurrency(plan.outpatientCoverageLimit)
-                                  : "N/A"}
-                              </div>
+                            <div className="flex items-center">
+                              <TbRefresh className="h-4 w-4 text-gray-500 mr-2" />
+                              <span className="text-sm font-medium text-gray-500">
+                                Renewal Limit: {plan.renewalAgeLimit}yrs
+                              </span>
                             </div>
-                            {plan.geographicalCoverage && (
-                              <div className="flex items-center text-xs text-gray-500">
-                                <TbMapPin className="h-3 w-3 mr-1" />
-                                {plan.geographicalCoverage}
-                              </div>
-                            )}
                           </div>
                         </td>
 
-                        {/* Benefits */}
-                        <td className="py-5 px-4 whitespace-nowrap">
-                          <div className="text-sm">
-                            {renderAdditionalBenefits(plan)}
-                            {plan.lastExpenseCover && (
-                              <div className="text-xs text-gray-600 mt-1">
-                                Last Expense:{" "}
-                                {formatCurrency(plan.lastExpenseCover)}
-                              </div>
-                            )}
-                            {plan.bedLimit && (
-                              <div className="flex items-center text-xs text-gray-500 mt-1">
-                                <TbBed className="h-3 w-3 mr-1" />
-                                {plan.bedLimit}
-                              </div>
-                            )}
+                        {/* Inpatient Coverage */}
+                        <td className="py-5 px-4 whitespace-nowrap max-w-[200px] truncate text-ellipsis">
+                          <div className="text-sm text-gray-600 font-medium mb-1">
+                            Cover:{" "}
+                            <span className="font-semibold text-secondary-700">
+                              {formatCurrency(plan.inpatientCoverageLimit)}
+                            </span>
                           </div>
+                          {plan.geographicalCoverage && (
+                            <div className="flex items-center text-sm font-medium text-gray-400 ">
+                              <PiMapPinAreaDuotone className="h-4 w-4 mr-2" />
+                              {plan.geographicalCoverage}
+                            </div>
+                          )}
+                        </td>
+
+                        {/* Outpatient Coverage */}
+                        <td className="py-5 px-4 whitespace-nowrap max-w-[200px] truncate text-ellipsis">
+                          <div className="text-sm text-gray-600 font-medium mb-1">
+                            Cover:{" "}
+                            <span className="font-semibold text-secondary-700">
+                              {formatCurrency(plan.outpatientCoverageLimit)}
+                            </span>
+                          </div>
+                          {plan.geographicalCoverage && (
+                            <div className="flex items-center text-sm font-medium text-gray-500 ">
+                              Premium: Covered in base
+                            </div>
+                          )}
                         </td>
 
                         {/* Premium */}
                         <td className="py-5 px-4 whitespace-nowrap">
                           <div className="text-sm">
-                            <div className="font-medium text-gray-900">
-                              {plan.rawAnnualPremium
-                                ? formatCurrency(plan.rawAnnualPremium)
+                            <div className="font-semibold text-secondary-700">
+                              {plan.annualPremium
+                                ? plan.annualPremium
                                 : "Age-based"}
                             </div>
                             <div className="text-xs text-gray-500 capitalize">
                               {plan.premiumStructure} premium
                             </div>
-                            {plan.isNhifApplicable && (
-                              <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800 border border-green-200 mt-1">
-                                NHIF Applicable
-                              </span>
-                            )}
                           </div>
                         </td>
 
@@ -835,24 +814,15 @@ const InsurancePlanManagementPage = () => {
                             <button
                               onClick={() => {
                                 setSelectedPlan(plan);
-                                setShowDetailModal(true);
-                              }}
-                              className="flex items-center border border-green-300 px-2 py-1 rounded-lg hover:bg-green-100 hover:border-green-300 text-green-500 hover:text-green-600"
-                              title="View Details"
-                            >
-                              <TbEye className="h-4 w-4 mr-1" />
-                              <span className="text-xs">View</span>
-                            </button>
-                            <button
-                              onClick={() => {
-                                setSelectedPlan(plan);
                                 setShowEditModal(true);
                               }}
                               className="flex items-center border border-blue-300 px-2 py-1 rounded-lg hover:bg-blue-100 hover:border-blue-300 text-blue-500 hover:text-blue-600"
                               title="Edit Plan"
                             >
                               <TbEdit className="h-4 w-4 mr-1" />
-                              <span className="text-xs">Edit</span>
+                              <span className="text-[0.8rem] font-medium">
+                                Edit
+                              </span>
                             </button>
                             <button
                               onClick={() => setDeleteConfirmation(plan)}
@@ -860,7 +830,9 @@ const InsurancePlanManagementPage = () => {
                               title="Delete Plan"
                             >
                               <TbTrash className="h-4 w-4 mr-1" />
-                              <span className="text-xs">Delete</span>
+                              <span className="text-[0.8rem] font-medium">
+                                Delete
+                              </span>
                             </button>
                           </div>
                         </td>
