@@ -160,7 +160,7 @@ function App() {
                       }
                     />
                     <Route
-                      path="applications/approved"
+                      path="approved-applications"
                       element={
                         <AuthGuard>
                           <ApprovedApplicationsPage />

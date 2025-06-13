@@ -61,7 +61,7 @@ const navItems = [
       {
         name: "Approved Applications",
         icon: TbShieldCheckFilled,
-        path: "/admin/applications/approved",
+        path: "/admin/approved-applications",
       },
     ],
   },

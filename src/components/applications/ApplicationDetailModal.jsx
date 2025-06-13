@@ -38,7 +38,10 @@ import {
   TbFileDownload,
   TbLoader2,
   TbFolderOpen,
+  TbCoins,
+  TbBuildingBank,
 } from "react-icons/tb";
+import { PiUserDuotone, PiUsersDuotone } from "react-icons/pi";
 import applicationService from "../../services/applicationService";
 import { useToast } from "../../hooks/useToast";
 import ToastContainer from "../../components/ui/ToastContainer";
@@ -288,260 +291,276 @@ const ApplicationDetailModal = ({ application, onClose }) => {
             <div className="space-y-6">
               {/* Application Overview Card */}
               <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                  <TbShield className="h-5 w-5 mr-2 text-green-600" />
+                <h3 className=" font-semibold text-secondary-700 mb-4">
                   Application Overview
                 </h3>
 
-                <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
-                  <div className="space-y-4">
-                    <div className="flex items-center p-3 bg-gray-50 rounded-lg">
-                      <TbClipboard className="h-5 w-5 text-gray-400 mr-3 flex-shrink-0" />
-                      <div>
-                        <p className="text-sm text-gray-500 font-medium">
-                          Application Number
-                        </p>
-                        <p className="font-semibold text-green-600">
-                          {application.applicationNumber}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center p-3 bg-gray-50 rounded-lg">
-                      <TbUsers className="h-5 w-5 text-gray-400 mr-3 flex-shrink-0" />
-                      <div>
-                        <p className="text-sm text-gray-500 font-medium">
-                          Cover Type
-                        </p>
-                        <p className="font-semibold capitalize">
-                          {application.coverType || "Not specified"}
-                        </p>
-                      </div>
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 text-gray-600">
+                  <div className="flex items-center p-3 bg-gray-50 rounded-lg">
+                    <div>
+                      <p className="text-sm text-neutral-700 font-medium">
+                        Application Number
+                      </p>
+                      <p className="font-semibold text-gray-600">
+                        {application.applicationNumber}
+                      </p>
                     </div>
                   </div>
 
-                  <div className="space-y-4">
-                    <div className="flex items-center p-3 bg-gray-50 rounded-lg">
-                      <TbShield className="h-5 w-5 text-gray-400 mr-3 flex-shrink-0" />
-                      <div>
-                        <p className="text-sm text-gray-500 font-medium">
-                          Insurance Type
-                        </p>
-                        <p className="font-semibold capitalize">
-                          {application.insuranceType?.replace("-", " ")}
-                        </p>
-                      </div>
+                  <div className="flex items-center p-3 bg-gray-50 rounded-lg">
+                    <div>
+                      <p className="font-semibold capitalize text-primary-600">
+                        {application.insuranceType?.replace("-", " ")}
+                      </p>
+                      <p className="font-semibold capitalize">
+                        {application.coverType || "Not specified"}
+                      </p>
                     </div>
+                  </div>
 
-                    <div className="flex items-center p-3 bg-gray-50 rounded-lg">
-                      <TbCalendarTime className="h-5 w-5 text-gray-400 mr-3 flex-shrink-0" />
-                      <div>
-                        <p className="text-sm text-gray-500 font-medium">
-                          Submitted
-                        </p>
-                        <p className="font-semibold">
-                          {formatDateTime(application.createdAt)}
-                        </p>
-                      </div>
+                  <div className="flex items-center p-3 bg-gray-50 rounded-lg">
+                    <div>
+                      <p className="text-sm text-neutral-700 font-medium">
+                        Submitted
+                      </p>
+                      <p className="font-semibold text-[0.95rem] text-gray-600">
+                        {formatDateTime(application.createdAt)}
+                      </p>
                     </div>
                   </div>
                 </div>
+
+                {/* Policy Details Card */}
+                {(application.policyStartDate ||
+                  application.premiumAmount ||
+                  application.insuranceProvider) && (
+                  <div className="mt-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {application.insuranceProvider && (
+                        <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-400">
+                          <div className="flex items-center mb-2">
+                            <p className="text-sm text-neutral-700 font-medium">
+                              {application.selectedPlan?.name}
+                            </p>
+                          </div>
+                          <p className="font-semibold text-[0.95rem] text-gray-600">
+                            {application.insuranceProvider}
+                          </p>
+                        </div>
+                      )}
+                      {application.policyStartDate && (
+                        <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-400">
+                          <div className="flex items-center mb-2">
+                            <TbCalendar size={18} className=" mr-2" />
+                            <p className="text-sm text-neutral-700 font-medium">
+                              Policy Start Date
+                            </p>
+                          </div>
+                          <p className="font-semibold text-[0.95rem] text-gray-600">
+                            {formatDate(application.policyStartDate)}
+                          </p>
+                        </div>
+                      )}
+
+                      {application.premiumAmount && (
+                        <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-400">
+                          <div className="flex items-center mb-2">
+                            <TbCoins size={18} className=" mr-2" />
+                            <p className="text-sm text-neutral-700 font-medium">
+                              Premium Amount
+                            </p>
+                          </div>
+                          <p className="font-semibold text-[0.95rem] text-gray-600">
+                            KSH{" "}
+                            {Number(application.premiumAmount).toLocaleString()}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Personal Information Card */}
+              {/* Applicant details Card */}
               <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                  <TbUser className="h-5 w-5 mr-2 text-green-600" />
-                  Personal Information
+                <h3 className=" font-semibold text-secondary-700 mb-4 ">
+                  Applicant Details
                 </h3>
 
                 <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
-                  <div className="space-y-4">
-                    <div>
-                      <p className="text-sm text-gray-500 font-medium mb-1">
-                        Full Name
-                      </p>
-                      <p className="font-semibold text-gray-900">
-                        {[
-                          application.firstName,
-                          application.middleName,
-                          application.lastName,
-                        ]
-                          .filter(Boolean)
-                          .join(" ")}
-                      </p>
-                    </div>
-
-                    <div>
-                      <p className="text-sm text-gray-500 font-medium mb-1">
-                        Date of Birth
-                      </p>
-                      <p className="font-semibold text-gray-900">
-                        {formatDate(application.dateOfBirth)}
-                      </p>
-                    </div>
-
-                    <div>
-                      <p className="text-sm text-gray-500 font-medium mb-1">
-                        Gender
-                      </p>
-                      <p className="font-semibold text-gray-900 capitalize">
-                        {application.gender || "Not specified"}
-                      </p>
-                    </div>
-
-                    {application.universityCollegeSchool && (
-                      <div>
-                        <p className="text-sm text-gray-500 font-medium mb-1">
-                          Institution
-                        </p>
-                        <p className="font-semibold text-gray-900 flex items-center">
-                          <TbSchool className="h-4 w-4 mr-2 text-blue-600" />
-                          {application.universityCollegeSchool}
-                        </p>
-                      </div>
-                    )}
+                  <div>
+                    <p className="text-sm text-neutral-700 font-medium mb-1">
+                      Full Name
+                    </p>
+                    <p className="font-semibold text-gray-600">
+                      {[
+                        application.firstName,
+                        application.middleName,
+                        application.lastName,
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
+                    </p>
                   </div>
 
-                  <div className="space-y-4">
-                    <div>
-                      <p className="text-sm text-gray-500 font-medium mb-1">
-                        ID Number
-                      </p>
-                      <p className="font-semibold text-gray-900">
-                        {application.idNumber}
-                      </p>
-                    </div>
-
-                    {application.kraPin && (
-                      <div>
-                        <p className="text-sm text-gray-500 font-medium mb-1">
-                          KRA PIN
-                        </p>
-                        <p className="font-semibold text-gray-900">
-                          {application.kraPin}
-                        </p>
-                      </div>
-                    )}
-
-                    {application.postalAddress && (
-                      <div>
-                        <p className="text-sm text-gray-500 font-medium mb-1">
-                          Postal Address
-                        </p>
-                        <p className="font-semibold text-gray-900">
-                          {application.postalAddress}
-                        </p>
-                      </div>
-                    )}
-
-                    {application.town && (
-                      <div>
-                        <p className="text-sm text-gray-500 font-medium mb-1">
-                          Town/City
-                        </p>
-                        <p className="font-semibold text-gray-900">
-                          {application.town}
-                        </p>
-                      </div>
-                    )}
+                  <div>
+                    <p className="text-sm text-neutral-700 font-medium mb-1">
+                      ID Number
+                    </p>
+                    <p className="font-semibold text-gray-600">
+                      {application.idNumber}
+                    </p>
                   </div>
-                </div>
-              </div>
 
-              {/* Contact Information Card */}
-              <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                  <TbMail className="h-5 w-5 mr-2 text-green-600" />
-                  Contact Information
-                </h3>
+                  <div>
+                    <p className="text-sm text-neutral-700 font-medium mb-1">
+                      Gender
+                    </p>
+                    <p className="font-semibold text-gray-600 capitalize">
+                      {application.gender || "Not specified"}
+                    </p>
+                  </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                    <div className="flex items-center mb-2">
-                      <TbMail className="h-5 w-5 text-blue-600 mr-2" />
-                      <p className="text-sm text-blue-700 font-medium">
-                        Email Address
+                  {application.kraPin && (
+                    <div>
+                      <p className="text-sm text-neutral-700 font-medium mb-1">
+                        KRA PIN
+                      </p>
+                      <p className="font-semibold text-gray-600">
+                        {application.kraPin}
                       </p>
                     </div>
+                  )}
+
+                  <div>
+                    <p className="text-sm text-neutral-700 font-medium mb-1">
+                      Email Address
+                    </p>
                     <a
                       href={`mailto:${application.emailAddress}`}
-                      className="font-semibold text-blue-700 hover:text-blue-800 transition-colors"
+                      className="font-semibold text-gray-600 hover:text-gray-700 transition-colors "
                     >
-                      {application.emailAddress}
+                      <span className="flex items-center">
+                        {application.emailAddress}{" "}
+                        <TbExternalLink className=" ml-1.5 w-4 h-4" />
+                      </span>
                     </a>
                   </div>
 
-                  <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-                    <div className="flex items-center mb-2">
-                      <TbPhone className="h-5 w-5 text-green-600 mr-2" />
-                      <p className="text-sm text-green-700 font-medium">
-                        Mobile Number
-                      </p>
-                    </div>
+                  <div>
+                    <p className="text-sm text-neutral-700 font-medium mb-1">
+                      Mobile Number
+                    </p>
                     <a
                       href={`tel:${application.mobileNumber}`}
-                      className="font-semibold text-green-700 hover:text-green-800 transition-colors"
+                      className="font-semibold text-gray-600 hover:text-gray-700 transition-colors "
                     >
-                      {application.mobileNumber}
+                      <span className="flex items-center">
+                        {application.mobileNumber}{" "}
+                        <TbExternalLink className=" ml-1.5 w-4 h-4" />
+                      </span>
                     </a>
                   </div>
-                </div>
-              </div>
 
-              {/* Emergency Contacts Card */}
-              {(application.nextOfKinName || application.beneficiaryName) && (
-                <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                    <TbUserCheck className="h-5 w-5 mr-2 text-green-600" />
+                  <div>
+                    <p className="text-sm text-neutral-700 font-medium mb-1">
+                      Date of Birth
+                    </p>
+                    <p className="font-semibold text-gray-600">
+                      {formatDate(application.dateOfBirth)}
+                    </p>
+                  </div>
+
+                  {application.postalAddress && (
+                    <div>
+                      <p className="text-sm text-neutral-700 font-medium mb-1">
+                        Postal Address
+                      </p>
+                      <p className="font-semibold text-gray-600">
+                        {application.postalAddress}
+                      </p>
+                    </div>
+                  )}
+
+                  {application.town && (
+                    <div>
+                      <p className="text-sm text-neutral-700 font-medium mb-1">
+                        Town/City
+                      </p>
+                      <p className="font-semibold text-gray-600">
+                        {application.town}
+                      </p>
+                    </div>
+                  )}
+
+                  {application.universityCollegeSchool ? (
+                    <div>
+                      <p className="text-sm text-neutral-700 font-medium mb-1">
+                        Institution
+                      </p>
+                      <p className="font-semibold text-gray-600 flex items-center">
+                        <TbSchool className="h-4 w-4 mr-2 text-blue-600" />
+                        {application.universityCollegeSchool}
+                      </p>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-sm text-neutral-700 font-medium mb-1">
+                        ---
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Emergency contacts and beneficiaries Card */}
+                <div className="pt-6">
+                  <h3 className=" font-semibold text-secondary-700 mb-3 ">
                     Emergency Contacts & Beneficiaries
                   </h3>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {application.nextOfKinName && (
-                      <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
-                        <div className="flex items-center mb-2">
-                          <TbUsers className="h-5 w-5 text-orange-600 mr-2" />
-                          <p className="text-sm text-orange-700 font-medium">
-                            Next of Kin
-                          </p>
-                        </div>
-                        <p className="font-semibold text-orange-700">
-                          {application.nextOfKinName}
+                    <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                      <span className="text-sm text-neutral-700 font-medium mb-2 flex items-center">
+                        <PiUserDuotone
+                          size={18}
+                          className=" text-gray-400 mr-2 flex-shrink-0"
+                        />
+                        Next of Kin
+                      </span>
+                      <div className="flex items-center justify-between">
+                        <p className="font-semibold text-primary-600">
+                          {application.nextOfKinName || "Not specified"}
                         </p>
-                        {application.nextOfKinContacts && (
-                          <p className="text-sm text-orange-600 mt-1">
-                            {application.nextOfKinContacts}
-                          </p>
-                        )}
+                        <p className="text-sm font-medium text-gray-600">
+                          {application.nextOfKinContacts || "Not specified"}
+                        </p>
                       </div>
-                    )}
+                    </div>
+                    <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                      <span className="text-sm text-neutral-700 font-medium mb-2 flex items-center">
+                        <PiUserDuotone
+                          size={18}
+                          className=" text-gray-400 mr-2 flex-shrink-0"
+                        />
+                        Beneficiary
+                      </span>
 
-                    {application.beneficiaryName && (
-                      <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
-                        <div className="flex items-center mb-2">
-                          <TbHeart className="h-5 w-5 text-purple-600 mr-2" />
-                          <p className="text-sm text-purple-700 font-medium">
-                            Beneficiary
-                          </p>
-                        </div>
-                        <p className="font-semibold text-purple-700">
-                          {application.beneficiaryName}
+                      <div className="flex items-center justify-between">
+                        <p className="font-semibold text-primary-600">
+                          {application.beneficiaryName || "Not specified"}
                         </p>
-                        {application.beneficiaryContacts && (
-                          <p className="text-sm text-purple-600 mt-1">
-                            {application.beneficiaryContacts}
-                          </p>
-                        )}
+                        <p className="text-sm font-medium text-gray-600">
+                          {application.beneficiaryContacts || "Not specified"}
+                        </p>
                       </div>
-                    )}
+                    </div>
                   </div>
                 </div>
-              )}
+              </div>
 
               {/* Medical History Card */}
               <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-                <h3 className="font-semibold text-secondary-600 mb-4 ">
+                <h3 className="font-semibold text-secondary-700 mb-4 ">
                   Medical History
                 </h3>
 
@@ -643,7 +662,7 @@ const ApplicationDetailModal = ({ application, onClose }) => {
 
                   {application.medicalHistoryDetails && (
                     <div className="mt-4">
-                      <p className="text-sm text-gray-500 font-medium mb-2">
+                      <p className="text-sm text-neutral-700 font-medium mb-2">
                         Medical History Details
                       </p>
                       <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
@@ -659,7 +678,7 @@ const ApplicationDetailModal = ({ application, onClose }) => {
               {/* Documents Card */}
               <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-secondary-600 ">
+                  <h3 className="font-semibold text-secondary-700 ">
                     Documents ({documents.length})
                   </h3>
                   {loadingDocuments && (
@@ -756,63 +775,6 @@ const ApplicationDetailModal = ({ application, onClose }) => {
                   </div>
                 )}
               </div>
-
-              {/* Policy Details Card */}
-              {(application.policyStartDate ||
-                application.premiumAmount ||
-                application.insuranceProvider) && (
-                <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                    <TbBuilding className="h-5 w-5 mr-2 text-green-600" />
-                    Policy Details
-                  </h3>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {application.policyStartDate && (
-                      <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                        <div className="flex items-center mb-2">
-                          <TbCalendar className="h-5 w-5 text-blue-600 mr-2" />
-                          <p className="text-sm text-blue-700 font-medium">
-                            Policy Start Date
-                          </p>
-                        </div>
-                        <p className="font-semibold text-blue-700">
-                          {formatDate(application.policyStartDate)}
-                        </p>
-                      </div>
-                    )}
-
-                    {application.premiumAmount && (
-                      <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-                        <div className="flex items-center mb-2">
-                          <TbCurrencyDollar className="h-5 w-5 text-green-600 mr-2" />
-                          <p className="text-sm text-green-700 font-medium">
-                            Premium Amount
-                          </p>
-                        </div>
-                        <p className="font-semibold text-green-700">
-                          KSH{" "}
-                          {Number(application.premiumAmount).toLocaleString()}
-                        </p>
-                      </div>
-                    )}
-
-                    {application.insuranceProvider && (
-                      <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
-                        <div className="flex items-center mb-2">
-                          <TbBuilding className="h-5 w-5 text-purple-600 mr-2" />
-                          <p className="text-sm text-purple-700 font-medium">
-                            Insurance Provider
-                          </p>
-                        </div>
-                        <p className="font-semibold text-purple-700">
-                          {application.insuranceProvider}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
 
               {/* Agent Information Card */}
               {application.isAgentPurchase &&

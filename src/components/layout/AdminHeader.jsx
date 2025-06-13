@@ -51,7 +51,6 @@ const AdminHeader = ({ toggleSidebarCollapse, sidebarCollapsed }) => {
   const firstName = userData.firstName || "";
   const lastName = userData.lastName || "";
   const username = firstName && lastName ? `${firstName} ${lastName}` : "Admin";
-  console.log(userData);
 
   // Mock notifications data
   const notifications = [

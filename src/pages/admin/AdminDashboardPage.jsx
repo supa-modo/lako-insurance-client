@@ -113,7 +113,6 @@ const AdminDashboardPage = () => {
       // Fetch recent applications
       const recentApplicationsResponse =
         await applicationService.getAllApplications({
-          limit: 5,
           sortBy: "createdAt",
           sortOrder: "desc",
         });
@@ -200,9 +199,8 @@ const AdminDashboardPage = () => {
         pending: monthApplications.filter(
           (app) => app.status === "under_review" || app.status === "submitted"
         ).length,
-        rejected: monthApplications.filter(
-          (app) => app.status === "rejected"
-        ).length,
+        rejected: monthApplications.filter((app) => app.status === "rejected")
+          .length,
       });
     }
 
@@ -558,18 +556,14 @@ const AdminDashboardPage = () => {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
                     <YAxis />
-                    <Tooltip />
+                    <Tooltip contentStyle={{ fontSize: "12.5px" }} />
                     <Legend />
                     <Bar
                       dataKey="applications"
                       fill="#3B82F6"
                       name="Applications"
                     />
-                    <Bar
-                      dataKey="pending"
-                      fill="#F59E0B"
-                      name="Pending"
-                    />
+                    <Bar dataKey="pending" fill="#F59E0B" name="Pending" />
                     <Bar dataKey="approved" fill="#10B981" name="Approved" />
                   </BarChart>
                 </ResponsiveContainer>
@@ -595,39 +589,41 @@ const AdminDashboardPage = () => {
             </div>
             <div className="space-y-2">
               {dashboardData.recentApplications.length > 0 ? (
-                dashboardData.recentApplications.map((application) => (
-                  <div
-                    key={application.id}
+                dashboardData.recentApplications
+                  .slice(0, 5)
+                  .map((application) => (
+                    <div
+                      key={application.id}
                       className="px-3 py-3.5 border border-gray-100 rounded-lg hover:bg-neutral-100 transition-colors"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center">
-                          <TbFileText className="h-4 w-4 text-blue-500 mr-2" />
-                          <span className="text-sm font-medium text-gray-900">
-                            {application.applicationNumber}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center">
+                            <TbFileText className="h-4 w-4 text-blue-500 mr-2" />
+                            <span className="text-sm font-medium text-gray-900">
+                              {application.applicationNumber}
+                            </span>
+                          </div>
+                          <div className="text-xs text-gray-500 mt-1">
+                            {application.firstName} {application.lastName} •{" "}
+                            {application.insuranceType}
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span
+                            className={`inline-flex px-4 py-1 text-xs font-medium rounded-full border ${getStatusColor(
+                              application.status
+                            )}`}
+                          >
+                            {application.status?.replace("_", " ")}
+                          </span>
+                          <span className="text-xs text-gray-400">
+                            {formatDate2(application.createdAt)}
                           </span>
                         </div>
-                        <div className="text-xs text-gray-500 mt-1">
-                          {application.firstName} {application.lastName} •{" "}
-                          {application.insuranceType}
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <span
-                          className={`inline-flex px-2 py-1 text-xs font-medium rounded-full border ${getStatusColor(
-                            application.status
-                          )}`}
-                        >
-                          {application.status?.replace("_", " ")}
-                        </span>
-                        <span className="text-xs text-gray-400">
-                          {formatDate2(application.createdAt)}
-                        </span>
                       </div>
                     </div>
-                  </div>
-                ))
+                  ))
               ) : (
                 <div className="text-center py-8 text-gray-500">
                   <TbFileText className="h-8 w-8 mx-auto mb-2 text-gray-300" />
@@ -672,7 +668,7 @@ const AdminDashboardPage = () => {
                       </div>
                       <div className="flex items-center space-x-2">
                         <span
-                          className={`inline-flex px-2 py-1 text-xs font-medium rounded-full border ${getPriorityColor(
+                          className={`inline-flex px-4 py-1 text-xs font-medium rounded-full border ${getPriorityColor(
                             message.priority
                           )}`}
                         >
