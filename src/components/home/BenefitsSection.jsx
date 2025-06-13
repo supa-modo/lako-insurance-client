@@ -504,7 +504,7 @@ const BenefitsSection = () => {
               <div className="p-4 lg:p-6 relative z-10">
                 <div className="text-left mb-6">
                   <p className="text-gray-700 text-base">
-                    Have questions? We're here to help you find the perfect
+                    Have any questions? We're here to help you find the perfect
                     insurance solution.
                   </p>
                 </div>

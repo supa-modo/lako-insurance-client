@@ -32,13 +32,22 @@ import {
   TbEye,
   TbStethoscope,
   TbPhoneCall,
-  TbMailForward,
+  TbMailFilled,
+  TbInfoCircle,
+  TbFileCheck,
+  TbFileDownload,
+  TbLoader2,
+  TbFolderOpen,
 } from "react-icons/tb";
 import applicationService from "../../services/applicationService";
+import { useToast } from "../../hooks/useToast";
+import ToastContainer from "../../components/ui/ToastContainer";
 
 const ApplicationDetailModal = ({ application, onClose }) => {
+  const { toasts, toast, removeToast } = useToast();
   const [documents, setDocuments] = useState([]);
   const [loadingDocuments, setLoadingDocuments] = useState(false);
+  const [downloadingDoc, setDownloadingDoc] = useState(null);
 
   // Fetch application documents
   useEffect(() => {
@@ -64,6 +73,52 @@ const ApplicationDetailModal = ({ application, onClose }) => {
       setDocuments([]);
     } finally {
       setLoadingDocuments(false);
+    }
+  };
+
+  const handleDownloadDocument = async (documentId, fileName) => {
+    setDownloadingDoc(documentId);
+    try {
+      const blob = await applicationService.downloadDocument(documentId);
+
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      toast.success("Document downloaded successfully!");
+    } catch (error) {
+      console.error("Error downloading document:", error);
+      toast.error("Failed to download document. Please try again.");
+    } finally {
+      setDownloadingDoc(null);
+    }
+  };
+
+  const handlePreviewDocument = async (documentId, fileName, mimeType) => {
+    try {
+      const blob = await applicationService.downloadDocument(documentId);
+
+      // For images and PDFs, open in new tab
+      if (mimeType.startsWith("image/") || mimeType === "application/pdf") {
+        const url = window.URL.createObjectURL(blob);
+        window.open(url, "_blank");
+        // Clean up URL after a delay
+        setTimeout(() => window.URL.revokeObjectURL(url), 1000);
+      } else {
+        // For other file types, trigger download
+        handleDownloadDocument(documentId, fileName);
+      }
+    } catch (error) {
+      console.error("Error previewing document:", error);
+      toast.error(
+        "Failed to preview document. Please try downloading instead."
+      );
     }
   };
 
@@ -135,6 +190,44 @@ const ApplicationDetailModal = ({ application, onClose }) => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
+  const getDocumentTypeIcon = (documentType) => {
+    switch (documentType?.toLowerCase()) {
+      case "national_id":
+      case "id":
+        return <TbId className="h-5 w-5 text-blue-600" />;
+      case "kra_pin":
+      case "kra":
+        return <TbFileText className="h-5 w-5 text-green-600" />;
+      case "medical_report":
+      case "medical":
+        return <TbMedicalCross className="h-5 w-5 text-red-600" />;
+      case "passport_photo":
+      case "photo":
+        return <TbUser className="h-5 w-5 text-purple-600" />;
+      default:
+        return <TbFile className="h-5 w-5 text-gray-600" />;
+    }
+  };
+
+  const getDocumentTypeColor = (documentType) => {
+    switch (documentType?.toLowerCase()) {
+      case "national_id":
+      case "id":
+        return "bg-blue-100 border-blue-200";
+      case "kra_pin":
+      case "kra":
+        return "bg-green-100 border-green-200";
+      case "medical_report":
+      case "medical":
+        return "bg-red-100 border-red-200";
+      case "passport_photo":
+      case "photo":
+        return "bg-purple-100 border-purple-200";
+      default:
+        return "bg-gray-100 border-gray-200";
+    }
+  };
+
   if (!application) return null;
 
   return (
@@ -150,7 +243,7 @@ const ApplicationDetailModal = ({ application, onClose }) => {
         className="w-[750px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-xl border border-gray-200"
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-green-600 to-green-700 px-6 py-4 relative">
+        <div className="bg-gradient-to-r from-primary-700 to-primary-600 px-6 py-4 relative">
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
             <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
@@ -200,7 +293,7 @@ const ApplicationDetailModal = ({ application, onClose }) => {
                   Application Overview
                 </h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
                   <div className="space-y-4">
                     <div className="flex items-center p-3 bg-gray-50 rounded-lg">
                       <TbClipboard className="h-5 w-5 text-gray-400 mr-3 flex-shrink-0" />
@@ -262,7 +355,7 @@ const ApplicationDetailModal = ({ application, onClose }) => {
                   Personal Information
                 </h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
                   <div className="space-y-4">
                     <div>
                       <p className="text-sm text-gray-500 font-medium mb-1">
@@ -448,8 +541,7 @@ const ApplicationDetailModal = ({ application, onClose }) => {
 
               {/* Medical History Card */}
               <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                  <TbStethoscope className="h-5 w-5 mr-2 text-green-600" />
+                <h3 className="font-semibold text-secondary-600 mb-4 ">
                   Medical History
                 </h3>
 
@@ -567,16 +659,25 @@ const ApplicationDetailModal = ({ application, onClose }) => {
               {/* Documents Card */}
               <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-                    <TbFile className="h-5 w-5 mr-2 text-green-600" />
+                  <h3 className="font-semibold text-secondary-600 ">
                     Documents ({documents.length})
                   </h3>
                   {loadingDocuments && (
-                    <TbLoader className="h-4 w-4 animate-spin text-gray-400" />
+                    <div className="flex items-center text-sm text-gray-500">
+                      <TbLoader className="h-4 w-4 animate-spin mr-2" />
+                      Loading documents...
+                    </div>
                   )}
                 </div>
 
-                {documents.length === 0 ? (
+                {loadingDocuments ? (
+                  <div className="text-center py-8">
+                    <TbLoader className="h-8 w-8 animate-spin text-gray-400 mx-auto mb-3" />
+                    <p className="text-gray-500 font-medium">
+                      Loading documents...
+                    </p>
+                  </div>
+                ) : documents.length === 0 ? (
                   <div className="text-center py-8">
                     <TbFile className="h-12 w-12 text-gray-300 mx-auto mb-3" />
                     <p className="text-gray-500 font-medium">
@@ -591,15 +692,17 @@ const ApplicationDetailModal = ({ application, onClose }) => {
                     {documents.map((doc) => (
                       <div
                         key={doc.id}
-                        className="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors"
+                        className={`p-4 rounded-lg border transition-all hover:shadow-md ${getDocumentTypeColor(
+                          doc.documentType
+                        )}`}
                       >
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-start justify-between">
                           <div className="flex items-center space-x-3 flex-1">
-                            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                              <TbFile className="h-5 w-5 text-blue-600" />
+                            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center border">
+                              {getDocumentTypeIcon(doc.documentType)}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-gray-900 truncate">
+                              <p className="text-sm font-medium text-gray-900 max-w-[170px] truncate">
                                 {doc.fileName}
                               </p>
                               <p className="text-xs text-gray-500">
@@ -613,12 +716,40 @@ const ApplicationDetailModal = ({ application, onClose }) => {
                               </p>
                             </div>
                           </div>
-                          <button
-                            className="ml-3 p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
-                            title="Download Document"
-                          >
-                            <TbDownload className="h-4 w-4" />
-                          </button>
+                          <div className="flex items-center space-x-1">
+                            <button
+                              onClick={() =>
+                                handlePreviewDocument(
+                                  doc.id,
+                                  doc.fileName,
+                                  doc.mimeType
+                                )
+                              }
+                              disabled={downloadingDoc === doc.id}
+                              className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              title="Preview Document"
+                            >
+                              {downloadingDoc === doc.id ? (
+                                <TbLoader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <TbFolderOpen className="h-4 w-4" />
+                              )}
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleDownloadDocument(doc.id, doc.fileName)
+                              }
+                              disabled={downloadingDoc === doc.id}
+                              className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              title="Download Document"
+                            >
+                              {downloadingDoc === doc.id ? (
+                                <TbLoader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <TbDownload className="h-4 w-4" />
+                              )}
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -858,6 +989,9 @@ const ApplicationDetailModal = ({ application, onClose }) => {
           </div>
         </div>
       </motion.div>
+
+      {/* Toast Container */}
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
 };

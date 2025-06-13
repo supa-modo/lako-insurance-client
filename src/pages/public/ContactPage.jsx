@@ -174,7 +174,7 @@ const ContactPage = () => {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="text-white/90 text-[0.95rem] md:text-lg mb-8"
             >
-              Have questions about our insurance products? Need a quote? Our
+              Have any questions about our insurance services? Need a quote? Our
               team is ready to assist you with personalized solutions.
             </motion.p>
           </div>
@@ -300,24 +300,28 @@ const ContactPage = () => {
                         <div className="flex space-x-3">
                           <a
                             href="https://web.facebook.com/lakoinsuranceagency?_rdc=1&_rdr"
+                            target="_blank"
                             className="h-10 w-10 rounded-full flex items-center justify-center bg-blue-600 hover:bg-gray-600/20 transition-colors"
                           >
                             <FaFacebookF className="h-5 w-5 text-white" />
                           </a>
                           <a
-                            href="#"
+                            href="https://x.com/lakoinsurance"
+                            target="_blank"
                             className="h-10 w-10 rounded-full bg-black flex items-center justify-center text-white hover:bg-gray-600/20 transition-colors"
                           >
                             <FaXTwitter className="h-5 w-5" />
                           </a>
                           <a
                             href="https://www.instagram.com/lakoinsurance"
+                            target="_blank"
                             className="h-10 w-10 rounded-full bg-gradient-to-r from-purple-500 to-red-500 flex items-center justify-center text-white hover:bg-gray-600/20 transition-colors"
                           >
                             <FaInstagram className="h-5 w-5" />
                           </a>
                           <a
                             href="https://www.linkedin.com/company/lako-insurance/"
+                            target="_blank"
                             className="h-10 w-10 rounded-full bg-sky-600 flex items-center justify-center text-white hover:bg-gray-600/20 transition-colors"
                           >
                             <FaLinkedinIn className="h-5 w-5" />
