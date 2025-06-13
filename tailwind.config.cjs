@@ -13,7 +13,7 @@ module.exports = {
           200: "#fbd7a1",
           300: "#f9c372",
           400: "#f7af43",
-          500: "#f69023", // Main primary color (teal)
+          500: "#f69023",
           600: "#e07b13",
           700: "#b5640f",
           800: "#8a4c0b",
@@ -25,7 +25,7 @@ module.exports = {
           200: "#a3dbdb",
           300: "#75c9c9",
           400: "#47b7b7",
-          500: "#2d9f9b", // New primary color
+          500: "#2d9f9b",
           600: "#247f7c",
           700: "#1b5f5d",
           800: "#123f3e",
@@ -35,7 +35,7 @@ module.exports = {
           50: "#fcfbfa",
           100: "#f9f7f5",
           200: "#f3efeb",
-          300: "#ede8e4", // Main neutral color (cream)
+          300: "#ede8e4",
           400: "#dfd7d0",
           500: "#c5baaf",
           600: "#a79889",

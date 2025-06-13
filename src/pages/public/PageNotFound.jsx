@@ -12,7 +12,7 @@ const PageNotFound = () => {
       {/* Simple Header */}
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between py-4">
+          <div className="flex items-center justify-between py-1">
             {/* Logo */}
             <Link to="/" className="flex-shrink-0">
               <div className="w-20 md:w-24">

@@ -152,7 +152,7 @@ function App() {
                       }
                     />
                     <Route
-                      path="applications/all"
+                      path="applications"
                       element={
                         <AuthGuard>
                           <InsuranceApplicationManagementPage />

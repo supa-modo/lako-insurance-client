@@ -31,6 +31,16 @@ import {
   TbInfoCircle,
   TbSearch,
   TbClipboardPlus,
+  TbShield,
+  TbBuilding,
+  TbMessage,
+  TbAlertCircle,
+  TbCheck,
+  TbX,
+  TbShieldHalfFilled,
+  TbBuildingBank,
+  TbListCheck,
+  TbTrendingUp,
 } from "react-icons/tb";
 import {
   LineChart,
@@ -45,6 +55,7 @@ import {
   XAxis,
   YAxis,
   ResponsiveContainer,
+  Cell,
 } from "recharts";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -52,195 +63,285 @@ import { PiUsersDuotone } from "react-icons/pi";
 import { RiUserAddLine, RiUserShared2Line } from "react-icons/ri";
 import { useAuth } from "../../context/AuthContext";
 import { formatDate2 } from "../../utils/formatDate";
+import applicationService from "../../services/applicationService";
+import contactService from "../../services/contactService";
+import { useToast } from "../../hooks/useToast";
+import ToastContainer from "../../components/ui/ToastContainer";
 
 const AdminDashboardPage = () => {
   const [period, setPeriod] = useState("weekly");
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { user } = useAuth();
+  const { toasts, toast, removeToast } = useToast();
+
+  // Dashboard data state
+  const [dashboardData, setDashboardData] = useState({
+    applications: {
+      total: 0,
+      pending: 0,
+      approved: 0,
+      rejected: 0,
+      submitted: 0,
+    },
+    messages: {
+      total: 0,
+      pending: 0,
+      processed: 0,
+    },
+    recentApplications: [],
+    recentMessages: [],
+    monthlyStats: [],
+  });
 
   // Extract user details safely
-  const userData = user?.user || {};
+  const userData = user || {};
   const firstName = userData.firstName || "";
   const lastName = userData.lastName || "";
   const username = firstName && lastName ? `${firstName} ${lastName}` : "Admin";
-  const lastLogin = userData.lastLogin;
+  const lastLogin = userData.lastLogin || "N/A";
 
-  const refreshData = () => {
+  // Fetch dashboard data
+  const fetchDashboardData = async () => {
+    setLoading(true);
     setIsRefreshing(true);
-    // Simulate data refresh
-    setTimeout(() => {
+    try {
+      // Fetch applications statistics
+      const applicationsResponse =
+        await applicationService.getApplicationStats();
+
+      // Fetch recent applications
+      const recentApplicationsResponse =
+        await applicationService.getAllApplications({
+          limit: 5,
+          sortBy: "createdAt",
+          sortOrder: "desc",
+        });
+
+      // Fetch messages statistics
+      const messagesResponse = await contactService.getContactMessageStats();
+
+      // Fetch recent messages
+      const recentMessagesResponse = await contactService.getAllContactMessages(
+        {
+          limit: 5,
+          sortBy: "createdAt",
+          sortOrder: "desc",
+        }
+      );
+
+      // Process applications data
+      const applicationsData = applicationsResponse?.data || {};
+      const recentApplications =
+        recentApplicationsResponse?.data?.applications || [];
+
+      // Process messages data
+      const messagesData = messagesResponse?.data || {};
+      const recentMessages = recentMessagesResponse?.data || [];
+
+      // Calculate monthly statistics for the last 6 months
+      const monthlyStats = generateMonthlyStats(recentApplications);
+
+      // Process status counts from backend response
+      const statusCounts = applicationsData.statusCounts || [];
+      const statusMap = {};
+      statusCounts.forEach((item) => {
+        statusMap[item.status] = parseInt(item.count);
+      });
+
+      setDashboardData({
+        applications: {
+          total: applicationsData.totalApplications || 0,
+          pending: statusMap.under_review || 0,
+          approved: statusMap.approved || 0,
+          rejected: statusMap.rejected || 0,
+          submitted: statusMap.submitted || 0,
+        },
+        messages: {
+          total: messagesData.overview?.total || 0,
+          pending: messagesData.overview?.pending || 0,
+          processed: messagesData.overview?.processed || 0,
+        },
+        recentApplications,
+        recentMessages,
+        monthlyStats,
+      });
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+      toast.error("Failed to load dashboard data");
+    } finally {
+      setLoading(false);
       setIsRefreshing(false);
-    }, 1000);
+    }
   };
+
+  // Generate monthly statistics
+  const generateMonthlyStats = (applications) => {
+    const months = [];
+    const now = new Date();
+
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthName = date.toLocaleDateString("en-US", { month: "short" });
+
+      const monthApplications = applications.filter((app) => {
+        const appDate = new Date(app.createdAt);
+        return (
+          appDate.getMonth() === date.getMonth() &&
+          appDate.getFullYear() === date.getFullYear()
+        );
+      });
+
+      months.push({
+        name: monthName,
+        applications: monthApplications.length,
+        approved: monthApplications.filter((app) => app.status === "approved")
+          .length,
+        pending: monthApplications.filter(
+          (app) => app.status === "under_review" || app.status === "submitted"
+        ).length,
+        rejected: monthApplications.filter(
+          (app) => app.status === "rejected"
+        ).length,
+      });
+    }
+
+    return months;
+  };
+
+  // Refresh data
+  const refreshData = () => {
+    fetchDashboardData();
+  };
+
+  // Effect hooks
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
 
   // Card metrics data
   const metrics = [
     {
-      title: "Active Clients",
-      value: "1,284",
+      title: "Total Applications",
+      value: dashboardData.applications.total.toString(),
       change: "+12.5%",
       isPositive: true,
-      icon: PiUsersDuotone,
+      icon: TbFileText,
       color: "bg-blue-500",
       textColor: "text-blue-500",
-      path: "/admin/clients",
+      path: "/admin/applications",
     },
     {
-      title: "Leads in Pipeline",
-      value: "427",
+      title: "Pending Review",
+      value: dashboardData.applications.pending.toString(),
       change: "+8.2%",
-      isPositive: true,
-      icon: RiUserShared2Line,
-      color: "bg-indigo-500",
-      textColor: "text-indigo-500",
-      path: "/admin/leads",
-    },
-
-    {
-      title: "Upcoming Renewals",
-      value: "68",
-      change: "+18.4%",
       isPositive: false,
-      icon: TbCalendarTime,
+      icon: TbClock,
       color: "bg-yellow-500",
       textColor: "text-yellow-500",
-      path: "/admin/renewals",
+      path: "/admin/applications",
     },
     {
-      title: "New Queries",
-      value: "37",
+      title: "Approved Applications",
+      value: dashboardData.applications.approved.toString(),
+      change: "+18.4%",
+      isPositive: true,
+      icon: TbCheck,
+      color: "bg-green-500",
+      textColor: "text-green-500",
+      path: "/admin/applications",
+    },
+    {
+      title: "Pending Messages",
+      value: dashboardData.messages.pending.toString(),
       change: "+22.8%",
       isPositive: true,
-      icon: TbClipboard,
-      color: "bg-secondary-500",
-      textColor: "text-secondary-500",
-      path: "/admin/queries/new",
+      icon: TbMessage,
+      color: "bg-purple-500",
+      textColor: "text-purple-500",
+      path: "/admin/messages",
     },
   ];
 
-  // Lead Pipeline data
-  const leadPipeline = [
-    { stage: "New Lead", count: 145, color: "bg-blue-500" },
-    { stage: "Proposal", count: 64, color: "bg-purple-500" },
-    { stage: "Negotiation", count: 31, color: "bg-pink-500" },
-    { stage: "Converted", count: 19, color: "bg-secondary-500" },
-  ];
-
-
-  // Insurance plans by subscriber count
-  const topPlans = [
+  // Application status distribution for pie chart
+  const applicationStatusData = [
     {
-      name: "Senior Gold Plus",
-      provider: "Jubilee Insurance",
-      subscribers: 142,
-      revenue: "KES 4,260,000",
-      change: "+12.7%",
+      name: "Approved",
+      value: dashboardData.applications.approved,
+      color: "#10B981",
     },
     {
-      name: "Premium Health 65+",
-      provider: "ICEA Lion",
-      subscribers: 128,
-      revenue: "KES 3,840,000",
-      change: "+8.2%",
+      name: "Pending",
+      value: dashboardData.applications.pending,
+      color: "#F59E0B",
     },
     {
-      name: "Elder Care Complete",
-      provider: "Britam",
-      subscribers: 117,
-      revenue: "KES 2,925,000",
-      change: "+5.3%",
+      name: "Rejected",
+      value: dashboardData.applications.rejected,
+      color: "#EF4444",
     },
     {
-      name: "Senior Comprehensive",
-      provider: "AAR Insurance",
-      subscribers: 98,
-      revenue: "KES 2,450,000",
-      change: "-2.1%",
+      name: "Submitted",
+      value: dashboardData.applications.submitted,
+      color: "#3B82F6",
     },
-    {
-      name: "Silver Years Protection",
-      provider: "CIC Insurance",
-      subscribers: 86,
-      revenue: "KES 2,150,000",
-      change: "+14.6%",
-    },
-  ];
-
-  // Tasks data
-  const tasks = [
-    {
-      id: 1,
-      title: "Follow up with John Mwangi",
-      due: "Today",
-      priority: "High",
-      status: "Pending",
-    },
-    {
-      id: 2,
-      title: "Prepare renewal proposal for Mary Kamau",
-      due: "Tomorrow",
-      priority: "High",
-      status: "In Progress",
-    },
-    {
-      id: 3,
-      title: "Call David Otieno about policy updates",
-      due: "Aug 12",
-      priority: "Medium",
-      status: "Pending",
-    },
-    {
-      id: 4,
-      title: "File claim documents for Sarah Njoroge",
-      due: "Aug 13",
-      priority: "Medium",
-      status: "Pending",
-    },
-    {
-      id: 5,
-      title: "Prepare monthly sales report",
-      due: "Aug 15",
-      priority: "Low",
-      status: "Not Started",
-    },
-  ];
-
-  // Performance data for charts
-  const conversionData = [
-    { name: "Jan", rate: 28 },
-    { name: "Feb", rate: 29 },
-    { name: "Mar", rate: 33 },
-    { name: "Apr", rate: 36 },
-    { name: "May", rate: 32 },
-    { name: "Jun", rate: 32 },
-    { name: "Jul", rate: 34 },
-  ];
-
-  const planDistributionData = [
-    { name: "Gold Plus", value: 142 },
-    { name: "Premium 65+", value: 128 },
-    { name: "Elder Care", value: 117 },
-    { name: "Comprehensive", value: 98 },
-    { name: "Silver Years", value: 86 },
   ];
 
   // Handler for period changes
   const handlePeriodChange = (newPeriod) => {
     setPeriod(newPeriod);
-    // In a real app, this would fetch new data for the selected period
+    fetchDashboardData();
   };
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "submitted":
+        return "bg-blue-100 text-blue-800 border-blue-300";
+      case "under_review":
+        return "bg-yellow-100 text-yellow-800 border-yellow-300";
+      case "approved":
+        return "bg-green-100 text-green-800 border-green-300";
+      case "rejected":
+        return "bg-red-100 text-red-800 border-red-300";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-300";
+    }
+  };
+
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case "high":
+        return "bg-red-100 text-red-800 border-red-300";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800 border-yellow-300";
+      case "low":
+        return "bg-green-100 text-green-800 border-green-300";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-300";
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="h-[calc(100vh-64px)] flex items-center justify-center bg-neutral-100">
+        <div className="text-center">
+          <div className="h-12 w-12 border-4 border-primary-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="text-gray-800 font-lexend h-[calc(100vh-64px)] overflow-y-auto pb-6 bg-neutral-100">
       {/* Dashboard Header */}
-      <div className="bg-gradient-to-r from-secondary-50 via-white to-secondary-50 px-8 py-5 border-b border-gray-200">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+      <div className="bg-white from-neutral-700 to-neutral-600 px-8 py-3 border-b border-gray-200">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
           <div>
             <h1 className="text-[1.5rem] font-bold text-secondary-700">
               Welcome back, {username || "Admin"}
             </h1>
-            <p className="text-neutral-600 font-lexend text-[0.83rem]">
+            <p className="text-gray-500 font-medium font-lexend pl-1.5 text-[0.83rem]">
               Last login: {formatDate2(lastLogin, true)}
             </p>
           </div>
@@ -263,7 +364,7 @@ const AdminDashboardPage = () => {
             </div>
             <button
               onClick={refreshData}
-              className="bg-white border border-gray-200 rounded-lg p-2 text-gray-500 hover:text-primary-600 hover:bg-primary-100  focus:border-primary-300 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              className="bg-white border border-gray-200 rounded-lg p-2 text-gray-500 hover:text-primary-600 hover:bg-primary-100 focus:border-primary-300 focus:outline-none focus:ring-1 focus:ring-primary-500"
             >
               <TbRefresh
                 className={`h-5 w-5 ${isRefreshing ? "animate-spin" : ""}`}
@@ -273,15 +374,15 @@ const AdminDashboardPage = () => {
         </div>
 
         {/* Metric Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-2">
+        {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-2">
           {metrics.map((metric, index) => (
             <Link
               to={metric.path}
               key={index}
-              className="group bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex items-center  hover:shadow-md"
+              className="group bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex items-center hover:shadow-md transition-all"
             >
               <div
-                className={`h-12 w-12 rounded-lg ${metric.color} flex items-center justify-center flex-shrink-0 mr-4 `}
+                className={`h-12 w-12 rounded-lg ${metric.color} flex items-center justify-center flex-shrink-0 mr-4`}
               >
                 <metric.icon className="h-6 w-6 text-white" />
               </div>
@@ -307,64 +408,61 @@ const AdminDashboardPage = () => {
               </div>
             </Link>
           ))}
-        </div>
+        </div> */}
       </div>
 
       {/* Main Dashboard Content */}
       <div className="space-y-6 p-8">
         {/* Quick Actions */}
-        <div className="bg-neutral-50 rounded-xl border border-gray-200 p-4">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 pb-[1.2rem]">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold text-primary-600">
               Quick Actions
             </h2>
-            <button className="text-primary-600 hover:text-primary-700 text-sm font-medium">
-              Customize
-            </button>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {[
               {
-                name: "New Client",
-                icon: RiUserAddLine,
-                path: "/admin/clients/new",
+                name: "New Application",
+                icon: TbFileText,
+                path: "/admin/applications",
                 color: "bg-blue-100 text-blue-600",
               },
               {
-                name: "New Policy",
-                icon: TbShieldCheck,
-                path: "/admin/policies/new",
-                color: "bg-green-100 text-green-600",
-              },
-              {
-                name: "Add New Task",
-                icon: TbClipboardPlus,
-                path: "/admin/tasks",
-                color: "bg-secondary-100 text-secondary-600",
-              },
-              {
-                name: "Send Email",
-                icon: TbMail,
-                path: "/admin/mail",
+                name: "View Messages",
+                icon: TbMessage,
+                path: "/admin/messages",
                 color: "bg-purple-100 text-purple-600",
               },
               {
-                name: "Schedule",
-                icon: TbCalendar,
-                path: "/admin/calendar",
+                name: "Insurance Plans",
+                icon: TbShieldHalfFilled,
+                path: "/admin/plans",
+                color: "bg-green-100 text-green-600",
+              },
+              {
+                name: "Insurance Companies",
+                icon: TbBuildingBank,
+                path: "/admin/companies",
                 color: "bg-indigo-100 text-indigo-600",
               },
               {
-                name: "Reports",
-                icon: TbFileText,
-                path: "/admin/reports",
+                name: "Calendar",
+                icon: TbCalendar,
+                path: "/admin/calendar",
                 color: "bg-yellow-100 text-yellow-600",
+              },
+              {
+                name: "Tasks",
+                icon: TbListCheck,
+                path: "/admin/tasks",
+                color: "bg-red-100 text-red-600",
               },
             ].map((action, index) => (
               <Link
                 key={index}
                 to={action.path}
-                className="flex flex-col items-center justify-center p-4 rounded-xl border border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-colors"
+                className="flex flex-col items-center justify-center p-4 shadow-sm rounded-xl border border-gray-200 hover:bg-slate-50 hover:border-gray-300 hover:shadow-md transition-all duration-300"
               >
                 <div className={`p-3 rounded-full ${action.color} mb-2`}>
                   <action.icon className="h-6 w-6" />
@@ -379,219 +477,227 @@ const AdminDashboardPage = () => {
 
         {/* Two Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Lead Pipeline - col-span-1 */}
+          {/* Application Status Distribution - col-span-1 */}
           <div className="bg-white rounded-xl border border-gray-200 p-4 lg:col-span-1">
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-between items-center mb-2">
               <h2 className="text-lg font-bold text-primary-600">
-                Lead Pipeline
+                Application Status
               </h2>
               <Link
-                to="/admin/leads"
-                className="text-primary-600 hover:text-primary-700 text-sm font-medium"
+                to="/admin/applications"
+                className="text-primary-600 hover:text-primary-700 text-sm font-medium underline underline-offset-4"
               >
                 View All
               </Link>
             </div>
-            <div className="space-y-4">
-              {leadPipeline.map((stage, index) => (
-                <div key={index} className="relative">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm text-gray-600">{stage.stage}</span>
-                    <span className="text-sm font-medium">{stage.count}</span>
-                  </div>
-                  <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={applicationStatusData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    label={(entry) => (
+                      <text
+                        x={entry.x}
+                        y={entry.y}
+                        fill={entry.color}
+                        textAnchor={entry.x > entry.cx ? "start" : "end"}
+                        dominantBaseline="central"
+                        fontSize="12.5px"
+                      >
+                        {`${entry.name} ${(entry.percent * 100).toFixed(0)}%`}
+                      </text>
+                    )}
+                  >
+                    {applicationStatusData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip contentStyle={{ fontSize: "10px" }} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="space-y-2">
+              {applicationStatusData.map((status, index) => (
+                <div key={index} className="flex justify-between items-center">
+                  <div className="flex items-center">
                     <div
-                      className={`h-full ${stage.color}`}
-                      style={{ width: `${(stage.count / 145) * 100}%` }}
+                      className="w-3 h-3 rounded-full mr-2"
+                      style={{ backgroundColor: status.color }}
                     ></div>
+                    <span className="text-sm text-gray-600">{status.name}</span>
                   </div>
+                  <span className="text-sm text-secondary-600 font-semibold">
+                    {status.value}
+                  </span>
                 </div>
               ))}
             </div>
-            <div className="mt-4 pt-4 border-t border-gray-100">
-              <div className="flex justify-between items-center">
-                <div>
-                  <div className="text-sm text-neutral-600">Total Leads</div>
-                  <div className="text-xl font-bold text-secondary-700">
-                    427
-                  </div>
-                </div>
-                <div>
-                  <div className="text-sm text-neutral-600">
-                    Avg. Conversion Time
-                  </div>
-                  <div className="text-xl font-bold text-secondary-700">
-                    18 days
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
 
-          {/* Charts Section - col-span-2 */}
+          {/* Monthly Applications Chart - col-span-2 */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Conversion Rate Chart */}
             <div className="bg-white rounded-xl border border-gray-200 p-4">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-bold text-primary-600">
-                  Conversion Rate Trends
+                  Monthly Applications
                 </h2>
                 <div className="flex items-center">
-                  <div className="bg-purple-100 text-purple-800 text-xs font-medium px-2 py-0.5 rounded">
-                    +5.3% vs last period
+                  <div className="bg-green-100 flex items-center gap-1 text-green-800 text-xs font-medium px-2 py-0.5 rounded">
+                    <TbTrendingUp className="h-4 w-4" /> +15.3% vs last month
                   </div>
                 </div>
               </div>
-              <div className="h-64">
+              <div className="h-[22rem]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={conversionData}>
+                  <BarChart data={dashboardData.monthlyStats}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Line
-                      type="monotone"
-                      dataKey="rate"
-                      stroke="#8884d8"
-                      fill="#8884d8"
+                    <Bar
+                      dataKey="applications"
+                      fill="#3B82F6"
+                      name="Applications"
                     />
-                  </LineChart>
+                    <Bar
+                      dataKey="pending"
+                      fill="#F59E0B"
+                      name="Pending"
+                    />
+                    <Bar dataKey="approved" fill="#10B981" name="Approved" />
+                  </BarChart>
                 </ResponsiveContainer>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Three Column Layout */}
-        <div className="flex flex-col md:flex-row gap-6">
-          {/* Top Insurance Plans */}
-          <div className="bg-white w-[33%] rounded-xl border border-gray-200 p-4">
+        {/* Recent Activity Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Recent Applications */}
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-bold text-primary-600">
-                Top Insurance Plans
+                Recent Applications
               </h2>
               <Link
-                to="/admin/plans"
-                className="text-primary-600 hover:text-primary-700 text-sm font-medium"
+                to="/admin/applications"
+                className="text-primary-600 hover:text-primary-700 text-sm font-medium underline underline-offset-4"
               >
                 View All
               </Link>
             </div>
-            <div className="h-64 mb-2">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={planDistributionData}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={80}
-                    fill="#8884d8"
-                    label
-                  />
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="mt-4 space-y-2">
-              {topPlans.slice(0, 3).map((plan, index) => (
-                <div
-                  key={index}
-                  className="flex justify-between items-center p-2 hover:bg-gray-50 rounded-lg"
-                >
-                  <div>
-                    <div className="text-sm font-medium text-gray-900">
-                      {plan.name}
-                    </div>
-                    <div className="text-xs text-gray-500">{plan.provider}</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-sm font-medium">
-                      {plan.subscribers} clients
-                    </div>
-                    <div
-                      className={`text-xs ${
-                        plan.change.startsWith("+")
-                          ? "text-green-500"
-                          : "text-red-500"
-                      }`}
-                    >
-                      {plan.change}
+            <div className="space-y-2">
+              {dashboardData.recentApplications.length > 0 ? (
+                dashboardData.recentApplications.map((application) => (
+                  <div
+                    key={application.id}
+                      className="px-3 py-3.5 border border-gray-100 rounded-lg hover:bg-neutral-100 transition-colors"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center">
+                          <TbFileText className="h-4 w-4 text-blue-500 mr-2" />
+                          <span className="text-sm font-medium text-gray-900">
+                            {application.applicationNumber}
+                          </span>
+                        </div>
+                        <div className="text-xs text-gray-500 mt-1">
+                          {application.firstName} {application.lastName} •{" "}
+                          {application.insuranceType}
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span
+                          className={`inline-flex px-2 py-1 text-xs font-medium rounded-full border ${getStatusColor(
+                            application.status
+                          )}`}
+                        >
+                          {application.status?.replace("_", " ")}
+                        </span>
+                        <span className="text-xs text-gray-400">
+                          {formatDate2(application.createdAt)}
+                        </span>
+                      </div>
                     </div>
                   </div>
+                ))
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <TbFileText className="h-8 w-8 mx-auto mb-2 text-gray-300" />
+                  <p>No recent applications</p>
                 </div>
-              ))}
+              )}
             </div>
           </div>
 
-          {/* Upcoming Tasks */}
-          <div className="bg-white w-[67.5%] rounded-xl border border-gray-200 p-4">
+          {/* Recent Messages */}
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold text-primary-600">My Tasks</h2>
+              <h2 className="text-lg font-bold text-primary-600">
+                Recent Messages
+              </h2>
               <Link
-                to="/admin/tasks"
-                className="text-primary-600 hover:text-primary-700 text-sm font-medium"
+                to="/admin/messages"
+                className="text-primary-600 hover:text-primary-700 text-sm font-medium underline underline-offset-4"
               >
                 View All
               </Link>
             </div>
-            <div className="space-y-3">
-              {tasks.map((task) => (
-                <div
-                  key={task.id}
-                  className="p-2 hover:bg-neutral-200 rounded-lg"
-                >
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      className="h-4 w-4 text-primary-600 focus:ring-primary-500 rounded border-gray-300"
-                    />
-                    <span className="ml-2 text-sm font-medium text-gray-900 truncate flex-1">
-                      {task.title}
-                    </span>
-                    <div
-                      className={`text-xs px-2 py-0.5 rounded-full ml-2 ${
-                        task.priority === "High"
-                          ? "bg-red-100 border border-red-300 text-red-800"
-                          : task.priority === "Medium"
-                          ? "bg-yellow-100 border border-yellow-300 text-yellow-800"
-                          : "bg-blue-100 border border-blue-300 text-blue-800"
-                      }`}
-                    >
-                      {task.priority}
+            <div className="space-y-2">
+              {dashboardData.recentMessages.length > 0 ? (
+                dashboardData.recentMessages.map((message) => (
+                  <div
+                    key={message.id}
+                    className="px-3 py-3.5 border border-gray-100 rounded-lg hover:bg-neutral-100 transition-colors"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center">
+                          <TbMessage className="h-4 w-4 text-purple-500 mr-2" />
+                          <span className="text-sm font-medium text-gray-900">
+                            {message.name}
+                          </span>
+                        </div>
+                        <div className="text-xs text-gray-500 mt-1">
+                          {message.subject || message.message?.substring(0, 50)}
+                          ...
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span
+                          className={`inline-flex px-2 py-1 text-xs font-medium rounded-full border ${getPriorityColor(
+                            message.priority
+                          )}`}
+                        >
+                          {message.priority}
+                        </span>
+                        <span className="text-xs text-gray-400">
+                          {formatDate2(message.createdAt)}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <div className="mt-1 flex items-center ml-6">
-                    <TbClock className="h-3 w-3 text-gray-400 mr-1" />
-                    <span className="text-xs text-gray-500">
-                      Due: {task.due}
-                    </span>
-                    <span
-                      className={`ml-2 text-[0.7rem] px-2 py-0.5 rounded ${
-                        task.status === "Pending"
-                          ? "bg-yellow-100 border border-yellow-300 text-yellow-800"
-                          : task.status === "In Progress"
-                          ? "bg-blue-100 border border-blue-300 text-blue-800"
-                          : "bg-gray-100 border border-gray-300 text-gray-800"
-                      }`}
-                    >
-                      {task.status}
-                    </span>
-                  </div>
+                ))
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <TbMessage className="h-8 w-8 mx-auto mb-2 text-gray-300" />
+                  <p>No recent messages</p>
                 </div>
-              ))}
-            </div>
-            <div className="mt-4 pt-4 border-t border-gray-200">
-              <button className="w-full flex items-center justify-center py-2 bg-gradient-to-r from-primary-500 via-primary-600 to-primary-500 hover:bg-primary-700 text-white rounded-lg text-sm font-medium transition-colors">
-                <TbPlus className="h-4 w-4 mr-1" />
-                Add New Task
-              </button>
+              )}
             </div>
           </div>
         </div>
       </div>
+
+      {/* Toast Container */}
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
 };

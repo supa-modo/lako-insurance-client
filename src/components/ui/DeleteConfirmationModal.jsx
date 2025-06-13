@@ -31,7 +31,7 @@ const DeleteConfirmationModal = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/50 backdrop-blur-[2px] flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/50 backdrop-blur-[2px] flex items-center justify-center z-50 p-3.5"
           onClick={handleBackdropClick}
         >
           <motion.div
@@ -88,18 +88,18 @@ const DeleteConfirmationModal = ({
             </div>
 
             {/* Footer */}
-            <div className="px-3 md:px-6 pb-3 md:pt-3 md:pb-4 flex flex-col md:flex-row justify-center gap-1.5 md:gap-3">
+            <div className="px-3.5 md:px-4 pt-3 lg:px-6 pb-4 md:pb-[1.3rem] flex  justify-center gap-1.5 md:gap-3">
               <button
                 onClick={onClose}
                 disabled={isLoading}
-                className="w-full px-8 py-2 text-gray-700 text-sm font-medium bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-8 py-2 lg:py-2.5 text-gray-700 text-sm font-medium bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Cancel
               </button>
               <button
                 onClick={onConfirm}
                 disabled={isLoading}
-                className="w-full px-8 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-8 py-2 lg:py-2.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? "Deleting..." : confirmButtonText}
               </button>

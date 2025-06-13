@@ -47,11 +47,6 @@ const navItems = [
         path: "/admin/applications",
         submenu: [
           {
-            name: "Applications",
-            path: "/admin/applications/all",
-            icon: RiUserFollowLine,
-          },
-          {
             name: "Processed Applications",
             path: "/admin/applications/processed",
             icon: TbListCheck,
@@ -234,6 +229,10 @@ const AdminSidebar = ({ collapsed }) => {
                               if (!collapsed) {
                                 e.preventDefault();
                                 toggleSubmenu(item.name);
+                                // Navigate to the main path for "All Applications"
+                                if (item.name === "All Applications") {
+                                  navigate("/admin/applications");
+                                }
                               }
                             }
                           : undefined
