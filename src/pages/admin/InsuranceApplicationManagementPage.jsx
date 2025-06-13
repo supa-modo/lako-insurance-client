@@ -673,8 +673,7 @@ const InsuranceApplicationManagementPage = () => {
                               {application.policyNumber || "12345678"}
                             </span>
                             <span className="text-[0.8rem] font-medium text-gray-500 capitalize">
-                              {formatDate(application.policyStartDate)}
-                              {" "} to {" "}
+                              {formatDate(application.policyStartDate)} to{" "}
                               {formatDate(application.policyEndDate) || "--"}
                             </span>
                           </div>

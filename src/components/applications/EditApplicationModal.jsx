@@ -349,7 +349,10 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
               {/* Personal Information */}
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <PiUserDuotone size={20} className="mr-2 text-secondary-600" />
+                  <PiUserDuotone
+                    size={20}
+                    className="mr-2 text-secondary-600"
+                  />
                   Personal Information
                 </h3>
 
@@ -661,7 +664,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
                       >
                         <input
                           type="checkbox"
-                          name="agreement"
+                          name="previousAccidents"
                           checked={formData.previousAccidents === true}
                           onChange={(e) => {
                             setFormData({
@@ -693,7 +696,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
                       >
                         <input
                           type="checkbox"
-                          name="agreement"
+                          name="physicalDisability"
                           checked={formData.physicalDisability === true}
                           onChange={(e) => {
                             setFormData({
@@ -724,7 +727,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
                       >
                         <input
                           type="checkbox"
-                          name="agreement"
+                          name="chronicIllness"
                           checked={formData.chronicIllness === true}
                           onChange={(e) => {
                             setFormData({

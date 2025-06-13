@@ -42,6 +42,9 @@ import {
   SystemMetrics,
 } from "./components/SuperAdmin";
 import InsuranceApplicationManagementPage from "./pages/admin/InsuranceApplicationManagementPage";
+import ApprovedApplicationsPage from "./pages/admin/ApprovedApplicationsPage";
+import PendingApplicationsPage from "./pages/admin/PendingApplicationsPage";
+import ProcessedApplicationsPage from "./pages/admin/ProcessedApplicationsPage";
 
 function App() {
   return (
@@ -149,10 +152,34 @@ function App() {
                       }
                     />
                     <Route
-                      path="applications"
+                      path="applications/all"
                       element={
                         <AuthGuard>
                           <InsuranceApplicationManagementPage />
+                        </AuthGuard>
+                      }
+                    />
+                    <Route
+                      path="applications/approved"
+                      element={
+                        <AuthGuard>
+                          <ApprovedApplicationsPage />
+                        </AuthGuard>
+                      }
+                    />
+                    <Route
+                      path="applications/pending"
+                      element={
+                        <AuthGuard>
+                          <PendingApplicationsPage />
+                        </AuthGuard>
+                      }
+                    />
+                    <Route
+                      path="applications/processed"
+                      element={
+                        <AuthGuard>
+                          <ProcessedApplicationsPage />
                         </AuthGuard>
                       }
                     />

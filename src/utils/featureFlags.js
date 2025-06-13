@@ -12,7 +12,7 @@ const AVAILABLE_INSURANCE_TYPES = {
   },
   production: {
     health: false,
-    "personal-accident": true, // Disable in production
+    "personal-accident": false, // Disable in production
     property: false,
     motor: false,
   },

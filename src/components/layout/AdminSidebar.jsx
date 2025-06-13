@@ -15,6 +15,8 @@ import {
   TbBuildingBank,
   TbMessage,
   TbShieldPlus,
+  TbListDetails,
+  TbClockExclamation,
 } from "react-icons/tb";
 import { MdSpaceDashboard } from "react-icons/md";
 import { useState, useEffect } from "react";
@@ -41,18 +43,23 @@ const navItems = [
     items: [
       {
         name: "All Applications",
-        icon: PiUsersDuotone,
+        icon: TbListDetails,
         path: "/admin/applications",
         submenu: [
           {
             name: "Applications",
-            path: "/admin/applications",
+            path: "/admin/applications/all",
             icon: RiUserFollowLine,
           },
           {
             name: "Processed Applications",
             path: "/admin/applications/processed",
-            icon: RiUserShared2Line,
+            icon: TbListCheck,
+          },
+          {
+            name: "Pending Applications",
+            path: "/admin/applications/pending",
+            icon: TbClockExclamation,
           },
         ],
       },
@@ -142,7 +149,7 @@ const AdminSidebar = ({ collapsed }) => {
     navItems.forEach((category) => {
       category.items.forEach((item) => {
         // Only open "Clients & Leads" by default
-        if (item.name === "Clients & Leads") {
+        if (item.name === "All Applications & Leads") {
           initialOpen[item.name] = true;
         }
       });

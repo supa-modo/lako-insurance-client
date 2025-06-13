@@ -48,26 +48,26 @@ const MessageDetailModal = ({
   const getPriorityColor = (priority) => {
     switch (priority) {
       case "high":
-        return "text-red-600 bg-red-50 border-red-200";
+        return "text-red-600 bg-red-100 border-red-300";
       case "medium":
-        return "text-amber-600 bg-amber-50 border-amber-200";
+        return "text-amber-600 bg-amber-100 border-amber-300";
       case "low":
-        return "text-green-600 bg-green-50 border-green-200";
+        return "text-green-600 bg-green-100 border-green-300";
       default:
-        return "text-gray-600 bg-gray-50 border-gray-200";
+        return "text-gray-600 bg-gray-100 border-gray-300";
     }
   };
 
   const getStatusColor = (status) => {
     switch (status) {
       case "pending":
-        return "text-orange-600 bg-orange-50 border-orange-200";
+        return "text-orange-600 bg-orange-100 border-orange-300";
       case "processed":
-        return "text-green-600 bg-green-50 border-green-200";
+        return "text-green-600 bg-green-100 border-green-300";
       case "closed":
-        return "text-gray-600 bg-gray-50 border-gray-200";
+        return "text-gray-600 bg-gray-100 border-gray-300";
       default:
-        return "text-gray-600 bg-gray-50 border-gray-200";
+        return "text-gray-600 bg-gray-100 border-gray-300";
     }
   };
 
@@ -95,16 +95,13 @@ const MessageDetailModal = ({
                 <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
               </div>
               <div className="relative flex justify-between items-center z-10">
-                <div className="flex items-center">
-                  <TbEye className="h-6 w-6 text-white mr-3" />
-                  <div>
-                    <h2 className="text-white font-semibold text-lg font-lexend">
-                      Message Details
-                    </h2>
-                    <p className="text-white/80 text-sm">
-                      Review customer inquiry details
-                    </p>
-                  </div>
+                <div>
+                  <h2 className="text-white font-semibold text-lg font-lexend">
+                    Message Details
+                  </h2>
+                  <p className="text-white/80 text-sm">
+                    Review customer inquiry details
+                  </p>  
                 </div>
                 <button
                   onClick={onClose}
@@ -138,7 +135,17 @@ const MessageDetailModal = ({
                         </div>
                         <div className="ml-4">
                           <h3 className="text-lg font-semibold text-gray-900 font-lexend">
-                            {message.name}
+                            {message.name} -{" "}
+                            {message.email && (
+                              <span className="text-gray-900">
+                                {message.email}
+                              </span>
+                            )}
+                            {message.phone && (
+                              <span className="text-gray-900">
+                                {message.phone}
+                              </span>
+                            )}
                           </h3>
                           <p className="text-sm text-gray-500 capitalize">
                             {message.type === "callback"
@@ -149,14 +156,14 @@ const MessageDetailModal = ({
                       </div>
                       <div className="flex space-x-2">
                         <span
-                          className={`inline-flex px-3 py-1 text-xs font-medium rounded-full border ${getPriorityColor(
+                          className={`inline-flex px-4 py-1 text-xs font-medium rounded-full border ${getPriorityColor(
                             message.priority
                           )}`}
                         >
                           {message.priority}
                         </span>
                         <span
-                          className={`inline-flex px-3 py-1 text-xs font-medium rounded-full border ${getStatusColor(
+                          className={`inline-flex px-4 py-1 text-xs font-medium rounded-full border ${getStatusColor(
                             message.status
                           )}`}
                         >
@@ -171,54 +178,6 @@ const MessageDetailModal = ({
                     </div>
                   </div>
 
-                  {/* Contact Information */}
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-4 flex items-center">
-                      <TbUser className="w-5 h-5 mr-2 text-primary-600" />
-                      Contact Information
-                    </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {message.email && (
-                        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Email Address
-                          </label>
-                          <div className="flex items-center justify-between">
-                            <span className="text-gray-900">
-                              {message.email}
-                            </span>
-                            <a
-                              href={`mailto:${message.email}`}
-                              className="text-primary-600 hover:text-primary-700 p-1 rounded"
-                              title="Send email"
-                            >
-                              <TbExternalLink className="h-4 w-4" />
-                            </a>
-                          </div>
-                        </div>
-                      )}
-                      {message.phone && (
-                        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Phone Number
-                          </label>
-                          <div className="flex items-center justify-between">
-                            <span className="text-gray-900">
-                              {message.phone}
-                            </span>
-                            <a
-                              href={`tel:${message.phone}`}
-                              className="text-primary-600 hover:text-primary-700 p-1 rounded"
-                              title="Call number"
-                            >
-                              <TbExternalLink className="h-4 w-4" />
-                            </a>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
                   {/* Message Content */}
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-4 flex items-center">
@@ -228,7 +187,7 @@ const MessageDetailModal = ({
                     <div className="space-y-4">
                       {message.subject && (
                         <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                          <label className="block text-sm font-semibold text-neutral-700 mb-2">
                             Subject
                           </label>
                           <p className="text-gray-900 font-medium">
@@ -238,10 +197,10 @@ const MessageDetailModal = ({
                       )}
 
                       <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-semibold text-neutral-700 mb-2">
                           Message
                         </label>
-                        <div className="bg-white border border-gray-200 rounded-lg p-4">
+                        <div className="p-2">
                           <p className="text-gray-900 whitespace-pre-wrap leading-relaxed">
                             {message.message}
                           </p>
@@ -312,7 +271,7 @@ const MessageDetailModal = ({
                           onChange={(e) => setProcessingNotes(e.target.value)}
                           placeholder="Add any notes about how this message was handled..."
                           rows={4}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
+                          className="w-full px-3 py-2 bg-neutral-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 text-gray-600 text-sm"
                         />
                       </div>
                     </div>
