@@ -15,8 +15,12 @@ import {
   TbVirus,
   TbEyeglass2,
   TbShieldHalfFilled,
+  TbShieldCheckFilled,
+  TbBabyCarriage,
+  TbCoins,
+  TbEdit,
 } from "react-icons/tb";
-import { PiTooth, PiUsersDuotone } from "react-icons/pi";
+import { PiCaretDownDuotone, PiTooth, PiUsersDuotone } from "react-icons/pi";
 import insuranceService from "../../services/insuranceService";
 import { FaCarCrash } from "react-icons/fa";
 
@@ -262,32 +266,32 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
   ];
 
   return (
-    <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-[1.5px] flex items-start justify-end z-50 p-3 font-outfit"
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
+      className="fixed inset-0 bg-black/50 backdrop-blur-[1.5px] flex items-start justify-end z-50 p-3 font-lexend"
       onClick={handleBackdropClick}
     >
       <motion.div
         initial={{ x: "100%" }}
         animate={{ x: 0 }}
         exit={{ x: "100%" }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="w-[750px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-xl border border-gray-200"
+        transition={{ duration: 0.2, ease: "easeInOut" }}
+        className="w-[730px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-xl border border-gray-200"
       >
         {/* Header */}
         <div className="bg-gradient-to-r from-secondary-600 to-secondary-700 px-6 py-4 relative">
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
-            <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
-          </div>
           <div className="relative flex justify-between items-center z-10">
             <div className="flex items-center">
-              <TbShieldCheck className="h-6 w-6 text-white mr-3" />
+              <TbEdit size={40} className=" text-white mr-3" />
               <div>
                 <h2 className="text-white font-semibold text-lg font-lexend">
                   Edit Insurance Plan
                 </h2>
                 <p className="text-white/80 text-sm">
-                  Update plan details and settings
+                  Update insurance plan details and benefits
                 </p>
               </div>
             </div>
@@ -302,7 +306,7 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
 
         {/* Success Message */}
         {success && (
-          <div className="bg-green-50 border-b border-green-200 px-6 py-3">
+          <div className="bg-green-200 border-b border-green-400 px-6 py-3">
             <div className="flex items-center">
               <TbCheck className="h-5 w-5 text-green-500 mr-2" />
               <p className="text-green-800">
@@ -314,7 +318,7 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
 
         {/* Error Message */}
         {error && (
-          <div className="bg-red-50 border-b border-red-200 px-6 py-3">
+          <div className="bg-red-200 border-b border-red-400 px-6 py-3">
             <div className="flex items-center">
               <TbAlertCircle className="h-5 w-5 text-red-500 mr-2" />
               <p className="text-red-800">{error}</p>
@@ -338,7 +342,7 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
               {/* Basic Information */}
               <div>
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <TbInfoCircle size={20} className="mr-2 text-primary-600" />
+                  <TbInfoCircle size={20} className="mr-2 text-secondary-600" />
                   Basic Information
                 </h3>
 
@@ -348,21 +352,28 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Insurance Company <span className="text-red-500">*</span>
                     </label>
-                    <select
-                      value={formData.companyId}
-                      onChange={(e) =>
-                        handleInputChange("companyId", e.target.value)
-                      }
-                      required
-                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-orange-500 focus:border-orange-500 transition-colors"
-                    >
-                      <option value="">Select a company</option>
-                      {companies.map((company) => (
-                        <option key={company.id} value={company.id}>
-                          {company.name}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="relative flex items-center">
+                      <select
+                        value={formData.companyId}
+                        onChange={(e) =>
+                          handleInputChange("companyId", e.target.value)
+                        }
+                        required
+                        className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-gray-600 font-medium rounded-lg border border-gray-300 px-4 py-2.5 focus:outline-none focus:border-secondary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
+                      >
+                        <option value="">Select a company</option>
+                        {companies.map((company) => (
+                          <option key={company.id} value={company.id}>
+                            {company.name}
+                          </option>
+                        ))}
+                      </select>
+
+                      <PiCaretDownDuotone
+                        size={20}
+                        className="absolute right-4 text-gray-600 pointer-events-none"
+                      />
+                    </div>
                   </div>
 
                   {/* Plan Name */}
@@ -403,17 +414,20 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
                 </div>
               </div>
 
-              {/* Plan Type Selection */}
+              {/* Cover Type Selection */}
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <PiUsersDuotone size={20} className="mr-2 text-primary-600" />
+                  <PiUsersDuotone
+                    size={20}
+                    className="mr-2 text-secondary-600"
+                  />
                   Cover Type
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-gray-600">
                   {coverTypeOptions.map((option) => (
                     <label
                       key={option.value}
-                      className={`relative flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-50 ${
+                      className={`relative flex items-center p-4 border-2 rounded-[0.7rem] cursor-pointer transition-all hover:bg-gray-50 ${
                         formData.coverType === option.value
                           ? option.color + " border-current"
                           : "border-gray-200 bg-white hover:border-gray-300"
@@ -430,7 +444,7 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
                         className="sr-only"
                       />
                       <div
-                        className={`flex items-center justify-center w-5 h-5 border-2 rounded-full mr-3 ${
+                        className={`flex items-center justify-center w-5 h-5 border-2 rounded-full mr-3 transition-colors ${
                           formData.coverType === option.value
                             ? "border-current bg-current"
                             : "border-gray-300"
@@ -455,7 +469,7 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
                   <TbShieldHalfFilled
                     size={20}
-                    className="mr-2 text-primary-600"
+                    className="mr-2 text-secondary-600"
                   />
                   Insurance Type
                 </h3>
@@ -463,7 +477,7 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
                   {insuranceTypeOptions.map((option) => (
                     <label
                       key={option.value}
-                      className={`relative flex items-center p-4 border rounded-lg cursor-pointer transition-all hover:bg-gray-50 ${
+                      className={`relative flex items-center p-4 border rounded-[0.7rem] cursor-pointer transition-all hover:bg-gray-50 ${
                         formData.insuranceType === option.value
                           ? "text-orange-600 bg-orange-50 border-orange-200"
                           : "border-gray-200 bg-white"
@@ -507,7 +521,7 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
               {/* Age Eligibility */}
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <TbUsers size={20} className="mr-2 text-orange-600" />
+                  <PiUsersDuotone size={20} className="mr-2 text-orange-600" />
                   Age Eligibility
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -567,7 +581,10 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
               {/* Coverage Limits */}
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <TbShieldCheck size={20} className="mr-2 text-orange-600" />
+                  <TbShieldCheckFilled
+                    size={20}
+                    className="mr-2 text-orange-600"
+                  />
                   Coverage Limits
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -651,22 +668,39 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
 
                 <div className="space-y-4">
                   {/* Dental Coverage */}
-                  <div className="border border-gray-200 rounded-lg p-4">
+                  <div className="border border-gray-200 rounded-[0.8rem] p-4">
                     <div className="flex items-center mb-3">
-                      <input
-                        type="checkbox"
-                        id="hasDental"
-                        checked={formData.hasDental}
-                        onChange={(e) =>
-                          handleInputChange("hasDental", e.target.checked)
-                        }
-                        className="h-4 w-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
-                      />
+                      <div
+                        className={`relative flex items-center justify-center h-[1.3rem] w-[1.3rem] rounded-[0.3rem] border-2 focus:outline-none ${
+                          formData.hasDental === true
+                            ? "border-secondary-500 bg-secondary-100"
+                            : "border-gray-400"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          id="hasDental"
+                          checked={formData.hasDental}
+                          onChange={(e) =>
+                            handleInputChange("hasDental", e.target.checked)
+                          }
+                          className="absolute opacity-0 h-full w-full cursor-pointer"
+                        />
+                        {formData.hasDental && (
+                          <div className="">
+                            <TbCheck className="text-secondary-600" />
+                          </div>
+                        )}
+                      </div>
+
                       <label
                         htmlFor="hasDental"
-                        className="ml-3 text-sm font-medium text-gray-900 flex items-center"
+                        className="ml-3 text-sm lg:text-[0.95rem] font-medium text-gray-900 flex items-center cursor-pointer"
                       >
-                        <PiTooth className="mr-2 h-5 w-5 text-orange-600" />
+                        <PiTooth
+                          size={22}
+                          className="mr-2  text-secondary-600"
+                        />
                         Dental Coverage
                       </label>
                     </div>
@@ -687,7 +721,7 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
                             }
                             min="0"
                             placeholder="50000"
-                            className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                            className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors"
                           />
                         </div>
                         <div>
@@ -702,25 +736,50 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
                             }
                             min="0"
                             placeholder="10000"
-                            className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                            className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors"
                           />
                         </div>
                         <div className="flex items-center">
-                          <input
-                            type="checkbox"
-                            id="dentalCoveredInBase"
-                            checked={formData.dentalCoveredInBase}
-                            onChange={(e) =>
+                          <div
+                            className={`relative flex items-center justify-center h-6 w-[3.3rem] rounded-full border-2 transition-all duration-200 cursor-pointer ${
+                              formData.dentalCoveredInBase
+                                ? "bg-secondary-500 border-secondary-500"
+                                : "bg-gray-200 border-gray-300"
+                            }`}
+                            onClick={() =>
                               handleInputChange(
                                 "dentalCoveredInBase",
-                                e.target.checked
+                                !formData.dentalCoveredInBase
                               )
                             }
-                            className="h-4 w-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
-                          />
+                          >
+                            <div
+                              className={`absolute left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-200 ${
+                                formData.dentalCoveredInBase
+                                  ? "transform translate-x-5"
+                                  : ""
+                              }`}
+                            />
+                            {formData.dentalCoveredInBase ? (
+                              <TbCheck
+                                size={13}
+                                className="absolute left-1  text-white z-10"
+                              />
+                            ) : (
+                              <TbX
+                                size={13}
+                                className="absolute right-1 text-gray-400 z-10"
+                              />
+                            )}
+                          </div>
                           <label
-                            htmlFor="dentalCoveredInBase"
-                            className="ml-2 text-sm text-gray-700"
+                            className="ml-3 text-sm text-primary-700 cursor-pointer font-medium"
+                            onClick={() =>
+                              handleInputChange(
+                                "dentalCoveredInBase",
+                                !formData.dentalCoveredInBase
+                              )
+                            }
                           >
                             Covered in base premium
                           </label>
@@ -730,22 +789,35 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
                   </div>
 
                   {/* Optical Coverage */}
-                  <div className="border border-gray-200 rounded-lg p-4">
+                  <div className="border border-gray-200 rounded-[0.8rem] p-4">
                     <div className="flex items-center mb-3">
-                      <input
-                        type="checkbox"
-                        id="hasOptical"
-                        checked={formData.hasOptical}
-                        onChange={(e) =>
-                          handleInputChange("hasOptical", e.target.checked)
-                        }
-                        className="h-4 w-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
-                      />
+                      <div
+                        className={`relative flex items-center justify-center h-[1.3rem] w-[1.3rem] rounded-[0.3rem] border-2 focus:outline-none ${
+                          formData.hasOptical === true
+                            ? "border-secondary-500 bg-secondary-100"
+                            : "border-gray-400"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          id="hasOptical"
+                          checked={formData.hasOptical}
+                          onChange={(e) =>
+                            handleInputChange("hasOptical", e.target.checked)
+                          }
+                          className="absolute opacity-0 h-full w-full cursor-pointer"
+                        />
+                        {formData.hasOptical && (
+                          <div className="">
+                            <TbCheck className="text-secondary-600" />
+                          </div>
+                        )}
+                      </div>
                       <label
                         htmlFor="hasOptical"
-                        className="ml-3 text-sm font-medium text-gray-900 flex items-center"
+                        className="ml-3 text-sm font-medium text-gray-900 flex items-center cursor-pointer"
                       >
-                        <TbEyeglass2 className="mr-2 h-5 w-5 text-orange-600" />
+                        <TbEyeglass2 className="mr-2 h-5 w-5 text-secondary-600" />
                         Optical Coverage
                       </label>
                     </div>
@@ -766,7 +838,7 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
                             }
                             min="0"
                             placeholder="30000"
-                            className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                            className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors"
                           />
                         </div>
                         <div>
@@ -784,25 +856,50 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
                             }
                             min="0"
                             placeholder="5000"
-                            className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                            className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors"
                           />
                         </div>
                         <div className="flex items-center">
-                          <input
-                            type="checkbox"
-                            id="opticalCoveredInBase"
-                            checked={formData.opticalCoveredInBase}
-                            onChange={(e) =>
+                          <div
+                            className={`relative flex items-center justify-center h-6 w-[3.3rem] rounded-full border-2 transition-all duration-200 cursor-pointer ${
+                              formData.opticalCoveredInBase
+                                ? "bg-secondary-500 border-secondary-500"
+                                : "bg-gray-200 border-gray-300"
+                            }`}
+                            onClick={() =>
                               handleInputChange(
                                 "opticalCoveredInBase",
-                                e.target.checked
+                                !formData.opticalCoveredInBase
                               )
                             }
-                            className="h-4 w-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
-                          />
+                          >
+                            <div
+                              className={`absolute left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-200 ${
+                                formData.opticalCoveredInBase
+                                  ? "transform translate-x-5"
+                                  : ""
+                              }`}
+                            />
+                            {formData.opticalCoveredInBase ? (
+                              <TbCheck
+                                size={13}
+                                className="absolute left-1  text-white z-10"
+                              />
+                            ) : (
+                              <TbX
+                                size={13}
+                                className="absolute right-[0.28rem]  text-gray-400 z-10"
+                              />
+                            )}
+                          </div>
                           <label
-                            htmlFor="opticalCoveredInBase"
-                            className="ml-2 text-sm text-gray-700"
+                            className="ml-3 text-sm text-primary-700 cursor-pointer font-medium"
+                            onClick={() =>
+                              handleInputChange(
+                                "opticalCoveredInBase",
+                                !formData.opticalCoveredInBase
+                              )
+                            }
                           >
                             Covered in base premium
                           </label>
@@ -812,22 +909,35 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
                   </div>
 
                   {/* Maternity Coverage */}
-                  <div className="border border-gray-200 rounded-lg p-4">
+                  <div className="border border-gray-200 rounded-[0.8rem] p-4">
                     <div className="flex items-center mb-3">
-                      <input
-                        type="checkbox"
-                        id="hasMaternity"
-                        checked={formData.hasMaternity}
-                        onChange={(e) =>
-                          handleInputChange("hasMaternity", e.target.checked)
-                        }
-                        className="h-4 w-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
-                      />
+                      <div
+                        className={`relative flex items-center justify-center h-[1.3rem] w-[1.3rem] rounded-[0.3rem] border-2 focus:outline-none ${
+                          formData.hasMaternity === true
+                            ? "border-secondary-500 bg-secondary-100"
+                            : "border-gray-400"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          id="hasMaternity"
+                          checked={formData.hasMaternity}
+                          onChange={(e) =>
+                            handleInputChange("hasMaternity", e.target.checked)
+                          }
+                          className="absolute opacity-0 h-full w-full cursor-pointer"
+                        />
+                        {formData.hasMaternity && (
+                          <div className="">
+                            <TbCheck className="text-secondary-600" />
+                          </div>
+                        )}
+                      </div>
                       <label
                         htmlFor="hasMaternity"
-                        className="ml-3 text-sm font-medium text-gray-900 flex items-center"
+                        className="ml-3 text-sm font-medium text-gray-900 flex items-center cursor-pointer"
                       >
-                        <TbHeartRateMonitor className="mr-2 h-5 w-5 text-orange-600" />
+                        <TbBabyCarriage className="mr-2 h-5 w-5 text-secondary-600" />
                         Maternity Coverage
                       </label>
                     </div>
@@ -846,7 +956,7 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
                                 e.target.value
                               )
                             }
-                            className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                            className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors"
                             placeholder="50000"
                           />
                         </div>
@@ -863,7 +973,7 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
                                 e.target.value
                               )
                             }
-                            className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                            className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors"
                             placeholder="5000"
                           />
                         </div>
@@ -876,10 +986,7 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
               {/* Premium Information */}
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <TbCurrencyDollar
-                    size={20}
-                    className="mr-2 text-orange-600"
-                  />
+                  <TbCoins size={20} className="mr-2 text-secondary-600" />
                   Premium Information
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -887,16 +994,23 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Premium Structure
                     </label>
-                    <select
-                      value={formData.premiumStructure}
-                      onChange={(e) =>
-                        handleInputChange("premiumStructure", e.target.value)
-                      }
-                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-orange-500 focus:border-orange-500 transition-colors"
-                    >
-                      <option value="fixed">Fixed Premium</option>
-                      <option value="age-based">Age-Based Premium</option>
-                    </select>
+                    <div className="relative flex items-center">
+                      <select
+                        value={formData.premiumStructure}
+                        onChange={(e) =>
+                          handleInputChange("premiumStructure", e.target.value)
+                        }
+                        className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors"
+                      >
+                        <option value="fixed">Fixed Premium</option>
+                        <option value="age-based">Age-Based Premium</option>
+                      </select>
+
+                      <PiCaretDownDuotone
+                        size={20}
+                        className="absolute right-4 text-gray-600 pointer-events-none"
+                      />
+                    </div>
                   </div>
                   {formData.premiumStructure === "fixed" ? (
                     <div>
@@ -911,7 +1025,7 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
                         }
                         min="0"
                         placeholder="50000"
-                        className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                        className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors"
                       />
                     </div>
                   ) : (
@@ -929,8 +1043,12 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
                         }
                         rows={3}
                         placeholder='{"65-69": 57952, "70-74": 68341, "75+": 78729}'
-                        className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                        className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors"
                       />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Format:{" "}
+                        {`{"age-range": premium, "70-74": 68341, "75+": 78729}`}
+                      </p>
                     </div>
                   )}
                 </div>
@@ -942,20 +1060,33 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
                   Additional Settings
                 </h3>
                 <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="isNhifApplicable"
-                    checked={formData.isNhifApplicable}
-                    onChange={(e) =>
-                      handleInputChange("isNhifApplicable", e.target.checked)
-                    }
-                    className="h-4 w-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
-                  />
+                  <div
+                    className={`relative flex items-center justify-center h-[1.3rem] w-[1.3rem] rounded-[0.3rem] border-2 focus:outline-none ${
+                      formData.isNhifApplicable
+                        ? "border-secondary-500 bg-secondary-100"
+                        : "border-gray-400"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      id="isNhifApplicable"
+                      checked={formData.isNhifApplicable}
+                      onChange={(e) =>
+                        handleInputChange("isNhifApplicable", e.target.checked)
+                      }
+                      className="absolute opacity-0 h-full w-full cursor-pointer"
+                    />
+                    {formData.isNhifApplicable && (
+                      <div className="">
+                        <TbCheck className="text-secondary-600" />
+                      </div>
+                    )}
+                  </div>
                   <label
                     htmlFor="isNhifApplicable"
-                    className="ml-3 text-sm font-medium text-gray-900"
+                    className="ml-3 text-sm font-medium text-gray-900 cursor-pointer"
                   >
-                    NHIF Benefits Applicable
+                    NHIF / SHA Benefits Applicable
                   </label>
                 </div>
               </div>
@@ -993,7 +1124,7 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
           </div>
         </form>
       </motion.div>
-    </div>
+    </motion.div>
   );
 };
 

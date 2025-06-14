@@ -13,7 +13,7 @@ const ServicesSection = () => {
       description:
         "Specialized health insurance designed for seniors. Comprehensive coverage, age-appropriate benefits, and tailored solutions for your unique healthcare needs in your golden years.",
       delay: 0.1,
-      isNew: true,
+      isNew: false,
       featured: true,
     },
     {
@@ -38,7 +38,7 @@ const ServicesSection = () => {
       image: "/health-insurance.jpg",
       description:
         "Rest easy, knowing that we safeguard your health and financial security. Wide-ranging coverage, access to premier healthcare, affordable premiums and flexible plans.",
-
+      featured: true,
       delay: 0.4,
     },
     {
@@ -95,8 +95,8 @@ const ServicesSection = () => {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-2xl md:text-3xl lg:text-4xl font-bold font-outfit text-primary-600 mt-3"
           >
-            Comprehensive Insurance Coverage {" "}
-            <span className="text-secondary-600">for All Your Needs</span>
+            Comprehensive Insurance Coverage
+            <span className="text-secondary-600 ml-2">for All Your Needs</span>
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: -10 }}
@@ -104,7 +104,11 @@ const ServicesSection = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="max-w-6xl mx-auto mt-4 text-base lg:text-lg text-neutral-800 font-outfit"
           >
-            Building lasting partnerships through comprehensive coverage, competitive rates, and personalized service that grows with you.  From business liability to personal protection - we deliver customized insurance solutions with expert guidance every step of the way.
+            Building lasting partnerships through comprehensive coverage,
+            competitive rates, and personalized service that grows with you.
+            From business liability to personal protection - we deliver
+            customized insurance solutions with expert guidance every step of
+            the way.
           </motion.p>
         </div>
 

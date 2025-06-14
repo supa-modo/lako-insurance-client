@@ -16,9 +16,10 @@ import {
   TbFileText,
   TbCurrencyDollar,
   TbMailFilled,
+  TbClipboardText,
 } from "react-icons/tb";
 import applicationService from "../../services/applicationService";
-import { PiUserDuotone } from "react-icons/pi";
+import { PiCaretDownDuotone, PiUserDuotone } from "react-icons/pi";
 import { MdEmergency } from "react-icons/md";
 
 const AddApplicationModal = ({ onClose, onSave }) => {
@@ -167,7 +168,11 @@ const AddApplicationModal = ({ onClose, onSave }) => {
   };
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
       className="fixed inset-0 bg-black/50 backdrop-blur-[1.5px] flex items-start justify-end z-50 p-3 font-outfit"
       onClick={handleBackdropClick}
     >
@@ -175,18 +180,14 @@ const AddApplicationModal = ({ onClose, onSave }) => {
         initial={{ x: "100%" }}
         animate={{ x: 0 }}
         exit={{ x: "100%" }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
+        transition={{ duration: 0.2, ease: "easeInOut" }}
         className="w-[750px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-xl border border-gray-200"
       >
         {/* Header */}
         <div className="bg-gradient-to-r from-primary-600 to-primary-700 px-6 py-4 relative">
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
-            <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
-          </div>
           <div className="relative flex justify-between items-center z-10">
             <div className="flex items-center">
-              <TbShield className="h-6 w-6 text-white mr-3" />
+              <TbClipboardText size={40} className=" text-white mr-3" />
               <div>
                 <h2 className="text-white font-semibold text-lg font-lexend">
                   Create New Insurance Application
@@ -224,37 +225,50 @@ const AddApplicationModal = ({ onClose, onSave }) => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Insurance Type <span className="text-red-500">*</span>
                     </label>
-                    <select
-                      name="insuranceType"
-                      value={formData.insuranceType}
-                      onChange={handleInputChange}
-                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors"
-                    >
-                      <option value="personal-accident">
-                        Personal Accident
-                      </option>
-                      <option value="health">Health Insurance</option>
-                      <option value="motor">Motor Insurance</option>
-                      <option value="life">Life Insurance</option>
-                    </select>
+                    <div className="relative flex items-center">
+                      <select
+                        name="insuranceType"
+                        value={formData.insuranceType}
+                        onChange={handleInputChange}
+                        className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                      >
+                        <option value="personal-accident">
+                          Personal Accident
+                        </option>
+                        <option value="health">Health Insurance</option>
+                        <option value="motor">Motor Insurance</option>
+                        <option value="life">Life Insurance</option>
+                      </select>
+
+                      <PiCaretDownDuotone
+                        size={20}
+                        className="absolute right-4 text-gray-500 pointer-events-none"
+                      />
+                    </div>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Cover Type
                     </label>
-                    <select
-                      name="coverType"
-                      value={formData.coverType}
-                      onChange={handleInputChange}
-                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors"
-                    >
-                      <option value="">Select cover type</option>
-                      <option value="individual">Individual</option>
-                      <option value="student">Student</option>
-                      <option value="family">Family</option>
-                      <option value="group">Group</option>
-                    </select>
+                    <div className="relative flex items-center">
+                      <select
+                        name="coverType"
+                        value={formData.coverType}
+                        onChange={handleInputChange}
+                        className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                      >
+                        <option value="">Select cover type</option>
+                        <option value="individual">Individual</option>
+                        <option value="student">Student</option>
+                        <option value="family">Family</option>
+                        <option value="group">Group</option>
+                      </select>
+                      <PiCaretDownDuotone
+                        size={20}
+                        className="absolute right-4 text-gray-500 pointer-events-none"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -566,10 +580,10 @@ const AddApplicationModal = ({ onClose, onSave }) => {
                   <div className="flex flex-wrap gap-6">
                     <label className=" flex items-center">
                       <div
-                        className={`relative flex items-center justify-center h-[1rem] w-[1rem] rounded-[0.2rem] border focus:outline-none ${
+                        className={`relative flex items-center justify-center h-[1.2rem] w-[1.25rem] rounded-[0.35rem] border-2 focus:outline-none ${
                           formData.previousAccidents === true
-                            ? "border-primary-600 bg-primary-100"
-                            : "border-gray-500"
+                            ? "border-primary-500 bg-primary-100"
+                            : "border-gray-400"
                         }`}
                       >
                         <input
@@ -598,10 +612,10 @@ const AddApplicationModal = ({ onClose, onSave }) => {
                     </label>
                     <label className=" flex items-center">
                       <div
-                        className={`relative flex items-center justify-center h-[1rem] w-[1rem] rounded-[0.2rem] border focus:outline-none ${
+                        className={`relative flex items-center justify-center h-[1.2rem] w-[1.25rem] rounded-[0.35rem] border-2 focus:outline-none ${
                           formData.physicalDisability === true
-                            ? "border-primary-600 bg-primary-100"
-                            : "border-gray-500"
+                            ? "border-primary-500 bg-primary-100"
+                            : "border-gray-400"
                         }`}
                       >
                         <input
@@ -630,10 +644,10 @@ const AddApplicationModal = ({ onClose, onSave }) => {
                     </label>
                     <label className=" flex items-center">
                       <div
-                        className={`relative flex items-center justify-center h-[1rem] w-[1rem] rounded-[0.2rem] border focus:outline-none ${
+                        className={`relative flex items-center justify-center h-[1.2rem] w-[1.25rem] rounded-[0.35rem] border-2 focus:outline-none ${
                           formData.chronicIllness === true
-                            ? "border-primary-600 bg-primary-100"
-                            : "border-gray-500"
+                            ? "border-primary-500 bg-primary-100"
+                            : "border-gray-400"
                         }`}
                       >
                         <input
@@ -723,7 +737,7 @@ const AddApplicationModal = ({ onClose, onSave }) => {
           </div>
         </form>
       </motion.div>
-    </div>
+    </motion.div>
   );
 };
 

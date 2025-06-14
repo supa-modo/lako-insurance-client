@@ -177,7 +177,7 @@ const TaskList = ({
                 : viewMode === "active"
                 ? "Active Tasks"
                 : "Completed Tasks"}
-              <PiCaretDownDuotone className="ml-3 h-4 w-4" />
+              <PiCaretDownDuotone className="ml-3 h-4 w-4 pointer-events-none" />
             </button>
 
             {/* View mode dropdown */}
@@ -235,7 +235,7 @@ const TaskList = ({
             >
               <TbArrowsSort className="mr-1 h-4 w-4" />
               Sort by
-              <PiCaretDownDuotone className="ml-3 h-4 w-4" />
+              <PiCaretDownDuotone className="ml-3 h-4 w-4 pointer-events-none" />
             </button>
 
             {/* Sort dropdown */}

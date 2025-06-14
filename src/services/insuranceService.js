@@ -117,6 +117,23 @@ const insuranceService = {
   },
 
   /**
+   * Get all plans for a specific company
+   * @param {string} companyId - ID of the company
+   * @returns {Promise<Object>} Response with company plans data
+   */
+  getCompanyPlans: async (companyId) => {
+    try {
+      const response = await apiClient.get(
+        `/admin/insurance/companies/${companyId}/plans`
+      );
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching plans for company ${companyId}:`, error);
+      throw error;
+    }
+  },
+
+  /**
    * Create a new insurance company
    * @param {Object} companyData - Data for the new company
    * @returns {Promise<Object>} Response with created company data

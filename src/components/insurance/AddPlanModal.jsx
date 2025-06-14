@@ -17,8 +17,12 @@ import {
   TbDental,
   TbBabyCarriage,
   TbShieldHalfFilled,
+  TbCoins,
+  TbShieldCheckFilled,
+  TbChevronDown,
+  TbHexagonPlus2,
 } from "react-icons/tb";
-import { PiTooth, PiUsersDuotone } from "react-icons/pi";
+import { PiCaretDownDuotone, PiTooth, PiUsersDuotone } from "react-icons/pi";
 import insuranceService from "../../services/insuranceService";
 import { FaCarCrash } from "react-icons/fa";
 
@@ -31,7 +35,8 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
   const [formData, setFormData] = useState({
     companyId: "",
     name: "",
-    planType: "",
+    planType: "default",
+    coverType: "",
     insuranceType: "",
     description: "",
     eligibilityAgeMin: "",
@@ -212,26 +217,26 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
   ];
 
   return (
-    <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-[1.5px] flex items-start justify-end z-50 p-3 font-outfit"
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
+      className="fixed inset-0 bg-black/50 backdrop-blur-[1.5px] flex items-start justify-end z-50 p-3 font-lexend"
       onClick={handleBackdropClick}
     >
       <motion.div
         initial={{ x: "100%" }}
         animate={{ x: 0 }}
         exit={{ x: "100%" }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="w-[750px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-xl border border-gray-200"
+        transition={{ duration: 0.2, ease: "easeInOut" }}
+        className="w-[730px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-xl border border-gray-200"
       >
         {/* Header */}
         <div className="bg-gradient-to-r from-primary-600 to-primary-700 px-6 py-4 relative">
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
-            <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
-          </div>
           <div className="relative flex justify-between items-center z-10">
             <div className="flex items-center">
-              <TbShieldCheck className="h-6 w-6 text-white mr-3" />
+              <TbHexagonPlus2 size={40} className=" text-white mr-3" />
               <div>
                 <h2 className="text-white font-semibold text-lg font-lexend">
                   Add New Insurance Plan
@@ -252,9 +257,9 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
 
         {/* Success Message */}
         {success && (
-          <div className="bg-green-50 border-b border-green-200 px-6 py-3">
+          <div className="bg-green-200 border-b border-green-400 px-6 py-3">
             <div className="flex items-center">
-              <TbCheck className="h-5 w-5 text-green-500 mr-2" />
+              <TbCheck className="h-5 w-5 text-green-600 mr-2" />
               <p className="text-green-800">
                 Insurance plan created successfully!
               </p>
@@ -264,7 +269,7 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
 
         {/* Error Message */}
         {error && (
-          <div className="bg-red-50 border-b border-red-200 px-6 py-3">
+          <div className="bg-red-200 border-b border-red-400 px-6 py-3">
             <div className="flex items-center">
               <TbAlertCircle className="h-5 w-5 text-red-500 mr-2" />
               <p className="text-red-800">{error}</p>
@@ -298,21 +303,28 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Insurance Company <span className="text-red-500">*</span>
                     </label>
-                    <select
-                      value={formData.companyId}
-                      onChange={(e) =>
-                        handleInputChange("companyId", e.target.value)
-                      }
-                      required
-                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-gray-600 font-medium rounded-lg border border-neutral-300 px-4 py-2.5 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
-                    >
-                      <option value="">Select a company</option>
-                      {companies.map((company) => (
-                        <option key={company.id} value={company.id}>
-                          {company.name}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="relative flex items-center">
+                      <select
+                        value={formData.companyId}
+                        onChange={(e) =>
+                          handleInputChange("companyId", e.target.value)
+                        }
+                        required
+                        className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-gray-600 font-medium rounded-lg border border-gray-300 px-4 py-2.5 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
+                      >
+                        <option value="">Select a company</option>
+                        {companies.map((company) => (
+                          <option key={company.id} value={company.id}>
+                            {company.name}
+                          </option>
+                        ))}
+                      </select>
+
+                      <PiCaretDownDuotone
+                        size={20}
+                        className="absolute right-4 text-gray-600 pointer-events-none"
+                      />
+                    </div>
                   </div>
 
                   {/* Plan Name */}
@@ -327,8 +339,8 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
                         handleInputChange("name", e.target.value)
                       }
                       required
-                      placeholder="e.g., Senior Citizen Health Plan"
-                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                      placeholder="e.g., Bima Bora AfyaCare"
+                      className="w-full font-lexend text-[0.92rem] bg-neutral-100 text-neutral-900l px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors"
                     />
                   </div>
 
@@ -353,7 +365,7 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
                 </div>
               </div>
 
-              {/* Plan Type Selection */}
+              {/* Cover Type Selection */}
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
                   <PiUsersDuotone size={20} className="mr-2 text-primary-600" />
@@ -363,30 +375,30 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
                   {coverTypeOptions.map((option) => (
                     <label
                       key={option.value}
-                      className={`relative flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-50 ${
-                        formData.planType === option.value
+                      className={`relative flex items-center p-4 border-2 rounded-[0.7rem] cursor-pointer transition-all hover:bg-gray-50 ${
+                        formData.coverType === option.value
                           ? option.color + " border-current"
                           : "border-gray-200 bg-white hover:border-gray-300"
                       }`}
                     >
                       <input
                         type="radio"
-                        name="planType"
+                        name="coverType"
                         value={option.value}
-                        checked={formData.planType === option.value}
+                        checked={formData.coverType === option.value}
                         onChange={(e) =>
-                          handleInputChange("planType", e.target.value)
+                          handleInputChange("coverType", e.target.value)
                         }
                         className="sr-only"
                       />
                       <div
                         className={`flex items-center justify-center w-5 h-5 border-2 rounded-full mr-3 transition-colors ${
-                          formData.planType === option.value
+                          formData.coverType === option.value
                             ? "border-current bg-current"
                             : "border-gray-300"
                         }`}
                       >
-                        {formData.planType === option.value && (
+                        {formData.coverType === option.value && (
                           <div className="w-2 h-2 bg-white rounded-full"></div>
                         )}
                       </div>
@@ -413,7 +425,7 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
                   {insuranceTypeOptions.map((option) => (
                     <label
                       key={option.value}
-                      className={`relative flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-50 ${
+                      className={`relative flex items-center p-4 border-2 rounded-[0.7rem] cursor-pointer transition-all hover:bg-gray-50 ${
                         formData.insuranceType === option.value
                           ? "text-primary-600 bg-primary-50 border-primary-200"
                           : "border-gray-200 bg-white hover:border-gray-300"
@@ -457,7 +469,7 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
               {/* Age Eligibility */}
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <TbUsers size={20} className="mr-2 text-primary-600" />
+                  <PiUsersDuotone size={20} className="mr-2 text-primary-600" />
                   Age Eligibility
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -517,7 +529,10 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
               {/* Coverage Limits */}
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <TbShieldCheck size={20} className="mr-2 text-primary-600" />
+                  <TbShieldCheckFilled
+                    size={20}
+                    className="mr-2 text-primary-600"
+                  />
                   Coverage Limits
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -601,9 +616,15 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
 
                 <div className="space-y-4">
                   {/* Dental Coverage */}
-                  <div className="border border-gray-200 rounded-lg p-4">
+                  <div className="border border-gray-200 rounded-[0.8rem] p-4">
                     <div className="flex items-center mb-3">
-                      <div className="relative">
+                      <div
+                        className={`relative flex items-center justify-center h-[1.3rem] w-[1.3rem] rounded-[0.3rem] border-2 focus:outline-none ${
+                          formData.hasDental === true
+                            ? "border-primary-500 bg-primary-100"
+                            : "border-gray-400"
+                        }`}
+                      >
                         <input
                           type="checkbox"
                           id="hasDental"
@@ -611,17 +632,20 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
                           onChange={(e) =>
                             handleInputChange("hasDental", e.target.checked)
                           }
-                          className="w-5 h-5 text-primary-600 bg-gray-100 border-2 border-gray-300 rounded focus:ring-primary-500 focus:ring-2 transition-colors"
+                          className="absolute opacity-0 h-full w-full cursor-pointer"
                         />
                         {formData.hasDental && (
-                          <TbCheck className="absolute top-0 left-0 w-5 h-5 text-white pointer-events-none" />
+                          <div className="">
+                            <TbCheck className="text-primary-600" />
+                          </div>
                         )}
                       </div>
+
                       <label
                         htmlFor="hasDental"
-                        className="ml-3 text-sm font-medium text-gray-900 flex items-center cursor-pointer"
+                        className="ml-3 text-sm lg:text-[0.95rem] font-medium text-gray-900 flex items-center cursor-pointer"
                       >
-                        <PiTooth className="mr-2 h-5 w-5 text-primary-600" />
+                        <PiTooth size={22} className="mr-2  text-primary-600" />
                         Dental Coverage
                       </label>
                     </div>
@@ -661,26 +685,46 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
                           />
                         </div>
                         <div className="flex items-center">
-                          <div className="relative">
-                            <input
-                              type="checkbox"
-                              id="dentalCoveredInBase"
-                              checked={formData.dentalCoveredInBase}
-                              onChange={(e) =>
-                                handleInputChange(
-                                  "dentalCoveredInBase",
-                                  e.target.checked
-                                )
-                              }
-                              className="w-4 h-4 text-primary-600 bg-gray-100 border-2 border-gray-300 rounded focus:ring-primary-500 focus:ring-2"
+                          <div
+                            className={`relative flex items-center justify-center h-6 w-[3.3rem] rounded-full border-2 transition-all duration-200 cursor-pointer ${
+                              formData.dentalCoveredInBase
+                                ? "bg-primary-500 border-primary-500"
+                                : "bg-gray-200 border-gray-300"
+                            }`}
+                            onClick={() =>
+                              handleInputChange(
+                                "dentalCoveredInBase",
+                                !formData.dentalCoveredInBase
+                              )
+                            }
+                          >
+                            <div
+                              className={`absolute left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-200 ${
+                                formData.dentalCoveredInBase
+                                  ? "transform translate-x-5"
+                                  : ""
+                              }`}
                             />
-                            {formData.dentalCoveredInBase && (
-                              <TbCheck className="absolute top-0 left-0 w-4 h-4 text-white pointer-events-none" />
+                            {formData.dentalCoveredInBase ? (
+                              <TbCheck
+                                size={13}
+                                className="absolute left-1  text-white z-10"
+                              />
+                            ) : (
+                              <TbX
+                                size={13}
+                                className="absolute right-1 text-gray-400 z-10"
+                              />
                             )}
                           </div>
                           <label
-                            htmlFor="dentalCoveredInBase"
-                            className="ml-2 text-sm text-gray-700 cursor-pointer"
+                            className="ml-3 text-sm text-gray-700 cursor-pointer font-medium"
+                            onClick={() =>
+                              handleInputChange(
+                                "dentalCoveredInBase",
+                                !formData.dentalCoveredInBase
+                              )
+                            }
                           >
                             Covered in base premium
                           </label>
@@ -690,9 +734,15 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
                   </div>
 
                   {/* Optical Coverage */}
-                  <div className="border border-gray-200 rounded-lg p-4">
+                  <div className="border border-gray-200 rounded-[0.8rem] p-4">
                     <div className="flex items-center mb-3">
-                      <div className="relative">
+                      <div
+                        className={`relative flex items-center justify-center h-[1.3rem] w-[1.3rem] rounded-[0.3rem] border-2 focus:outline-none ${
+                          formData.hasOptical === true
+                            ? "border-primary-500 bg-primary-100"
+                            : "border-gray-400"
+                        }`}
+                      >
                         <input
                           type="checkbox"
                           id="hasOptical"
@@ -700,10 +750,12 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
                           onChange={(e) =>
                             handleInputChange("hasOptical", e.target.checked)
                           }
-                          className="w-5 h-5 text-primary-600 bg-gray-100 border-2 border-gray-300 rounded focus:ring-primary-500 focus:ring-2 transition-colors"
+                          className="absolute opacity-0 h-full w-full cursor-pointer"
                         />
                         {formData.hasOptical && (
-                          <TbCheck className="absolute top-0 left-0 w-5 h-5 text-white pointer-events-none" />
+                          <div className="">
+                            <TbCheck className="text-primary-600" />
+                          </div>
                         )}
                       </div>
                       <label
@@ -753,26 +805,46 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
                           />
                         </div>
                         <div className="flex items-center">
-                          <div className="relative">
-                            <input
-                              type="checkbox"
-                              id="opticalCoveredInBase"
-                              checked={formData.opticalCoveredInBase}
-                              onChange={(e) =>
-                                handleInputChange(
-                                  "opticalCoveredInBase",
-                                  e.target.checked
-                                )
-                              }
-                              className="w-4 h-4 text-primary-600 bg-gray-100 border-2 border-gray-300 rounded focus:ring-primary-500 focus:ring-2"
+                          <div
+                            className={`relative flex items-center justify-center h-6 w-[3.3rem] rounded-full border-2 transition-all duration-200 cursor-pointer ${
+                              formData.opticalCoveredInBase
+                                ? "bg-primary-500 border-primary-500"
+                                : "bg-gray-200 border-gray-300"
+                            }`}
+                            onClick={() =>
+                              handleInputChange(
+                                "opticalCoveredInBase",
+                                !formData.opticalCoveredInBase
+                              )
+                            }
+                          >
+                            <div
+                              className={`absolute left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-200 ${
+                                formData.opticalCoveredInBase
+                                  ? "transform translate-x-5"
+                                  : ""
+                              }`}
                             />
-                            {formData.opticalCoveredInBase && (
-                              <TbCheck className="absolute top-0 left-0 w-4 h-4 text-white pointer-events-none" />
+                            {formData.opticalCoveredInBase ? (
+                              <TbCheck
+                                size={13}
+                                className="absolute left-1  text-white z-10"
+                              />
+                            ) : (
+                              <TbX
+                                size={13}
+                                className="absolute right-[0.28rem]  text-gray-400 z-10"
+                              />
                             )}
                           </div>
                           <label
-                            htmlFor="opticalCoveredInBase"
-                            className="ml-2 text-sm text-gray-700 cursor-pointer"
+                            className="ml-3 text-sm text-gray-700 cursor-pointer font-medium"
+                            onClick={() =>
+                              handleInputChange(
+                                "opticalCoveredInBase",
+                                !formData.opticalCoveredInBase
+                              )
+                            }
                           >
                             Covered in base premium
                           </label>
@@ -782,9 +854,15 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
                   </div>
 
                   {/* Maternity Coverage */}
-                  <div className="border border-gray-200 rounded-lg p-4">
+                  <div className="border border-gray-200 rounded-[0.8rem] p-4">
                     <div className="flex items-center mb-3">
-                      <div className="relative">
+                      <div
+                        className={`relative flex items-center justify-center h-[1.3rem] w-[1.3rem] rounded-[0.3rem] border-2 focus:outline-none ${
+                          formData.hasMaternity === true
+                            ? "border-primary-500 bg-primary-100"
+                            : "border-gray-400"
+                        }`}
+                      >
                         <input
                           type="checkbox"
                           id="hasMaternity"
@@ -792,10 +870,12 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
                           onChange={(e) =>
                             handleInputChange("hasMaternity", e.target.checked)
                           }
-                          className="w-5 h-5 text-primary-600 bg-gray-100 border-2 border-gray-300 rounded focus:ring-primary-500 focus:ring-2 transition-colors"
+                          className="absolute opacity-0 h-full w-full cursor-pointer"
                         />
                         {formData.hasMaternity && (
-                          <TbCheck className="absolute top-0 left-0 w-5 h-5 text-white pointer-events-none" />
+                          <div className="">
+                            <TbCheck className="text-primary-600" />
+                          </div>
                         )}
                       </div>
                       <label
@@ -851,10 +931,7 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
               {/* Premium Information */}
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <TbCurrencyDollar
-                    size={20}
-                    className="mr-2 text-primary-600"
-                  />
+                  <TbCoins size={20} className="mr-2 text-primary-600" />
                   Premium Information
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -862,16 +939,23 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Premium Structure
                     </label>
-                    <select
-                      value={formData.premiumStructure}
-                      onChange={(e) =>
-                        handleInputChange("premiumStructure", e.target.value)
-                      }
-                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors"
-                    >
-                      <option value="fixed">Fixed Premium</option>
-                      <option value="age-based">Age-Based Premium</option>
-                    </select>
+                    <div className="relative flex items-center">
+                      <select
+                        value={formData.premiumStructure}
+                        onChange={(e) =>
+                          handleInputChange("premiumStructure", e.target.value)
+                        }
+                        className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                      >
+                        <option value="fixed">Fixed Premium</option>
+                        <option value="age-based">Age-Based Premium</option>
+                      </select>
+
+                      <PiCaretDownDuotone
+                        size={20}
+                        className="absolute right-4 text-gray-600 pointer-events-none"
+                      />
+                    </div>
                   </div>
                   {formData.premiumStructure === "fixed" ? (
                     <div>
@@ -921,7 +1005,13 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
                   Additional Settings
                 </h3>
                 <div className="flex items-center">
-                  <div className="relative">
+                  <div
+                    className={`relative flex items-center justify-center h-[1.3rem] w-[1.3rem] rounded-[0.3rem] border-2 focus:outline-none ${
+                      formData.isNhifApplicable === true
+                        ? "border-primary-500 bg-primary-100"
+                        : "border-gray-400"
+                    }`}
+                  >
                     <input
                       type="checkbox"
                       id="isNhifApplicable"
@@ -929,17 +1019,19 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
                       onChange={(e) =>
                         handleInputChange("isNhifApplicable", e.target.checked)
                       }
-                      className="w-5 h-5 text-primary-600 bg-gray-100 border-2 border-gray-300 rounded focus:ring-primary-500 focus:ring-2"
+                      className="absolute opacity-0 h-full w-full cursor-pointer"
                     />
                     {formData.isNhifApplicable && (
-                      <TbCheck className="absolute top-0 left-0 w-5 h-5 text-white pointer-events-none" />
+                      <div className="">
+                        <TbCheck className="text-primary-600" />
+                      </div>
                     )}
                   </div>
                   <label
                     htmlFor="isNhifApplicable"
                     className="ml-3 text-sm font-medium text-gray-900 cursor-pointer"
                   >
-                    NHIF Benefits Applicable
+                    NHIF / SHA Benefits Applicable
                   </label>
                 </div>
               </div>
@@ -977,7 +1069,7 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
           </div>
         </form>
       </motion.div>
-    </div>
+    </motion.div>
   );
 };
 

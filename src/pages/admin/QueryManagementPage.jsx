@@ -398,7 +398,7 @@ const QueryManagementPage = () => {
                 <option value="converted">Converted to Lead</option>
               </select>
 
-              <PiCaretDownDuotone className="absolute right-3.5 top-1/2 transform -translate-y-1/2 h-5 w-5 text-neutral-700" />
+              <PiCaretDownDuotone className="absolute right-3.5 top-1/2 transform -translate-y-1/2 h-5 w-5 text-neutral-700 pointer-events-none" />
             </div>
 
             <button

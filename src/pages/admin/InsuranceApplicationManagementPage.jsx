@@ -34,6 +34,7 @@ import ApplicationDetailModal from "../../components/applications/ApplicationDet
 import DeleteConfirmationModal from "../../components/ui/DeleteConfirmationModal";
 import applicationService from "../../services/applicationService";
 import { formatDate } from "../../utils/formatDate";
+import { formatCurrency } from "../../utils/formatCurrency";
 
 const InsuranceApplicationManagementPage = () => {
   // State management
@@ -663,8 +664,8 @@ const InsuranceApplicationManagementPage = () => {
                           </div>
                         </td>
                         <td className="py-5 px-4 whitespace-nowrap">
-                          <span className="text-sm font-semibold text-gray-600 capitalize">
-                            {application.premiumAmount}
+                          <span className="text-sm font-semibold text-secondary-700 capitalize">
+                            {formatCurrency(application.premiumAmount)}
                           </span>
                         </td>
                         <td className="py-5 px-4 whitespace-nowrap">

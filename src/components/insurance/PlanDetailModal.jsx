@@ -24,6 +24,7 @@ import {
   TbCalendarTime,
   TbEyeglass2,
   TbPlaneDeparture,
+  TbInfoHexagon,
 } from "react-icons/tb";
 import { FaUserDoctor } from "react-icons/fa6";
 import { PiTooth } from "react-icons/pi";
@@ -97,26 +98,26 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
   const planConfig = getPlanTypeConfig(plan?.planType);
 
   return (
-    <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-[1.5px] transition-all duration-300 flex items-start justify-end z-50 p-3 font-outfit"
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
+      className="fixed inset-0 bg-black/50 backdrop-blur-[1.5px] flex items-start justify-end z-50 p-3 font-lexend"
       onClick={handleBackdropClick}
     >
       <motion.div
         initial={{ x: "100%" }}
         animate={{ x: 0 }}
         exit={{ x: "100%" }}
-        transition={{ duration: 0.3 }}
-        className="w-[750px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-xl border border-gray-200"
+        transition={{ duration: 0.2, ease: "easeInOut" }}
+        className="w-[730px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-xl border border-gray-200"
       >
         {/* Header */}
         <div className="bg-gradient-to-r from-primary-600 to-primary-700 px-6 py-4 relative">
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
-            <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
-          </div>
           <div className="relative flex justify-between items-center z-10">
             <div className="flex items-center">
-              <TbEye className="h-6 w-6 text-white mr-3" />
+              <TbInfoHexagon size={40} className="text-white mr-3" />
               <div>
                 <h2 className="text-white font-semibold text-lg font-lexend">
                   Insurance Plan Details
@@ -145,11 +146,11 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center">
-                    <div
-                      className={`p-3 rounded-lg bg-white border ${planConfig.borderColor} mr-4`}
-                    >
-                      <div className="text-2xl">{planConfig.icon}</div>
-                    </div>
+                    <img
+                      src={plan.companyLogo}
+                      alt={plan.companyName}
+                      className="w-28 object-cover mr-4"
+                    />
                     <div>
                       <h3 className="text-xl font-bold text-gray-900 font-lexend">
                         {plan?.name || "Insurance Plan"}
@@ -163,7 +164,7 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                           </span>
                         )}
                         {plan?.insuranceType && (
-                          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-700 border border-gray-300">
+                          <span className="inline-flex items-center px-3 py-1 rounded-full text-[0.8rem] font-medium bg-gray-100 text-gray-700 border border-gray-300">
                             {plan.insuranceType === "seniors"
                               ? "Seniors Insurance"
                               : plan.insuranceType === "family"
@@ -202,9 +203,7 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                 {/* Quick Stats Grid */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
                   <div className="bg-white rounded-lg p-4 border border-gray-200">
-                    <div className="flex items-center justify-center w-10 h-10 bg-blue-100 rounded-lg mb-3">
-                      <TbBuildingHospital className="w-5 h-5 text-blue-600" />
-                    </div>
+                    
                     <div className="text-xs text-gray-500 mb-1">
                       Inpatient Limit
                     </div>
@@ -215,9 +214,7 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                     </div>
                   </div>
                   <div className="bg-white rounded-lg p-4 border border-gray-200">
-                    <div className="flex items-center justify-center w-10 h-10 bg-green-100 rounded-lg mb-3">
-                      <FaUserDoctor className="w-5 h-5 text-green-600" />
-                    </div>
+                   
                     <div className="text-xs text-gray-500 mb-1">
                       Outpatient Limit
                     </div>
@@ -228,9 +225,7 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                     </div>
                   </div>
                   <div className="bg-white rounded-lg p-4 border border-gray-200">
-                    <div className="flex items-center justify-center w-10 h-10 bg-amber-100 rounded-lg mb-3">
-                      <TbCoffin className="w-5 h-5 text-amber-600" />
-                    </div>
+                    
                     <div className="text-xs text-gray-500 mb-1">
                       Last Expense
                     </div>
@@ -241,9 +236,7 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                     </div>
                   </div>
                   <div className="bg-white rounded-lg p-4 border border-gray-200">
-                    <div className="flex items-center justify-center w-10 h-10 bg-purple-100 rounded-lg mb-3">
-                      <TbCalendarTime className="w-5 h-5 text-purple-600" />
-                    </div>
+                  
                     <div className="text-xs text-gray-500 mb-1">Age Range</div>
                     <div className="font-semibold text-gray-900 text-sm">
                       {plan?.eligibilityAgeMin || "0"}-
@@ -294,32 +287,6 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                   transition={{ duration: 0.2 }}
                   className="space-y-6"
                 >
-                  {/* Company Information */}
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-4 flex items-center">
-                      <TbBuilding className="w-5 h-5 mr-2 text-primary-600" />
-                      Insurance Company
-                    </h4>
-                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                      <div className="flex items-center">
-                        {plan?.companyLogo && (
-                          <img
-                            src={plan.companyLogo}
-                            alt={plan.companyName}
-                            className="w-12 h-12 rounded-lg object-cover mr-4"
-                          />
-                        )}
-                        <div>
-                          <div className="font-medium text-gray-900">
-                            {plan?.companyName || "N/A"}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            Insurance Provider
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
 
                   {/* Basic Information */}
                   <div>
@@ -777,7 +744,7 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
           </div>
         </div>
       </motion.div>
-    </div>
+    </motion.div>
   );
 };
 

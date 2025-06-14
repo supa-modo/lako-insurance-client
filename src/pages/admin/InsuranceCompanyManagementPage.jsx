@@ -636,9 +636,9 @@ const InsuranceCompanyManagementPage = () => {
                       </td>
                     </tr>
                   ) : (
-                    filteredAndSortedCompanies.map((company) => (
+                    filteredAndSortedCompanies.map((company, index) => (
                       <tr
-                        key={company.id}
+                        key={company.id || `company-${index}`}
                         className="hover:bg-gray-100 transition-colors cursor-pointer"
                         onClick={(e) => {
                           // Only trigger if not clicking on action buttons
@@ -733,7 +733,9 @@ const InsuranceCompanyManagementPage = () => {
                               title="Edit Company"
                             >
                               <TbEdit className="h-5 w-5 mr-1" />
-                              <span className="text-[0.8rem] font-medium">Edit</span>
+                              <span className="text-[0.8rem] font-medium">
+                                Edit
+                              </span>
                             </button>
                             <button
                               onClick={() => setDeleteConfirmation(company)}

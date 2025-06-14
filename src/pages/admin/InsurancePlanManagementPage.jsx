@@ -727,7 +727,7 @@ const InsurancePlanManagementPage = () => {
                           <div className="text-sm">
                             <div className="font-semibold text-secondary-700">
                               {plan.annualPremium
-                                ? plan.annualPremium
+                                ? formatCurrency(plan.annualPremium)
                                 : "Age-based"}
                             </div>
                             <div className="text-xs text-gray-500 capitalize">

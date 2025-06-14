@@ -10,6 +10,10 @@ import {
   TbCheck,
   TbAlertCircle,
   TbStar,
+  TbEdit,
+  TbInfoCircle,
+  TbMailFilled,
+  TbPhoneCall,
 } from "react-icons/tb";
 import insuranceService from "../../services/insuranceService";
 
@@ -167,7 +171,11 @@ const EditCompanyModal = ({ company, onClose, onSave }) => {
   ];
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
       className="fixed inset-0 bg-black/50 backdrop-blur-[1.5px] flex items-start justify-end z-50 p-3 font-outfit"
       onClick={handleBackdropClick}
     >
@@ -175,18 +183,14 @@ const EditCompanyModal = ({ company, onClose, onSave }) => {
         initial={{ x: "100%" }}
         animate={{ x: 0 }}
         exit={{ x: "100%" }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="w-[750px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-xl border border-gray-200"
+        transition={{ duration: 0.2, ease: "easeInOut" }}
+        className="w-[730px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-xl border border-gray-200 "
       >
         {/* Header */}
         <div className="bg-gradient-to-r from-secondary-600 to-secondary-700 px-6 py-4 relative">
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
-            <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
-          </div>
           <div className="relative flex justify-between items-center z-10">
             <div className="flex items-center">
-              <TbBuilding className="h-6 w-6 text-white mr-3" />
+              <TbEdit size={40} className=" text-white mr-3" />
               <div>
                 <h2 className="text-white font-semibold text-lg font-lexend">
                   Edit Insurance Company
@@ -215,7 +219,7 @@ const EditCompanyModal = ({ company, onClose, onSave }) => {
               {/* Basic Information */}
               <div className="">
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <TbBuilding size={20} className="mr-2 text-secondary-600" />
+                  <TbInfoCircle size={20} className="mr-2 text-secondary-600" />
                   Basic Information
                 </h3>
 
@@ -224,19 +228,17 @@ const EditCompanyModal = ({ company, onClose, onSave }) => {
                     {/* Logo Preview */}
                     {formData.logoUrl && (
                       <div className="text-center">
-                        <div className="inline-block p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <div className="inline-block p-2  bg-gray-50 rounded-lg border border-gray-200">
                           <img
                             src={formData.logoUrl}
                             alt="Company logo preview"
-                            className="h-10 md:h-12 w-auto object-contain"
+                            className="h-10 md:h-14 w-auto object-contain"
                             onError={(e) => {
                               e.target.style.display = "none";
                             }}
                           />
                         </div>
-                        <p className="text-xs text-gray-500">
-                          Current Logo
-                        </p>
+                        <p className="text-xs text-gray-500">Current Logo</p>
                       </div>
                     )}
 
@@ -288,7 +290,7 @@ const EditCompanyModal = ({ company, onClose, onSave }) => {
               {/* Contact Information */}
               <div className="border-t border-gray-200 pt-6">
                 <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
-                  <TbMail size={20} className="mr-2 text-secondary-600" />
+                  <TbMailFilled size={20} className="mr-2 text-secondary-600" />
                   Contact Information
                 </h3>
 
@@ -299,7 +301,7 @@ const EditCompanyModal = ({ company, onClose, onSave }) => {
                       Contact Email <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
-                      <TbMail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <TbMailFilled className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                       <input
                         type="email"
                         name="contactEmail"
@@ -326,7 +328,7 @@ const EditCompanyModal = ({ company, onClose, onSave }) => {
                       Contact Phone <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
-                      <TbPhone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <TbPhoneCall className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                       <input
                         type="tel"
                         name="contactPhone"
@@ -484,7 +486,7 @@ const EditCompanyModal = ({ company, onClose, onSave }) => {
           </div>
         </form>
       </motion.div>
-    </div>
+    </motion.div>
   );
 };
 

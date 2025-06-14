@@ -23,6 +23,7 @@ import {
 } from "react-icons/tb";
 import userService from "../../services/userService";
 import { PiUsersDuotone } from "react-icons/pi";
+import { motion } from "framer-motion";
 
 const EventModal = ({
   event,
@@ -689,7 +690,7 @@ const EventModal = ({
         </button>
         <button
           type="submit"
-          className="px-5 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 flex items-center text-sm font-medium"
+          className="px-5 py-2 bg-secondary-600 text-white rounded-md hover:bg-secondary-700 transition-colors flex items-center text-sm font-medium"
         >
           <TbCheck className="mr-1.5 h-4 w-4" />
           {event ? "Update Event" : "Add Event"}
@@ -699,19 +700,24 @@ const EventModal = ({
   );
 
   return (
-    <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start justify-end z-50 p-3"
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
+      className="fixed inset-0 bg-black/50 backdrop-blur-[1.5px] flex items-start justify-end z-50 p-3 font-outfit"
       onClick={handleBackdropClick}
     >
-      <div
-        className="w-[600px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-2xl"
-        style={{
-          animation: "slide-in 0.3s ease-out forwards",
-        }}
+      <motion.div
+        initial={{ x: "100%" }}
+        animate={{ x: 0 }}
+        exit={{ x: "100%" }}
+        transition={{ duration: 0.2, ease: "easeInOut" }}
+        className="w-[650px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-xl border border-gray-200"
       >
         {/* Header */}
-        <div className="bg-white px-6 py-4 flex justify-between items-center border-b border-gray-200 rounded-t-2xl">
-          <h2 className="text-lg font-semibold text-gray-800">
+        <div className={` px-6 py-4 flex justify-between items-center relative ${mode === "edit" ? "bg-gradient-to-r from-secondary-600 to-secondary-700" : "bg-gradient-to-r from-primary-600 to-primary-700"}`}>
+           <h2 className="text-lg font-semibold text-white">
             {!event
               ? "Add New Event"
               : mode === "edit"
@@ -720,7 +726,7 @@ const EventModal = ({
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors rounded-full p-1 hover:bg-gray-100"
+            className="text-white hover:text-red-500 transition-colors rounded-full p-1"
           >
             <TbX className="w-5 h-5" />
           </button>
@@ -728,19 +734,10 @@ const EventModal = ({
 
         {/* Content area - toggle between view and edit modes */}
         {mode === "view" ? renderViewMode() : renderEditMode()}
-      </div>
+      </motion.div>
 
-      <style>{`
-        @keyframes slide-in {
-          from {
-            transform: translateX(100%);
-          }
-          to {
-            transform: translateX(0);
-          }
-        }
-      `}</style>
-    </div>
+      
+    </motion.div>
   );
 };
 

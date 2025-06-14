@@ -212,7 +212,11 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
   };
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
       className="fixed inset-0 bg-black/50 backdrop-blur-[1.5px] flex items-start justify-end z-50 p-3 font-outfit"
       onClick={handleBackdropClick}
     >
@@ -220,24 +224,21 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
         initial={{ x: "100%" }}
         animate={{ x: 0 }}
         exit={{ x: "100%" }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
+        transition={{ duration: 0.2, ease: "easeInOut" }}
         className="w-[750px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-xl border border-gray-200"
       >
         {/* Header */}
         <div className="bg-gradient-to-r from-secondary-600 to-secondary-700 px-6 py-4 relative">
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
-            <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-white/10 blur-xl"></div>
-          </div>
+         
           <div className="relative flex justify-between items-center z-10">
             <div className="flex items-center">
-              <TbEdit className="h-6 w-6 text-white mr-3" />
+              <TbEdit size={40} className=" text-white mr-3" />
               <div>
                 <h2 className="text-white font-semibold text-lg font-lexend">
                   Edit Insurance Application
                 </h2>
                 <p className="text-white/80 text-sm">
-                  Update application for {application?.firstName}{" "}
+                  Update application details for {application?.firstName}{" "}
                   {application?.lastName}
                 </p>
               </div>
@@ -811,7 +812,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
           </div>
         </form>
       </motion.div>
-    </div>
+    </motion.div>
   );
 };
 
