@@ -467,6 +467,12 @@ const ReviewAndSubmit = ({
                 {formatCurrency(
                   formData.premiumAmount || formData.selectedPlan.annualPremium
                 )}
+                {formData.selectedPlan?.premiumStructure === "age-based" &&
+                  formData.selectedAge && (
+                    <span className="text-sm text-gray-500 ml-2">
+                      (Age: {formData.selectedAge} years)
+                    </span>
+                  )}
               </p>
             </div>
             <div>

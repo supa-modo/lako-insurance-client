@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import {
   TbCheck,
@@ -21,6 +21,10 @@ import {
 } from "react-icons/tb";
 import { PiTooth } from "react-icons/pi";
 import { formatCurrency } from "../../utils/formatCurrency";
+import {
+  calculatePremiumForAge,
+  getPremiumDisplay,
+} from "../../utils/premiumUtils";
 import PrintableComparisonTable from "./PrintableComparisonTable";
 import { useComparison } from "../../context/ComparisonContext";
 
@@ -46,38 +50,27 @@ const ComparisonTable = ({ plans, onDownload }) => {
         {
           name: "Annual Premium",
           accessor: (plan) => {
-            let premium = 0;
+            // For comparison table, we'll use a default age of 65 for age-based plans
+            // This provides a reasonable baseline for comparison
+            const defaultAge = 65;
+            const premium = calculatePremiumForAge(plan, defaultAge);
 
-            // Handle different premium structures
-            if (plan.premiumStructure === "fixed") {
-              premium = parseFloat(plan.annualPremium || "0");
-            } else if (
-              plan.premiumStructure === "age-based" &&
-              plan.premiumsByAgeRange
-            ) {
-              try {
-                // For comparison table, we'll show the middle age range premium
-                const premiumsByAge = JSON.parse(plan.premiumsByAgeRange);
-                const ageRanges = Object.keys(premiumsByAge);
-                if (ageRanges.length > 0) {
-                  // Use the middle age range for display
-                  const middleRangeIndex = Math.floor(ageRanges.length / 2);
-                  premium = parseFloat(
-                    premiumsByAge[ageRanges[middleRangeIndex]] || "0"
-                  );
-                }
-              } catch (error) {
-                console.error("Error parsing premiums by age range:", error);
-                premium = parseFloat(plan.annualPremium || "0"); // Fallback
-              }
-            } else {
-              premium = parseFloat(plan.annualPremium || "0"); // Fallback
+            if (premium !== null) {
+              return {
+                value: premium,
+                display: formatCurrency(premium),
+                isAmount: true,
+              };
             }
 
+            // Fallback for plans without valid premium data
             return {
-              value: premium,
-              display: formatCurrency(premium),
-              isAmount: true,
+              value: 0,
+              display:
+                plan.premiumStructure === "age-based"
+                  ? "Age-based"
+                  : "Contact for pricing",
+              isAmount: false,
             };
           },
           icon: <TbCoins className="text-secondary-600 h-5 w-5" />,
@@ -279,15 +272,14 @@ const ComparisonTable = ({ plans, onDownload }) => {
               }}
               className="px-3 md:px-6 py-1.5 md:py-3 border md:border-2 border-white  text-white rounded-[0.4rem] md:rounded-lg text-xs md:text-sm font-medium shadow-lg font-lexend"
             >
-               <div className="md:hidden flex items-center ">
-              <TbDownload className="mr-1 sm:mr-2 h-3.5 w-3.5 sm:h-5 sm:w-5" />
-              <span>Print Comparison</span>
+              <div className="md:hidden flex items-center ">
+                <TbDownload className="mr-1 sm:mr-2 h-3.5 w-3.5 sm:h-5 sm:w-5" />
+                <span>Print Comparison</span>
               </div>
               <div className="hidden md:flex items-center ">
-              <TbDownload className="mr-1 sm:mr-2 h-3.5 w-3.5 sm:h-5 sm:w-5" />
-              <span>Print Comparison Table</span>
+                <TbDownload className="mr-1 sm:mr-2 h-3.5 w-3.5 sm:h-5 sm:w-5" />
+                <span>Print Comparison Table</span>
               </div>
-              
             </motion.button>
           )}
         </div>

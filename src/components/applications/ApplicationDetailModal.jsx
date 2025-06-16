@@ -374,6 +374,11 @@ const ApplicationDetailModal = ({ application, onClose }) => {
                           <p className="font-semibold text-[0.95rem] text-gray-600">
                             KSH{" "}
                             {Number(application.premiumAmount).toLocaleString()}
+                            {application.selectedAge && (
+                              <span className="text-sm text-gray-500 ml-2">
+                                (Age: {application.selectedAge} years)
+                              </span>
+                            )}
                           </p>
                         </div>
                       )}

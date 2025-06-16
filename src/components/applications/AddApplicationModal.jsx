@@ -49,6 +49,7 @@ const AddApplicationModal = ({ onClose, onSave }) => {
     policyStartDate: "",
     premiumAmount: "",
     insuranceProvider: "",
+    selectedAge: "",
     isAgentPurchase: false,
     agentName: "",
     agentEmail: "",
@@ -120,6 +121,9 @@ const AddApplicationModal = ({ onClose, onSave }) => {
         ...formData,
         premiumAmount: formData.premiumAmount
           ? parseFloat(formData.premiumAmount)
+          : null,
+        selectedAge: formData.selectedAge
+          ? parseInt(formData.selectedAge, 10)
           : null,
         policyStartDate:
           formData.policyStartDate || new Date().toISOString().split("T")[0],
@@ -687,6 +691,62 @@ const AddApplicationModal = ({ onClose, onSave }) => {
                       rows="3"
                       className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors"
                       placeholder="Provide any relevant medical history details..."
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Policy Details */}
+              <div className="border-t border-gray-200 pt-6">
+                <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
+                  <TbShield size={20} className="mr-2 text-primary-600" />
+                  Policy Details
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Premium Amount
+                    </label>
+                    <input
+                      type="number"
+                      name="premiumAmount"
+                      value={formData.premiumAmount}
+                      onChange={handleInputChange}
+                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                      placeholder="0.00"
+                      step="0.01"
+                      min="0"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Selected Age (for age-based plans)
+                    </label>
+                    <input
+                      type="number"
+                      name="selectedAge"
+                      value={formData.selectedAge}
+                      onChange={handleInputChange}
+                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                      placeholder="Age in years"
+                      min="0"
+                      max="120"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Insurance Provider
+                    </label>
+                    <input
+                      type="text"
+                      name="insuranceProvider"
+                      value={formData.insuranceProvider}
+                      onChange={handleInputChange}
+                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                      placeholder="Insurance company name"
                     />
                   </div>
                 </div>

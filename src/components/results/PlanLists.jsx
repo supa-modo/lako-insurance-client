@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   TbShieldHalfFilled,
@@ -12,6 +12,8 @@ import {
   TbShoppingBag,
   TbInfoCircle,
   TbEyeglass2,
+  TbBabyCarriage,
+  TbX,
 } from "react-icons/tb";
 import { PiTooth } from "react-icons/pi";
 import { MdOutlineChildFriendly } from "react-icons/md";
@@ -19,6 +21,7 @@ import { BsFillCreditCardFill } from "react-icons/bs";
 import { formatCurrency } from "../../utils/formatCurrency";
 import { FaFilePdf } from "react-icons/fa";
 import { FaRegFilePdf } from "react-icons/fa";
+import { calculatePremiumForAge } from "../../utils/premiumUtils";
 
 const PlanList = ({
   plans,
@@ -64,33 +67,9 @@ const PlanList = ({
     const planData = plan.plan || plan;
     const planId = planData.id || plan.id;
 
-    // Get base premium based on premium structure
-    let basePremium = 0;
-    if (planData.premiumStructure === 'fixed') {
-      basePremium = parseFloat(planData.annualPremium) || 0;
-    } else if (planData.premiumStructure === 'age-based' && planData.premiumsByAgeRange) {
-      try {
-        // Parse the JSON string of premiums by age range
-        const premiumsByAge = JSON.parse(planData.premiumsByAgeRange);
-        
-        // Find the appropriate premium for the user's age
-        const userAgeNum = parseInt(userAge, 10) || 65; // Default to 65 if not provided
-        
-        // Find the matching age range
-        for (const ageRange in premiumsByAge) {
-          if (isAgeInRange(userAgeNum, ageRange)) {
-            basePremium = parseFloat(premiumsByAge[ageRange]) || 0;
-            break;
-          }
-        }
-      } catch (error) {
-        console.error('Error parsing premiums by age range:', error);
-        basePremium = parseFloat(planData.annualPremium) || 0; // Fallback to annualPremium
-      }
-    } else {
-      // Fallback to annualPremium if structure is not specified
-      basePremium = parseFloat(planData.annualPremium) || 0;
-    }
+    // Get base premium using utility function
+    const userAgeNum = parseInt(userAge, 10) || 65; // Default to 65 if not provided
+    let basePremium = calculatePremiumForAge(planData, userAgeNum) || 0;
 
     // Get plan's optional covers
     const planCurrentOptions = planOptions[planId] || {
@@ -118,20 +97,6 @@ const PlanList = ({
     }
 
     return adjustedPremium;
-  };
-  
-  // Helper function to check if an age is within a range string
-  const isAgeInRange = (age, rangeStr) => {
-    if (rangeStr.includes('-')) {
-      const [min, max] = rangeStr.split('-').map(part => parseInt(part.trim(), 10));
-      return age >= min && age <= max;
-    } else if (rangeStr.includes('+')) {
-      const min = parseInt(rangeStr.replace('+', '').trim(), 10);
-      return age >= min;
-    } else {
-      const exactAge = parseInt(rangeStr.trim(), 10);
-      return age === exactAge;
-    }
   };
 
   // Get appropriate value for plan property, accounting for nested structure
@@ -279,65 +244,73 @@ const PlanList = ({
                   </div>
 
                   <div className="flex flex-wrap gap-2">
-                    {hasDental && (
-                      plan.dentalCoveredInBase ? (
+                    {hasDental &&
+                      (plan.dentalCoveredInBase ? (
                         <div className="flex items-center px-4 py-1 rounded-full text-xs sm:text-[0.78rem] font-medium bg-green-100 text-green-700 border border-green-300">
                           <PiTooth className="mr-1 h-4 w-4" />
                           Dental
                           <TbCheck className="ml-1" />
                           <span className="ml-1 opacity-75">Covered</span>
                         </div>
-                      ) : parseFloat(dentalPremium, 0) > 0 && (
-                        <button
-                          onClick={() => toggleOptionalCover(planId, "dental")}
-                          className={`flex items-center px-4 py-1 rounded-full text-xs sm:text-[0.78rem] font-medium transition-colors ${
-                            planCurrentOptions.dental
-                              ? "bg-green-100 text-green-700 border border-green-300"
-                              : "bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200"
-                          }`}
-                        >
-                          <PiTooth className="mr-1 h-4 w-4" />
-                          Dental
-                          {planCurrentOptions.dental && (
-                            <TbCheck className="ml-1" />
-                          )}
-                          <span className="ml-1 opacity-75">
-                            (+
-                            {formatCurrency(parseFloat(dentalPremium, 0))})
-                          </span>
-                        </button>
-                      )
-                    )}
+                      ) : (
+                        parseFloat(dentalPremium, 0) > 0 && (
+                          <button
+                            onClick={() =>
+                              toggleOptionalCover(planId, "dental")
+                            }
+                            className={`flex items-center px-4 py-1 rounded-full text-xs sm:text-[0.78rem] font-medium transition-colors ${
+                              planCurrentOptions.dental
+                                ? "bg-green-100 text-green-700 border border-green-300"
+                                : "bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200"
+                            }`}
+                          >
+                            <PiTooth className="mr-1 h-4 w-4" />
+                            Dental
+                            {planCurrentOptions.dental && (
+                              <TbCheck className="ml-1" />
+                            )}
+                            <span className="ml-1 opacity-75">
+                              (+
+                              {formatCurrency(parseFloat(dentalPremium, 0))})
+                            </span>
+                          </button>
+                        )
+                      ))}
 
-                    {hasOptical && (
-                      plan.opticalCoveredInBase ? (
+                    {hasOptical &&
+                      (plan.opticalCoveredInBase ? (
                         <div className="flex items-center px-4 py-1 rounded-full text-xs sm:text-[0.78rem] font-medium bg-green-100 text-green-700 border border-green-300">
                           <TbEyeglass2 className="mr-1 h-4 w-4" />
                           Optical
                           <TbCheck className="ml-1" />
                           <span className="ml-1 opacity-75">Covered</span>
                         </div>
-                      ) : parseFloat(getPlanValue(planResult, "opticalPremium", 0)) > 0 && (
-                        <button
-                          onClick={() => toggleOptionalCover(planId, "optical")}
-                          className={`flex items-center px-4 py-1 rounded-full text-xs sm:text-[0.78rem] font-medium transition-colors ${
-                            planCurrentOptions.optical
-                              ? "bg-green-100 text-green-700 border border-green-300"
-                              : "bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200"
-                          }`}
-                        >
-                          <TbEyeglass2 className="mr-1 h-4 w-4" />
-                          Optical
-                          {planCurrentOptions.optical && (
-                            <TbCheck className="ml-1" />
-                          )}
-                          <span className="ml-1 opacity-75">
-                            (+
-                            {formatCurrency(parseFloat(opticalPremium, 0))})
-                          </span>
-                        </button>
-                      )
-                    )}
+                      ) : (
+                        parseFloat(
+                          getPlanValue(planResult, "opticalPremium", 0)
+                        ) > 0 && (
+                          <button
+                            onClick={() =>
+                              toggleOptionalCover(planId, "optical")
+                            }
+                            className={`flex items-center px-4 py-1 rounded-full text-xs sm:text-[0.78rem] font-medium transition-colors ${
+                              planCurrentOptions.optical
+                                ? "bg-green-100 text-green-700 border border-green-300"
+                                : "bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200"
+                            }`}
+                          >
+                            <TbEyeglass2 className="mr-1 h-4 w-4" />
+                            Optical
+                            {planCurrentOptions.optical && (
+                              <TbCheck className="ml-1" />
+                            )}
+                            <span className="ml-1 opacity-75">
+                              (+
+                              {formatCurrency(parseFloat(opticalPremium, 0))})
+                            </span>
+                          </button>
+                        )
+                      ))}
 
                     {hasMaternity && (
                       <button
@@ -369,10 +342,9 @@ const PlanList = ({
                     className="px-3 py-1.5 border border-primary-500 bg-white font-medium text-primary-600 text-sm rounded-lg hover:bg-primary-50 transition-colors"
                   >
                     <div className="flex items-center justify-center space-x-2">
-                      <FaFilePdf className="text-red-500 w-5 h-5"/>
+                      <FaFilePdf className="text-red-500 w-5 h-5" />
                       <span className="text-sm">Plan Details</span>
                     </div>
-
                   </button>
                 </div>
               </div>

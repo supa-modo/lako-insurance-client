@@ -1,5 +1,14 @@
-import React from 'react';
+import React from "react";
+import {
+  TbCoins,
+  TbShieldHalfFilled,
+  TbStethoscope,
+  TbEyeglass2,
+  TbBabyCarriage,
+} from "react-icons/tb";
+import { PiTooth } from "react-icons/pi";
 import { formatCurrency } from "../../utils/formatCurrency";
+import { calculatePremiumForAge } from "../../utils/premiumUtils";
 import { useComparison } from "../../context/ComparisonContext";
 
 /**
@@ -8,7 +17,7 @@ import { useComparison } from "../../context/ComparisonContext";
  * @returns {String} - HTML string for the printable table
  */
 const PrintableComparisonTable = ({ plans, userQuery }) => {
-  if (!plans || !plans.length) return '';
+  if (!plans || !plans.length) return "";
 
   // Extract actual plan objects
   const normalizedPlans = plans.map((planItem) => planItem.plan);
@@ -21,38 +30,27 @@ const PrintableComparisonTable = ({ plans, userQuery }) => {
         {
           name: "Annual Premium",
           accessor: (plan) => {
-            let premium = 0;
+            // For comparison table, we'll use a default age of 65 for age-based plans
+            // This provides a reasonable baseline for comparison
+            const defaultAge = 65;
+            const premium = calculatePremiumForAge(plan, defaultAge);
 
-            // Handle different premium structures
-            if (plan.premiumStructure === "fixed") {
-              premium = parseFloat(plan.annualPremium || "0");
-            } else if (
-              plan.premiumStructure === "age-based" &&
-              plan.premiumsByAgeRange
-            ) {
-              try {
-                // For comparison table, we'll show the middle age range premium
-                const premiumsByAge = JSON.parse(plan.premiumsByAgeRange);
-                const ageRanges = Object.keys(premiumsByAge);
-                if (ageRanges.length > 0) {
-                  // Use the middle age range for display
-                  const middleRangeIndex = Math.floor(ageRanges.length / 2);
-                  premium = parseFloat(
-                    premiumsByAge[ageRanges[middleRangeIndex]] || "0"
-                  );
-                }
-              } catch (error) {
-                console.error("Error parsing premiums by age range:", error);
-                premium = parseFloat(plan.annualPremium || "0"); // Fallback
-              }
-            } else {
-              premium = parseFloat(plan.annualPremium || "0"); // Fallback
+            if (premium !== null) {
+              return {
+                value: premium,
+                display: formatCurrency(premium),
+                isAmount: true,
+              };
             }
 
+            // Fallback for plans without valid premium data
             return {
-              value: premium,
-              display: formatCurrency(premium),
-              isAmount: true,
+              value: 0,
+              display:
+                plan.premiumStructure === "age-based"
+                  ? "Age-based"
+                  : "Contact for pricing",
+              isAmount: false,
             };
           },
         },
@@ -213,14 +211,16 @@ const PrintableComparisonTable = ({ plans, userQuery }) => {
   // Generate HTML string for the printable table
   const generateHtmlTable = () => {
     const currentDate = new Date().toLocaleDateString();
-    
+
     // Format user query data for display
-    const formattedAge = userQuery?.age || '';
-    const formattedBudgetMin = userQuery?.budgetMin || userQuery?.budget?.split('-')[0] || '';
-    const formattedBudgetMax = userQuery?.budgetMax || (userQuery?.budget?.split('-')[1] || '');
-    const formattedCoverageLimit = userQuery?.coverageLimit || '';
+    const formattedAge = userQuery?.age || "";
+    const formattedBudgetMin =
+      userQuery?.budgetMin || userQuery?.budget?.split("-")[0] || "";
+    const formattedBudgetMax =
+      userQuery?.budgetMax || userQuery?.budget?.split("-")[1] || "";
+    const formattedCoverageLimit = userQuery?.coverageLimit || "";
     const formattedOptionalCovers = userQuery?.optionalCovers || [];
-    
+
     return `
       <!DOCTYPE html>
       <html lang="en">
@@ -389,10 +389,32 @@ const PrintableComparisonTable = ({ plans, userQuery }) => {
           <div class="header-center">
             <h1 class="report-title">Insurance Plan Comparison</h1>
             <div class="user-query-details">
-              ${formattedAge ? `<span class="query-item"><strong>Age:</strong> ${formattedAge}</span>` : ''}
-              ${formattedBudgetMin ? `<span class="query-item"><strong>Budget Range:</strong> ${formatCurrency(formattedBudgetMin)} - ${formatCurrency(formattedBudgetMax || 0)}</span>` : ''}
-              ${formattedCoverageLimit ? `<span class="query-item"><strong>Coverage Limit:</strong> ${formatCurrency(formattedCoverageLimit)}</span>` : ''}
-              ${formattedOptionalCovers?.length ? `<span class="query-item"><strong>Optional Covers:</strong> ${formattedOptionalCovers.join(', ')}</span>` : ''}
+              ${
+                formattedAge
+                  ? `<span class="query-item"><strong>Age:</strong> ${formattedAge}</span>`
+                  : ""
+              }
+              ${
+                formattedBudgetMin
+                  ? `<span class="query-item"><strong>Budget Range:</strong> ${formatCurrency(
+                      formattedBudgetMin
+                    )} - ${formatCurrency(formattedBudgetMax || 0)}</span>`
+                  : ""
+              }
+              ${
+                formattedCoverageLimit
+                  ? `<span class="query-item"><strong>Coverage Limit:</strong> ${formatCurrency(
+                      formattedCoverageLimit
+                    )}</span>`
+                  : ""
+              }
+              ${
+                formattedOptionalCovers?.length
+                  ? `<span class="query-item"><strong>Optional Covers:</strong> ${formattedOptionalCovers.join(
+                      ", "
+                    )}</span>`
+                  : ""
+              }
             </div>
           </div>
           <div class="header-right">
@@ -404,38 +426,60 @@ const PrintableComparisonTable = ({ plans, userQuery }) => {
           <thead>
             <tr>
               <th class="details-column">Details</th>
-              ${plans.map(planItem => {
-                const plan = planItem.plan;
-                return `
+              ${plans
+                .map((planItem) => {
+                  const plan = planItem.plan;
+                  return `
                   <th>
                     <div>
-                      <img src="${plan.company?.logoUrl || "/insurance-placeholder.png"}" alt="${plan.company?.name || "Insurance"}" class="company-logo">
-                      <div class="plan-name">${plan.name || "Insurance Plan"}</div>
+                      <img src="${
+                        plan.company?.logoUrl || "/insurance-placeholder.png"
+                      }" alt="${
+                    plan.company?.name || "Insurance"
+                  }" class="company-logo">
+                      <div class="plan-name">${
+                        plan.name || "Insurance Plan"
+                      }</div>
                     </div>
                   </th>
                 `;
-              }).join('')}
+                })
+                .join("")}
             </tr>
           </thead>
           <tbody>
-            ${comparisonRows.map(section => `
+            ${comparisonRows
+              .map(
+                (section) => `
               <tr class="category-row">
                 <td colspan="${plans.length + 1}">${section.category}</td>
               </tr>
-              ${section.items.map(row => `
+              ${section.items
+                .map(
+                  (row) => `
                 <tr>
                   <td class="details-column">${row.name}</td>
-                  ${plans.map(planItem => {
-                    const cellData = row.accessor(planItem.plan);
-                    if (cellData.isIncluded !== undefined) {
-                      return `<td class="${cellData.isIncluded ? 'included' : 'not-included'}">${cellData.display}</td>`;
-                    } else {
-                      return `<td class="${cellData.isAmount ? 'amount' : ''}">${cellData.display}</td>`;
-                    }
-                  }).join('')}
+                  ${plans
+                    .map((planItem) => {
+                      const cellData = row.accessor(planItem.plan);
+                      if (cellData.isIncluded !== undefined) {
+                        return `<td class="${
+                          cellData.isIncluded ? "included" : "not-included"
+                        }">${cellData.display}</td>`;
+                      } else {
+                        return `<td class="${
+                          cellData.isAmount ? "amount" : ""
+                        }">${cellData.display}</td>`;
+                      }
+                    })
+                    .join("")}
                 </tr>
-              `).join('')}
-            `).join('')}
+              `
+                )
+                .join("")}
+            `
+              )
+              .join("")}
           </tbody>
         </table>
         
@@ -460,22 +504,22 @@ const PrintableComparisonTable = ({ plans, userQuery }) => {
 
   // Create a printable HTML string
   const htmlContent = generateHtmlTable();
-  
+
   // Function to open the printable version in a new window
   const openPrintableVersion = () => {
-    const printWindow = window.open('', '_blank');
+    const printWindow = window.open("", "_blank");
     if (printWindow) {
       printWindow.document.write(htmlContent);
       printWindow.document.close();
       // Automatically open print dialog after content loads
-      printWindow.onload = function() {
+      printWindow.onload = function () {
         printWindow.focus();
         setTimeout(() => {
           printWindow.print();
         }, 500);
       };
     } else {
-      alert('Please allow pop-ups to view the printable version.');
+      alert("Please allow pop-ups to view the printable version.");
     }
   };
 

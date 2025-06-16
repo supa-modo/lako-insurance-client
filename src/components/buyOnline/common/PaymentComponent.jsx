@@ -278,6 +278,15 @@ const PaymentComponent = ({ applicationData, onPaymentComplete, onCancel }) => {
               {applicationData.coverType}
             </span>
           </div>
+          {applicationData.selectedPlan?.premiumStructure === "age-based" &&
+            applicationData.selectedAge && (
+              <div className="flex justify-between">
+                <span className="text-gray-600">Selected Age:</span>
+                <span className="font-semibold text-gray-600">
+                  {applicationData.selectedAge} years
+                </span>
+              </div>
+            )}
           <div className="border-t pt-3 flex justify-between text-base font-semibold">
             <span className="text-green-600">Amount to Pay:</span>
             <span className="text-green-600 text-lg font-bold font-lexend">

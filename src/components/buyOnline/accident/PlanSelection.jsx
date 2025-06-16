@@ -13,9 +13,16 @@ import {
   TbLoader2,
   TbRefresh,
   TbDownload,
+  TbCalendar,
 } from "react-icons/tb";
 import applicationService from "../../../services/applicationService";
 import { formatCurrency } from "../../../utils/formatCurrency";
+import {
+  calculatePremiumForAge,
+  getPremiumDisplay,
+  getPremiumBreakdown,
+  getAgeRangesForPlan,
+} from "../../../utils/premiumUtils";
 import { FaFilePdf, FaRegFilePdf } from "react-icons/fa";
 
 const PlanSelection = ({ formData, updateFormData, nextStep, prevStep }) => {
@@ -25,10 +32,80 @@ const PlanSelection = ({ formData, updateFormData, nextStep, prevStep }) => {
   const [selectedPlan, setSelectedPlan] = useState(
     formData.selectedPlan || null
   );
+  const [selectedAgeForPlan, setSelectedAgeForPlan] = useState({});
+
+  // Calculate user's age from date of birth
+  const calculateAge = (dateOfBirth) => {
+    if (!dateOfBirth) return null;
+    const today = new Date();
+    const birthDate = new Date(dateOfBirth);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+
+    return age;
+  };
+
+  const userAge = calculateAge(formData.dateOfBirth);
 
   useEffect(() => {
     fetchPlans();
   }, [formData.coverType]);
+
+  // Initialize selected ages for age-based plans
+  useEffect(() => {
+    if (plans.length > 0) {
+      const initialAges = {};
+      plans.forEach((plan) => {
+        if (plan.premiumStructure === "age-based") {
+          // Set default age to user's age if available, otherwise use first available age range
+          const ageRanges = getAgeRangesForPlan(plan);
+          if (ageRanges.length > 0) {
+            if (
+              userAge &&
+              ageRanges.some((range) => {
+                if (range.includes("-")) {
+                  const [min, max] = range
+                    .split("-")
+                    .map((part) => parseInt(part.trim(), 10));
+                  return userAge >= min && userAge <= max;
+                } else if (range.includes("+")) {
+                  const min = parseInt(range.replace("+", "").trim(), 10);
+                  return userAge >= min;
+                } else {
+                  const exactAge = parseInt(range.trim(), 10);
+                  return userAge === exactAge;
+                }
+              })
+            ) {
+              initialAges[plan.id] = userAge;
+            } else {
+              // Use the first age range as default
+              const firstRange = ageRanges[0];
+              if (firstRange.includes("-")) {
+                const [min] = firstRange
+                  .split("-")
+                  .map((part) => parseInt(part.trim(), 10));
+                initialAges[plan.id] = min;
+              } else if (firstRange.includes("+")) {
+                const min = parseInt(firstRange.replace("+", "").trim(), 10);
+                initialAges[plan.id] = min;
+              } else {
+                initialAges[plan.id] = parseInt(firstRange.trim(), 10);
+              }
+            }
+          }
+        }
+      });
+      setSelectedAgeForPlan(initialAges);
+    }
+  }, [plans, userAge]);
 
   const fetchPlans = async () => {
     setLoading(true);
@@ -71,11 +148,40 @@ const PlanSelection = ({ formData, updateFormData, nextStep, prevStep }) => {
   const handleSelectPlan = (plan) => {
     setSelectedPlan(plan);
     updateFormData("selectedPlan", plan);
-    updateFormData("premiumAmount", parseFloat(plan.annualPremium));
+
+    // Calculate premium based on user's age and plan structure
+    let premium;
+    if (plan.premiumStructure === "age-based") {
+      const selectedAge = selectedAgeForPlan[plan.id] || userAge;
+      premium = calculatePremiumForAge(plan, selectedAge);
+      // Store the selected age for age-based plans
+      updateFormData("selectedAge", selectedAge);
+    } else {
+      premium = calculatePremiumForAge(plan, userAge);
+    }
+
+    updateFormData("premiumAmount", premium);
     updateFormData(
       "insuranceProvider",
       plan.company?.name || "Unknown Provider"
     );
+  };
+
+  const handleAgeChange = (planId, age) => {
+    setSelectedAgeForPlan((prev) => ({
+      ...prev,
+      [planId]: parseInt(age),
+    }));
+
+    // If this plan is currently selected, update the premium
+    if (selectedPlan?.id === planId) {
+      const plan = plans.find((p) => p.id === planId);
+      if (plan) {
+        const premium = calculatePremiumForAge(plan, parseInt(age));
+        updateFormData("premiumAmount", premium);
+        updateFormData("selectedAge", parseInt(age));
+      }
+    }
   };
 
   const handleContinue = () => {
@@ -85,13 +191,19 @@ const PlanSelection = ({ formData, updateFormData, nextStep, prevStep }) => {
   };
 
   const handleDownloadPlanDetails = (plan) => {
+    // Get premium information
+    const selectedAge = selectedAgeForPlan[plan.id] || userAge;
+    const premiumInfo = getPremiumDisplay(plan, selectedAge);
+    const premiumBreakdown = getPremiumBreakdown(plan);
+
     // Create a detailed plan information object
     const planDetails = {
       planName: plan.name,
       company: plan.company?.name || "Insurance Company",
       description: plan.description || "No description available",
       coverageAmount: formatCurrency(plan.inpatientCoverageLimit),
-      annualPremium: formatCurrency(parseFloat(plan.annualPremium)),
+      premiumInfo: premiumInfo,
+      premiumBreakdown: premiumBreakdown,
       coverType: formData.coverType,
       // Add more details as needed
       benefits: plan.benefits || [],
@@ -99,6 +211,21 @@ const PlanSelection = ({ formData, updateFormData, nextStep, prevStep }) => {
         plan.terms ||
         "Please contact the insurance company for detailed terms and conditions",
     };
+
+    // Create premium details text
+    let premiumDetailsText = "";
+    if (plan.premiumStructure === "fixed") {
+      premiumDetailsText = `Annual Premium: ${formatCurrency(
+        plan.annualPremium
+      )}`;
+    } else if (plan.premiumStructure === "age-based") {
+      premiumDetailsText = "Age-Based Premium Structure:\n";
+      premiumBreakdown.forEach(({ ageRange, premium }) => {
+        premiumDetailsText += `- ${ageRange} years: ${formatCurrency(
+          premium
+        )}\n`;
+      });
+    }
 
     // Create a simple text content for download
     const content = `
@@ -113,7 +240,10 @@ Coverage Type: ${
 
 COVERAGE DETAILS:
 - Coverage Amount: ${planDetails.coverageAmount}
-- Annual Premium: ${planDetails.annualPremium}
+- Premium Structure: ${
+      plan.premiumStructure === "fixed" ? "Fixed" : "Age-based"
+    }
+${premiumDetailsText}
 
 DESCRIPTION:
 ${planDetails.description}
@@ -143,6 +273,107 @@ Note: This is a summary document. Please contact ${
     link.click();
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
+  };
+
+  // Render premium display component
+  const renderPremiumDisplay = (plan) => {
+    const selectedAge = selectedAgeForPlan[plan.id] || userAge;
+    const premiumInfo = getPremiumDisplay(plan, selectedAge);
+
+    if (premiumInfo.isValid) {
+      return (
+        <div className="text-xl lg:text-2xl font-lexend font-bold text-primary-600">
+          {formatCurrency(premiumInfo.value)}
+        </div>
+      );
+    } else {
+      return (
+        <div className="text-sm lg:text-base font-medium text-gray-600">
+          {premiumInfo.display}
+        </div>
+      );
+    }
+  };
+
+  // Render age selector for age-based plans
+  const renderAgeSelector = (plan) => {
+    if (plan.premiumStructure !== "age-based") return null;
+
+    const ageRanges = getAgeRangesForPlan(plan);
+    const selectedAge = selectedAgeForPlan[plan.id] || userAge;
+
+    if (ageRanges.length === 0) return null;
+
+    return (
+      <div className="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+        <div className="flex items-center justify-between mb-2">
+          <label className="text-sm font-medium text-gray-700 flex items-center">
+            <TbCalendar className="w-4 h-4 mr-1" />
+            Select Your Age:
+          </label>
+          <span className="text-xs text-gray-500">Age-based pricing</span>
+        </div>
+        <select
+          value={selectedAge || ""}
+          onChange={(e) => handleAgeChange(plan.id, e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {ageRanges.map((range) => {
+            let ageValue, ageLabel;
+            if (range.includes("-")) {
+              const [min, max] = range
+                .split("-")
+                .map((part) => parseInt(part.trim(), 10));
+              ageValue = min;
+              ageLabel = `${range} years`;
+            } else if (range.includes("+")) {
+              const min = parseInt(range.replace("+", "").trim(), 10);
+              ageValue = min;
+              ageLabel = `${range} years`;
+            } else {
+              ageValue = parseInt(range.trim(), 10);
+              ageLabel = `${range} years`;
+            }
+            return (
+              <option key={range} value={ageValue}>
+                {ageLabel}
+              </option>
+            );
+          })}
+        </select>
+        <div className="mt-2 text-xs text-gray-500">
+          Premium: {renderPremiumDisplay(plan)}
+        </div>
+      </div>
+    );
+  };
+
+  // Render age-based premium breakdown
+  const renderAgeBasedBreakdown = (plan) => {
+    if (plan.premiumStructure !== "age-based") return null;
+
+    const breakdown = getPremiumBreakdown(plan);
+    if (breakdown.length === 0) return null;
+
+    return (
+      <div className="mt-2 text-xs text-gray-500">
+        <div className="font-medium mb-1">Available age ranges:</div>
+        <div className="space-y-1">
+          {breakdown.slice(0, 3).map(({ ageRange, premium }, index) => (
+            <div key={index} className="flex justify-between">
+              <span>{ageRange} yrs:</span>
+              <span>{formatCurrency(premium)}</span>
+            </div>
+          ))}
+          {breakdown.length > 3 && (
+            <div className="text-gray-400 italic">
+              +{breakdown.length - 3} more age ranges
+            </div>
+          )}
+        </div>
+      </div>
+    );
   };
 
   if (loading) {
@@ -273,10 +504,7 @@ Note: This is a summary document. Please contact ${
                       </p>
                     </div>
                   </div>
-
-                  
                 </div>
-                
 
                 <div className="min-w-[23%] flex flex-row items-center justify-between border-t md:border-none border-gray-200">
                   <div className="rounded-lg px-2 py-2.5 md:py-0">
@@ -292,40 +520,42 @@ Note: This is a summary document. Please contact ${
                     <div className="text-sm font-medium text-primary-600 md:mb-1">
                       Plan Premium
                     </div>
-                    <div className="text-xl lg:text-2xl font-lexend font-bold text-primary-600">
-                      {formatCurrency(parseFloat(plan.annualPremium))}
-                    </div>
+                    {plan.premiumStructure === "age-based"
+                      ? renderAgeSelector(plan)
+                      : renderPremiumDisplay(plan)}
                   </div>
                 </div>
-
-                
               </div>
 
               <p className="text-sm pl-2 font-medium text-gray-600 pt-1 mb-2 lg:mb-3.5">
-                    Download plan details for more information <button onClick={(e) => {
-                    e.stopPropagation();
-                    handleDownloadPlanDetails(plan);
-                  }} className="text-primary-600 underline underline-offset-4 font-medium transition-colors hover:bg-primary-50">here</button>
-                  </p>
-
-              
+                Download plan details for more information{" "}
                 <button
-                  type="button"
-                  className={`w-full px-6 py-2 mt-2  rounded-lg font-medium transition-colors ${
-                    selectedPlan?.id === plan.id
-                      ? "bg-primary-600 text-white"
-                      : "bg-gray-200 border border-gray-300 text-gray-600 hover:bg-gray-200"
-                  }`}
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleSelectPlan(plan);
+                    handleDownloadPlanDetails(plan);
                   }}
+                  className="text-primary-600 underline underline-offset-4 font-medium transition-colors hover:bg-primary-50"
                 >
-                  {selectedPlan?.id === plan.id
-                    ? "Selected. Click Continue to proceed"
-                    : "Select this Plan"}
+                  here
                 </button>
+              </p>
 
+              <button
+                type="button"
+                className={`w-full px-6 py-2 mt-2  rounded-lg font-medium transition-colors ${
+                  selectedPlan?.id === plan.id
+                    ? "bg-primary-600 text-white"
+                    : "bg-gray-200 border border-gray-300 text-gray-600 hover:bg-gray-200"
+                }`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSelectPlan(plan);
+                }}
+              >
+                {selectedPlan?.id === plan.id
+                  ? "Selected. Click Continue to proceed"
+                  : "Select this Plan"}
+              </button>
             </motion.div>
           ))
         ) : (

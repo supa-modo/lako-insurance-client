@@ -28,6 +28,7 @@ import {
 } from "react-icons/tb";
 import { FaUserDoctor } from "react-icons/fa6";
 import { PiTooth } from "react-icons/pi";
+import { getPremiumBreakdown } from "../../utils/premiumUtils";
 
 const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -203,7 +204,6 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                 {/* Quick Stats Grid */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
                   <div className="bg-white rounded-lg p-4 border border-gray-200">
-                    
                     <div className="text-xs text-gray-500 mb-1">
                       Inpatient Limit
                     </div>
@@ -214,7 +214,6 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                     </div>
                   </div>
                   <div className="bg-white rounded-lg p-4 border border-gray-200">
-                   
                     <div className="text-xs text-gray-500 mb-1">
                       Outpatient Limit
                     </div>
@@ -225,7 +224,6 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                     </div>
                   </div>
                   <div className="bg-white rounded-lg p-4 border border-gray-200">
-                    
                     <div className="text-xs text-gray-500 mb-1">
                       Last Expense
                     </div>
@@ -236,7 +234,6 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                     </div>
                   </div>
                   <div className="bg-white rounded-lg p-4 border border-gray-200">
-                  
                     <div className="text-xs text-gray-500 mb-1">Age Range</div>
                     <div className="font-semibold text-gray-900 text-sm">
                       {plan?.eligibilityAgeMin || "0"}-
@@ -287,7 +284,6 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                   transition={{ duration: 0.2 }}
                   className="space-y-6"
                 >
-
                   {/* Basic Information */}
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-4 flex items-center">
@@ -709,14 +705,22 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                             Age-Based Premium Structure
                           </label>
                           {plan?.premiumsByAgeRange ? (
-                            <div className="bg-white border border-gray-200 rounded p-3">
-                              <pre className="text-sm text-gray-700 whitespace-pre-wrap">
-                                {JSON.stringify(
-                                  JSON.parse(plan.premiumsByAgeRange),
-                                  null,
-                                  2
-                                )}
-                              </pre>
+                            <div className="space-y-3">
+                              {getPremiumBreakdown(plan).map(
+                                ({ ageRange, premium }, index) => (
+                                  <div
+                                    key={index}
+                                    className="flex justify-between items-center py-2 px-3 bg-white border border-gray-200 rounded"
+                                  >
+                                    <span className="text-gray-700 font-medium">
+                                      {ageRange} years
+                                    </span>
+                                    <span className="text-gray-900 font-semibold">
+                                      {formatCurrency(premium)}
+                                    </span>
+                                  </div>
+                                )
+                              )}
                             </div>
                           ) : (
                             <span className="text-gray-500">Not specified</span>

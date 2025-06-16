@@ -11,7 +11,13 @@ const applicationService = {
    */
   createApplication: async (applicationData) => {
     try {
-      const response = await apiClient.post("/applications", applicationData);
+      // Ensure selectedAge is included if it exists
+      const dataToSend = { ...applicationData };
+      if (dataToSend.selectedAge) {
+        dataToSend.selectedAge = parseInt(dataToSend.selectedAge, 10);
+      }
+
+      const response = await apiClient.post("/applications", dataToSend);
       return response.data;
     } catch (error) {
       console.error("Error creating application:", error);

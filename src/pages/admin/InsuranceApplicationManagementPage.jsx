@@ -666,6 +666,11 @@ const InsuranceApplicationManagementPage = () => {
                         <td className="py-5 px-4 whitespace-nowrap">
                           <span className="text-sm font-semibold text-secondary-700 capitalize">
                             {formatCurrency(application.premiumAmount)}
+                            {application.selectedAge && (
+                              <span className="text-xs text-gray-500 ml-1">
+                                (Age: {application.selectedAge})
+                              </span>
+                            )}
                           </span>
                         </td>
                         <td className="py-5 px-4 whitespace-nowrap">
