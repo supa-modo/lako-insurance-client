@@ -5,8 +5,18 @@ import Footer from "../../components/layout/Footer";
 import InsuranceTypeSelection from "../../components/buyOnline/InsuranceTypeSelection";
 import HealthInsuranceFlow from "../../components/buyOnline/health/HealthInsuranceFlow";
 import PersonalAccidentFlow from "../../components/buyOnline/accident/PersonalAccidentFlow";
-import { TbArrowLeft } from "react-icons/tb";
+import {
+  TbArrowLeft,
+  TbClipboardText,
+  TbCoins,
+  TbLock,
+  TbMoneybag,
+  TbShieldHalf,
+  TbShieldHalfFilled,
+} from "react-icons/tb";
 import { Link } from "react-router-dom";
+import MpesaIcon from "../../components/common/MpesaIcon";
+import { FiCheckCircle } from "react-icons/fi";
 
 const BuyOnlinePage = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -222,49 +232,75 @@ const BuyOnlinePage = () => {
             </div>
           )}
 
-          {/* Main Content */}
-          <div className="bg-white max-w-[85rem] mx-auto rounded-t-2xl lg:rounded-[1.2rem] md:shadow-sm border-t md:border border-slate-200 px-2.5 py-5 md:p-5 lg:p-8">
-            {renderContent()}
-          </div>
-
-          {/* Additional Content Sections */}
-          {currentStep === 1 && (
-            <div className="max-w-[85rem] mx-auto mt-16 space-y-16">
-              {/* Why Choose Online Insurance */}
-              <motion.section
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                className="px-4 py-16 bg-gradient-to-br from-primary-50 to-secondary-50 rounded-2xl"
-              >
-                <div className="text-center mb-12">
-                  <h2 className="text-3xl lg:text-4xl font-bold text-primary-700 mb-4">
-                    Why Buy Insurance Online?
-                  </h2>
-                  <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                    Experience the convenience and benefits of purchasing
-                    insurance digitally
-                  </p>
+          {/* Layout with sidebar for step 1 */}
+          {currentStep === 1 ? (
+            <div className="flex flex-col lg:flex-row gap-8 max-w-[95rem] mx-auto">
+              {/* Main Content */}
+              <div className="lg:w-3/4 order-2 lg:order-1">
+                <div className="bg-white rounded-t-2xl lg:rounded-[1.2rem] md:shadow-sm border-t md:border border-slate-200 px-2.5 py-5 md:p-5 lg:p-8">
+                  {renderContent()}
                 </div>
+              </div>
 
-                <div className="grid md:grid-cols-3 gap-8">
-                  <div className="text-center group">
-                    <div className="w-16 h-16 bg-primary-100 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-primary-200 transition-colors duration-300">
-                      <TbArrowLeft className="w-8 h-8 text-primary-600 transform rotate-90" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-800 mb-3">
-                      Fast & Easy
-                    </h3>
-                    <p className="text-gray-600">
-                      Complete your application in minutes with our streamlined
-                      process. No paperwork, no waiting in lines.
-                    </p>
+              {/* Right Sidebar - Why Choose Online Insurance */}
+              <div className="hidden lg:block lg:w-1/4 order-1 lg:order-2">
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                  className="bg-white rounded-xl shadow-md border border-slate-200 py-6 px-4 sticky top-24"
+                >
+                  <h3 className="text-lg font-bold text-secondary-600 mb-4">
+                    Why Buy Insurance Online?
+                  </h3>
+
+                  <div className="space-y-4">
+                    {[
+                      {
+                        title: "Fast & Easy",
+                        description:
+                          "Complete your application in minutes with our streamlined process. No paperwork, no waiting in lines.",
+                        icon: (
+                          <TbArrowLeft className="w-5 h-5 text-primary-600 transform rotate-90" />
+                        ),
+                      },
+                      {
+                        title: "100% Secure",
+                        description:
+                          "Your personal and financial information is protected with bank-level security encryption.",
+                        icon: <TbLock size={18} className="text-primary-600" />,
+                      },
+                      {
+                        title: "Best Prices",
+                        description:
+                          "Access competitive rates and exclusive online discounts not available through traditional channels.",
+                        icon: (
+                          <TbCoins size={18} className="text-primary-600" />
+                        ),
+                      },
+                    ].map((benefit, index) => (
+                      <div key={index} className="flex">
+                        <div className="flex-shrink-0 mt-1">
+                          <div className="w-8 h-8 rounded-lg bg-secondary-100 flex items-center justify-center">
+                            {benefit.icon}
+                          </div>
+                        </div>
+                        <div className="ml-3">
+                          <h4 className="text-md font-semibold text-slate-700 mb-1">
+                            {benefit.title}
+                          </h4>
+                          <p className="text-sm text-slate-600">
+                            {benefit.description}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
 
-                  <div className="text-center group">
-                    <div className="w-16 h-16 bg-secondary-100 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-secondary-200 transition-colors duration-300">
+                  <div className="mt-6 pt-3 border-t border-slate-200">
+                    <div className="flex items-center justify-center text-sm text-slate-600">
                       <motion.svg
-                        className="w-8 h-8 text-secondary-600"
+                        className="w-5 h-5 mr-2 text-primary-500"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -275,250 +311,257 @@ const BuyOnlinePage = () => {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
-                          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                         />
                       </motion.svg>
+                      <span>Trusted by thousands</span>
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-800 mb-3">
-                      100% Secure
-                    </h3>
-                    <p className="text-gray-600">
-                      Your personal and financial information is protected with
-                      bank-level security encryption.
-                    </p>
                   </div>
+                </motion.div>
+              </div>
+            </div>
+          ) : (
+            /* Regular layout for other steps */
+            <div className="bg-white max-w-[85rem] mx-auto rounded-t-2xl lg:rounded-[1.2rem] md:shadow-sm border-t md:border border-slate-200 px-2.5 py-5 md:p-5 lg:p-8">
+              {renderContent()}
+            </div>
+          )}
 
-                  <div className="text-center group">
-                    <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-green-200 transition-colors duration-300">
-                      <motion.svg
-                        className="w-8 h-8 text-green-600"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        whileHover={{ rotate: 360 }}
-                        transition={{ duration: 0.5 }}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
-                        />
-                      </motion.svg>
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-800 mb-3">
-                      Best Prices
-                    </h3>
-                    <p className="text-gray-600">
-                      Access competitive rates and exclusive online discounts
-                      not available through traditional channels.
-                    </p>
-                  </div>
-                </div>
-              </motion.section>
-
-              {/* Coverage Types */}
+          {/* Additional Content Sections - Only show on step 1 */}
+          {currentStep === 1 && (
+            <div className="">
+              {/* Simple 4-Step Process */}
               <motion.section
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="px-4"
+                className="max-w-[100rem] mx-auto mt-6 md:mt-10 lg:mt-16"
               >
-                <div className="text-center mb-12">
-                  <h2 className="text-3xl lg:text-4xl font-bold text-gray-800 mb-4">
-                    Comprehensive Coverage Options
+                <div className="text-center mb-8 lg:mb-12">
+                  <h2 className="text-2xl lg:text-3xl font-bold text-secondary-600 mb-4">
+                    How It Works
                   </h2>
-                  <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                    Choose from our wide range of insurance products designed to
-                    protect what matters most
+                  <p className="text-[0.95rem] md:text-base lg:text-lg text-slate-600 max-w-2xl mx-auto">
+                    A simple, secure process to get you covered in minutes
                   </p>
                 </div>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 relative">
+                  {/* Vertical connecting line for mobile/tablet */}
+                  <div className="absolute lg:hidden left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-[2px] bg-secondary-300 z-0"></div>
+
                   {[
                     {
-                      title: "Personal Accident",
-                      description: "24/7 protection against accidents",
-                      icon: "🛡️",
-                      color: "from-blue-500 to-blue-600",
-                      features: [
-                        "Disability coverage",
-                        "Medical expenses",
-                        "Death benefits",
-                      ],
-                    },
-                    {
-                      title: "Health Insurance",
-                      description: "Comprehensive medical coverage",
-                      icon: "🏥",
-                      color: "from-green-500 to-green-600",
-                      features: [
-                        "Hospitalization",
-                        "Outpatient care",
-                        "Emergency services",
-                      ],
-                    },
-                    {
-                      title: "Motor Insurance",
-                      description: "Complete vehicle protection",
-                      icon: "🚗",
-                      color: "from-purple-500 to-purple-600",
-                      features: [
-                        "Third party liability",
-                        "Comprehensive coverage",
-                        "Roadside assistance",
-                      ],
-                    },
-                    {
-                      title: "Life Insurance",
-                      description: "Financial security for loved ones",
-                      icon: "❤️",
-                      color: "from-red-500 to-red-600",
-                      features: ["Term life", "Whole life", "Investment plans"],
-                    },
-                  ].map((product, index) => (
-                    <motion.div
-                      key={index}
-                      className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300"
-                      whileHover={{ y: -5 }}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: index * 0.1 }}
-                    >
-                      <div
-                        className={`h-2 bg-gradient-to-r ${product.color}`}
-                      ></div>
-                      <div className="p-6">
-                        <div className="text-3xl mb-4">{product.icon}</div>
-                        <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                          {product.title}
-                        </h3>
-                        <p className="text-gray-600 mb-4">
-                          {product.description}
-                        </p>
-                        <ul className="space-y-2">
-                          {product.features.map((feature, idx) => (
-                            <li
-                              key={idx}
-                              className="flex items-center text-sm text-gray-600"
-                            >
-                              <div className="w-1.5 h-1.5 bg-primary-500 rounded-full mr-2"></div>
-                              {feature}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.section>
-
-              {/* Simple Process */}
-              <motion.section
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.5 }}
-                className="px-4 py-16 bg-gray-50 rounded-2xl"
-              >
-                <div className="text-center mb-12">
-                  <h2 className="text-3xl lg:text-4xl font-bold text-gray-800 mb-4">
-                    Simple 4-Step Process
-                  </h2>
-                  <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                    Get insured in just a few minutes with our hassle-free
-                    process
-                  </p>
-                </div>
-
-                <div className="grid md:grid-cols-4 gap-8">
-                  {[
-                    {
-                      step: "1",
+                      step: "01",
                       title: "Choose Plan",
                       description:
-                        "Select the insurance type and coverage that suits your needs",
+                        "Select the insurance type and coverage that best suits your needs and budget.",
+                      icon: (
+                        <TbShieldHalfFilled className="text-white w-6 h-6" />
+                      ),
                     },
                     {
-                      step: "2",
+                      step: "02",
                       title: "Fill Details",
                       description:
-                        "Provide your personal information and documents securely",
+                        "Provide your personal information through our secure, encrypted application form.",
+                      icon: <TbClipboardText className="text-white w-6 h-6" />,
                     },
                     {
-                      step: "3",
+                      step: "03",
                       title: "Make Payment",
                       description:
-                        "Pay securely using M-Pesa or other payment methods",
+                        "Complete your purchase using M-Pesa, bank transfer, or other secure payment methods.",
+                      icon: (
+                        <MpesaIcon variant="white" height={24} width={55} />
+                      ),
                     },
                     {
-                      step: "4",
-                      title: "Get Covered",
+                      step: "04",
+                      title: "Get Coverage",
                       description:
-                        "Receive your policy documents instantly via email",
+                        "Receive your policy documents instantly and enjoy immediate coverage protection.",
+                      icon: <FiCheckCircle className="text-white w-6 h-6" />,
                     },
                   ].map((item, index) => (
                     <motion.div
                       key={index}
-                      className="text-center relative"
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.5, delay: index * 0.1 + 0.2 }}
+                      className="lg:text-center relative px-4 lg:p-0 border lg:border-none border-primary-200 rounded-xl p-5 mx-3 lg:mx-0 bg-white lg:bg-transparent"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 + 0.3 }}
                     >
+                      {/* Horizontal connecting line for desktop */}
                       {index < 3 && (
-                        <div className="hidden md:block absolute top-8 left-full w-full h-0.5 bg-gradient-to-r from-primary-300 to-secondary-300 transform -translate-x-2"></div>
+                        <div className="hidden lg:block absolute top-8 left-[55%] w-full h-[2px] bg-secondary-400 transform -translate-x-4"></div>
                       )}
-                      <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center mx-auto mb-4 text-white text-xl font-bold shadow-lg">
-                        {item.step}
+
+                      <div className="flex flex-row lg:flex-col items-center lg:justify-center gap-4 lg:gap-0 relative z-10">
+                        <div className="relative lg:mb-6">
+                          <div className="w-16 h-16 bg-primary-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white shadow-lg">
+                            {item.icon}
+                          </div>
+                          <div className="text-sm font-semibold text-primary-600 mb-2 text-center">
+                            STEP {item.step}
+                          </div>
+                        </div>
+
+                        <div className="flex-1 lg:flex-none">
+                          <h3 className="text-xl font-semibold text-neutral-700 mb-1.5 lg:mb-3">
+                            {item.title}
+                          </h3>
+                          <p className="text-slate-600 text-sm leading-relaxed">
+                            {item.description}
+                          </p>
+                        </div>
                       </div>
-                      <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                        {item.title}
-                      </h3>
-                      <p className="text-gray-600 text-sm">
-                        {item.description}
-                      </p>
                     </motion.div>
                   ))}
-                </div>
-              </motion.section>
-
-              {/* Trust Indicators */}
-              <motion.section
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.6 }}
-                className="px-4 py-12 bg-white rounded-2xl shadow-sm border border-gray-100"
-              >
-                <div className="grid md:grid-cols-4 gap-8 text-center">
-                  <div>
-                    <div className="text-3xl font-bold text-primary-600 mb-2">
-                      10,000+
-                    </div>
-                    <div className="text-gray-600">Policies Sold</div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-bold text-secondary-600 mb-2">
-                      98%
-                    </div>
-                    <div className="text-gray-600">Customer Satisfaction</div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-bold text-green-600 mb-2">
-                      24/7
-                    </div>
-                    <div className="text-gray-600">Customer Support</div>
-                  </div>
-                  <div>
-                    <div className="text-3xl font-bold text-purple-600 mb-2">
-                      5 Min
-                    </div>
-                    <div className="text-gray-600">Average Processing</div>
-                  </div>
                 </div>
               </motion.section>
             </div>
           )}
         </div>
       </main>
+
+      {/* Trust Indicators */}
+      <section className="py-16 md:py-20 bg-primary-600 relative overflow-hidden mt-8 md:mt-12 lg:mt-16">
+        {/* Decorative elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 -left-10 w-40 h-40 rounded-full bg-secondary-500/30 blur-3xl"></div>
+          <div className="absolute bottom-1/3 -right-10 w-60 h-60 rounded-full bg-primary-500/40 blur-3xl"></div>
+        </div>
+
+        <div className="lg:container mx-auto px-4 relative z-10">
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <motion.span
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="inline-flex items-center px-4 py-1.5 rounded-full text-[0.8rem] md:text-sm font-medium bg-white/10 backdrop-blur-sm text-white border border-white/20 mb-4"
+            >
+              <span className="flex h-2 w-2 rounded-full bg-secondary-500 mr-2"></span>
+              Trusted by Thousands
+            </motion.span>
+
+            <motion.h2
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="text-3xl md:text-4xl font-bold text-white mb-6"
+            >
+              <span className="text-secondary-400">Numbers</span> that build
+              confidence
+            </motion.h2>
+
+            <motion.p
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="text-white/90 text-base lg:text-[1.1rem]"
+            >
+              Join thousands of satisfied customers who trust us with their
+              insurance needs across Kenya. Our track record speaks for itself.
+            </motion.p>
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6 mb-12">
+            {[
+              {
+                number: "10,000+",
+                label: "Policies Sold",
+                description: "Active policies nationwide",
+              },
+              {
+                number: "98%",
+                label: "Customer Satisfaction",
+                description: "Consistently high ratings",
+              },
+              {
+                number: "24/7",
+                label: "Customer Support",
+                description: "Always here to help",
+              },
+              {
+                number: "5 Min",
+                label: "Average Processing",
+                description: "Quick policy approval",
+              },
+            ].map((stat, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 + 0.3 }}
+                className="text-center"
+              >
+                <div className="bg-white/10 backdrop-blur-sm rounded-2xl px-2 py-6 lg:p-8 border border-white/20 hover:bg-white/20 transition-all duration-300">
+                  <h3 className="text-3xl lg:text-4xl font-bold text-secondary-400 mb-2">
+                    {stat.number}
+                  </h3>
+                  <p className="text-white font-semibold text-lg mb-1">
+                    {stat.label}
+                  </p>
+                  <p className="text-white/70 text-sm">{stat.description}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Trust badges */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.7 }}
+            className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 p-6 md:p-8"
+          >
+            <div className="text-center mb-8">
+              <h3 className="text-xl md:text-2xl font-bold text-white mb-3">
+                Industry Standards & Compliance
+              </h3>
+              <p className="text-white/80 text-sm md:text-base max-w-2xl mx-auto">
+                We maintain the highest levels of security, regulation
+                compliance, and service excellence
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-4 md:gap-6">
+              {[
+                {
+                  title: "Licensed & Regulated",
+                  description:
+                    "Fully licensed by Insurance Regulatory Authority (IRA) Kenya",
+                },
+                {
+                  title: "Bank-Level Security",
+                  description:
+                    "256-bit SSL encryption and secure data handling protocols",
+                },
+                {
+                  title: "Instant Coverage",
+                  description:
+                    "Immediate policy activation upon successful payment verification",
+                },
+              ].map((badge, index) => (
+                <motion.div
+                  key={index}
+                  className="text-center p-4 md:p-6 bg-white/5 rounded-xl hover:bg-white/10 transition-colors duration-300"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 + 0.8 }}
+                >
+                  <h4 className="font-semibold text-white text-base md:text-lg mb-2">
+                    {badge.title}
+                  </h4>
+                  <p className="text-white/70 text-xs md:text-sm leading-relaxed">
+                    {badge.description}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
 
       <Footer />
     </div>
