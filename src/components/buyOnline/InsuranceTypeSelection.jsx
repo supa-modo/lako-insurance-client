@@ -6,6 +6,7 @@ import {
   TbCheck,
   TbBuildingBank,
   TbLock,
+  TbPlane,
 } from "react-icons/tb";
 import { GiLifeInTheBalance } from "react-icons/gi";
 import { FaCarCrash } from "react-icons/fa";
@@ -33,6 +34,15 @@ const insuranceTypes = [
       "Protection against accidents and injuries in various situations",
     comingSoon: false,
     benefits: ["Individual Cover", "Student Cover"],
+  },
+  {
+    id: "travel",
+    name: "Travel Insurance",
+    icon: <TbPlane className="h-6 w-6 md:h-7 md:w-7" />,
+    description:
+      "Comprehensive protection for domestic and international travel",
+    comingSoon: false,
+    benefits: ["Single Trip", "Annual Multi-Trip", "Emergency Medical"],
   },
   {
     id: "property",

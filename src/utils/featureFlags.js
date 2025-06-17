@@ -7,12 +7,14 @@ const AVAILABLE_INSURANCE_TYPES = {
   development: {
     health: true,
     "personal-accident": true,
+    travel: true,
     property: false,
     motor: false,
   },
   production: {
     health: false,
     "personal-accident": false, // Disable in production
+    travel: false,
     property: false,
     motor: false,
   },

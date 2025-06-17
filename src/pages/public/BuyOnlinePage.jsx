@@ -5,6 +5,7 @@ import Footer from "../../components/layout/Footer";
 import InsuranceTypeSelection from "../../components/buyOnline/InsuranceTypeSelection";
 import HealthInsuranceFlow from "../../components/buyOnline/health/HealthInsuranceFlow";
 import PersonalAccidentFlow from "../../components/buyOnline/accident/PersonalAccidentFlow";
+import TravelInsuranceFlow from "../../components/buyOnline/travel/TravelInsuranceFlow";
 import {
   TbArrowLeft,
   TbClipboardText,
@@ -148,6 +149,7 @@ const BuyOnlinePage = () => {
   const getMaxSteps = () => {
     if (formData.insuranceType === "personal-accident") return 7; // 6 steps + success
     if (formData.insuranceType === "health") return 6; // 5 steps + success
+    if (formData.insuranceType === "travel") return 7; // 6 steps + success
     return 1;
   };
 
@@ -178,6 +180,19 @@ const BuyOnlinePage = () => {
     if (formData.insuranceType === "personal-accident") {
       return (
         <PersonalAccidentFlow
+          currentStep={currentStep - 1}
+          formData={formData}
+          updateFormData={updateFormData}
+          nextStep={nextStep}
+          prevStep={prevStep}
+          resetFlow={resetFlow}
+        />
+      );
+    }
+
+    if (formData.insuranceType === "travel") {
+      return (
+        <TravelInsuranceFlow
           currentStep={currentStep - 1}
           formData={formData}
           updateFormData={updateFormData}
@@ -398,7 +413,7 @@ const BuyOnlinePage = () => {
 
                       <div className="flex flex-row lg:flex-col items-center lg:justify-center gap-4 lg:gap-0 relative z-10">
                         <div className="relative lg:mb-6">
-                          <div className="w-16 h-16 bg-primary-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white shadow-lg">
+                          <div className="w-16 lg:w-[4.7rem] h-16 lg:h-[4.7rem] bg-primary-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white shadow-lg">
                             {item.icon}
                           </div>
                           <div className="text-sm font-semibold text-primary-600 mb-2 text-center">
@@ -425,7 +440,7 @@ const BuyOnlinePage = () => {
       </main>
 
       {/* Trust Indicators */}
-      <section className="py-16 md:py-20 bg-primary-600 relative overflow-hidden mt-8 md:mt-12 lg:mt-16">
+      <section className="pt-16 md:pt-20 bg-primary-600 relative overflow-hidden mt-8 md:mt-12 lg:mt-16">
         {/* Decorative elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-1/4 -left-10 w-40 h-40 rounded-full bg-secondary-500/30 blur-3xl"></div>
@@ -433,7 +448,7 @@ const BuyOnlinePage = () => {
         </div>
 
         <div className="lg:container mx-auto px-4 relative z-10">
-          <div className="text-center max-w-3xl mx-auto mb-12">
+          <div className="text-center max-w-4xl mx-auto mb-8 lg:mb-12">
             <motion.span
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -450,8 +465,8 @@ const BuyOnlinePage = () => {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="text-3xl md:text-4xl font-bold text-white mb-6"
             >
-              <span className="text-secondary-400">Numbers</span> that build
-              confidence
+              Your <span className="text-secondary-400">trusted</span> insurance
+              partner
             </motion.h2>
 
             <motion.p
@@ -468,7 +483,7 @@ const BuyOnlinePage = () => {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6 mb-12">
             {[
               {
-                number: "10,000+",
+                number: "5,000+",
                 label: "Policies Sold",
                 description: "Active policies nationwide",
               },
@@ -507,61 +522,23 @@ const BuyOnlinePage = () => {
               </motion.div>
             ))}
           </div>
-
-          {/* Trust badges */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.7 }}
-            className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 p-6 md:p-8"
-          >
-            <div className="text-center mb-8">
-              <h3 className="text-xl md:text-2xl font-bold text-white mb-3">
-                Industry Standards & Compliance
-              </h3>
-              <p className="text-white/80 text-sm md:text-base max-w-2xl mx-auto">
-                We maintain the highest levels of security, regulation
-                compliance, and service excellence
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-4 md:gap-6">
-              {[
-                {
-                  title: "Licensed & Regulated",
-                  description:
-                    "Fully licensed by Insurance Regulatory Authority (IRA) Kenya",
-                },
-                {
-                  title: "Bank-Level Security",
-                  description:
-                    "256-bit SSL encryption and secure data handling protocols",
-                },
-                {
-                  title: "Instant Coverage",
-                  description:
-                    "Immediate policy activation upon successful payment verification",
-                },
-              ].map((badge, index) => (
-                <motion.div
-                  key={index}
-                  className="text-center p-4 md:p-6 bg-white/5 rounded-xl hover:bg-white/10 transition-colors duration-300"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 + 0.8 }}
-                >
-                  <h4 className="font-semibold text-white text-base md:text-lg mb-2">
-                    {badge.title}
-                  </h4>
-                  <p className="text-white/70 text-xs md:text-sm leading-relaxed">
-                    {badge.description}
-                  </p>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
         </div>
       </section>
+      {/* Trust badges */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.7 }}
+        className="bg-primary-600 text-center pt-4"
+      >
+        <p className="text-white/80 p-6 md:p-8 text-sm md:text-base border-t border-white/20 max-w-screen-2xl mx-auto">
+          Lako Insurance Agency is regulated and is authorized by IRA (the
+          Insurance Regulatory Authority) to handle all forms of general
+          insurance business. Your trust and protection are our top priorities.
+          Your data is protected through our Kenya Data Protection Act Compliant
+          system.
+        </p>
+      </motion.div>
 
       <Footer />
     </div>
