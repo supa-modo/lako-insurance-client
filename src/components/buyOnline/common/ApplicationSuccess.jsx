@@ -137,6 +137,14 @@ const ApplicationSuccess = ({
               font-size: 16px;
               font-weight: 500;
             }
+
+            .header-right {
+              text-align: right;
+              font-size: 11px;
+              color: #718096;
+              font-weight: 400;
+              font-family: monospace;
+            }
             
             /* Application Details Section */
             .application-details {
@@ -313,6 +321,11 @@ const ApplicationSuccess = ({
                     : "N/A"
                 } Insurance</h2>
               </div>
+              <div class="header-right">
+                <p>Generated <br/> ${new Date().toLocaleDateString(
+                  "en-GB"
+                )} ${new Date().toLocaleTimeString("en-GB")}</p>
+              </div>
             </div>
   
             <!-- Application Details Section -->
@@ -445,10 +458,8 @@ const ApplicationSuccess = ({
             <!-- Footer - Always at bottom -->
             <div class="footer">
               <img src="/lako-logo.png" alt="Lako Insurance" class="footer-logo" />
-              <p class="footer-text">This is an automatically generated document. Please retain this for your records.</p>
-              <p>Generated on ${new Date().toLocaleDateString(
-                "en-GB"
-              )} at ${new Date().toLocaleTimeString("en-GB")}</p>
+              <p class="footer-text">This is an automatic system-generated document. Please retain it for your records.</p>
+             
               <p>© ${new Date().getFullYear()} Lako Insurance. All rights reserved.</p>
             </div>
           </div>

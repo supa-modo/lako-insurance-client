@@ -456,7 +456,7 @@ const BuyOnlinePage = () => {
               className="inline-flex items-center px-4 py-1.5 rounded-full text-[0.8rem] md:text-sm font-medium bg-white/10 backdrop-blur-sm text-white border border-white/20 mb-4"
             >
               <span className="flex h-2 w-2 rounded-full bg-secondary-500 mr-2"></span>
-              Trusted by Thousands
+              Lako Insurance Agency
             </motion.span>
 
             <motion.h2
@@ -534,9 +534,8 @@ const BuyOnlinePage = () => {
         <p className="text-white/80 p-6 md:p-8 text-sm md:text-base border-t border-white/20 max-w-screen-2xl mx-auto">
           Lako Insurance Agency is regulated and is authorized by IRA (the
           Insurance Regulatory Authority) to handle all forms of general
-          insurance business. Your trust and protection are our top priorities.
-          Your data is protected through our Kenya Data Protection Act Compliant
-          system.
+          insurance business. Your data is protected through our Kenya Data
+          Protection Act Compliant system.
         </p>
       </motion.div>
 
