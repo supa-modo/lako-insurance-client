@@ -420,6 +420,8 @@ const ApplicationSuccess = ({
                   <strong>Payment:</strong> ${
                     paymentCompleted
                       ? "Payment completed as part of the application process. The policy documents will be shared to your email after application approval."
+                      : applicationData?.insuranceType === "travel"
+                      ? "Payment for this policy will be arranged after your application and travel details are reviewed and approved by our underwriting team."
                       : "Payment for this policy was part of your application process."
                   }
                 </div>
@@ -622,6 +624,8 @@ const ApplicationSuccess = ({
               <strong>Payment:</strong>{" "}
               {paymentCompleted
                 ? "Payment for this policy has been completed as part of the application process. Once the application is approved, your policy documents will be sent via email."
+                : applicationData?.insuranceType === "travel"
+                ? "Payment for this policy will be arranged after your application and travel details are reviewed and approved by our underwriting team."
                 : "Payment for this policy has been completed as part of the application process."}
             </p>
           </div>

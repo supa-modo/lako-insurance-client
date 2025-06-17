@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import TripTypeSelection from "./TripTypeSelection";
 import TravelDetailsForm from "./TravelDetailsForm";
 import PlanSelection from "./PlanSelection";
@@ -7,7 +7,6 @@ import PersonalDetailsForm from "./PersonalDetailsForm";
 import DocumentUpload from "./DocumentUpload";
 import ReviewAndSubmit from "./ReviewAndSubmit";
 import ApplicationSuccess from "../common/ApplicationSuccess";
-import PaymentComponent from "../common/PaymentComponent";
 import applicationService from "../../../services/applicationService";
 
 const TravelInsuranceFlow = ({
@@ -20,16 +19,12 @@ const TravelInsuranceFlow = ({
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedApplication, setSubmittedApplication] = useState(null);
-  const [draftApplication, setDraftApplication] = useState(null);
-  const [paymentCompleted, setPaymentCompleted] = useState(false);
-  const [showApplicationSuccess, setShowApplicationSuccess] = useState(false);
-  const [isCreatingDraft, setIsCreatingDraft] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
-  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [showApplicationSuccess, setShowApplicationSuccess] = useState(false);
 
   // Scroll to top when validation errors are set
   React.useEffect(() => {
-    if (Object.keys(validationErrors).length > 0 && currentStep === 5) {
+    if (Object.keys(validationErrors).length > 0 && currentStep === 6) {
       setTimeout(() => {
         window.scrollTo({ top: 0, behavior: "smooth" });
       }, 100);
@@ -67,58 +62,15 @@ const TravelInsuranceFlow = ({
       description: "Review and submit application",
       component: "review",
     },
-    {
-      title: "Payment & Success",
-      description: "Complete payment and confirmation",
-      component: "payment-success",
-    },
   ];
 
-  // Function to reset all form data to default values
-  const resetFormData = () => {
-    updateFormData("insuranceType", "travel");
-    updateFormData("tripType", "");
-    updateFormData("selectedPlan", null);
-    updateFormData("firstName", "");
-    updateFormData("middleName", "");
-    updateFormData("lastName", "");
-    updateFormData("dateOfBirth", "");
-    updateFormData("gender", "");
-    updateFormData("kraPin", "");
-    updateFormData("idNumber", "");
-    updateFormData("mobileNumber", "");
-    updateFormData("emailAddress", "");
-    updateFormData("postalAddress", "");
-    updateFormData("town", "");
-    updateFormData("nextOfKinName", "");
-    updateFormData("nextOfKinContacts", "");
-    updateFormData("beneficiaryName", "");
-    updateFormData("beneficiaryContacts", "");
-    updateFormData("premiumAmount", null);
-    updateFormData("insuranceProvider", "");
-    updateFormData("isAgentPurchase", false);
-    updateFormData("agentName", "");
-    updateFormData("agentEmail", "");
-    updateFormData("agentPhone", "");
-    updateFormData("documents", {});
-    // Travel specific fields
-    updateFormData("destination", "");
-    updateFormData("departureDate", "");
-    updateFormData("returnDate", "");
-    updateFormData("travelPurpose", "");
-    updateFormData("numberOfTravelers", 1);
-    updateFormData("coverageType", "");
-  };
+  // Handle application submission
+  const handleSubmitApplication = async () => {
+    setValidationErrors({});
+    setIsSubmitting(true);
 
-  // Create draft application before payment
-  const createDraftApplication = async () => {
-    if (draftApplication) {
-      return draftApplication;
-    }
-
-    setIsCreatingDraft(true);
     try {
-      console.log("Creating draft application for payment...");
+      console.log("Submitting travel insurance application...");
 
       const sanitizeField = (value) => {
         if (typeof value === "string" && value.trim() === "") {
@@ -127,10 +79,10 @@ const TravelInsuranceFlow = ({
         return value || null;
       };
 
-      const draftPayload = {
+      const applicationPayload = {
         insuranceType: "travel",
         tripType: formData.tripType,
-        status: "pending_payment",
+        status: "submitted",
         firstName: formData.firstName,
         middleName: sanitizeField(formData.middleName),
         lastName: formData.lastName,
@@ -161,34 +113,25 @@ const TravelInsuranceFlow = ({
         agentPhone: sanitizeField(formData.agentPhone),
       };
 
-      const response = await applicationService.createApplication(draftPayload);
+      const response = await applicationService.createApplication(
+        applicationPayload
+      );
 
       if (!response.success) {
-        throw new Error(
-          response.message || "Failed to create draft application"
-        );
+        throw new Error(response.message || "Failed to submit application");
       }
 
-      const createdDraft = response.data;
-      setDraftApplication(createdDraft);
-      return createdDraft;
-    } catch (error) {
-      console.error("Error creating draft application:", error);
-      throw error;
-    } finally {
-      setIsCreatingDraft(false);
-    }
-  };
+      const createdApplication = response.data;
+      setSubmittedApplication(createdApplication);
 
-  // Handle moving to payment step
-  const handleProceedToPayment = async () => {
-    setValidationErrors({});
+      // Upload documents if any
+      if (formData.documents && Object.keys(formData.documents).length > 0) {
+        await uploadDocumentsToApplication(createdApplication.id);
+      }
 
-    try {
-      await createDraftApplication();
-      nextStep();
+      setShowApplicationSuccess(true);
     } catch (error) {
-      console.error("Error proceeding to payment:", error);
+      console.error("Error submitting application:", error);
 
       if (
         error.response &&
@@ -198,75 +141,10 @@ const TravelInsuranceFlow = ({
         const serverValidationErrors = error.response.data.errors || {};
         setValidationErrors(serverValidationErrors);
       } else {
-        alert("Failed to prepare application for payment. Please try again.");
+        alert("Failed to submit application. Please try again.");
       }
-    }
-  };
-
-  // Handle payment completion
-  const handlePaymentComplete = async (paymentData) => {
-    if (isProcessingPayment || paymentCompleted) {
-      return;
-    }
-
-    setIsProcessingPayment(true);
-    setPaymentCompleted(true);
-
-    try {
-      await updateDraftApplicationAfterPayment(paymentData);
-      setShowApplicationSuccess(true);
-    } catch (error) {
-      console.error("Error updating application after payment:", error);
-      setIsProcessingPayment(false);
-      setPaymentCompleted(false);
-      alert(
-        "Payment successful but application update failed. Please contact support with your payment reference: " +
-          paymentData.paymentReference
-      );
-    }
-  };
-
-  // Update draft application after successful payment
-  const updateDraftApplicationAfterPayment = async (paymentData) => {
-    setIsSubmitting(true);
-    try {
-      if (!draftApplication) {
-        throw new Error("Draft application not found");
-      }
-
-      const updatePayload = {
-        status: "submitted",
-        paymentReference:
-          paymentData.paymentReference || paymentData.mpesaReceiptNumber,
-        paymentDate: new Date().toISOString(),
-      };
-
-      const updateResponse = await applicationService.updateApplication(
-        draftApplication.id,
-        updatePayload
-      );
-
-      if (!updateResponse.success) {
-        throw new Error(
-          updateResponse.message || "Failed to update application"
-        );
-      }
-
-      const updatedApplication = updateResponse.data;
-      setSubmittedApplication(updatedApplication);
-
-      // Upload documents if any
-      if (formData.documents && Object.keys(formData.documents).length > 0) {
-        await uploadDocumentsToApplication(updatedApplication.id);
-      }
-
-      return updatedApplication;
-    } catch (error) {
-      console.error("Error updating application:", error);
-      throw error;
     } finally {
       setIsSubmitting(false);
-      setIsProcessingPayment(false);
     }
   };
 
@@ -305,23 +183,25 @@ const TravelInsuranceFlow = ({
     }
   };
 
-  // Handle payment cancellation
-  const handlePaymentCancel = () => {
-    setPaymentCompleted(false);
-    setShowApplicationSuccess(false);
-    prevStep();
-  };
-
   // Reset flow completely
   const handleStartNewApplication = () => {
-    setPaymentCompleted(false);
     setShowApplicationSuccess(false);
     setSubmittedApplication(null);
-    setDraftApplication(null);
+    setValidationErrors({});
     resetFlow();
   };
 
   const renderStep = () => {
+    if (showApplicationSuccess) {
+      return (
+        <ApplicationSuccess
+          applicationData={submittedApplication}
+          onStartNew={handleStartNewApplication}
+          paymentCompleted={false}
+        />
+      );
+    }
+
     switch (currentStep) {
       case 1:
         return (
@@ -373,41 +253,13 @@ const TravelInsuranceFlow = ({
           <ReviewAndSubmit
             formData={formData}
             updateFormData={updateFormData}
-            nextStep={handleProceedToPayment}
+            nextStep={handleSubmitApplication}
             prevStep={prevStep}
-            isSubmitting={isSubmitting || isCreatingDraft}
+            isSubmitting={isSubmitting}
             validationErrors={validationErrors}
             setValidationErrors={setValidationErrors}
           />
         );
-      case 7:
-        if (!paymentCompleted && !showApplicationSuccess) {
-          return (
-            <PaymentComponent
-              applicationData={{
-                id: draftApplication?.id,
-                applicationNumber: draftApplication?.applicationNumber,
-                premiumAmount:
-                  formData.premiumAmount ||
-                  formData.selectedPlan?.annualPremium,
-                firstName: formData.firstName,
-                lastName: formData.lastName,
-                tripType: formData.tripType,
-                insuranceType: formData.insuranceType,
-              }}
-              onPaymentComplete={handlePaymentComplete}
-              onCancel={handlePaymentCancel}
-            />
-          );
-        } else {
-          return (
-            <ApplicationSuccess
-              applicationData={submittedApplication}
-              onStartNew={handleStartNewApplication}
-              paymentCompleted={paymentCompleted}
-            />
-          );
-        }
       default:
         return null;
     }
@@ -416,62 +268,66 @@ const TravelInsuranceFlow = ({
   return (
     <div className="">
       {/* Progress Bar */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-2.5 md:mb-4">
-          <h2 className="text-[1.05rem] md:text-xl font-semibold text-neutral-700">
-            Travel Insurance
-          </h2>
-          <span className="text-[0.83rem] md:text-sm font-medium text-gray-500">
-            Step {currentStep} of {steps.length}
-          </span>
-        </div>
+      {!showApplicationSuccess && (
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-2.5 md:mb-4">
+            <h2 className="text-[1.05rem] md:text-xl font-semibold text-neutral-700">
+              Travel Insurance
+            </h2>
+            <span className="text-[0.83rem] md:text-sm font-medium text-gray-500">
+              Step {currentStep} of {steps.length}
+            </span>
+          </div>
 
-        <div className="relative hidden lg:block">
-          <div className="flex items-center">
-            {steps.map((step, index) => (
-              <React.Fragment key={index}>
-                <div className="flex items-center">
-                  <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-lexend font-medium ${
-                      index + 1 <= currentStep
-                        ? "bg-primary-600 text-white"
-                        : "bg-gray-200 text-neutral-700"
-                    }`}
-                  >
-                    {index + 1}
-                  </div>
-                  <div className="ml-2">
+          <div className="relative hidden lg:block">
+            <div className="flex items-center">
+              {steps.map((step, index) => (
+                <React.Fragment key={index}>
+                  <div className="flex items-center">
                     <div
-                      className={`text-sm font-bold ${
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-lexend font-medium ${
                         index + 1 <= currentStep
-                          ? "text-primary-600"
-                          : "text-gray-700"
+                          ? "bg-primary-600 text-white"
+                          : "bg-gray-200 text-neutral-700"
                       }`}
                     >
-                      {step.title}
+                      {index + 1}
                     </div>
-                    <div className="text-xs text-neutral-700 font-medium">
-                      {step.description}
+                    <div className="ml-2">
+                      <div
+                        className={`text-sm font-bold ${
+                          index + 1 <= currentStep
+                            ? "text-primary-600"
+                            : "text-gray-700"
+                        }`}
+                      >
+                        {step.title}
+                      </div>
+                      <div className="text-xs text-neutral-700 font-medium">
+                        {step.description}
+                      </div>
                     </div>
                   </div>
-                </div>
-                {index < steps.length - 1 && (
-                  <div
-                    className={`flex-1 h-0.5 mx-3.5 ${
-                      index + 1 < currentStep ? "bg-primary-600" : "bg-gray-200"
-                    }`}
-                  />
-                )}
-              </React.Fragment>
-            ))}
+                  {index < steps.length - 1 && (
+                    <div
+                      className={`flex-1 h-0.5 mx-3.5 ${
+                        index + 1 < currentStep
+                          ? "bg-primary-600"
+                          : "bg-gray-200"
+                      }`}
+                    />
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Current Step Content */}
       <AnimatePresence mode="wait">
         <motion.div
-          key={currentStep}
+          key={showApplicationSuccess ? "success" : currentStep}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}

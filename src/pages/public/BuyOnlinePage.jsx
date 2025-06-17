@@ -149,7 +149,7 @@ const BuyOnlinePage = () => {
   const getMaxSteps = () => {
     if (formData.insuranceType === "personal-accident") return 7; // 6 steps + success
     if (formData.insuranceType === "health") return 6; // 5 steps + success
-    if (formData.insuranceType === "travel") return 7; // 6 steps + success
+    if (formData.insuranceType === "travel") return 6; // 6 steps (no separate payment step)
     return 1;
   };
 

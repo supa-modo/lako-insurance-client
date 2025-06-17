@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import {
   TbUpload,
@@ -16,8 +16,46 @@ import {
 import { FaPassport } from "react-icons/fa6";
 
 const DocumentUpload = ({ formData, updateFormData, nextStep, prevStep }) => {
+  const [uploadedFiles, setUploadedFiles] = useState(formData.documents || {});
   const [dragOver, setDragOver] = useState(null);
   const [uploadProgress, setUploadProgress] = useState({});
+  const fileInputRefs = useRef({});
+
+  // Effect to handle external updates to formData.documents (like reset)
+  React.useEffect(() => {
+    if (formData.documents !== uploadedFiles) {
+      // Clean up existing file previews before updating
+      Object.values(uploadedFiles).forEach((fileData) => {
+        if (fileData?.url) {
+          URL.revokeObjectURL(fileData.url);
+        }
+      });
+
+      // Update state with new documents (could be empty object for reset)
+      setUploadedFiles(formData.documents || {});
+
+      // Clear file inputs when reset
+      if (!formData.documents || Object.keys(formData.documents).length === 0) {
+        Object.values(fileInputRefs.current).forEach((input) => {
+          if (input) {
+            input.value = "";
+          }
+        });
+      }
+    }
+  }, [formData.documents]);
+
+  // Cleanup effect for component unmount
+  React.useEffect(() => {
+    return () => {
+      // Clean up all object URLs when component unmounts
+      Object.values(uploadedFiles).forEach((fileData) => {
+        if (fileData?.url) {
+          URL.revokeObjectURL(fileData.url);
+        }
+      });
+    };
+  }, []);
 
   const requiredDocuments = [
     {
@@ -49,30 +87,34 @@ const DocumentUpload = ({ formData, updateFormData, nextStep, prevStep }) => {
     },
   ];
 
-  const handleFileUpload = (documentId, files) => {
-    const file = files[0];
-    if (!file) return;
-
-    // Validate file size
+  const validateFile = (file, documentId) => {
     const maxSize =
       documentId === "passportPhoto" ? 2 * 1024 * 1024 : 5 * 1024 * 1024; // 2MB for photo, 5MB for others
-    if (file.size > maxSize) {
-      alert(
-        `File size must be less than ${
-          documentId === "passportPhoto" ? "2MB" : "5MB"
-        }`
-      );
-      return;
-    }
-
-    // Validate file type
     const allowedTypes =
       documentId === "passportPhoto"
         ? ["image/jpeg", "image/png"]
         : ["image/jpeg", "image/png", "application/pdf"];
 
+    if (file.size > maxSize) {
+      return `File size must be less than ${
+        documentId === "passportPhoto" ? "2MB" : "5MB"
+      }`;
+    }
+
     if (!allowedTypes.includes(file.type)) {
-      alert("Please upload a valid file format (PDF, JPG, or PNG)");
+      return "Please upload a valid file format (PDF, JPG, or PNG)";
+    }
+
+    return null;
+  };
+
+  const handleFileUpload = (documentId, files) => {
+    const file = files[0];
+    if (!file) return;
+
+    const error = validateFile(file, documentId);
+    if (error) {
+      alert(error);
       return;
     }
 
@@ -95,12 +137,14 @@ const DocumentUpload = ({ formData, updateFormData, nextStep, prevStep }) => {
             uploadedAt: new Date().toISOString(),
           };
 
-          // Update form data
-          const currentDocuments = formData.documents || {};
-          updateFormData("documents", {
-            ...currentDocuments,
+          // Update local state and form data
+          const newUploadedFiles = {
+            ...uploadedFiles,
             [documentId]: fileData,
-          });
+          };
+
+          setUploadedFiles(newUploadedFiles);
+          updateFormData("documents", newUploadedFiles);
 
           return { ...prev, [documentId]: 100 };
         }
@@ -127,16 +171,16 @@ const DocumentUpload = ({ formData, updateFormData, nextStep, prevStep }) => {
   };
 
   const removeDocument = (documentId) => {
-    const currentDocuments = formData.documents || {};
-    const newDocuments = { ...currentDocuments };
+    const newUploadedFiles = { ...uploadedFiles };
 
     // Revoke the URL to prevent memory leaks
-    if (newDocuments[documentId]?.url) {
-      URL.revokeObjectURL(newDocuments[documentId].url);
+    if (newUploadedFiles[documentId]?.url) {
+      URL.revokeObjectURL(newUploadedFiles[documentId].url);
     }
 
-    delete newDocuments[documentId];
-    updateFormData("documents", newDocuments);
+    delete newUploadedFiles[documentId];
+    setUploadedFiles(newUploadedFiles);
+    updateFormData("documents", newUploadedFiles);
 
     // Remove upload progress
     setUploadProgress((prev) => {
@@ -144,19 +188,23 @@ const DocumentUpload = ({ formData, updateFormData, nextStep, prevStep }) => {
       delete newProgress[documentId];
       return newProgress;
     });
+
+    // Clear the file input
+    if (fileInputRefs.current[documentId]) {
+      fileInputRefs.current[documentId].value = "";
+    }
   };
 
   const viewDocument = (documentId) => {
-    const document = formData.documents?.[documentId];
+    const document = uploadedFiles?.[documentId];
     if (document?.url) {
       window.open(document.url, "_blank");
     }
   };
 
   const validateDocuments = () => {
-    const uploadedDocs = formData.documents || {};
     const missingRequired = requiredDocuments
-      .filter((doc) => doc.required && !uploadedDocs[doc.id])
+      .filter((doc) => doc.required && !uploadedFiles[doc.id])
       .map((doc) => doc.title);
 
     return missingRequired.length === 0;
@@ -200,7 +248,7 @@ const DocumentUpload = ({ formData, updateFormData, nextStep, prevStep }) => {
 
         <div className="space-y-6">
           {requiredDocuments.map((document) => {
-            const uploadedDoc = formData.documents?.[document.id];
+            const uploadedDoc = uploadedFiles?.[document.id];
             const progress = uploadProgress[document.id];
             const isUploaded = uploadedDoc && progress === 100;
             const isUploading = progress > 0 && progress < 100;
@@ -298,6 +346,9 @@ const DocumentUpload = ({ formData, updateFormData, nextStep, prevStep }) => {
                             <label className="text-primary-600 cursor-pointer hover:underline">
                               browse
                               <input
+                                ref={(el) =>
+                                  (fileInputRefs.current[document.id] = el)
+                                }
                                 type="file"
                                 className="hidden"
                                 accept={

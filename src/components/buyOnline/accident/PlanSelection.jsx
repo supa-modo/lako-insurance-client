@@ -24,6 +24,7 @@ import {
   getAgeRangesForPlan,
 } from "../../../utils/premiumUtils";
 import { FaFilePdf, FaRegFilePdf } from "react-icons/fa";
+import { PiCaretDownDuotone } from "react-icons/pi";
 
 const PlanSelection = ({ formData, updateFormData, nextStep, prevStep }) => {
   const [plans, setPlans] = useState([]);
@@ -305,14 +306,15 @@ Note: This is a summary document. Please contact ${
     if (ageRanges.length === 0) return null;
 
     return (
-      <div className="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-        <div className="flex items-center justify-between mb-2">
-          <label className="text-sm font-medium text-gray-700 flex items-center">
+      <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+        {/* <div className="flex items-center justify-between mb-2">
+          <label className="text-sm font-medium text-primary-600 flex items-center">
             <TbCalendar className="w-4 h-4 mr-1" />
-            Select Your Age:
-          </label>
-          <span className="text-xs text-gray-500">Age-based pricing</span>
-        </div>
+            Age-base Pricing:
+          </label>{" "}
+        </div> */}
+
+        <div className="relative flex items-center">
         <select
           value={selectedAge || ""}
           onChange={(e) => handleAgeChange(plan.id, e.target.value)}
@@ -342,8 +344,12 @@ Note: This is a summary document. Please contact ${
             );
           })}
         </select>
+
+        <PiCaretDownDuotone className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2" />
+        </div>
+        
         <div className="mt-2 text-xs text-gray-500">
-          Premium: {renderPremiumDisplay(plan)}
+          {renderPremiumDisplay(plan)}
         </div>
       </div>
     );
@@ -454,7 +460,7 @@ Note: This is a summary document. Please contact ${
           plans.map((plan, index) => (
             <motion.div
               key={plan.id}
-              className={`relative rounded-xl border-2 p-3.5 md:p-6 cursor-pointer transition-all duration-200 ${
+              className={`relative rounded-xl border-2 p-2 md:p-6 cursor-pointer transition-all duration-200 ${
                 selectedPlan?.id === plan.id
                   ? "border-primary-500 bg-primary-50 shadow-lg"
                   : "border-gray-200 bg-white hover:border-primary-300 hover:shadow-md"
@@ -506,19 +512,25 @@ Note: This is a summary document. Please contact ${
                   </div>
                 </div>
 
-                <div className="min-w-[23%] flex flex-row items-center justify-between border-t md:border-none border-gray-200">
-                  <div className="rounded-lg px-2 py-2.5 md:py-0">
+                <div className="min-w-[23%] flex flex-row items-start justify-between border-t md:border-none border-gray-200">
+                  <div className="rounded-lg px-2 py-2.5 md:py-0 w-full">
                     <div className="text-sm font-medium text-neutral-700 md:mb-1">
                       Coverage Amount
                     </div>
                     <div className="text-lg lg:text-xl font-lexend font-bold text-gray-600">
                       {formatCurrency(plan.inpatientCoverageLimit)}
                     </div>
+                    {/*show age based premium text if premium structure is age based */}
+                    {plan.premiumStructure === "age-based" && (
+                      <div className="text-sm font-semibold text-primary-700 mt-3 md:mb-1">
+                        Age-based Premium:
+                      </div>
+                    )}
                   </div>
 
-                  <div className=" rounded-lg px-2 py-2.5 md:py-0">
-                    <div className="text-sm font-medium text-primary-600 md:mb-1">
-                      Plan Premium
+                  <div className=" rounded-lg px-2 py-2.5 md:py-0 w-full">
+                    <div className={`text-sm text-primary-600 font-medium ${plan.premiumStructure === "age-based" ? "hidden" : "block"} md:mb-1`}>
+                      Cover Premium
                     </div>
                     {plan.premiumStructure === "age-based"
                       ? renderAgeSelector(plan)
@@ -542,7 +554,7 @@ Note: This is a summary document. Please contact ${
 
               <button
                 type="button"
-                className={`w-full px-6 py-2 mt-2  rounded-lg font-medium transition-colors ${
+                className={`w-full px-6 py-2.5 mt-2  rounded-lg font-medium transition-colors ${
                   selectedPlan?.id === plan.id
                     ? "bg-primary-600 text-white"
                     : "bg-gray-200 border border-gray-300 text-gray-600 hover:bg-gray-200"
