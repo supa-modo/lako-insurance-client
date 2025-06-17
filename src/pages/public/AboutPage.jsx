@@ -219,7 +219,9 @@ const AboutPage = () => {
                   className="w-full md:w-auto inline-flex px-6 py-3 bg-gradient-to-r from-primary-500 via-primary-600 to-primary-700 font-lexend text-secondary-100 rounded-lg shadow-xl hover:shadow-2xl group"
                 >
                   <div className="flex items-center mx-auto">
-                    <span className="text-white text-[0.93rem] md:text-base ">Get in Touch </span>
+                    <span className="text-white text-[0.93rem] md:text-base ">
+                      Get in Touch{" "}
+                    </span>
                     <TbArrowRight
                       size={18}
                       className="text-white ml-1 group-hover:translate-x-1 transition-transform"
@@ -241,7 +243,9 @@ const AboutPage = () => {
                 >
                   <div className="flex items-center mx-auto">
                     <HiMiniUserGroup size={20} />
-                    <span className="ml-2 text-[0.93rem] md:text-base font-medium">Partner with Us</span>
+                    <span className="ml-2 text-[0.93rem] md:text-base font-medium">
+                      Partner with Us
+                    </span>
                   </div>
                 </Link>
               </motion.div>
@@ -314,7 +318,6 @@ const AboutPage = () => {
           </div>
         </div>
       </section>
-
 
       {/* CEO Message Section */}
       <section className="py-16 md:py-20 bg-neutral-50">
@@ -769,7 +772,9 @@ const AboutPage = () => {
                     <h3 className="text-base lg:text-xl font-lexend font-bold text-primary-600 mb-1.5 lg:mb-2">
                       Our Office
                     </h3>
-                    <p className="text-gray-600">Upper Hill, Nairobi</p>
+                    <p className="text-gray-600">
+                      SNDBX Office, Ground Floor, Kilimani, Nairobi
+                    </p>
                     <p className="text-gray-600">Kenya</p>
                   </div>
                 </div>
@@ -842,7 +847,7 @@ const AboutPage = () => {
               <div className="rounded-2xl overflow-hidden shadow-xl h-[520px] border border-neutral-100">
                 {/* Google Maps iframe */}
                 <iframe
-                  src="https://maps.google.com/maps?q=Real%20Towers&#038;t=m&#038;z=14&#038;output=embed&#038;iwloc=near"
+                  src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3988.7999027532646!2d36.789854999999996!3d-1.2945929999999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMcKwMTcnNDAuNSJTIDM2wrA0NycyMy41IkU!5e0!3m2!1sen!2ske!4v1750147901897!5m2!1sen!2ske"
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}

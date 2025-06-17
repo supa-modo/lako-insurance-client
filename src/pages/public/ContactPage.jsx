@@ -76,7 +76,7 @@ const ContactPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setFormStatus({ status: "submitting", message: "" });
@@ -84,7 +84,7 @@ const ContactPage = () => {
     try {
       // Determine if emailPhone is email or phone
       const isEmail = formState.emailPhone.includes("@");
-      
+
       const messageData = {
         name: formState.name.trim(),
         email: isEmail ? formState.emailPhone.trim() : "",
@@ -92,7 +92,7 @@ const ContactPage = () => {
         subject: formState.subject.trim(),
         message: formState.message.trim(),
         type: "contact",
-        priority: "medium"
+        priority: "medium",
       };
 
       // Remove empty email/phone fields to avoid validation issues
@@ -106,11 +106,12 @@ const ContactPage = () => {
       console.log("Sending contact message data:", messageData);
 
       const response = await contactService.createContactMessage(messageData);
-      
+
       if (response.success !== false) {
         setFormStatus({
           status: "success",
-          message: "Your message has been sent successfully. We will get back to you soon!",
+          message:
+            "Your message has been sent successfully. We will get back to you soon!",
         });
         toast.success("Message sent successfully!");
         setFormState({
@@ -127,7 +128,8 @@ const ContactPage = () => {
       console.error("Error response:", error.response?.data);
       setFormStatus({
         status: "error",
-        message: "There was an error sending your message. Please try again or contact us directly.",
+        message:
+          "There was an error sending your message. Please try again or contact us directly.",
       });
       toast.error("Failed to send message. Please try again.");
     }
@@ -224,7 +226,7 @@ const ContactPage = () => {
                             Our Office
                           </h3>
                           <p className="text-gray-600 text-[0.95rem] lg:text-base">
-                            Upper Hill, Nairobi, Kenya
+                            SNDBX Office, Ground Floor, Nairobi, Kenya
                           </p>
                         </div>
                       </div>
@@ -541,9 +543,9 @@ const ContactPage = () => {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="text-gray-700 max-w-3xl mx-auto mb-8 lg:mb-12"
             >
-              We're conveniently located in Upper Hill, Nairobi. Visit us during
-              our office hours for one on one consultations with our insurance
-              experts.
+              We're conveniently located in Kilimani - SNDBX Office, Ground Floor,
+              Nairobi. Visit us during our office hours for one on one
+              consultations with our insurance experts.
             </motion.p>
           </div>
 
@@ -557,7 +559,7 @@ const ContactPage = () => {
             <div className="bg-neutral-200 w-full h-full flex items-center justify-center relative overflow-hidden">
               {/* Google Maps iframe */}
               <iframe
-                src="https://maps.google.com/maps?q=Real%20Towers&#038;t=m&#038;z=14&#038;output=embed&#038;iwloc=near"
+                src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3988.7999027532646!2d36.789854999999996!3d-1.2945929999999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMcKwMTcnNDAuNSJTIDM2wrA0NycyMy41IkU!5e0!3m2!1sen!2ske!4v1750147901897!5m2!1sen!2ske"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}

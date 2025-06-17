@@ -197,7 +197,7 @@ const Footer = () => {
 
                 <div className="flex items-start text-[0.9rem] text-gray-600">
                   <PiMapPinAreaBold className="mr-3 text-primary-500 text-2xl" />
-                  <span>Upperhill, Nairobi, Kenya</span>
+                  <span>SNDBX Office, Ground Floor, Kilimani, Nairobi</span>
                 </div>
 
                 <motion.button 
