@@ -472,7 +472,7 @@ const ApplicationSuccess = ({
     // Open print content in new window
     const printWindow = window.open("", "_blank");
     printWindow.document.write(printContent);
-    printWindow.document.close();
+    // printWindow.document.close();
 
     // Wait for content to load, then print
     printWindow.onload = () => {

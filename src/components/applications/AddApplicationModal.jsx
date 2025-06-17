@@ -50,6 +50,7 @@ const AddApplicationModal = ({ onClose, onSave }) => {
     premiumAmount: "",
     insuranceProvider: "",
     selectedAge: "",
+    paymentReference: "",
     isAgentPurchase: false,
     agentName: "",
     agentEmail: "",
@@ -122,9 +123,10 @@ const AddApplicationModal = ({ onClose, onSave }) => {
         premiumAmount: formData.premiumAmount
           ? parseFloat(formData.premiumAmount)
           : null,
-        selectedAge: formData.selectedAge
-          ? parseInt(formData.selectedAge, 10)
-          : null,
+        selectedAge:
+          formData.selectedAge && formData.selectedAge.trim() !== ""
+            ? parseInt(formData.selectedAge, 10)
+            : null,
         policyStartDate:
           formData.policyStartDate || new Date().toISOString().split("T")[0],
       };
@@ -242,6 +244,7 @@ const AddApplicationModal = ({ onClose, onSave }) => {
                         <option value="health">Health Insurance</option>
                         <option value="motor">Motor Insurance</option>
                         <option value="life">Life Insurance</option>
+                        <option value="travel">Travel Insurance</option>
                       </select>
 
                       <PiCaretDownDuotone
@@ -703,7 +706,7 @@ const AddApplicationModal = ({ onClose, onSave }) => {
                   Policy Details
                 </h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Premium Amount
@@ -747,6 +750,20 @@ const AddApplicationModal = ({ onClose, onSave }) => {
                       onChange={handleInputChange}
                       className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors"
                       placeholder="Insurance company name"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Payment Reference (M-Pesa Receipt)
+                    </label>
+                    <input
+                      type="text"
+                      name="paymentReference"
+                      value={formData.paymentReference}
+                      onChange={handleInputChange}
+                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                      placeholder="e.g., QGH7RT8MNX"
                     />
                   </div>
                 </div>
