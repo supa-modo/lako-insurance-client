@@ -52,7 +52,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
     premiumAmount: "",
     insuranceProvider: "",
     selectedAge: "",
-    paymentReference: "",
+
     isAgentPurchase: false,
     agentName: "",
     agentEmail: "",
@@ -97,7 +97,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
         premiumAmount: application.premiumAmount || "",
         insuranceProvider: application.insuranceProvider || "",
         selectedAge: application.selectedAge || "",
-        paymentReference: application.paymentReference || "",
+
         isAgentPurchase: application.isAgentPurchase || false,
         agentName: application.agentName || "",
         agentEmail: application.agentEmail || "",
@@ -782,7 +782,7 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
                   Policy Details
                 </h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Premium Amount
@@ -826,20 +826,6 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
                       onChange={handleInputChange}
                       className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors"
                       placeholder="Insurance company name"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Payment Reference (M-Pesa Receipt)
-                    </label>
-                    <input
-                      type="text"
-                      name="paymentReference"
-                      value={formData.paymentReference}
-                      onChange={handleInputChange}
-                      className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors"
-                      placeholder="e.g., QGH7RT8MNX"
                     />
                   </div>
                 </div>

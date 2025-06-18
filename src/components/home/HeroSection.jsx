@@ -91,7 +91,7 @@ const HeroSection = ({ activeSlide, heroSlides }) => {
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeSlide}
-                  className="max-w-3xl"
+                  className="max-w-[50rem]"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}

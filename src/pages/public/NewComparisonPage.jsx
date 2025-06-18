@@ -308,7 +308,7 @@ const NewComparisonPage = () => {
                 </motion.div>
 
                 {/* Step Content */}
-                <div className="md:bg-white md:rounded-xl md:shadow-md md:border md:border-slate-200 p-1.5 md:p-6 mb-8">
+                <div className="md:bg-white md:rounded-xl md:shadow-md md:border md:border-slate-200 p-1.5 md:p-6 ">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={currentStep}
@@ -367,69 +367,166 @@ const NewComparisonPage = () => {
 
         {/* Additional Content Sections */}
         {currentStep === 1 && (
-          <div className="bg-slate-50 py-16">
-            <div className="container mx-auto px-2.5 max-w-screen-2xl space-y-16">
-              {/* How Comparison Works */}
+          <div className="">
+            {/* FAQ Section */}
+            <motion.section
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className="max-w-[75rem] mx-auto"
+            >
+              <div className="text-center mb-8 lg:mb-12">
+                <h2 className="text-2xl lg:text-3xl font-bold text-secondary-600 mb-4">
+                  Frequently Asked Questions
+                </h2>
+                <p className="text-[0.95rem] md:text-base lg:text-lg text-slate-600 max-w-2xl mx-auto">
+                  Get answers to common questions about our comparison service
+                </p>
+              </div>
 
-              {/* FAQ Section */}
-              <motion.section
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.6 }}
-                className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-8 lg:p-12"
-              >
-                <div className="text-center mb-12">
-                  <h2 className="text-3xl lg:text-4xl font-bold text-gray-800 mb-4">
-                    Frequently Asked Questions
-                  </h2>
-                  <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                    Get answers to common questions about our comparison service
-                  </p>
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-8">
-                  {[
-                    {
-                      question: "Is the comparison service free?",
-                      answer:
-                        "Yes, our comparison service is completely free. We help you find the best insurance plans without any charges.",
-                    },
-                    {
-                      question: "How accurate are the quotes?",
-                      answer:
-                        "Our quotes are real-time and directly from insurance providers, ensuring 99% accuracy in pricing and coverage details.",
-                    },
-                    {
-                      question: "Can I purchase directly through the platform?",
-                      answer:
-                        "Absolutely! Once you find your ideal plan, you can purchase it instantly through our secure online platform.",
-                    },
-                    {
-                      question: "What if I need help choosing?",
-                      answer:
-                        "Our expert advisors are available 24/7 to help you understand different plans and make the best choice for your needs.",
-                    },
-                  ].map((faq, index) => (
-                    <motion.div
-                      key={index}
-                      className="bg-white rounded-lg p-6 shadow-sm border border-gray-100"
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.5, delay: index * 0.1 + 0.2 }}
-                    >
-                      <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-                        <TbInfoCircle className="w-5 h-5 text-primary-600 mr-2" />
-                        {faq.question}
-                      </h3>
-                      <p className="text-gray-600">{faq.answer}</p>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.section>
-            </div>
+              <div className="grid md:grid-cols-2 gap-8">
+                {[
+                  {
+                    question: "Is the comparison service free?",
+                    answer:
+                      "Yes, our comparison service is completely free. We help you find the best insurance plans without any charges.",
+                  },
+                  {
+                    question: "How accurate are the quotes?",
+                    answer:
+                      "Our quotes are real-time and directly from insurance providers, ensuring 99% accuracy in pricing and coverage details.",
+                  },
+                  {
+                    question: "Can I purchase directly through the platform?",
+                    answer:
+                      "Absolutely! Once you find your ideal plan, you can purchase it instantly through our secure online platform.",
+                  },
+                  {
+                    question: "What if I need help choosing?",
+                    answer:
+                      "Our expert advisors are available 24/7 to help you understand different plans and make the best choice for your needs.",
+                  },
+                ].map((faq, index) => (
+                  <motion.div
+                    key={index}
+                    className="bg-white rounded-lg p-5 shadow-sm border border-gray-100"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 + 0.2 }}
+                  >
+                    <h3 className="text-base lg:text-lg font-semibold text-primary-600 mb-2 lg:mb-3 flex items-center">
+                      <TbInfoCircle className="w-6 lg:w-6 h-6 lg:h-6 text-primary-600 mr-2" />
+                      {faq.question}
+                    </h3>
+                    <p className="text-gray-600 text-[0.95rem] md:text-base lg:text-[1.05rem]">
+                      {faq.answer}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.section>
           </div>
         )}
       </div>
+
+      {/* Trust Indicators */}
+      <section className="font-outfit pt-16 md:pt-20 bg-gradient-to-r from-primary-800 to-primary-700 relative overflow-hidden mt-6 md:mt-10 lg:mt-12">
+        {/* Decorative elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 -left-10 w-40 h-40 rounded-full bg-secondary-500/30 blur-3xl"></div>
+          <div className="absolute bottom-1/3 -right-10 w-60 h-60 rounded-full bg-primary-500/40 blur-3xl"></div>
+        </div>
+
+        <div className="lg:container mx-auto px-4 relative z-10">
+          <div className="text-center max-w-4xl mx-auto mb-8 lg:mb-12">
+            <motion.span
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="inline-flex items-center px-4 py-1.5 rounded-full text-[0.8rem] md:text-sm font-medium bg-white/10 backdrop-blur-sm text-white border border-white/20 mb-4"
+            >
+              <span className="flex h-2 w-2 rounded-full bg-secondary-600 mr-2"></span>
+              Lako Insurance Agency
+            </motion.span>
+
+            <motion.h2
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="text-3xl md:text-4xl font-bold text-white mb-6"
+            >
+              Your <span className="text-secondary-500">trusted</span> insurance
+              partner
+            </motion.h2>
+
+            <motion.p
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="text-white/90 text-base lg:text-[1.1rem]"
+            >
+              Join thousands of satisfied customers who trust us with their
+              insurance needs across Kenya. Our track record speaks for itself.
+            </motion.p>
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6 mb-12">
+            {[
+              {
+                number: "5,000+",
+                label: "Policies Sold",
+                description: "Active policies nationwide",
+              },
+              {
+                number: "98%",
+                label: "Customer Satisfaction",
+                description: "Consistently high ratings",
+              },
+              {
+                number: "24/7",
+                label: "Customer Support",
+                description: "Always here to help",
+              },
+              {
+                number: "5 Min",
+                label: "Average Processing",
+                description: "Quick policy approval",
+              },
+            ].map((stat, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 + 0.3 }}
+                className="text-center"
+              >
+                <div className="bg-white/10 backdrop-blur-sm rounded-2xl px-2 py-6 lg:p-8 border border-white/20 hover:bg-white/20 transition-all duration-300">
+                  <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-secondary-500 mb-2">
+                    {stat.number}
+                  </h3>
+                  <p className="text-white font-semibold text-base md:text-lg mb-1">
+                    {stat.label}
+                  </p>
+                  <p className="text-white/70 text-sm">{stat.description}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+      {/* Trust badges */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.7 }}
+        className="bg-gradient-to-r from-primary-800 to-primary-700 text-center -mt-2 lg:mt-0 pt-4 font-outfit"
+      >
+        <p className="text-white/80 py-6 md:p-8 text-sm md:text-base border-t border-white/20 max-w-[90%] md:max-w-screen-xl mx-auto">
+          Lako Insurance Agency is regulated and is authorized by IRA (the
+          Insurance Regulatory Authority) to handle all forms of general
+          insurance business and compliant with the Kenya Data Protection Act.
+        </p>
+      </motion.div>
       <Footer />
     </>
   );

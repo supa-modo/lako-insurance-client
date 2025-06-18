@@ -117,7 +117,7 @@ const InsuranceTypeSelection = ({ onSelect, formData }) => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-3">
         {insuranceTypes.map((type) => {
           const isDisabled = isTypeDisabled(type);
 

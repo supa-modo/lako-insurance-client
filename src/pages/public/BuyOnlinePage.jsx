@@ -350,7 +350,7 @@ const BuyOnlinePage = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="max-w-[100rem] mx-auto mt-6 md:mt-10 lg:mt-16"
+                className="max-w-[100rem] mx-auto mt-6 md:mt-10 lg:mt-12"
               >
                 <div className="text-center mb-8 lg:mb-12">
                   <h2 className="text-2xl lg:text-3xl font-bold text-secondary-600 mb-4">
@@ -401,7 +401,7 @@ const BuyOnlinePage = () => {
                   ].map((item, index) => (
                     <motion.div
                       key={index}
-                      className="lg:text-center relative px-4 lg:p-0 border lg:border-none border-primary-200 rounded-xl p-5 mx-3 lg:mx-0 bg-white lg:bg-transparent"
+                      className="lg:text-center relative px-4 lg:p-0 border-2 lg:border-none border-neutral-300 shadow-md lg:shadow-none rounded-xl py-4 mx-3 lg:mx-0 bg-white lg:bg-transparent"
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: index * 0.1 + 0.3 }}
@@ -413,16 +413,16 @@ const BuyOnlinePage = () => {
 
                       <div className="flex flex-row lg:flex-col items-center lg:justify-center gap-4 lg:gap-0 relative z-10">
                         <div className="relative lg:mb-6">
-                          <div className="w-16 lg:w-[4.7rem] h-16 lg:h-[4.7rem] bg-primary-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white shadow-lg">
+                          <div className="w-14 lg:w-[4.7rem] h-14 lg:h-[4.7rem] bg-gradient-to-r from-primary-700 to-primary-600 rounded-full flex items-center justify-center mx-auto mb-2 md:mb-3 lg:mb-4 text-white shadow-lg">
                             {item.icon}
                           </div>
-                          <div className="text-sm font-semibold text-primary-600 mb-2 text-center">
+                          <div className="text-[0.83rem] md:text-sm font-semibold font-lexend text-primary-600 mb-2 text-center">
                             STEP {item.step}
                           </div>
                         </div>
 
                         <div className="flex-1 lg:flex-none">
-                          <h3 className="text-xl font-semibold text-neutral-700 mb-1.5 lg:mb-3">
+                          <h3 className="text-base md:text-lg lg:text-xl font-semibold font-lexend text-neutral-700 mb-1 lg:mb-2">
                             {item.title}
                           </h3>
                           <p className="text-slate-600 text-sm leading-relaxed">
@@ -440,7 +440,7 @@ const BuyOnlinePage = () => {
       </main>
 
       {/* Trust Indicators */}
-      <section className="pt-16 md:pt-20 bg-primary-600 relative overflow-hidden mt-8 md:mt-12 lg:mt-16">
+      <section className="pt-16 md:pt-20 bg-gradient-to-r from-primary-800 to-primary-700 relative overflow-hidden mt-6 md:mt-10 lg:mt-12">
         {/* Decorative elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-1/4 -left-10 w-40 h-40 rounded-full bg-secondary-500/30 blur-3xl"></div>
@@ -455,7 +455,7 @@ const BuyOnlinePage = () => {
               transition={{ duration: 0.5 }}
               className="inline-flex items-center px-4 py-1.5 rounded-full text-[0.8rem] md:text-sm font-medium bg-white/10 backdrop-blur-sm text-white border border-white/20 mb-4"
             >
-              <span className="flex h-2 w-2 rounded-full bg-secondary-500 mr-2"></span>
+              <span className="flex h-2 w-2 rounded-full bg-secondary-600 mr-2"></span>
               Lako Insurance Agency
             </motion.span>
 
@@ -465,7 +465,7 @@ const BuyOnlinePage = () => {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="text-3xl md:text-4xl font-bold text-white mb-6"
             >
-              Your <span className="text-secondary-400">trusted</span> insurance
+              Your <span className="text-secondary-500">trusted</span> insurance
               partner
             </motion.h2>
 
@@ -511,10 +511,10 @@ const BuyOnlinePage = () => {
                 className="text-center"
               >
                 <div className="bg-white/10 backdrop-blur-sm rounded-2xl px-2 py-6 lg:p-8 border border-white/20 hover:bg-white/20 transition-all duration-300">
-                  <h3 className="text-3xl lg:text-4xl font-bold text-secondary-400 mb-2">
+                  <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-secondary-500 mb-2">
                     {stat.number}
                   </h3>
-                  <p className="text-white font-semibold text-lg mb-1">
+                  <p className="text-white font-semibold text-base md:text-lg mb-1">
                     {stat.label}
                   </p>
                   <p className="text-white/70 text-sm">{stat.description}</p>
@@ -529,13 +529,12 @@ const BuyOnlinePage = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.7 }}
-        className="bg-primary-600 text-center pt-4"
+        className="bg-gradient-to-r from-primary-800 to-primary-700 text-center pt-4"
       >
-        <p className="text-white/80 p-6 md:p-8 text-sm md:text-base border-t border-white/20 max-w-screen-2xl mx-auto">
+        <p className="text-white/80 p-6 md:p-8 text-sm md:text-base border-t border-white/20 max-w-screen-xl mx-auto">
           Lako Insurance Agency is regulated and is authorized by IRA (the
           Insurance Regulatory Authority) to handle all forms of general
-          insurance business. Your data is protected through our Kenya Data
-          Protection Act Compliant system.
+          insurance business and compliant with the Kenya Data Protection Act.
         </p>
       </motion.div>
 

@@ -264,7 +264,7 @@ const PersonalAccidentFlow = ({
     }
   };
 
-  // Upload documents to application
+  // Upload documents to application (with robust duplicate prevention)
   const uploadDocumentsToApplication = async (applicationId) => {
     try {
       console.log("Uploading documents to application:", applicationId);
@@ -289,51 +289,61 @@ const PersonalAccidentFlow = ({
       console.log("No existing documents found, proceeding with upload...");
       console.log("Form data documents:", formData.documents);
 
+      if (!formData.documents || Object.keys(formData.documents).length === 0) {
+        console.log("No documents to upload");
+        return;
+      }
+
       const uploadPromises = [];
       const documentTypes = [];
+      let hasValidFiles = false;
 
       Object.entries(formData.documents).forEach(([docType, fileData]) => {
         console.log(
           `Processing document type: ${docType}, fileData:`,
           fileData
         );
-        if (fileData && fileData.file) {
-          console.log("Adding file to upload:", fileData.name);
+        if (fileData && fileData.file && fileData.file instanceof File) {
+          console.log("Adding valid file to upload:", fileData.name);
           uploadPromises.push(fileData.file);
           documentTypes.push(docType);
+          hasValidFiles = true;
         }
       });
 
+      if (!hasValidFiles) {
+        console.log("No valid files found to upload");
+        return;
+      }
+
       console.log("Total files to upload:", uploadPromises.length);
 
-      if (uploadPromises.length > 0) {
-        // Create FormData for upload
-        const uploadFormData = new FormData();
+      // Create FormData for upload
+      const uploadFormData = new FormData();
 
-        uploadPromises.forEach((file, index) => {
-          uploadFormData.append("documents", file);
-          uploadFormData.append("documentTypes", documentTypes[index]);
-        });
+      uploadPromises.forEach((file, index) => {
+        uploadFormData.append("documents", file);
+        uploadFormData.append("documentTypes", documentTypes[index]);
+      });
 
-        console.log("Calling applicationService.uploadDocuments with:", {
-          applicationId,
-          formDataEntries: Array.from(uploadFormData.entries()),
-        });
+      console.log("Calling applicationService.uploadDocuments with:", {
+        applicationId,
+        documentCount: uploadPromises.length,
+        documentTypes: documentTypes,
+      });
 
-        const uploadResponse = await applicationService.uploadDocuments(
-          applicationId,
-          uploadFormData
-        );
+      const uploadResponse = await applicationService.uploadDocuments(
+        applicationId,
+        uploadFormData
+      );
 
-        console.log("Upload response:", uploadResponse);
+      console.log("Upload response:", uploadResponse);
 
-        if (uploadResponse.success) {
-          console.log("Documents uploaded successfully:", uploadResponse.data);
-        } else {
-          console.error("Document upload failed:", uploadResponse.message);
-        }
+      if (uploadResponse.success) {
+        console.log("Documents uploaded successfully:", uploadResponse.data);
       } else {
-        console.log("No files to upload");
+        console.error("Document upload failed:", uploadResponse.message);
+        throw new Error(uploadResponse.message || "Document upload failed");
       }
     } catch (error) {
       console.error("Error uploading documents:", error);
@@ -378,7 +388,15 @@ const PersonalAccidentFlow = ({
       console.log("Checking documents for upload:", formData.documents);
       if (formData.documents && Object.keys(formData.documents).length > 0) {
         console.log("Documents found, starting upload...");
-        await uploadDocumentsToApplication(updatedApplication.id);
+        try {
+          await uploadDocumentsToApplication(updatedApplication.id);
+        } catch (uploadError) {
+          console.error(
+            "Document upload failed but payment was successful:",
+            uploadError
+          );
+          // Don't fail the entire process if document upload fails
+        }
       } else {
         console.log("No documents to upload or documents object is empty");
       }
