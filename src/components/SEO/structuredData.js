@@ -85,9 +85,9 @@ export const organizationSchema = {
       name: "Insurance Regulatory Authority (IRA) Kenya",
     },
   },
-  slogan: "Protecting What Matters Most",
+  slogan: "Safeguarding What Matters Most",
   keywords:
-    "insurance Kenya, health insurance, motor insurance, property insurance, life insurance, travel insurance",
+    "insurance Kenya, health insurance, personal accident insurance, motor insurance, property insurance, life insurance, travel insurance",
   priceRange: "$$",
   currenciesAccepted: "KES",
   paymentAccepted: ["Cash", "M-Pesa", "Bank Transfer", "Credit Card"],
@@ -201,8 +201,8 @@ export const localBusinessSchema = {
   email: "info@lako.co.ke",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Nairobi Office",
-    addressLocality: "Nairobi",
+    streetAddress: "SNDBX Building, Ground Floor",
+    addressLocality: "Kilimani, Nairobi",
     addressRegion: "Nairobi County",
     postalCode: "00100",
     addressCountry: "Kenya",
