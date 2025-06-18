@@ -19,6 +19,7 @@ const DocumentUpload = ({ formData, updateFormData, nextStep, prevStep }) => {
   const [uploadedFiles, setUploadedFiles] = useState(formData.documents || {});
   const [dragActive, setDragActive] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState({});
   const fileInputRefs = useRef({});
 
   // Effect to handle external updates to formData.documents (like reset)
@@ -140,32 +141,38 @@ const DocumentUpload = ({ formData, updateFormData, nextStep, prevStep }) => {
       return;
     }
 
-    setUploading(true);
+    // Simulate upload progress
+    setUploadProgress((prev) => ({ ...prev, [documentType]: 0 }));
 
-    try {
-      // Create a preview URL for the file
-      const fileData = {
-        file: file,
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        uploadedAt: new Date().toISOString(),
-        preview: URL.createObjectURL(file),
-      };
+    const interval = setInterval(() => {
+      setUploadProgress((prev) => {
+        const newProgress = (prev[documentType] || 0) + 10;
+        if (newProgress >= 100) {
+          clearInterval(interval);
 
-      const newUploadedFiles = {
-        ...uploadedFiles,
-        [documentType]: fileData,
-      };
+          // Create a preview URL for the file
+          const fileData = {
+            file: file,
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            uploadedAt: new Date().toISOString(),
+            preview: URL.createObjectURL(file),
+          };
 
-      setUploadedFiles(newUploadedFiles);
-      updateFormData("documents", newUploadedFiles);
-    } catch (error) {
-      console.error("Error uploading file:", error);
-      alert("Error uploading file. Please try again.");
-    } finally {
-      setUploading(false);
-    }
+          const newUploadedFiles = {
+            ...uploadedFiles,
+            [documentType]: fileData,
+          };
+
+          setUploadedFiles(newUploadedFiles);
+          updateFormData("documents", newUploadedFiles);
+
+          return { ...prev, [documentType]: 100 };
+        }
+        return { ...prev, [documentType]: newProgress };
+      });
+    }, 100);
   };
 
   const removeFile = (documentType) => {
@@ -179,6 +186,13 @@ const DocumentUpload = ({ formData, updateFormData, nextStep, prevStep }) => {
     delete newUploadedFiles[documentType];
     setUploadedFiles(newUploadedFiles);
     updateFormData("documents", newUploadedFiles);
+
+    // Remove upload progress
+    setUploadProgress((prev) => {
+      const newProgress = { ...prev };
+      delete newProgress[documentType];
+      return newProgress;
+    });
 
     // Clear the file input
     if (fileInputRefs.current[documentType]) {
@@ -283,20 +297,47 @@ const DocumentUpload = ({ formData, updateFormData, nextStep, prevStep }) => {
                   className="hidden"
                 />
 
-                <TbUpload className="w-8 md:w-12 h-8 md:h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600 text-sm md:text-base mb-2">
-                  Drag and drop your file here, or{" "}
-                  <button
-                    type="button"
-                    onClick={() => fileInputRefs.current[docType.id]?.click()}
-                    className="text-primary-600 hover:text-primary-700 font-medium underline underline-offset-4"
-                  >
-                    browse
-                  </button>
-                </p>
-                <p className="text-xs text-gray-500">
-                  {docType.acceptedFormats} up to {docType.maxSize}
-                </p>
+                {uploadProgress[docType.id] > 0 &&
+                uploadProgress[docType.id] < 100 ? (
+                  <div className="space-y-3">
+                    <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mx-auto">
+                      <TbUpload className="w-6 h-6 text-primary-600 animate-bounce" />
+                    </div>
+                    <div>
+                      <p className="text-gray-700 font-medium">Uploading...</p>
+                      <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                        <div
+                          className="bg-primary-600 h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${uploadProgress[docType.id]}%` }}
+                        ></div>
+                      </div>
+                      <p className="text-sm text-gray-500 mt-1">
+                        {uploadProgress[docType.id]}%
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <TbUpload className="w-8 md:w-12 h-8 md:h-12 text-gray-400 mx-auto" />
+                    <div>
+                      <p className="text-gray-600 text-sm md:text-base mb-2">
+                        Drag and drop your file here, or{" "}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            fileInputRefs.current[docType.id]?.click()
+                          }
+                          className="text-primary-600 hover:text-primary-700 font-medium underline underline-offset-4"
+                        >
+                          browse
+                        </button>
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {docType.acceptedFormats} up to {docType.maxSize}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
@@ -346,16 +387,6 @@ const DocumentUpload = ({ formData, updateFormData, nextStep, prevStep }) => {
         ))}
       </div>
 
-      {/* Upload Progress */}
-      {uploading && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex items-center">
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-3"></div>
-            <span className="text-blue-800 text-sm">Uploading file...</span>
-          </div>
-        </div>
-      )}
-
       {/* Requirements Check */}
       <div className="bg-gray-50 rounded-lg p-4">
         <h5 className="text-sm font-medium text-gray-900 mb-3">
@@ -382,8 +413,6 @@ const DocumentUpload = ({ formData, updateFormData, nextStep, prevStep }) => {
             ))}
         </div>
       </div>
-
-      
 
       {/* Navigation */}
       <div className="flex justify-between items-center pt-6 border-t border-gray-200">

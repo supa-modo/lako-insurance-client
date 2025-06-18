@@ -545,32 +545,8 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Regulatory Compliance Note */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6, delay: 0.5 }}
-        className="mt-10 lg:container mx-auto text-center"
-      >
-        <div className=" mx-auto bg-gradient-to-br from-primary-50 to-secondary-50 md:rounded-t-2xl p-3 lg:p-8 border border-primary-200/50 shadow-sm">
-          <h3 className="text-lg lg:text-xl font-bold text-secondary-500 mb-3 flex items-center gap-2 justify-center">
-            <TbInfoCircle className="h-6 w-6 text-secondary-500" />
-            Regulated & Authorized
-          </h3>
-          <p className="text-gray-600 text-sm lg:text-base leading-relaxed">
-            Lako Insurance Agency is regulated and is authorized by{" "}
-            <span className="font-semibold text-primary-700">
-              IRA (the Insurance Regulatory Authority)
-            </span>{" "}
-            to handle all forms of general insurance business. Your trust and
-            protection are our top priorities.
-          </p>
-        </div>
-      </motion.div>
-
       {/* Statistics & Achievements Section */}
-      <section className="py-16 md:py-20 bg-primary-600 relative overflow-hidden">
+      <section className="pt-16 md:pt-20 bg-gradient-to-r from-primary-800 to-primary-700 relative overflow-hidden">
         {/* Decorative elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-1/4 -left-10 w-40 h-40 rounded-full bg-secondary-500/30 blur-3xl"></div>
@@ -597,7 +573,7 @@ const AboutPage = () => {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="text-3xl md:text-4xl font-bold text-white mb-6"
             >
-              <span className="text-secondary-400">Numbers</span> that speak for
+              <span className="text-secondary-500">Numbers</span> that speak for
               themselves
             </motion.h2>
 
@@ -645,7 +621,7 @@ const AboutPage = () => {
                 className="text-center"
               >
                 <div className="bg-white/10 backdrop-blur-sm rounded-2xl px-2 py-6 lg:p-8 border border-white/20 hover:bg-white/20 transition-all duration-300">
-                  <h3 className="text-3xl lg:text-4xl font-bold text-secondary-400 mb-2">
+                  <h3 className="text-3xl lg:text-4xl font-bold text-secondary-500 mb-2">
                     {stat.number}
                   </h3>
                   <p className="text-white font-semibold text-lg mb-1">
@@ -657,73 +633,54 @@ const AboutPage = () => {
             ))}
           </div>
         </div>
-      </section>
 
-      {/* CTA Section */}
-      <section className="py-16 md:py-20 bg-gradient-to-r from-primary-700 to-primary-800 relative overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/4 -left-10 w-40 h-40 rounded-full bg-secondary-500/30 blur-3xl"></div>
-          <div className="absolute bottom-1/3 -right-10 w-60 h-60 rounded-full bg-primary-600/40 blur-3xl"></div>
+        <div className="mt-12 lg:mt-16 text-center max-w-5xl mx-auto">
+          <motion.p
+            initial={{ opacity: 0, y: -10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="text-white/90 text-[0.95rem] lg:text-lg mb-8"
+          >
+            Connect with our team today to discover how we can help safeguard
+            your future with tailored insurance solutions.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="flex flex-col sm:flex-row gap-2 md:gap-4 justify-center"
+          >
+            <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}>
+              <Link
+                to="/contact"
+                className="inline-flex items-center justify-center font-semibold px-8 py-3 bg-white text-sm md:text-base text-primary-700 rounded-lg shadow-lg hover:bg-primary-50 transition-all duration-200 w-full sm:w-auto"
+              >
+                <BiSupport className="mr-2 h-5 w-5" />
+                Get an Expert Quote
+              </Link>
+            </motion.div>
+
+            <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}>
+              <Link
+                to="/buy-online"
+                className="inline-flex items-center justify-center font-medium px-5 py-3 bg-secondary-500 text-sm md:text-base text-white rounded-lg shadow-lg hover:bg-secondary-600 transition-all duration-200 w-full sm:w-auto"
+              >
+                Compare Insurance Plans
+                <TbArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+            </motion.div>
+          </motion.div>
         </div>
 
-        <div className="container-custom relative z-10">
-          <div className="text-center max-w-3xl mx-auto">
-            <motion.h2
-              initial={{ opacity: 0, y: -10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="text-3xl md:text-4xl font-bold text-white font-outfit mb-6"
-            >
-              Ready to protect what matters most?
-            </motion.h2>
-
-            <motion.p
-              initial={{ opacity: 0, y: -10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-white/90 text-[0.95rem] lg:text-lg mb-8"
-            >
-              Connect with our team today to discover how we can help safeguard
-              your future with tailored insurance solutions.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="flex flex-col sm:flex-row gap-2 md:gap-4 justify-center"
-            >
-              <motion.div
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <Link
-                  to="/contact"
-                  className="inline-flex items-center justify-center font-semibold px-8 py-3 bg-white text-sm md:text-base text-primary-700 rounded-lg shadow-lg hover:bg-primary-50 transition-all duration-200 w-full sm:w-auto"
-                >
-                  <BiSupport className="mr-2 h-5 w-5" />
-                  Get an Expert Quote
-                </Link>
-              </motion.div>
-
-              <motion.div
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <Link
-                  to="/buy-online"
-                  className="inline-flex items-center justify-center font-medium px-5 py-3 bg-secondary-500 text-sm md:text-base text-white rounded-lg shadow-lg hover:bg-secondary-600 transition-all duration-200 w-full sm:w-auto"
-                >
-                  Compare Insurance Plans
-                  <TbArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </motion.div>
-            </motion.div>
-          </div>
+        <div className="mt-12 lg:mt-20 text-center">
+          <p className="text-white/80 py-6 md:p-8 text-sm md:text-base border-t border-white/20 max-w-[90%] md:max-w-screen-xl mx-auto">
+            Lako Insurance Agency is regulated and is authorized by IRA (the
+            Insurance Regulatory Authority) to handle all forms of general
+            insurance business and compliant with the Kenya Data Protection Act.
+          </p>
         </div>
       </section>
 
