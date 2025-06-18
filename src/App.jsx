@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import HomePage from "./pages/public/HomePage";
 import AboutPage from "./pages/public/AboutPage";
 import ContactPage from "./pages/public/ContactPage";
@@ -48,10 +49,9 @@ import ProcessedApplicationsPage from "./pages/admin/ProcessedApplicationsPage";
 
 function App() {
   return (
-    <>
-      <Analytics />
-      <NotificationProvider>
-        <AuthProvider>
+    <HelmetProvider>
+      <AuthProvider>
+        <NotificationProvider>
           <ModalProvider>
             <ComparisonProvider>
               <Router>
@@ -76,7 +76,11 @@ function App() {
                   </Route>
 
                   {/* Admin Login Page (Outside Admin Layout) */}
-                  <Route path="/admin/login" exact element={<AdminLoginPage />} />
+                  <Route
+                    path="/admin/login"
+                    exact
+                    element={<AdminLoginPage />}
+                  />
 
                   {/* Password Reset Page */}
                   <Route
@@ -281,15 +285,16 @@ function App() {
                     />
                   </Route>
 
-                  {/* 404 Page Not Found - Catch All */}
+                  {/* 404 Page */}
                   <Route path="*" element={<PageNotFound />} />
                 </Routes>
+                <Analytics />
               </Router>
             </ComparisonProvider>
           </ModalProvider>
-        </AuthProvider>
-      </NotificationProvider>
-    </>
+        </NotificationProvider>
+      </AuthProvider>
+    </HelmetProvider>
   );
 }
 

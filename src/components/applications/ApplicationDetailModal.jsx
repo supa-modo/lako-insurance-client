@@ -783,7 +783,7 @@ const ApplicationDetailModal = ({ application, onClose }) => {
               </div>
 
               {/* Agent Information Card */}
-              {application.isAgentPurchase &&
+              {/* {application.isAgentPurchase &&
                 (application.agentName ||
                   application.agentEmail ||
                   application.agentPhone) && (
@@ -843,7 +843,7 @@ const ApplicationDetailModal = ({ application, onClose }) => {
                       )}
                     </div>
                   </div>
-                )}
+                )} */}
 
               {/* Application Timeline Card */}
               <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">

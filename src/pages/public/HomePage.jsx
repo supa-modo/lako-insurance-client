@@ -8,6 +8,12 @@ import HowItWorksSection from "../../components/home/HowItWorksSection";
 import BenefitsSection from "../../components/home/BenefitsSection";
 import TestimonialsSection from "../../components/home/TestimonialsSection";
 import BottomCTASection from "../../components/home/BottomCTASection";
+import SEOHelmet from "../../components/SEO/SEOHelmet";
+import {
+  organizationSchema,
+  localBusinessSchema,
+  reviewSchema,
+} from "../../components/SEO/structuredData";
 import { motion } from "framer-motion";
 
 const HomePage = () => {
@@ -38,7 +44,7 @@ const HomePage = () => {
       titleBreak: "Isn't Optional.",
       titleHighlight: "Protect Your Workforce.",
       description:
-        "Empower your workforce with the confidence that they’re covered. Support your team where it matters most, because a secure team is a stronger team.",
+        "Empower your workforce with the confidence that they're covered. Support your team where it matters most, because a secure team is a stronger team.",
     },
 
     {
@@ -67,8 +73,48 @@ const HomePage = () => {
     return () => clearInterval(heroInterval);
   }, [heroSlides.length]);
 
+  // Combined structured data for homepage
+  const homepageStructuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      organizationSchema,
+      localBusinessSchema,
+      reviewSchema,
+      {
+        "@type": "WebPage",
+        "@id": "https://lako.co.ke#webpage",
+        url: "https://lako.co.ke",
+        name: "Lako Insurance Agency - Comprehensive Insurance Solutions in Kenya",
+        description:
+          "Leading insurance agency in Kenya providing health, life, motor, property, travel, and business insurance. Expert guidance, competitive rates, and exceptional service since 2015.",
+        isPartOf: {
+          "@type": "WebSite",
+          "@id": "https://lako.co.ke#website",
+          url: "https://lako.co.ke",
+          name: "Lako Insurance Agency",
+          potentialAction: {
+            "@type": "SearchAction",
+            target: "https://lako.co.ke/compare?q={search_term_string}",
+            "query-input": "required name=search_term_string",
+          },
+        },
+        mainEntity: organizationSchema,
+      },
+    ],
+  };
+
   return (
     <>
+      <SEOHelmet
+        title="Lako Insurance Agency - Comprehensive Insurance Solutions in Kenya"
+        description="Leading insurance agency in Kenya providing health, life, motor, property, travel, and business insurance. Expert guidance, competitive rates, and exceptional service since 2015. Get your free quote today."
+        keywords="insurance Kenya, health insurance Kenya, motor insurance Kenya, property insurance Kenya, life insurance Kenya, travel insurance Kenya, business insurance Kenya, insurance quotes Kenya, insurance agency Nairobi, insurance broker Kenya, comprehensive insurance coverage, best insurance rates Kenya, IRA licensed insurance agency"
+        canonical="/"
+        ogImage="/lako.png"
+        ogType="website"
+        structuredData={homepageStructuredData}
+      />
+
       <div className="bg-neutral-50 min-h-screen overflow-hidden">
         <Header />
 
@@ -145,41 +191,30 @@ const HomePage = () => {
                   className="grid grid-cols-2 gap-2 md:gap-3"
                 >
                   {[
-                    { name: "Kenya", code: "KE", colors: "bg-black" },
-                    { name: "Uganda", code: "UG", colors: "bg-yellow-400" },
-                    { name: "Tanzania", code: "TZ", colors: "bg-blue-500" },
-                    { name: "South Sudan", code: "SS", colors: "bg-blue-600" },
-                    { name: "Rwanda", code: "RW", colors: "bg-blue-500" },
+                    { name: "Kenya", flag: "🇰🇪" },
+                    { name: "Uganda", flag: "🇺🇬" },
+                    { name: "Tanzania", flag: "🇹🇿" },
+                    { name: "Rwanda", flag: "🇷🇼" },
+                    { name: "South Sudan", flag: "🇸🇸" },
                   ].map((country, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center bg-white text-gray-500 rounded-lg px-3 py-2 border border-gray-200 shadow-sm"
+                    <motion.div
+                      key={country.name}
+                      initial={{ opacity: 0, x: -10 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: 0.5 + index * 0.1 }}
+                      className="flex items-center space-x-3 p-3 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300"
                     >
-                      <div className="relative mr-3">
-                        <img
-                          src={`https://flagcdn.com/24x18/${country.code.toLowerCase()}.png`}
-                          alt={`${country.name} flag`}
-                          className="w-6 h-4 rounded-sm"
-                          onError={(e) => {
-                            // Fallback to colored circle if flag image fails to load
-                            e.target.style.display = "none";
-                            e.target.nextElementSibling.style.display = "block";
-                          }}
-                        />
-                        <div
-                          className={`w-6 h-4 rounded-sm ${country.colors} `}
-                          style={{ display: "none" }}
-                        ></div>
-                      </div>
-                      <span className="text-gray-600 text-[0.9rem] md:text-base font-medium">
+                      <span className="text-xl">{country.flag}</span>
+                      <span className="text-gray-700 font-medium">
                         {country.name}
                       </span>
-                    </div>
+                    </motion.div>
                   ))}
                 </motion.div>
               </div>
 
-              {/* Map */}
+              {/* Image Section */}
               <div className="lg:col-span-6 w-full">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}

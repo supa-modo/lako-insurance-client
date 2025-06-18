@@ -4,6 +4,17 @@
       "source": "/webmail",
       "destination": "https://webmail.lako.co.ke",
       "permanent": true
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "lako.co.ke"
+        }
+      ],
+      "destination": "https://www.lako.co.ke",
+      "permanent": true
     }
   ],
   "rewrites": [

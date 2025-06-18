@@ -472,7 +472,7 @@ const ApplicationSuccess = ({
     // Open print content in new window
     const printWindow = window.open("", "_blank");
     printWindow.document.write(printContent);
-    // printWindow.document.close();
+    printWindow.document.close();
 
     // Wait for content to load, then print
     printWindow.onload = () => {
@@ -723,11 +723,11 @@ const ApplicationSuccess = ({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 1.2 }}
-        className="text-center mt-8 p-4 bg-gray-50 rounded-lg"
+        className="text-center mt-8 "
       >
         <p className="text-[0.83rem] md:text-sm text-gray-600">
           Please save your application number:
-          <span className="font-lexend text-[0.9rem] font-semibold text-primary-600 ml-2">
+          <span className="font-lexend text-[0.85rem] md:text-[0.9rem] font-semibold text-primary-600 ml-2">
             {applicationData?.applicationNumber || "PA202412010001"}
           </span>
           <button

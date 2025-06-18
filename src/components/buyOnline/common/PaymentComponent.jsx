@@ -27,6 +27,7 @@ const PaymentComponent = ({ applicationData, onPaymentComplete, onCancel }) => {
   const [paymentData, setPaymentData] = useState(null);
   const [timeLeft, setTimeLeft] = useState(300); // 5 minutes countdown
   const [statusCheckInterval, setStatusCheckInterval] = useState(null);
+  const [paymentCompleteNotified, setPaymentCompleteNotified] = useState(false); // Prevent multiple completion notifications
 
   // Format phone number as user types
   const formatPhoneNumber = (value) => {
@@ -178,8 +179,10 @@ const PaymentComponent = ({ applicationData, onPaymentComplete, onCancel }) => {
             clearInterval(interval);
             setStatusCheckInterval(null);
 
-            // Notify parent component
-            if (onPaymentComplete) {
+            // Notify parent component only once
+            if (onPaymentComplete && !paymentCompleteNotified) {
+              setPaymentCompleteNotified(true);
+              console.log("PaymentComponent: Notifying parent of payment completion (once)");
               onPaymentComplete(payment);
             }
           } else if (
@@ -232,6 +235,7 @@ const PaymentComponent = ({ applicationData, onPaymentComplete, onCancel }) => {
     setError("");
     setPaymentData(null);
     setTimeLeft(300);
+    setPaymentCompleteNotified(false); // Reset notification flag for retry
     if (statusCheckInterval) {
       clearInterval(statusCheckInterval);
       setStatusCheckInterval(null);

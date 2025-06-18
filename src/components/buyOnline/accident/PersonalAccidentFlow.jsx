@@ -25,6 +25,7 @@ const PersonalAccidentFlow = ({
   const [isCreatingDraft, setIsCreatingDraft] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [documentsUploaded, setDocumentsUploaded] = useState(false); // Track document upload status
 
   // Scroll to top when validation errors are set
   React.useEffect(() => {
@@ -237,15 +238,24 @@ const PersonalAccidentFlow = ({
 
   // Handle payment completion - update draft application to submitted
   const handlePaymentComplete = async (paymentData) => {
-    // Prevent duplicate processing
+    console.log("Payment complete handler called with:", {
+      paymentData,
+      isProcessingPayment,
+      paymentCompleted,
+      documentsUploaded,
+    });
+
+    // Prevent duplicate processing with immediate state check and set
     if (isProcessingPayment || paymentCompleted) {
       console.log("Payment already being processed or completed, skipping...");
       return;
     }
 
+    // Set flags immediately to prevent race conditions
     setIsProcessingPayment(true);
-    console.log("Payment completed:", paymentData);
     setPaymentCompleted(true);
+
+    console.log("Payment completed:", paymentData);
 
     try {
       // Update the draft application to submitted status
@@ -266,8 +276,17 @@ const PersonalAccidentFlow = ({
 
   // Upload documents to application (with robust duplicate prevention)
   const uploadDocumentsToApplication = async (applicationId) => {
+    // Prevent multiple simultaneous uploads
+    if (documentsUploaded) {
+      console.log("Documents already uploaded, skipping...");
+      return;
+    }
+
     try {
       console.log("Uploading documents to application:", applicationId);
+
+      // Set upload flag immediately to prevent race conditions
+      setDocumentsUploaded(true);
 
       // First, check if documents already exist for this application
       console.log("Checking for existing documents...");
@@ -318,6 +337,27 @@ const PersonalAccidentFlow = ({
 
       console.log("Total files to upload:", uploadPromises.length);
 
+      // Double-check against existing documents by comparing file names and sizes
+      if (existingDocsResponse.success && existingDocsResponse.data) {
+        const existingDocs = existingDocsResponse.data;
+        const isDuplicate = uploadPromises.some((file, index) => {
+          const docType = documentTypes[index];
+          return existingDocs.some(
+            (existing) =>
+              existing.documentType === docType &&
+              existing.fileName === file.name &&
+              existing.fileSize === file.size
+          );
+        });
+
+        if (isDuplicate) {
+          console.log(
+            "Found duplicate files by name/size comparison, skipping upload..."
+          );
+          return;
+        }
+      }
+
       // Create FormData for upload
       const uploadFormData = new FormData();
 
@@ -343,10 +383,14 @@ const PersonalAccidentFlow = ({
         console.log("Documents uploaded successfully:", uploadResponse.data);
       } else {
         console.error("Document upload failed:", uploadResponse.message);
+        // Reset upload flag on failure so it can be retried
+        setDocumentsUploaded(false);
         throw new Error(uploadResponse.message || "Document upload failed");
       }
     } catch (error) {
       console.error("Error uploading documents:", error);
+      // Reset upload flag on error so it can be retried
+      setDocumentsUploaded(false);
       // Don't throw here - documents can be uploaded later
     }
   };
@@ -384,10 +428,14 @@ const PersonalAccidentFlow = ({
       console.log("Updated application:", updatedApplication);
       setSubmittedApplication(updatedApplication);
 
-      // Upload documents to the now-submitted application (with duplicate check)
+      // Upload documents to the now-submitted application (only if not already uploaded)
       console.log("Checking documents for upload:", formData.documents);
-      if (formData.documents && Object.keys(formData.documents).length > 0) {
-        console.log("Documents found, starting upload...");
+      if (
+        formData.documents &&
+        Object.keys(formData.documents).length > 0 &&
+        !documentsUploaded
+      ) {
+        console.log("Documents found and not yet uploaded, starting upload...");
         try {
           await uploadDocumentsToApplication(updatedApplication.id);
         } catch (uploadError) {
@@ -398,7 +446,7 @@ const PersonalAccidentFlow = ({
           // Don't fail the entire process if document upload fails
         }
       } else {
-        console.log("No documents to upload or documents object is empty");
+        console.log("No documents to upload or documents already uploaded");
       }
 
       return updatedApplication;
@@ -416,6 +464,8 @@ const PersonalAccidentFlow = ({
     // Reset payment states and go back to review step
     setPaymentCompleted(false);
     setShowApplicationSuccess(false);
+    setIsProcessingPayment(false);
+    setDocumentsUploaded(false); // Reset document upload flag
     prevStep();
   };
 
@@ -425,6 +475,8 @@ const PersonalAccidentFlow = ({
     setShowApplicationSuccess(false);
     setSubmittedApplication(null);
     setDraftApplication(null); // Clear draft application
+    setIsProcessingPayment(false);
+    setDocumentsUploaded(false); // Reset document upload flag
     resetFlow();
   };
 
