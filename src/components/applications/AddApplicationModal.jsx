@@ -124,7 +124,9 @@ const AddApplicationModal = ({ onClose, onSave }) => {
           ? parseFloat(formData.premiumAmount)
           : null,
         selectedAge:
-          formData.selectedAge && formData.selectedAge.trim() !== ""
+          formData.selectedAge &&
+          formData.selectedAge.toString().trim() !== "" &&
+          !isNaN(parseInt(formData.selectedAge, 10))
             ? parseInt(formData.selectedAge, 10)
             : null,
         policyStartDate:

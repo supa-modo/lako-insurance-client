@@ -219,6 +219,12 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
       icon: <TbShieldCheck className="w-5 h-5" />,
     },
     {
+      value: "seniors",
+      label: "Seniors Cover",
+      color: "text-orange-600 bg-orange-50 border-orange-300",
+      icon: <TbShieldCheck className="w-5 h-5" />,
+    },
+    {
       value: "family",
       label: "Family Cover",
       color: "text-secondary-600 bg-secondary-50 border-secondary-300",
