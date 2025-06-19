@@ -399,6 +399,9 @@ const insuranceService = {
         ageMax: formattedCriteria.ageMax,
         budgetMin: formattedCriteria.budgetMin,
         budgetMax: formattedCriteria.budgetMax,
+        coverageLimitMin: formattedCriteria.coverageLimitMin,
+        coverageLimitMax: formattedCriteria.coverageLimitMax,
+        healthFilterType: formattedCriteria.healthFilterType,
         optionalCovers: formattedCriteria.optionalCovers,
       };
 
@@ -407,20 +410,8 @@ const insuranceService = {
         JSON.stringify(apiQuery, null, 2)
       );
 
-      // STEP 4: Use mock data if enabled
-      if (ENABLE_MOCK_DATA) {
-        console.log("Using mock data for comparison");
-        return {
-          id: "mock-" + Date.now(),
-          createdAt: new Date(),
-          userQuery: apiQuery,
-          comparisonResults:
-            mockInsuranceData.generateMockComparisonResults(apiQuery),
-        };
-      }
-
-      // STEP 5: Call the backend API
-      const response = await apiClient.post("/insurance/compare", apiQuery);
+      // Call the backend API using the new comparison endpoint
+      const response = await apiClient.post("/comparison/results", apiQuery);
 
       if (
         response.data &&
@@ -435,19 +426,6 @@ const insuranceService = {
       } else {
         // If no plans found, return empty results structure
         console.warn("No plans found from API");
-
-        // Try fallback to mock data if in development
-        if (import.meta.env.DEV || ENABLE_MOCK_DATA) {
-          console.warn("No API results, falling back to mock data");
-          return {
-            id: "fallback-" + Date.now(),
-            createdAt: new Date(),
-            userQuery: apiQuery,
-            comparisonResults:
-              mockInsuranceData.generateMockComparisonResults(apiQuery),
-          };
-        }
-
         return {
           id: "empty-" + Date.now(),
           createdAt: new Date(),
@@ -458,19 +436,7 @@ const insuranceService = {
     } catch (error) {
       console.error("Error comparing insurance plans:", error);
 
-      // Fallback to mock data in case of API failure
-      if (import.meta.env.DEV || ENABLE_MOCK_DATA) {
-        console.warn("API failed, falling back to mock data");
-        return {
-          id: "fallback-" + Date.now(),
-          createdAt: new Date(),
-          userQuery: criteria,
-          comparisonResults:
-            mockInsuranceData.generateMockComparisonResults(criteria),
-        };
-      }
-
-      // In production with no mock data, return empty results
+      // Return empty results structure with error information
       return {
         id: "error-" + Date.now(),
         createdAt: new Date(),

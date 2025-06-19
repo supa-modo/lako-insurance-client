@@ -642,9 +642,9 @@ const ContactMessagesPage = () => {
                         className="text-xs border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-primary-500"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <option value={5}>5 per page</option>
-                        <option value={10}>10 per page</option>
-                        <option value={20}>20 per page</option>
+                        <option value={6}>6 per page</option>
+                        <option value={12}>12 per page</option>
+                        <option value={24}>24 per page</option>
                       </select>
                       {expandedSections[status] ? (
                         <TbChevronUp className="h-5 w-5 text-gray-500" />
@@ -655,14 +655,14 @@ const ContactMessagesPage = () => {
                   </div>
                 </div>
 
-                {/* Section Content */}
+                {/* Section Content  */}
                 <AnimatePresence>
                   {expandedSections[status] && (
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3 }}
+                      transition={{ duration: 0.5 }}
                       className="overflow-hidden"
                     >
                       {loading ? (
@@ -699,13 +699,14 @@ const ContactMessagesPage = () => {
                         </div>
                       ) : (
                         <>
-                          <div className="grid grid-cols-1 gap-4 p-4">
+                          <div className="grid grid-cols-2 gap-4 p-4">
                             {getPaginatedMessages(status).map((message) => (
                               <motion.div
                                 key={message.id}
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
+                                transition={{ duration: 0.5 }}
+                                className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md cursor-pointer"
                                 onClick={() => {
                                   setSelectedMessage(message);
                                   setShowModal(true);

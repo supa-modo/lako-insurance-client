@@ -77,20 +77,121 @@ const ResultsPage = () => {
             userQuery.ageMax === undefined &&
             !userQuery.age)
         ) {
-          console.warn(
-            "No user query data available or incomplete data, using default query"
+          console.warn("No user query data available or incomplete data");
+          setError(
+            "Invalid search parameters. Please go back and complete your search criteria."
           );
-          // Create a default query for seniors insurance
-          const defaultQuery = {
-            insuranceType: "seniors",
-            ageMin: 65,
-            ageMax: 70,
-            budgetMax: 75000,
-            optionalCovers: ["outpatient"],
-          };
+          setComparisonResults([]);
+          setReport(null);
+          setLoading(false);
+          return;
+        }
 
-          // Use the API service with default parameters
-          const reportData = await insuranceService.comparePlans(defaultQuery);
+        // The query should already be properly formatted from SummaryStep,
+        // but let's ensure all parameters are correct
+        let processedQuery = { ...userQuery };
+
+        // Ensure insurance type is set
+        if (!processedQuery.insuranceType) {
+          processedQuery.insuranceType = "seniors";
+        }
+
+        // Ensure age parameters are correctly formatted
+        if (
+          processedQuery.ageMin === undefined &&
+          processedQuery.ageMax === undefined &&
+          processedQuery.age
+        ) {
+          // Try to extract age values if only the string format is available
+          if (
+            typeof processedQuery.age === "string" &&
+            processedQuery.age.includes("-")
+          ) {
+            const [min, max] = processedQuery.age.split("-").map(Number);
+            processedQuery.ageMin = min;
+            processedQuery.ageMax = max;
+          } else if (
+            typeof processedQuery.age === "string" &&
+            processedQuery.age.includes("+")
+          ) {
+            const min = parseInt(processedQuery.age.replace("+", ""), 10);
+            processedQuery.ageMin = min;
+            processedQuery.ageMax = 120; // Use a high upper limit
+          } else if (typeof processedQuery.age === "number") {
+            processedQuery.ageMin = processedQuery.age;
+            processedQuery.ageMax = processedQuery.age;
+          } else {
+            // Parse single age as string
+            const age = parseInt(processedQuery.age, 10);
+            if (!isNaN(age)) {
+              processedQuery.ageMin = age;
+              processedQuery.ageMax = age;
+            }
+          }
+        }
+
+        // Ensure we have default age values if still undefined
+        if (
+          processedQuery.ageMin === undefined ||
+          processedQuery.ageMax === undefined
+        ) {
+          processedQuery.ageMin = processedQuery.ageMin || 65;
+          processedQuery.ageMax = processedQuery.ageMax || 70;
+        }
+
+        // Ensure budget parameters are correctly formatted
+        // If we have budgetValue, use it as budgetMax
+        if (
+          processedQuery.budgetValue !== undefined &&
+          processedQuery.budgetMax === undefined
+        ) {
+          processedQuery.budgetMax = Number(processedQuery.budgetValue);
+        }
+        // If we have a budget string that's a range
+        else if (
+          processedQuery.budgetMax === undefined &&
+          typeof processedQuery.budget === "string" &&
+          processedQuery.budget.includes("-")
+        ) {
+          const [min, max] = processedQuery.budget.split("-").map(Number);
+          processedQuery.budgetMin = min;
+          processedQuery.budgetMax = max;
+        }
+        // If we have a budget string with a plus sign
+        else if (
+          processedQuery.budgetMax === undefined &&
+          typeof processedQuery.budget === "string" &&
+          processedQuery.budget.includes("+")
+        ) {
+          const min = parseInt(processedQuery.budget.replace("+", ""), 10);
+          processedQuery.budgetMin = min;
+          processedQuery.budgetMax = 1000000; // Use a high upper limit
+        }
+        // If we have a single budget value
+        else if (
+          processedQuery.budgetMax === undefined &&
+          typeof processedQuery.budget === "number"
+        ) {
+          processedQuery.budgetMax = processedQuery.budget;
+        }
+
+        // Clean up unnecessary properties before sending to API
+        const apiQuery = {
+          insuranceType: processedQuery.insuranceType,
+          ageMin: processedQuery.ageMin,
+          ageMax: processedQuery.ageMax,
+          budgetMin: processedQuery.budgetMin,
+          budgetMax: processedQuery.budgetMax,
+          coverageLimitMin: processedQuery.coverageLimitMin,
+          coverageLimitMax: processedQuery.coverageLimitMax,
+          healthFilterType: processedQuery.healthFilterType,
+          optionalCovers: processedQuery.optionalCovers,
+        };
+
+        console.log("Using processed user query for API call:", apiQuery);
+
+        try {
+          const reportData = await insuranceService.comparePlans(apiQuery);
 
           if (
             reportData &&
@@ -99,233 +200,26 @@ const ResultsPage = () => {
           ) {
             setReport(reportData);
             setComparisonResults(reportData.comparisonResults);
-            setError(
-              "Using default search parameters. Please try again with your preferences."
+            setError(null); // Clear any previous errors
+            console.log(
+              `Successfully found ${reportData.comparisonResults.length} matching plans`
             );
           } else {
-            throw new Error("No results found with default parameters");
-          }
-        } else {
-          // The query should already be properly formatted from SummaryStep,
-          // but let's ensure all parameters are correct
-          let processedQuery = { ...userQuery };
-
-          // Ensure insurance type is set
-          if (!processedQuery.insuranceType) {
-            processedQuery.insuranceType = "seniors";
-          }
-
-          // Ensure age parameters are correctly formatted
-          if (
-            processedQuery.ageMin === undefined &&
-            processedQuery.ageMax === undefined &&
-            processedQuery.age
-          ) {
-            // Try to extract age values if only the string format is available
-            if (
-              typeof processedQuery.age === "string" &&
-              processedQuery.age.includes("-")
-            ) {
-              const [min, max] = processedQuery.age.split("-").map(Number);
-              processedQuery.ageMin = min;
-              processedQuery.ageMax = max;
-            } else if (
-              typeof processedQuery.age === "string" &&
-              processedQuery.age.includes("+")
-            ) {
-              const min = parseInt(processedQuery.age.replace("+", ""), 10);
-              processedQuery.ageMin = min;
-              processedQuery.ageMax = 120; // Use a high upper limit
-            } else if (typeof processedQuery.age === "number") {
-              processedQuery.ageMin = processedQuery.age;
-              processedQuery.ageMax = processedQuery.age;
-            } else {
-              // Parse single age as string
-              const age = parseInt(processedQuery.age, 10);
-              if (!isNaN(age)) {
-                processedQuery.ageMin = age;
-                processedQuery.ageMax = age;
-              }
-            }
-          }
-
-          // Ensure we have default age values if still undefined
-          if (
-            processedQuery.ageMin === undefined ||
-            processedQuery.ageMax === undefined
-          ) {
-            processedQuery.ageMin = processedQuery.ageMin || 65;
-            processedQuery.ageMax = processedQuery.ageMax || 70;
-          }
-
-          // Ensure budget parameters are correctly formatted
-          // If we have budgetValue, use it as budgetMax
-          if (
-            processedQuery.budgetValue !== undefined &&
-            processedQuery.budgetMax === undefined
-          ) {
-            processedQuery.budgetMax = Number(processedQuery.budgetValue);
-          }
-          // If we have a budget string that's a range
-          else if (
-            processedQuery.budgetMax === undefined &&
-            typeof processedQuery.budget === "string" &&
-            processedQuery.budget.includes("-")
-          ) {
-            const [min, max] = processedQuery.budget.split("-").map(Number);
-            processedQuery.budgetMin = min;
-            processedQuery.budgetMax = max;
-          }
-          // If we have a budget string with a plus sign
-          else if (
-            processedQuery.budgetMax === undefined &&
-            typeof processedQuery.budget === "string" &&
-            processedQuery.budget.includes("+")
-          ) {
-            const min = parseInt(processedQuery.budget.replace("+", ""), 10);
-            processedQuery.budgetMin = min;
-            processedQuery.budgetMax = 1000000; // Use a high upper limit
-          }
-          // If we have a single budget value
-          else if (
-            processedQuery.budgetMax === undefined &&
-            typeof processedQuery.budget === "number"
-          ) {
-            processedQuery.budgetMax = processedQuery.budget;
-          }
-
-          // Clean up unnecessary properties before sending to API
-          const apiQuery = {
-            insuranceType: processedQuery.insuranceType,
-            ageMin: processedQuery.ageMin,
-            ageMax: processedQuery.ageMax,
-            budgetMin: processedQuery.budgetMin,
-            budgetMax: processedQuery.budgetMax,
-            optionalCovers: processedQuery.optionalCovers,
-          };
-
-          console.log("Using processed user query for API call:", apiQuery);
-
-          try {
-            const reportData = await insuranceService.comparePlans(apiQuery);
-
-            if (
-              reportData &&
-              reportData.comparisonResults &&
-              reportData.comparisonResults.length > 0
-            ) {
-              setReport(reportData);
-              setComparisonResults(reportData.comparisonResults);
-              setError(null); // Clear any previous errors
-              console.log(
-                `Successfully found ${reportData.comparisonResults.length} matching plans`
-              );
-            } else {
-              console.log("No plans found in initial query response");
-              setError(
-                "No plans found that match your criteria. Trying with relaxed parameters..."
-              );
-
-              try {
-                // Try with increased budget if we have a budget constraint
-                if (apiQuery.budgetMax) {
-                  const relaxedQuery = {
-                    ...apiQuery,
-                    budgetMax: Math.round(apiQuery.budgetMax * 1.5), // Increase budget by 50%
-                  };
-
-                  console.log(
-                    "Trying relaxed query with increased budget:",
-                    relaxedQuery
-                  );
-
-                  const fallbackData = await insuranceService.comparePlans(
-                    relaxedQuery
-                  );
-
-                  if (
-                    fallbackData &&
-                    fallbackData.comparisonResults &&
-                    fallbackData.comparisonResults.length > 0
-                  ) {
-                    setReport(fallbackData);
-                    setComparisonResults(fallbackData.comparisonResults);
-                    setError(
-                      "No exact matches found within your budget. Showing plans with slightly higher premiums."
-                    );
-                    return; // Exit early if we found plans
-                  }
-                }
-
-                // Try without budget constraints
-                const noBudgetQuery = {
-                  ...apiQuery,
-                  budgetMin: undefined,
-                  budgetMax: undefined,
-                };
-
-                console.log(
-                  "Trying query without budget constraint:",
-                  noBudgetQuery
-                );
-                const noBudgetData = await insuranceService.comparePlans(
-                  noBudgetQuery
-                );
-
-                if (
-                  noBudgetData &&
-                  noBudgetData.comparisonResults &&
-                  noBudgetData.comparisonResults.length > 0
-                ) {
-                  setReport(noBudgetData);
-                  setComparisonResults(noBudgetData.comparisonResults);
-                  setError(
-                    "No plans found within your budget. Showing all available plans that match your other criteria."
-                  );
-                  return; // Exit early if we found plans
-                }
-
-                // Last resort - try with minimal criteria
-                const minimalQuery = {
-                  insuranceType: "seniors",
-                };
-
-                console.log(
-                  "Last resort - trying with minimal criteria:",
-                  minimalQuery
-                );
-                const minimalData = await insuranceService.comparePlans(
-                  minimalQuery
-                );
-
-                if (
-                  minimalData &&
-                  minimalData.comparisonResults &&
-                  minimalData.comparisonResults.length > 0
-                ) {
-                  setReport(minimalData);
-                  setComparisonResults(minimalData.comparisonResults);
-                  setError(
-                    "Showing all available senior insurance plans. You can refine your search to find more specific matches."
-                  );
-                } else {
-                  setError(
-                    "We're experiencing technical difficulties. Please try again later or contact customer support."
-                  );
-                }
-              } catch (fallbackError) {
-                console.error("Error in fallback queries:", fallbackError);
-                setError(
-                  "We're experiencing technical difficulties. Please try again later or contact customer support."
-                );
-              }
-            }
-          } catch (error) {
-            console.error("Error fetching comparison results:", error);
+            // No plans found - show appropriate message
+            console.log("No plans found matching the criteria");
+            setReport(reportData); // Still set the report for query info
+            setComparisonResults([]);
             setError(
-              "We couldn't find plans matching your criteria. Please try different parameters."
+              reportData?.error
+                ? "We're experiencing technical difficulties. Please try again later."
+                : "No insurance plans found matching your criteria. Please try adjusting your filters or contact us for assistance."
             );
           }
+        } catch (error) {
+          console.error("Error fetching comparison results:", error);
+          setError(
+            "We couldn't find plans matching your criteria. Please try different parameters."
+          );
         }
       } catch (err) {
         console.error("Error fetching comparison results:", err);
@@ -366,59 +260,25 @@ const ResultsPage = () => {
   };
 
   const handleBuyPlan = (plan) => {
-    // This would normally navigate to a checkout flow
-    // For now, we'll just show a notice and open the plan details
-    alert("The purchase functionality will be implemented in the future.");
-    setSelectedPlan(plan);
-    setShowPlanDetailsModal(true);
-  };
-
-  const handleClosePlanDetails = () => {
-    setShowPlanDetailsModal(false);
+    //navigate to the buy-online page for now
+    window.open("/buy-online", "_blank");
   };
 
   const handleDownloadPdf = async () => {
     setDownloadStatus("pdf-loading");
     try {
-      // Use mock download service
-      await mockDownloadReportPdf("mock-report-1");
-      setDownloadStatus("pdf-success");
+      // PDF download functionality not yet implemented
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      setDownloadStatus("pdf-error");
+      alert(
+        "PDF download feature is not yet implemented. Please contact support for assistance."
+      );
 
       // Reset status after 3 seconds
       setTimeout(() => setDownloadStatus(null), 3000);
     } catch (error) {
       setDownloadStatus("pdf-error");
       // Reset status after 3 seconds
-      setTimeout(() => setDownloadStatus(null), 3000);
-    }
-  };
-
-  const handleDownloadCsv = async () => {
-    setDownloadStatus("csv-loading");
-    try {
-      // Simulate download
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      setDownloadStatus("csv-success");
-
-      // Reset status after 3 seconds
-      setTimeout(() => setDownloadStatus(null), 3000);
-    } catch (error) {
-      setDownloadStatus("csv-error");
-      setTimeout(() => setDownloadStatus(null), 3000);
-    }
-  };
-
-  const handleDownloadText = async () => {
-    setDownloadStatus("text-loading");
-    try {
-      // Simulate download
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setDownloadStatus("text-success");
-
-      // Reset status after 3 seconds
-      setTimeout(() => setDownloadStatus(null), 3000);
-    } catch (error) {
-      setDownloadStatus("text-error");
       setTimeout(() => setDownloadStatus(null), 3000);
     }
   };
@@ -630,34 +490,31 @@ const ResultsPage = () => {
                         </div>
                         <div className="flex flex-col lg:flex-row gap-3">
                           <div>
-                          <motion.a
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            href={`tel:+2547206363638`}
-                            className="w-full lg:w-auto flex items-center justify-center px-4 sm:px-6 py-3 bg-secondary-500 hover:bg-secondary-600 text-white font-medium rounded-lg shadow-md transition-all text-[0.8rem] md:text-sm lg:text-base"
-                          >
-                            <TbPhoneCall className="mr-2" size={20} /> Call
-                            Expert
-                          </motion.a>
+                            <motion.a
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
+                              href={`tel:+2547206363638`}
+                              className="w-full lg:w-auto flex items-center justify-center px-4 sm:px-6 py-3 bg-secondary-500 hover:bg-secondary-600 text-white font-medium rounded-lg shadow-md transition-all text-[0.8rem] md:text-sm lg:text-base"
+                            >
+                              <TbPhoneCall className="mr-2" size={20} /> Call
+                              Expert
+                            </motion.a>
                           </div>
-                          
                           <div>
-
-                         
-                          <motion.button
-                            whileHover={{ scale: 1.01 }}
-                            whileTap={{ scale: 0.99 }}
-                            className="w-full lg:w-auto flex items-center justify-center px-4 sm:px-6 py-3 border-2 border-secondary-400 text-secondary-700 hover:bg-secondary-100 font-medium rounded-lg transition-all text-[0.8rem] md:text-sm lg:text-base"
-                            onClick={handleRequestCallback}
-                          >
-                            <TbMailFilled className="mr-2" size={20} /> Request
-                            Callback
-                          </motion.button>
-                        </div> </div>
+                            <motion.button
+                              whileHover={{ scale: 1.01 }}
+                              whileTap={{ scale: 0.99 }}
+                              className="w-full lg:w-auto flex items-center justify-center px-4 sm:px-6 py-3 border-2 border-secondary-400 text-secondary-700 hover:bg-secondary-100 font-medium rounded-lg transition-all text-[0.8rem] md:text-sm lg:text-base"
+                              onClick={handleRequestCallback}
+                            >
+                              <TbMailFilled className="mr-2" size={20} />{" "}
+                              Request Callback
+                            </motion.button>
+                          </div>{" "}
+                        </div>
                       </div>
                     </div>
                   </motion.div>
-
                 </motion.div>
               </div>
 

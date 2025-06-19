@@ -17,13 +17,24 @@ import {
   TbShieldPlus,
   TbListDetails,
   TbClockExclamation,
+  TbUsers,
+  TbShield,
+  TbActivity,
+  TbDatabase,
+  TbReport,
+  TbUserCog,
+  TbShieldX,
 } from "react-icons/tb";
 import { MdSpaceDashboard } from "react-icons/md";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PiUsersDuotone } from "react-icons/pi";
 import { LuLogOut } from "react-icons/lu";
-import { RiUserFollowLine, RiUserShared2Line } from "react-icons/ri";
+import {
+  RiAdminLine,
+  RiUserFollowLine,
+  RiUserShared2Line,
+} from "react-icons/ri";
 import { useAuth } from "../../context/AuthContext";
 
 // Navigation items with categories for better organization
@@ -78,13 +89,6 @@ const navItems = [
         icon: TbBuildingBank,
         path: "/admin/companies",
       },
-      {
-        name: "Renewals",
-        icon: TbCalendarEvent,
-        path: "/admin/renewals",
-        badge: "12",
-        badgeColor: "bg-yellow-500",
-      },
     ],
   },
   {
@@ -123,37 +127,73 @@ const navItems = [
   //   ],
   // },
   {
+    category: "SuperAdmin",
+    items: [
+      {
+        name: "SuperAdmin Panel",
+        icon: RiAdminLine,
+        path: "/admin/superAdmin",
+        badge: "SA",
+        badgeColor: "bg-red-500",
+        requiresSuperAdmin: true,
+        submenu: [
+          {
+            name: "User Management",
+            path: "/admin/users",
+            icon: PiUsersDuotone,
+          },
+          {
+            name: "Security Analytics",
+            path: "/admin/security",
+            icon: TbShield,
+          },
+          {
+            name: "Audit Logs",
+            path: "/admin/audit-logs",
+            icon: TbFileText,
+          },
+          {
+            name: "User Activities",
+            path: "/admin/user-activities",
+            icon: TbActivity,
+          },
+        ],
+      },
+    ],
+  },
+  {
     category: "null",
     items: [
       {
         name: "Settings",
         icon: TbSettings,
-        path: "/admin/settings",
+        //TODO: To chnage this later after working on the settings page
+        path: "/admin/security",
       },
     ],
   },
 ];
 
 const AdminSidebar = ({ collapsed }) => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const navigate = useNavigate();
 
+  // Always show all nav items including SuperAdmin
+  const allNavItems = navItems;
+
   // Initialize only the "Clients & Leads" submenu as open by default
-  const [openSubmenus, setOpenSubmenus] = useState(() => {
-    const initialOpen = {};
-    navItems.forEach((category) => {
-      category.items.forEach((item) => {
-        // Only open "Clients & Leads" by default
-        if (item.name === "All Applications & Leads") {
-          initialOpen[item.name] = true;
-        }
-      });
-    });
-    return initialOpen;
-  });
+  const [openSubmenus, setOpenSubmenus] = useState({});
+  const [showAccessError, setShowAccessError] = useState(false);
 
   // Handle submenu toggle - close other open submenus when opening a new one
-  const toggleSubmenu = (itemName) => {
+  const toggleSubmenu = (itemName, requiresSuperAdmin = false) => {
+    // Check SuperAdmin access if required
+    if (requiresSuperAdmin && user?.role !== "superadmin") {
+      setShowAccessError(true);
+      setTimeout(() => setShowAccessError(false), 8000);
+      return;
+    }
+
     setOpenSubmenus((prev) => {
       // Create a new object with all submenus closed
       const allClosed = {};
@@ -174,20 +214,22 @@ const AdminSidebar = ({ collapsed }) => {
     navigate("/admin/login");
   };
 
-  // Reset submenu state when sidebar expands - only "Clients & Leads" is open
+  // Reset submenu state when sidebar expands or user role changes
   useEffect(() => {
     if (!collapsed) {
-      const clientsOnly = {};
-      navItems.forEach((category) => {
-        category.items.forEach((item) => {
-          if (item.name === "Clients & Leads") {
-            clientsOnly[item.name] = true;
-          }
-        });
-      });
-      setOpenSubmenus(clientsOnly);
+      // Reset submenus to empty state when sidebar expands
+      setOpenSubmenus({});
     }
   }, [collapsed]);
+
+  // Initialize default open state when user role changes
+  useEffect(() => {
+    const initialOpen = {};
+    if (user?.role === "superadmin") {
+      // No default open menus for better UX
+    }
+    setOpenSubmenus(initialOpen);
+  }, [user?.role]);
 
   return (
     <aside
@@ -199,7 +241,7 @@ const AdminSidebar = ({ collapsed }) => {
       <div className="flex-1 overflow-y-auto py-4 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         {/* Navigation links by category */}
         <nav>
-          {navItems.map((category, index) => (
+          {allNavItems.map((category, index) => (
             <div key={index} className="mb-1 px-3">
               {/* Category label */}
               {category.category !== "null" && !collapsed && (
@@ -228,10 +270,20 @@ const AdminSidebar = ({ collapsed }) => {
                           ? (e) => {
                               if (!collapsed) {
                                 e.preventDefault();
-                                toggleSubmenu(item.name);
+                                toggleSubmenu(
+                                  item.name,
+                                  item.requiresSuperAdmin
+                                );
                                 // Navigate to the main path for "All Applications"
                                 if (item.name === "All Applications") {
                                   navigate("/admin/applications");
+                                }
+                                // Navigate to SuperAdmin if authorized
+                                if (
+                                  item.name === "SuperAdmin Panel" &&
+                                  user?.role === "superadmin"
+                                ) {
+                                  navigate("/admin/superAdmin");
                                 }
                               }
                             }
@@ -328,7 +380,7 @@ const AdminSidebar = ({ collapsed }) => {
               </div>
 
               {/* Category separator */}
-              {index < navItems.length - 1 && (
+              {index < allNavItems.length - 1 && (
                 <div
                   className={`${
                     collapsed ? "mx-3" : "mx-1"
@@ -356,6 +408,18 @@ const AdminSidebar = ({ collapsed }) => {
           </button>
         </div>
       </div>
+
+      {/* Access Error Toast */}
+      {showAccessError && (
+        <div className="fixed top-20 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-pulse">
+          <div className="flex items-center">
+            <TbShieldX className="h-4 w-4 mr-2" />
+            <span className="text-sm">
+              Access denied. SuperAdmin role required.
+            </span>
+          </div>
+        </div>
+      )}
     </aside>
   );
 };

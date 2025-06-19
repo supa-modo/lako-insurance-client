@@ -8,6 +8,17 @@ import {
   FiPhone,
   FiUserCheck,
 } from "react-icons/fi";
+import {
+  TbX,
+  TbUser,
+  TbMail,
+  TbPhone,
+  TbUserCheck,
+  TbLock,
+  TbCheck,
+  TbAlertCircle,
+  TbUserPlus,
+} from "react-icons/tb";
 
 const CreateUserModal = ({ isOpen, onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -102,6 +113,12 @@ const CreateUserModal = ({ isOpen, onClose, onSubmit }) => {
     onClose();
   };
 
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      handleClose();
+    }
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -109,187 +126,243 @@ const CreateUserModal = ({ isOpen, onClose, onSubmit }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
-          onClick={handleClose}
+          transition={{ duration: 0.4, ease: "easeInOut" }}
+          className="fixed inset-0 bg-black/50 backdrop-blur-[1.5px] flex items-start justify-end z-50 p-3 font-outfit"
+          onClick={handleBackdropClick}
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative top-8 mx-auto p-0 border w-full max-w-md shadow-lg rounded-lg bg-white"
-            onClick={(e) => e.stopPropagation()}
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            className="w-[650px] h-[calc(100vh-24px)] bg-white shadow-2xl overflow-hidden rounded-xl border border-gray-200"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900">
-                Create New User
-              </h3>
-              <button
-                onClick={handleClose}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <FiX className="h-6 w-6" />
-              </button>
+            <div className="bg-gradient-to-r from-primary-600 to-primary-700 px-6 py-4 relative">
+              <div className="relative flex justify-between items-center z-10">
+                <div className="flex items-center">
+                  <TbUserPlus size={40} className="text-white mr-3" />
+                  <div>
+                    <h2 className="text-white font-semibold text-lg font-lexend">
+                      Create New User
+                    </h2>
+                    <p className="text-white/80 text-sm">
+                      Add a new user account to the system
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={handleClose}
+                  className="text-white/80 hover:text-white transition-colors rounded-full p-1 hover:bg-white/10"
+                >
+                  <TbX className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              {errors.submit && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
-                  {errors.submit}
-                </div>
-              )}
+            {/* Form Content */}
+            <form
+              onSubmit={handleSubmit}
+              className="flex flex-col h-[calc(100vh-120px)] md:h-[calc(100vh-100px)]"
+            >
+              <div className="overflow-y-auto flex-1 px-3 md:px-6 py-5">
+                <div className="space-y-6">
+                  {/* Submit Error */}
+                  {errors.submit && (
+                    <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                      <div className="flex items-center">
+                        <TbAlertCircle className="h-5 w-5 text-red-500 mr-2" />
+                        <p className="text-sm text-red-800">{errors.submit}</p>
+                      </div>
+                    </div>
+                  )}
 
-              {/* First Name */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  First Name
-                </label>
-                <div className="relative">
-                  <FiUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                  <input
-                    type="text"
-                    name="firstName"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    className={`pl-10 w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.firstName ? "border-red-500" : "border-gray-300"
-                    }`}
-                    placeholder="Enter first name"
-                  />
+                  {/* Personal Information */}
+                  <div>
+                    <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
+                      <TbUser size={20} className="mr-2 text-primary-600" />
+                      Personal Information
+                    </h3>
+
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* First Name */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            First Name <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            name="firstName"
+                            value={formData.firstName}
+                            onChange={handleChange}
+                            className={`w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border ${
+                              errors.firstName
+                                ? "border-red-300 bg-red-50"
+                                : "border-gray-300"
+                            } focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors`}
+                            placeholder="Enter first name"
+                          />
+                          {errors.firstName && (
+                            <div className="text-red-500 text-xs mt-1 flex items-center">
+                              <TbAlertCircle className="mr-1" />
+                              {errors.firstName}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Last Name */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Last Name <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            name="lastName"
+                            value={formData.lastName}
+                            onChange={handleChange}
+                            className={`w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border ${
+                              errors.lastName
+                                ? "border-red-300 bg-red-50"
+                                : "border-gray-300"
+                            } focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors`}
+                            placeholder="Enter last name"
+                          />
+                          {errors.lastName && (
+                            <div className="text-red-500 text-xs mt-1 flex items-center">
+                              <TbAlertCircle className="mr-1" />
+                              {errors.lastName}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Email */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Email Address <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          className={`w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border ${
+                            errors.email
+                              ? "border-red-300 bg-red-50"
+                              : "border-gray-300"
+                          } focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors`}
+                          placeholder="john@example.com"
+                        />
+                        {errors.email && (
+                          <div className="text-red-500 text-xs mt-1 flex items-center">
+                            <TbAlertCircle className="mr-1" />
+                            {errors.email}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Password */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Password <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="password"
+                          name="password"
+                          value={formData.password}
+                          onChange={handleChange}
+                          className={`w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border ${
+                            errors.password
+                              ? "border-red-300 bg-red-50"
+                              : "border-gray-300"
+                          } focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors`}
+                          placeholder="Enter password"
+                        />
+                        {errors.password && (
+                          <div className="text-red-500 text-xs mt-1 flex items-center">
+                            <TbAlertCircle className="mr-1" />
+                            {errors.password}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Phone */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Phone Number (Optional)
+                        </label>
+                        <input
+                          type="tel"
+                          name="phone"
+                          value={formData.phone}
+                          onChange={handleChange}
+                          className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                          placeholder="+254712345678"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Account Settings */}
+                  <div className="border-t border-gray-200 pt-6">
+                    <h3 className="font-semibold text-neutral-700 mb-4 flex items-center">
+                      <TbUserCheck
+                        size={20}
+                        className="mr-2 text-primary-600"
+                      />
+                      Account Settings
+                    </h3>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        User Role <span className="text-red-500">*</span>
+                      </label>
+                      <select
+                        name="role"
+                        value={formData.role}
+                        onChange={handleChange}
+                        className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                      >
+                        {roles.map((role) => (
+                          <option key={role.value} value={role.value}>
+                            {role.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
                 </div>
-                {errors.firstName && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.firstName}
-                  </p>
-                )}
               </div>
 
-              {/* Last Name */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Last Name
-                </label>
-                <div className="relative">
-                  <FiUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                  <input
-                    type="text"
-                    name="lastName"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                    className={`pl-10 w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.lastName ? "border-red-500" : "border-gray-300"
-                    }`}
-                    placeholder="Enter last name"
-                  />
-                </div>
-                {errors.lastName && (
-                  <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>
-                )}
-              </div>
-
-              {/* Email */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email
-                </label>
-                <div className="relative">
-                  <FiMail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className={`pl-10 w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.email ? "border-red-500" : "border-gray-300"
-                    }`}
-                    placeholder="Enter email address"
-                  />
-                </div>
-                {errors.email && (
-                  <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-                )}
-              </div>
-
-              {/* Password */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Password
-                </label>
-                <div className="relative">
-                  <FiLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                  <input
-                    type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    className={`pl-10 w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.password ? "border-red-500" : "border-gray-300"
-                    }`}
-                    placeholder="Enter password"
-                  />
-                </div>
-                {errors.password && (
-                  <p className="mt-1 text-sm text-red-600">{errors.password}</p>
-                )}
-              </div>
-
-              {/* Role */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Role
-                </label>
-                <div className="relative">
-                  <FiUserCheck className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                  <select
-                    name="role"
-                    value={formData.role}
-                    onChange={handleChange}
-                    className="pl-10 w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              {/* Sticky Footer */}
+              <div className="border-t border-gray-200 bg-white px-6 py-4">
+                <div className="flex justify-end space-x-3">
+                  <button
+                    type="button"
+                    onClick={handleClose}
+                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors font-medium"
                   >
-                    {roles.map((role) => (
-                      <option key={role.value} value={role.value}>
-                        {role.label}
-                      </option>
-                    ))}
-                  </select>
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center font-medium"
+                  >
+                    {loading ? (
+                      <>
+                        <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                        Creating...
+                      </>
+                    ) : (
+                      <>
+                        <TbCheck className="mr-2 h-4 w-4" />
+                        Create User
+                      </>
+                    )}
+                  </button>
                 </div>
-              </div>
-
-              {/* Phone */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Phone (Optional)
-                </label>
-                <div className="relative">
-                  <FiPhone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className="pl-10 w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter phone number"
-                  />
-                </div>
-              </div>
-
-              {/* Buttons */}
-              <div className="flex justify-end space-x-3 pt-4">
-                <button
-                  type="button"
-                  onClick={handleClose}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loading ? "Creating..." : "Create User"}
-                </button>
               </div>
             </form>
           </motion.div>

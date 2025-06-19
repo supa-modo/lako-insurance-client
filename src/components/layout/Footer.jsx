@@ -34,7 +34,7 @@ import { useModal } from "../../context/ModalContext";
 
 const Footer = () => {
   const { openCallbackModal } = useModal();
-  
+
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -90,7 +90,7 @@ const Footer = () => {
               className="flex items-center space-x-3 group mb-4 md:mb-0"
             >
               <img
-                src="/lako-logo.png"
+                src="/logo.png"
                 alt="Lako Insurance Agency"
                 className="w-32 "
               />
@@ -104,7 +104,10 @@ const Footer = () => {
                 <span className="w-10 h-px bg-gray-300"></span>
               </div>
               <div className="flex space-x-3">
-                <SocialLink icon={FaFacebook} href="https://web.facebook.com/lakoinsuranceagency?_rdc=1&_rdr" />
+                <SocialLink
+                  icon={FaFacebook}
+                  href="https://web.facebook.com/lakoinsuranceagency?_rdc=1&_rdr"
+                />
                 <SocialLink icon={FaXTwitter} href="#" />
                 <SocialLink
                   icon={FaInstagram}
@@ -200,7 +203,7 @@ const Footer = () => {
                   <span>SNDBX Office, Ground Floor, Kilimani, Nairobi</span>
                 </div>
 
-                <motion.button 
+                <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={openCallbackModal}

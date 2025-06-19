@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   TbAlertTriangle,
   TbShield,
@@ -16,6 +16,12 @@ import {
   TbX,
   TbExclamationCircle,
   TbChartBar,
+  TbReport,
+  TbDatabaseExport,
+  TbAlertCircle,
+  TbClock,
+  TbLock,
+  TbKey,
 } from "react-icons/tb";
 import { analyticsAPI, auditAPI } from "../../api/superadminApi";
 
@@ -166,7 +172,7 @@ const SecurityAnalytics = () => {
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full"
+            className="w-16 h-16 border-4 border-primary-600 border-t-transparent rounded-full"
           />
         </div>
       </div>
@@ -190,7 +196,7 @@ const SecurityAnalytics = () => {
           <div className="flex flex-wrap mt-4 md:mt-0 space-x-2">
             <button
               onClick={handleRefresh}
-              className="bg-white border border-gray-200 rounded-lg p-2 text-gray-500 hover:text-primary-600 hover:border-primary-300 focus:outline-none focus:ring-1 focus:ring-primary-500 transition-all"
+              className="bg-white border border-gray-200 rounded-lg p-2 text-gray-500 hover:text-primary-600 hover:border-primary-300 focus:outline-none focus:ring-1 focus:ring-primary-500 transition-all shadow-sm"
             >
               <TbRefresh
                 className={`h-5 w-5 ${isRefreshing ? "animate-spin" : ""}`}
@@ -201,7 +207,7 @@ const SecurityAnalytics = () => {
               <select
                 value={timeRange}
                 onChange={(e) => setTimeRange(Number(e.target.value))}
-                className="pl-4 pr-8 py-2 bg-neutral-200 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 appearance-none"
+                className="pl-4 pr-8 py-2 bg-neutral-200 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 appearance-none shadow-sm"
               >
                 <option value={7}>Last 7 days</option>
                 <option value={30}>Last 30 days</option>
@@ -215,12 +221,12 @@ const SecurityAnalytics = () => {
         </div>
       </div>
 
-      <div className="overflow-y-auto flex-1 px-8 py-6 space-y-6">
+      <div className="overflow-y-auto flex-1 px-6 py-4 space-y-6">
         {/* Error Message */}
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4">
             <div className="flex items-center">
-              <TbAlertTriangle className="h-5 w-5 text-red-500 mr-2" />
+              <TbAlertCircle className="h-5 w-5 text-red-500 mr-2" />
               <p className="text-red-800">{error}</p>
               <button
                 onClick={() => setError(null)}
@@ -232,54 +238,84 @@ const SecurityAnalytics = () => {
           </div>
         )}
 
-        {/* Security Metrics */}
-        <div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Security Metrics ({timeRange} Days)
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <MetricCard
-              title="Failed Login Attempts"
-              value={analytics?.failedLogins || 0}
-              icon={TbAlertTriangle}
-              color="bg-red-500"
-              trend={-12}
-              subtitle="Security incidents"
-            />
-            <MetricCard
-              title="Password Resets"
-              value={analytics?.passwordResets || 0}
-              icon={TbShield}
-              color="bg-orange-500"
-              trend={8}
-              subtitle="User password changes"
-            />
-            <MetricCard
-              title="Account Lockouts"
-              value={analytics?.accountLockouts || 0}
-              icon={TbShieldCheck}
-              color="bg-red-600"
-              trend={-25}
-              subtitle="Accounts temporarily locked"
-            />
-            <MetricCard
-              title="Login Success Rate"
-              value={`${analytics?.successRate?.toFixed(1) || 0}%`}
-              icon={TbTrendingUp}
-              color="bg-green-500"
-              trend={5}
-              subtitle="Overall authentication success"
-            />
+        {/* Security Metrics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="bg-white px-6 py-4 rounded-xl border border-gray-200 border-l-4 border-l-red-500 shadow-md">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">
+                  Failed Login Attempts
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {analytics?.failedLogins || 0}
+                </p>
+                <p className="text-xs text-gray-500 mt-1">Security incidents</p>
+              </div>
+              <div className="p-3 bg-red-100 rounded-lg">
+                <TbAlertTriangle className="h-6 w-6 text-red-600" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white px-6 py-4 rounded-xl border border-gray-200 border-l-4 border-l-orange-500 shadow-md">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">
+                  Password Resets
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {analytics?.passwordResets || 0}
+                </p>
+                <p className="text-xs text-gray-500 mt-1">Password changes</p>
+              </div>
+              <div className="p-3 bg-orange-100 rounded-lg">
+                <TbKey className="h-6 w-6 text-orange-600" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white px-6 py-4 rounded-xl border border-gray-200 border-l-4 border-l-yellow-500 shadow-md">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">
+                  Account Lockouts
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {analytics?.accountLockouts || 0}
+                </p>
+                <p className="text-xs text-gray-500 mt-1">Temporary locks</p>
+              </div>
+              <div className="p-3 bg-yellow-100 rounded-lg">
+                <TbLock className="h-6 w-6 text-yellow-600" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white px-6 py-4 rounded-xl border border-gray-200 border-l-4 border-l-green-500 shadow-md">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">
+                  Success Rate
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {analytics?.successRate?.toFixed(1) || 0}%
+                </p>
+                <p className="text-xs text-gray-500 mt-1">Login success</p>
+              </div>
+              <div className="p-3 bg-green-100 rounded-lg">
+                <TbTrendingUp className="h-6 w-6 text-green-600" />
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Detailed Analytics Grid */}
+        {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Recent Failed Login Attempts */}
           <div className="bg-white rounded-xl shadow-md border border-gray-200">
             <div className="px-6 py-4 border-b border-gray-200">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-lg font-semibold text-secondary-700">
                   Recent Failed Logins
                 </h3>
                 <span className="text-sm text-gray-500">
@@ -297,7 +333,9 @@ const SecurityAnalytics = () => {
               ) : (
                 <div className="text-center py-8">
                   <TbShieldCheck className="h-12 w-12 text-green-300 mx-auto mb-3" />
-                  <p className="text-gray-500">No failed login attempts</p>
+                  <p className="text-gray-500 font-medium">
+                    No failed login attempts
+                  </p>
                   <p className="text-sm text-gray-400">
                     Your system is secure!
                   </p>
@@ -309,13 +347,13 @@ const SecurityAnalytics = () => {
           {/* Security Health Overview */}
           <div className="bg-white rounded-xl shadow-md border border-gray-200">
             <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-secondary-700">
                 Security Health Overview
               </h3>
             </div>
             <div className="p-6">
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
+                <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
                   <div className="flex items-center space-x-3">
                     <TbShieldCheck className="h-5 w-5 text-green-500" />
                     <span className="text-gray-900 font-medium">
@@ -327,7 +365,7 @@ const SecurityAnalytics = () => {
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+                <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg border border-blue-200">
                   <div className="flex items-center space-x-3">
                     <TbUsers className="h-5 w-5 text-blue-500" />
                     <span className="text-gray-900 font-medium">
@@ -339,7 +377,7 @@ const SecurityAnalytics = () => {
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between p-4 bg-purple-50 rounded-lg">
+                <div className="flex items-center justify-between p-4 bg-purple-50 rounded-lg border border-purple-200">
                   <div className="flex items-center space-x-3">
                     <TbActivity className="h-5 w-5 text-purple-500" />
                     <span className="text-gray-900 font-medium">
@@ -349,7 +387,7 @@ const SecurityAnalytics = () => {
                   <span className="text-purple-600 font-semibold">Active</span>
                 </div>
 
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
                   <div className="flex items-center space-x-3">
                     <TbDatabase className="h-5 w-5 text-gray-500" />
                     <span className="text-gray-900 font-medium">
@@ -366,12 +404,12 @@ const SecurityAnalytics = () => {
         {/* Security Recommendations */}
         <div className="bg-white rounded-xl shadow-md border border-gray-200">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">
+            <h3 className="text-lg font-semibold text-secondary-700">
               Security Recommendations
             </h3>
           </div>
           <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
                 <div className="flex items-start space-x-3">
                   <TbExclamationCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
@@ -420,16 +458,16 @@ const SecurityAnalytics = () => {
       </div>
 
       {/* Footer */}
-      <div className="bg-white border-t border-gray-200 px-8 py-3 flex-shrink-0">
+      <div className="bg-white border-t border-gray-200 px-6 py-3 flex-shrink-0">
         <div className="flex flex-wrap justify-between items-center text-sm text-gray-600">
           <div>Last updated: {new Date().toLocaleString()}</div>
           <div className="flex space-x-4">
             <button className="flex items-center hover:text-primary-600">
-              <TbEye className="mr-1 h-4 w-4" />
-              View Details
+              <TbReport className="mr-1 h-4 w-4" />
+              Generate Report
             </button>
             <button className="flex items-center hover:text-primary-600">
-              <TbDatabase className="mr-1 h-4 w-4" />
+              <TbDatabaseExport className="mr-1 h-4 w-4" />
               Export Data
             </button>
           </div>

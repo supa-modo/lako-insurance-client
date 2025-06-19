@@ -12,7 +12,9 @@ const AuthGuard = ({ children }) => {
   useEffect(() => {
     // Initialize auth when AuthGuard is accessed (admin routes)
     const init = async () => {
+      console.log("🛡️ AuthGuard: Initializing auth");
       await initializeAuth();
+      console.log("🛡️ AuthGuard: Auth initialized");
       setLoading(false);
     };
 
@@ -63,9 +65,14 @@ const AuthGuard = ({ children }) => {
   }
 
   if (!user) {
+    console.log("🛡️ AuthGuard: No user found, redirecting to login");
     // Redirect to login with return path
-    return <Navigate to="/admin/login" state={{ from: location.pathname }} replace />;
+    return (
+      <Navigate to="/admin/login" state={{ from: location.pathname }} replace />
+    );
   }
+
+  console.log("🛡️ AuthGuard: User authenticated, allowing access");
 
   return <>{children}</>;
 };

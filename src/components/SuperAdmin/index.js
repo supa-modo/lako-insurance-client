@@ -4,7 +4,7 @@ export { default as UserManagement } from "./UserManagement";
 export { default as SecurityAnalytics } from "./SecurityAnalytics";
 export { default as AuditLogs } from "./AuditLogs";
 export { default as UserActivities } from "./UserActivities";
-export { default as SystemMetrics } from "./SystemMetrics";
+export { default as SuperAdminGuard } from "./SuperAdminGuard";
 
 // Sub-components for UserManagement
 export { default as CreateUserModal } from "./CreateUserModal";

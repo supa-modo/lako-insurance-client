@@ -6,7 +6,7 @@ export const organizationSchema = {
   name: "Lako Insurance Agency",
   alternateName: "Lako Insurance",
   url: "https://lako.co.ke",
-  logo: "https://lako.co.ke/lako-logo.png",
+  logo: "https://lako.co.ke/logo.png",
   image: "https://lako.co.ke/lako.png",
   description:
     "Leading insurance agency in Kenya providing comprehensive insurance solutions including health, life, motor, property, travel, and business insurance since 2015.",

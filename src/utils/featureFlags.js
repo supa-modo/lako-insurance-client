@@ -12,9 +12,9 @@ const AVAILABLE_INSURANCE_TYPES = {
     motor: false,
   },
   production: {
-    health: false,
-    "personal-accident": true, // Disable in production
-    travel: false,
+    health: true, // Enable comprehensive health insurance
+    "personal-accident": true,
+    travel: true, // Enable travel insurance
     property: false,
     motor: false,
   },
@@ -44,13 +44,14 @@ export const getEnvironment = () => process.env.NODE_ENV || "development";
 // Feature flags for specific features
 export const FEATURES = {
   // Insurance types
-  HEALTH_INSURANCE: true, // Always available
-  PERSONAL_ACCIDENT: isDevelopment, // Only in development
+  HEALTH_INSURANCE: true, // Always available - comprehensive health insurance
+  PERSONAL_ACCIDENT: true, // Available in all environments
+  TRAVEL_INSURANCE: true, // Available in all environments
   PROPERTY_INSURANCE: isDevelopment, // Only in development
   MOTOR_INSURANCE: isDevelopment, // Only in development
 
   // Other features
-  ADVANCED_COMPARISON: isDevelopment,
+  ADVANCED_COMPARISON: true, // Enable advanced comparison features
   PREMIUM_FEATURES: isDevelopment,
 };
 

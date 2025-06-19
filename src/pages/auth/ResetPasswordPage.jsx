@@ -121,7 +121,7 @@ const ResetPasswordPage = () => {
         >
           <div className="flex items-center justify-center">
             <img
-              src="/lako-logo.png"
+              src="/logo.png"
               alt="Lako Insurance Logo"
               className="w-32 md:w-36 object-contain"
             />

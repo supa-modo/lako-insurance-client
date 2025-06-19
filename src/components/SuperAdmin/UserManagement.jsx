@@ -16,6 +16,7 @@ import {
   TbEyeOff,
   TbRefresh,
   TbChevronDown,
+  TbChevronUp,
   TbUserCheck,
   TbUserOff,
   TbX,
@@ -29,11 +30,22 @@ import {
   TbDatabase,
   TbReport,
   TbDatabaseExport,
+  TbMailFilled,
+  TbPhoneCall,
+  TbShieldHalfFilled,
 } from "react-icons/tb";
 import { userAPI } from "../../api/superadminApi";
 import CreateUserModal from "./CreateUserModal";
 import EditUserModal from "./EditUserModal";
-import ConfirmDialog from "../common/ConfirmDialog";
+import DeleteConfirmationModal from "../ui/DeleteConfirmationModal";
+import { PiUserDuotone, PiUsersDuotone } from "react-icons/pi";
+import {
+  RiUserFollowLine,
+  RiUserSettingsLine,
+  RiUserUnfollowFill,
+  RiUserUnfollowLine,
+} from "react-icons/ri";
+import { formatDate } from "../../utils/formatDate";
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -46,13 +58,17 @@ const UserManagement = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [showResetPasswordDialog, setShowResetPasswordDialog] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [newPassword, setNewPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
+  const [showResetPasswordDialog, setShowResetPasswordDialog] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [disable2FAConfirmation, setDisable2FAConfirmation] = useState(null);
+  const [isDisabling2FA, setIsDisabling2FA] = useState(false);
   const [statistics, setStatistics] = useState({
     totalUsers: 0,
     activeUsers: 0,
@@ -62,11 +78,11 @@ const UserManagement = () => {
 
   const roles = ["superadmin", "admin", "agent", "manager", "staff"];
   const roleColors = {
-    superadmin: "bg-red-100 text-red-800 border-red-200",
-    admin: "bg-purple-100 text-purple-800 border-purple-200",
-    agent: "bg-blue-100 text-blue-800 border-blue-200",
-    manager: "bg-green-100 text-green-800 border-green-200",
-    staff: "bg-gray-100 text-gray-800 border-gray-200",
+    superadmin: "bg-red-100 border border-red-300 text-red-800",
+    admin: "bg-purple-100 border border-purple-300 text-purple-800",
+    agent: "bg-blue-100 border border-blue-300 text-blue-800",
+    manager: "bg-green-100 border border-green-300 text-green-800",
+    staff: "bg-gray-100 border border-gray-300 text-gray-800",
   };
 
   useEffect(() => {
@@ -80,6 +96,7 @@ const UserManagement = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
+      setIsRefreshing(true);
       const params = {
         page: currentPage,
         limit: 10,
@@ -89,13 +106,14 @@ const UserManagement = () => {
       };
 
       const response = await userAPI.getUsers(params);
-      setUsers(response.data.users);
-      setTotalPages(response.data.pagination.totalPages);
+      setUsers(response.data.data.users);
+      setTotalPages(response.data.data.pagination.totalPages);
     } catch (error) {
       console.error("Error fetching users:", error);
       setError("Failed to load users");
     } finally {
       setLoading(false);
+      setIsRefreshing(false);
     }
   };
 
@@ -113,9 +131,6 @@ const UserManagement = () => {
   const handleRefresh = () => {
     setIsRefreshing(true);
     fetchUsers();
-    setTimeout(() => {
-      setIsRefreshing(false);
-    }, 1000);
   };
 
   const handleCreateUser = async (userData) => {
@@ -142,13 +157,35 @@ const UserManagement = () => {
   };
 
   const handleDeleteUser = async () => {
+    if (!deleteConfirmation) return;
+
+    setIsDeleting(true);
     try {
-      await userAPI.deleteUser(selectedUser.id);
-      setShowDeleteDialog(false);
-      setSelectedUser(null);
-      fetchUsers();
+      await userAPI.deleteUser(deleteConfirmation.id);
+      setUsers(users.filter((user) => user.id !== deleteConfirmation.id));
+      setDeleteConfirmation(null);
     } catch (error) {
       console.error("Error deleting user:", error);
+      setError("Failed to delete user");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleDisable2FA = async () => {
+    if (!disable2FAConfirmation) return;
+
+    setIsDisabling2FA(true);
+    try {
+      await userAPI.disable2FAForUser(disable2FAConfirmation.id);
+      // Refresh users list to show updated 2FA status
+      fetchUsers();
+      setDisable2FAConfirmation(null);
+    } catch (error) {
+      console.error("Error disabling 2FA:", error);
+      setError("Failed to disable 2FA");
+    } finally {
+      setIsDisabling2FA(false);
     }
   };
 
@@ -163,26 +200,31 @@ const UserManagement = () => {
     }
   };
 
+  const handleFilterToggle = () => {
+    setIsFilterDropdownOpen(!isFilterDropdownOpen);
+  };
+
+  const clearAllFilters = () => {
+    setRoleFilter("all");
+    setStatusFilter("all");
+    setSearchTerm("");
+  };
+
   const UserRow = ({ user, index }) => (
-    <motion.tr
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05 }}
-      className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
-    >
+    <motion.tr className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="flex items-center">
           <div className="flex-shrink-0 h-10 w-10">
             <div className="h-10 w-10 rounded-full bg-primary-500 flex items-center justify-center">
-              <TbUser className="h-5 w-5 text-white" />
+              <PiUserDuotone className="h-5 w-5 text-white" />
             </div>
           </div>
           <div className="ml-4">
-            <div className="text-sm font-medium text-gray-900">
+            <div className="text-sm font-semibold text-gray-600">
               {user.firstName} {user.lastName}
             </div>
             <div className="text-sm text-gray-500 flex items-center">
-              <TbMail className="h-3 w-3 mr-1" />
+              <TbMailFilled size={16} className=" mr-1" />
               {user.email}
             </div>
           </div>
@@ -190,7 +232,7 @@ const UserManagement = () => {
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
         <span
-          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
+          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
             roleColors[user.role]
           }`}
         >
@@ -198,8 +240,8 @@ const UserManagement = () => {
         </span>
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
-        <div className="text-sm text-gray-900 flex items-center">
-          <TbPhone className="h-3 w-3 mr-1" />
+        <div className="text-sm text-gray-600  font-semibold flex items-center">
+          <TbPhoneCall size={16} className=" mr-2" />
           {user.phone || "N/A"}
         </div>
       </td>
@@ -207,14 +249,14 @@ const UserManagement = () => {
         <span
           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
             user.isActive
-              ? "bg-green-100 text-green-800 border-green-200"
-              : "bg-red-100 text-red-800 border-red-200"
+              ? "bg-green-100 text-green-800 border-green-300"
+              : "bg-red-100 text-red-800 border-red-300"
           }`}
         >
           {user.isActive ? (
-            <TbUserCheck className="h-3 w-3 mr-1" />
+            <RiUserFollowLine size={16} className=" mr-1" />
           ) : (
-            <TbUserOff className="h-3 w-3 mr-1" />
+            <RiUserUnfollowFill size={16} className=" mr-1" />
           )}
           {user.isActive ? "Active" : "Inactive"}
         </span>
@@ -227,101 +269,85 @@ const UserManagement = () => {
               : "bg-gray-100 text-gray-800 border-gray-200"
           }`}
         >
-          <TbShield className="h-3 w-3 mr-1" />
+          <TbShieldHalfFilled size={16} className=" mr-1" />
           {user.twoFactorEnabled ? "Enabled" : "Disabled"}
         </span>
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-        {new Date(user.createdAt).toLocaleDateString()}
+        {formatDate(user.createdAt)}
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-        <div className="relative">
+      <td
+        className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex space-x-2">
           <button
-            onClick={() =>
-              setOpenDropdown(openDropdown === user.id ? null : user.id)
-            }
-            className="inline-flex items-center px-3 py-2 border border-gray-200 text-sm leading-4 font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-primary-500 transition-all"
+            onClick={() => {
+              setSelectedUser(user);
+              setShowEditModal(true);
+            }}
+            className="flex items-center border border-blue-300 px-2 py-1 rounded-lg focus:outline-none hover:bg-blue-100 hover:border-blue-300 text-blue-500 hover:text-blue-600"
+            title="Edit User"
           >
-            <TbDotsVertical className="h-4 w-4" />
+            <TbEdit className="h-4 w-4 mr-1" />
+            <span className="text-xs">Edit</span>
           </button>
 
-          <AnimatePresence>
-            {openDropdown === user.id && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="origin-top-right absolute right-0 mt-2 w-56 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-20"
-              >
-                <div className="py-1">
-                  <button
-                    onClick={() => {
-                      setSelectedUser(user);
-                      setShowEditModal(true);
-                      setOpenDropdown(null);
-                    }}
-                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left transition-colors"
-                  >
-                    <TbEdit className="h-4 w-4 mr-2" />
-                    Edit User
-                  </button>
-                  <button
-                    onClick={() => {
-                      setSelectedUser(user);
-                      setShowResetPasswordDialog(true);
-                      setOpenDropdown(null);
-                    }}
-                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left transition-colors"
-                  >
-                    <TbKey className="h-4 w-4 mr-2" />
-                    Reset Password
-                  </button>
-                  <div className="border-t border-gray-100"></div>
-                  <button
-                    onClick={() => {
-                      setSelectedUser(user);
-                      setShowDeleteDialog(true);
-                      setOpenDropdown(null);
-                    }}
-                    className="flex items-center px-4 py-2 text-sm text-red-700 hover:bg-red-50 w-full text-left transition-colors"
-                  >
-                    <TbTrash className="h-4 w-4 mr-2" />
-                    Delete User
-                  </button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {user.twoFactorEnabled && (
+            <button
+              onClick={() => setDisable2FAConfirmation(user)}
+              className="flex items-center border border-amber-300 px-2 py-1 rounded-lg focus:outline-none hover:bg-amber-100 hover:border-amber-300 text-amber-500 hover:text-amber-600"
+              title="Disable 2FA"
+            >
+              <TbShieldHalfFilled className="h-4 w-4 mr-1" />
+              <span className="text-xs">Disable 2FA</span>
+            </button>
+          )}
+
+          <button
+            onClick={() => setDeleteConfirmation(user)}
+            className="flex items-center border border-red-300 px-2 py-1 rounded-lg focus:outline-none hover:bg-red-100 hover:border-red-300 text-red-500 hover:text-red-600"
+            title="Delete User"
+          >
+            <TbTrash className="h-4 w-4 mr-1" />
+            <span className="text-xs">Delete</span>
+          </button>
         </div>
       </td>
     </motion.tr>
   );
 
   const Pagination = () => (
-    <div className="flex items-center justify-between px-6 py-3 bg-white border-t border-gray-200">
-      <div className="text-sm text-gray-500">
-        Showing page {currentPage} of {totalPages}
-      </div>
-      <div className="flex items-center space-x-2">
-        <button
-          onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-          disabled={currentPage === 1}
-          className="inline-flex items-center px-3 py-2 border border-gray-200 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-        >
-          <TbChevronLeft className="h-4 w-4 mr-1" />
-          Previous
-        </button>
-        <span className="text-sm text-gray-500">
-          {currentPage} / {totalPages}
-        </span>
-        <button
-          onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-          disabled={currentPage === totalPages}
-          className="inline-flex items-center px-3 py-2 border border-gray-200 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-        >
-          Next
-          <TbChevronRight className="h-4 w-4 ml-1" />
-        </button>
+    <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+      <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+        <div>
+          <p className="text-sm text-gray-700">
+            Showing page {currentPage} of {totalPages}
+          </p>
+        </div>
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+            disabled={currentPage === 1}
+            className="inline-flex items-center px-3 py-2 border border-gray-200 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          >
+            <TbChevronLeft className="h-4 w-4 mr-1" />
+            Previous
+          </button>
+          <span className="text-sm text-gray-500">
+            {currentPage} / {totalPages}
+          </span>
+          <button
+            onClick={() =>
+              setCurrentPage(Math.min(totalPages, currentPage + 1))
+            }
+            disabled={currentPage === totalPages}
+            className="inline-flex items-center px-3 py-2 border border-gray-200 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          >
+            Next
+            <TbChevronRight className="h-4 w-4 ml-1" />
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -357,16 +383,110 @@ const UserManagement = () => {
           <div className="flex flex-wrap mt-4 md:mt-0 space-x-2">
             <button
               onClick={handleRefresh}
-              className="bg-white border border-gray-200 rounded-lg p-2 text-gray-500 hover:text-primary-600 hover:border-primary-300 focus:outline-none focus:ring-1 focus:ring-primary-500 transition-all"
+              className="bg-white border border-gray-200 rounded-lg p-2 text-gray-500 hover:text-primary-600 hover:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-500 shadow-sm transition-all"
             >
               <TbRefresh
                 className={`h-5 w-5 ${isRefreshing ? "animate-spin" : ""}`}
               />
             </button>
 
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search users..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9 pr-4 py-2 bg-neutral-200 border border-gray-600/20 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 min-w-[400px] shadow-sm"
+              />
+              <TbSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm("")}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <TbX className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+
+            <div className="relative">
+              <button
+                onClick={handleFilterToggle}
+                className={`bg-white border ${
+                  roleFilter !== "all" || statusFilter !== "all"
+                    ? "border-primary-300 text-primary-600"
+                    : "border-gray-200 text-gray-700"
+                } rounded-lg px-4 py-2 text-sm hover:text-primary-600 hover:border-primary-300 focus:outline-none focus:ring-1 focus:ring-primary-500 flex items-center shadow-sm transition-all`}
+              >
+                <TbFilter className="h-4 w-4 mr-2" />
+                Filter
+                {isFilterDropdownOpen ? (
+                  <TbChevronUp className="h-4 w-4 ml-2" />
+                ) : (
+                  <TbChevronDown className="h-4 w-4 ml-2" />
+                )}
+              </button>
+
+              {/* Filter Dropdown */}
+              {isFilterDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-10 overflow-hidden">
+                  <div className="p-4">
+                    <div className="flex justify-between items-center mb-3">
+                      <h3 className="font-medium text-primary-700">
+                        Select Filters
+                      </h3>
+                      {(roleFilter !== "all" || statusFilter !== "all") && (
+                        <button
+                          onClick={clearAllFilters}
+                          className="text-xs text-primary-600 hover:text-primary-800"
+                        >
+                          Clear all
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Role filter */}
+                    <div className="mb-4">
+                      <h4 className="text-sm font-semibold text-neutral-700 mb-2">
+                        User Role
+                      </h4>
+                      <select
+                        value={roleFilter}
+                        onChange={(e) => setRoleFilter(e.target.value)}
+                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500"
+                      >
+                        <option value="all">All Roles</option>
+                        {roles.map((role) => (
+                          <option key={role} value={role}>
+                            {role.charAt(0).toUpperCase() + role.slice(1)}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Status filter */}
+                    <div>
+                      <h4 className="text-sm font-semibold text-neutral-700 mb-2">
+                        Account Status
+                      </h4>
+                      <select
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500"
+                      >
+                        <option value="all">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
             <button
               onClick={() => setShowCreateModal(true)}
-              className="bg-primary-600 text-white rounded-lg px-4 py-2 text-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 flex items-center transition-all"
+              className="bg-gradient-to-br from-primary-600 to-primary-700 text-white rounded-lg px-4 py-2 text-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary-500 flex items-center shadow-sm transition-all"
             >
               <TbUserPlus className="h-4 w-4 mr-2" />
               Add User
@@ -387,7 +507,7 @@ const UserManagement = () => {
                 </p>
               </div>
               <div className="p-3 bg-blue-100 rounded-lg">
-                <TbUsers className="h-6 w-6 text-blue-600" />
+                <PiUsersDuotone className="h-6 w-6 text-blue-600" />
               </div>
             </div>
           </div>
@@ -403,7 +523,7 @@ const UserManagement = () => {
                 </p>
               </div>
               <div className="p-3 bg-green-100 rounded-lg">
-                <TbUserCheck className="h-6 w-6 text-green-600" />
+                <RiUserFollowLine className="h-6 w-6 text-green-600" />
               </div>
             </div>
           </div>
@@ -431,58 +551,8 @@ const UserManagement = () => {
                 </p>
               </div>
               <div className="p-3 bg-amber-100 rounded-lg">
-                <TbUserCog className="h-6 w-6 text-amber-600" />
+                <RiUserSettingsLine className="h-6 w-6 text-amber-600" />
               </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Filters */}
-        <div className="bg-white px-6 py-4 rounded-xl shadow-md border border-gray-200">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="relative">
-              <TbSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <input
-                type="text"
-                placeholder="Search users..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 w-full border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
-              />
-            </div>
-
-            <div className="relative">
-              <select
-                value={roleFilter}
-                onChange={(e) => setRoleFilter(e.target.value)}
-                className="w-full pl-4 pr-8 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 appearance-none"
-              >
-                <option value="all">All Roles</option>
-                {roles.map((role) => (
-                  <option key={role} value={role}>
-                    {role.charAt(0).toUpperCase() + role.slice(1)}
-                  </option>
-                ))}
-              </select>
-              <TbChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-            </div>
-
-            <div className="relative">
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full pl-4 pr-8 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 appearance-none"
-              >
-                <option value="all">All Status</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-              <TbChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-            </div>
-
-            <div className="flex items-center text-sm text-gray-500">
-              <TbFilter className="h-4 w-4 mr-1" />
-              {users.length} results
             </div>
           </div>
         </div>
@@ -507,27 +577,27 @@ const UserManagement = () => {
         <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-secondary-200/40">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider">
                     User
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider">
                     Role
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider">
                     Phone
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider">
                     2FA
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider">
                     Created
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-right text-xs font-semibold text-secondary-700 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
@@ -603,18 +673,25 @@ const UserManagement = () => {
         onSubmit={handleEditUser}
       />
 
-      <ConfirmDialog
-        isOpen={showDeleteDialog}
-        title="Delete User"
-        message={`Are you sure you want to delete ${selectedUser?.firstName} ${selectedUser?.lastName}? This action cannot be undone.`}
-        confirmText="Delete"
-        cancelText="Cancel"
+      <DeleteConfirmationModal
+        isOpen={!!deleteConfirmation}
+        onClose={() => setDeleteConfirmation(null)}
         onConfirm={handleDeleteUser}
-        onCancel={() => {
-          setShowDeleteDialog(false);
-          setSelectedUser(null);
-        }}
-        type="danger"
+        itemName={`${deleteConfirmation?.firstName} ${deleteConfirmation?.lastName}`}
+        message={`Are you sure you want to delete ${deleteConfirmation?.firstName} ${deleteConfirmation?.lastName}? This action cannot be undone.`}
+        isLoading={isDeleting}
+      />
+
+      {/* Disable 2FA Confirmation Modal */}
+      <DeleteConfirmationModal
+        isOpen={!!disable2FAConfirmation}
+        onClose={() => setDisable2FAConfirmation(null)}
+        onConfirm={handleDisable2FA}
+        itemName={`2FA for ${disable2FAConfirmation?.firstName} ${disable2FAConfirmation?.lastName}`}
+        message={`Are you sure you want to disable two-factor authentication for ${disable2FAConfirmation?.firstName} ${disable2FAConfirmation?.lastName}? This will reduce their account security.`}
+        isLoading={isDisabling2FA}
+        actionText="Disable 2FA"
+        actionColor="bg-amber-600 hover:bg-amber-700"
       />
 
       {/* Reset Password Dialog */}
@@ -686,11 +763,11 @@ const UserManagement = () => {
         )}
       </AnimatePresence>
 
-      {/* Click outside handler for dropdown */}
-      {openDropdown && (
+      {/* Click outside handler for filter dropdown */}
+      {isFilterDropdownOpen && (
         <div
           className="fixed inset-0 z-0"
-          onClick={() => setOpenDropdown(null)}
+          onClick={() => setIsFilterDropdownOpen(false)}
         />
       )}
     </div>

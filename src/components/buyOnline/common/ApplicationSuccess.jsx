@@ -310,7 +310,7 @@ const ApplicationSuccess = ({
             <!-- Header -->
             <div class="header">
               <div class="header-left">
-                <img src="/lako-logo.png" alt="Lako Insurance" class="logo" />
+                <img src="/logo.png" alt="Lako Insurance" class="logo" />
               </div>
               <div class="header-center">
                 <h1>Insurance Application Summary</h1>
@@ -459,7 +459,7 @@ const ApplicationSuccess = ({
             
             <!-- Footer - Always at bottom -->
             <div class="footer">
-              <img src="/lako-logo.png" alt="Lako Insurance" class="footer-logo" />
+              <img src="/logo.png" alt="Lako Insurance" class="footer-logo" />
               <p class="footer-text">This is an automatic system-generated document. Please retain it for your records.</p>
              
               <p>© ${new Date().getFullYear()} Lako Insurance. All rights reserved.</p>

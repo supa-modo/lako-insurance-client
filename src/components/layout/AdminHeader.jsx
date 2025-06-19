@@ -146,7 +146,7 @@ const AdminHeader = ({ toggleSidebarCollapse, sidebarCollapsed }) => {
           {/* Logo */}
           <Link to="/admin/dashboard" className="flex items-center space-x-3">
             <img
-              src="/lako-logo.png"
+              src="/logo.png"
               alt="Lako Insurance CRM"
               className="w-24 h-16"
             />

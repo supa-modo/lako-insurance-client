@@ -14,7 +14,7 @@ import PageNotFound from "./pages/public/PageNotFound";
 import Layout from "./components/layout/Layout";
 import AdminLayout from "./components/layout/AdminLayout";
 import AuthGuard from "./components/AuthGuard";
-import ScrollToTop from "./components/utils/ScrollToTop";
+import ScrollToTop from "./utils/ScrollToTop";
 import { Analytics } from "@vercel/analytics/react";
 import EmailCenterPage from "./pages/admin/EmailCenterPage";
 import QueryManagementPage from "./pages/admin/QueryManagementPage";
@@ -40,7 +40,7 @@ import {
   SecurityAnalytics,
   AuditLogs,
   UserActivities,
-  SystemMetrics,
+  SuperAdminGuard,
 } from "./components/SuperAdmin";
 import InsuranceApplicationManagementPage from "./pages/admin/InsuranceApplicationManagementPage";
 import ApprovedApplicationsPage from "./pages/admin/ApprovedApplicationsPage";
@@ -142,17 +142,17 @@ function App() {
                     <Route
                       path="superAdmin"
                       element={
-                        <AuthGuard>
+                        <SuperAdminGuard>
                           <SuperAdminDashboard />
-                        </AuthGuard>
+                        </SuperAdminGuard>
                       }
                     />
                     <Route
                       path="users"
                       element={
-                        <AuthGuard>
+                        <SuperAdminGuard>
                           <UserManagement />
-                        </AuthGuard>
+                        </SuperAdminGuard>
                       }
                     />
                     <Route
@@ -190,35 +190,28 @@ function App() {
                     <Route
                       path="security"
                       element={
-                        <AuthGuard>
+                        <SuperAdminGuard>
                           <SecurityAnalytics />
-                        </AuthGuard>
+                        </SuperAdminGuard>
                       }
                     />
                     <Route
                       path="audit-logs"
                       element={
-                        <AuthGuard>
+                        <SuperAdminGuard>
                           <AuditLogs />
-                        </AuthGuard>
+                        </SuperAdminGuard>
                       }
                     />
                     <Route
                       path="user-activities"
                       element={
-                        <AuthGuard>
+                        <SuperAdminGuard>
                           <UserActivities />
-                        </AuthGuard>
+                        </SuperAdminGuard>
                       }
                     />
-                    <Route
-                      path="system-metrics"
-                      element={
-                        <AuthGuard>
-                          <SystemMetrics />
-                        </AuthGuard>
-                      }
-                    />
+
                     <Route
                       path="messages"
                       element={

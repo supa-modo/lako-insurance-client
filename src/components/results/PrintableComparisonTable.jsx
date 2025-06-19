@@ -418,7 +418,7 @@ const PrintableComparisonTable = ({ plans, userQuery }) => {
             </div>
           </div>
           <div class="header-right">
-            <img src="/lako-logo.png" alt="Lako Insurance" class="logo">
+            <img src="/logo.png" alt="Lako Insurance" class="logo">
           </div>
         </div>
         

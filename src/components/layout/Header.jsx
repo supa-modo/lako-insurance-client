@@ -15,7 +15,7 @@ const Header = () => {
       if (
         location.pathname === "/results" ||
         location.pathname === "/buy-online" ||
-        location.pathname === "/compare" 
+        location.pathname === "/compare"
       ) {
         setScrolled(true);
       } else if (window.scrollY > 20) {
@@ -128,8 +128,8 @@ const Header = () => {
           <Link to="/" className="">
             <div className="w-24">
               <img
-                src="/lako-logo.png"
-                alt="lako-logo"
+                src="/logo.png"
+                alt="logo"
                 className="w-full h-full object-cover "
               />
             </div>

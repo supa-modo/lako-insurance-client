@@ -24,7 +24,7 @@ const insuranceTypes = [
     description: "Comprehensive medical coverage for individuals and families",
     comingSoon: false,
     popular: true,
-    benefits: ["Seniors Cover", "Adult Insurance", "Child Cover"],
+    benefits: ["Seniors Cover", "Family Cover", "Individual"],
   },
   {
     id: "personal-accident",
@@ -124,22 +124,14 @@ const InsuranceTypeSelection = ({ onSelect, formData }) => {
           return (
             <motion.div
               key={type.id}
-              whileHover={
-                !isDisabled
-                  ? {
-                      scale: 1.01,
-                      boxShadow: "0 4px 12px -2px rgba(0, 0, 0, 0.08)",
-                    }
-                  : {}
-              }
               whileTap={!isDisabled ? { scale: 0.99 } : {}}
               className={`relative rounded-xl overflow-hidden border-2 ${
                 isDisabled
                   ? "border-slate-200 bg-slate-50 cursor-not-allowed"
                   : type.id === formData.insuranceType
-                  ? "border-primary-500 bg-primary-50 shadow-lg"
+                  ? "border-primary-500 bg-primary-50 shadow-lg "
                   : "border-slate-200 bg-white hover:border-primary-300 cursor-pointer shadow-sm"
-              } transition-all duration-300`}
+              } transition-all duration-300 `}
               onClick={() => !isDisabled && onSelect(type.id)}
             >
               <div className="px-3 py-4 md:p-5">

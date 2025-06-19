@@ -532,7 +532,7 @@ const BuyOnlinePage = () => {
         className="bg-gradient-to-r from-primary-800 to-primary-700 text-center pt-4"
       >
         <p className="text-white/80 p-6 md:p-8 text-sm md:text-base border-t border-white/20 max-w-screen-xl mx-auto">
-          Lako Insurance Agency is regulated and is authorized by IRA (the
+          Lako Insurance Agency is regulated & is authorized by IRA (the
           Insurance Regulatory Authority) to handle all forms of general
           insurance business and compliant with the Kenya Data Protection Act.
         </p>

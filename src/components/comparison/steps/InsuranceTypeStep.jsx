@@ -9,6 +9,7 @@ import {
   TbCheck,
   TbBuildingBank,
   TbLock,
+  TbPlane,
 } from "react-icons/tb";
 import { GiLifeInTheBalance } from "react-icons/gi";
 import { FaCarCrash } from "react-icons/fa";
@@ -26,7 +27,7 @@ const insuranceTypes = [
     description: "Comprehensive medical coverage for individuals and families",
     comingSoon: false,
     popular: true,
-    benefits: ["Seniors Cover", "Adult Cover", "Child Cover"],
+    benefits: ["Inpatient", "Outpatient", "Maternity"],
   },
   {
     id: "personal-accident",
@@ -34,25 +35,8 @@ const insuranceTypes = [
     icon: <FaUserInjured className="h-7 w-7" />,
     description:
       "Protection against accidents and injuries in various situations",
-    comingSoon: false,
-    benefits: ["Workplace Accidents", "Medical Expenses", "Travel Insurance"],
-  },
-  {
-    id: "property",
-    name: "Business/SMEs Cover",
-    icon: <TbBuildingBank className="h-7 w-7" />,
-    description: "Comprehensive protection for your home and valuable assets",
     comingSoon: true,
-    benefits: ["Premises Cover", "Employees Liability", "Medical Expenses"],
-  },
-  {
-    id: "motor",
-    name: "Motor Insurance",
-    icon: <FaCarCrash className="h-7 w-7" />,
-    description:
-      "Reliable coverage for your vehicles and third-party liability",
-    comingSoon: true,
-    benefits: ["Third Party Liability", "Vehicle Damage", "Driver's Liability"],
+    benefits: ["Workplace Accidents", "Medical Expenses"],
   },
 ];
 
@@ -67,9 +51,23 @@ const InsuranceTypeStep = ({ formData, updateFormData, nextStep }) => {
   };
 
   const getDisabledMessage = (type) => {
-    if (type.comingSoon) return <span className="bg-slate-200 text-slate-600 px-4 py-2 rounded-lg font-semibold text-sm shadow-sm">Coming Soon !</span>;
-    if (isProductionMode()) return <span className="bg-secondary-200 text-primary-600 px-4 py-2 rounded-lg font-semibold text-[0.78rem] md:text-sm shadow-sm">Under Maintenance🛠️</span>;
-    return <span className="bg-slate-200 text-slate-600 px-4 py-2 rounded-lg font-semibold text-sm shadow-sm">Not Available</span>;
+    if (type.comingSoon)
+      return (
+        <span className="bg-slate-200 text-slate-600 px-4 py-2 rounded-lg font-semibold text-sm shadow-sm">
+          Coming Soon !
+        </span>
+      );
+    if (isProductionMode())
+      return (
+        <span className="bg-secondary-200 text-primary-600 px-4 py-2 rounded-lg font-semibold text-[0.78rem] md:text-sm shadow-sm">
+          Under Maintenance🛠️
+        </span>
+      );
+    return (
+      <span className="bg-slate-200 text-slate-600 px-4 py-2 rounded-lg font-semibold text-sm shadow-sm">
+        Not Available
+      </span>
+    );
   };
 
   const handleSelectType = (typeId) => {
@@ -77,7 +75,7 @@ const InsuranceTypeStep = ({ formData, updateFormData, nextStep }) => {
 
     // Set the default cover type based on insurance type
     if (typeId === "health") {
-      updateFormData("coverType", "seniors");
+      updateFormData("coverType", "health");
     } else if (typeId === "personal-accident") {
       updateFormData("coverType", "personal-accident");
     }
@@ -97,7 +95,8 @@ const InsuranceTypeStep = ({ formData, updateFormData, nextStep }) => {
           <div className="flex items-center">
             <TbLock className="h-6 md:h-5 w-6 md:w-5 text-blue-600 mr-2" />
             <p className="text-blue-700 text-[0.82rem] md:text-sm">
-              This section is temporarily unavailable for maintenance. Please check back later.
+              This section is temporarily unavailable for maintenance. Please
+              check back later.
             </p>
           </div>
         </div>
@@ -113,7 +112,6 @@ const InsuranceTypeStep = ({ formData, updateFormData, nextStep }) => {
               whileHover={
                 !isDisabled
                   ? {
-                      scale: 1.01,
                       boxShadow: "0 4px 12px -2px rgba(0, 0, 0, 0.08)",
                     }
                   : {}
@@ -214,7 +212,6 @@ const InsuranceTypeStep = ({ formData, updateFormData, nextStep }) => {
               {isDisabled && (
                 <div className="absolute inset-0 bg-slate-100/50 flex items-center justify-center backdrop-blur-[0.9px]">
                   {getDisabledMessage(type)}
-                  
                 </div>
               )}
 

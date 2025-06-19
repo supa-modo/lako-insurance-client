@@ -15,13 +15,13 @@ import {
   TbFirstAidKit,
   TbPlus,
   TbInfoCircle,
-  TbStar,
 } from "react-icons/tb";
 import { FaUserInjured } from "react-icons/fa";
 
 // Step components
 import InsuranceTypeStep from "../../components/comparison/steps/InsuranceTypeStep";
-import SeniorsCoverAgeStep from "../../components/comparison/steps/SeniorsCoverAgeStep";
+import HealthAgeStep from "../../components/comparison/steps/HealthAgeStep";
+import HealthFilterStep from "../../components/comparison/steps/HealthFilterStep";
 import BudgetRangeStep from "../../components/comparison/steps/BudgetRangeStep";
 import SummaryStep from "../../components/comparison/steps/SummaryStep";
 
@@ -33,14 +33,23 @@ import AccidentAdditionalBenefitsStep from "../../components/comparison/steps/Ac
 const NewComparisonPage = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
-  const { userQuery, updateUserQuery, setLoading } = useComparison();
+  const {
+    userQuery,
+    updateUserQuery,
+    updateUserQueryBatch,
+    prepareQueryForSubmission,
+    setLoading,
+  } = useComparison();
 
   // Calculate total steps based on insurance type
   const getTotalSteps = () => {
-    if (userQuery.insuranceType === "personal-accident") {
-      return 4; // InsuranceType + AccidentType + CoverageAmount + AdditionalBenefits + Summary
+    switch (userQuery.insuranceType) {
+      case "personal-accident":
+        return 5; // InsuranceType + AccidentType + CoverageAmount + AdditionalBenefits + Summary
+      case "health":
+      default:
+        return 4; // InsuranceType + Age + HealthFilter + Summary
     }
-    return 4; // Default for health insurance: InsuranceType + Age + Budget + Summary
   };
 
   const totalSteps = getTotalSteps();
@@ -64,23 +73,18 @@ const NewComparisonPage = () => {
   const submitForm = (processedData) => {
     setLoading(true);
 
-    // If we received processed data from SummaryStep, use it
-    // Otherwise, process the query data here
-    const processedQuery = processedData || {
-      ...userQuery,
-      // If we have budgetValue, use it instead of the string budget ranges
-      budget: userQuery.budgetValue || userQuery.budget,
-    };
-
-    // Update the user query with the processed data
+    // Use the processed data from SummaryStep or prepare the current query
+    let finalQuery;
     if (processedData) {
-      // Update each field individually to ensure all values are properly set
-      Object.keys(processedData).forEach((key) => {
-        updateUserQuery(key, processedData[key]);
-      });
+      // Update the context with processed data
+      updateUserQueryBatch(processedData);
+      finalQuery = processedData;
+    } else {
+      // Use the prepared query from context
+      finalQuery = prepareQueryForSubmission();
     }
 
-    console.log("Submitting processed query:", processedQuery);
+    console.log("Submitting final query:", finalQuery);
 
     // Navigate to results page
     setTimeout(() => {
@@ -133,29 +137,29 @@ const NewComparisonPage = () => {
     },
     {
       component: (
-        <SeniorsCoverAgeStep
+        <HealthAgeStep
           formData={userQuery}
           updateFormData={updateFormData}
           nextStep={nextStep}
           prevStep={prevStep}
         />
       ),
-      title: "Age Range",
-      description: "Choose the age range of the person to be insured",
+      title: "Age Information",
+      description: "Enter your age or date of birth for accurate plans",
       icon: <TbUserCircle className="w-6 h-6" />,
       color: "indigo",
     },
     {
       component: (
-        <BudgetRangeStep
+        <HealthFilterStep
           formData={userQuery}
           updateFormData={updateFormData}
           nextStep={nextStep}
           prevStep={prevStep}
         />
       ),
-      title: "Budget Range",
-      description: "What's your budget for insurance coverage (per year)?",
+      title: "Filter Preference",
+      description: "Choose between budget or inpatient coverage limit for better results",
       icon: <TbCoin className="w-6 h-6" />,
       color: "teal",
     },
@@ -219,6 +223,20 @@ const NewComparisonPage = () => {
     },
     {
       component: (
+        <AccidentAdditionalBenefitsStep
+          formData={userQuery}
+          updateFormData={updateFormData}
+          nextStep={nextStep}
+          prevStep={prevStep}
+        />
+      ),
+      title: "Additional Benefits",
+      description: "Choose additional benefits for your coverage",
+      icon: <TbPlus className="w-6 h-6" />,
+      color: "orange",
+    },
+    {
+      component: (
         <SummaryStep
           formData={userQuery}
           submitForm={submitForm}
@@ -233,10 +251,17 @@ const NewComparisonPage = () => {
   ];
 
   // Choose the appropriate steps based on insurance type
-  const steps =
-    userQuery.insuranceType === "personal-accident"
-      ? personalAccidentSteps
-      : healthInsuranceSteps;
+  const getSteps = () => {
+    switch (userQuery.insuranceType) {
+      case "personal-accident":
+        return personalAccidentSteps;
+      case "health":
+      default:
+        return healthInsuranceSteps;
+    }
+  };
+
+  const steps = getSteps();
 
   return (
     <>
@@ -373,9 +398,9 @@ const NewComparisonPage = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.6 }}
-              className="max-w-[75rem] mx-auto"
+              className="max-w-[75rem] mx-auto px-0 md:px-2.5 lg::px-0"
             >
-              <div className="text-center mb-8 lg:mb-12">
+              <div className="text-center mb-4 md:mb-8 lg:mb-12">
                 <h2 className="text-2xl lg:text-3xl font-bold text-secondary-600 mb-4">
                   Frequently Asked Questions
                 </h2>
@@ -384,23 +409,27 @@ const NewComparisonPage = () => {
                 </p>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-8">
+              <div className="grid md:grid-cols-2 gap-1 md:gap-4 lg:gap-8">
                 {[
-                  {
-                    question: "Is the comparison service free?",
-                    answer:
-                      "Yes, our comparison service is completely free. We help you find the best insurance plans without any charges.",
-                  },
                   {
                     question: "How accurate are the quotes?",
                     answer:
                       "Our quotes are real-time and directly from insurance providers, ensuring 99% accuracy in pricing and coverage details.",
                   },
+
                   {
-                    question: "Can I purchase directly through the platform?",
+                    question:
+                      "Can I compare plans from different insurance companies?",
                     answer:
-                      "Absolutely! Once you find your ideal plan, you can purchase it instantly through our secure online platform.",
+                      "Yes, you can compare plans from different insurance companies. We have a wide range of insurance companies to choose from.",
                   },
+
+                  {
+                    question: "How do I purchase a plan?",
+                    answer:
+                      "Once you find your ideal plan, you can purchase it instantly through our secure online portal or contact us for assistance.",
+                  },
+
                   {
                     question: "What if I need help choosing?",
                     answer:
@@ -409,7 +438,7 @@ const NewComparisonPage = () => {
                 ].map((faq, index) => (
                   <motion.div
                     key={index}
-                    className="bg-white rounded-lg p-5 shadow-sm border border-gray-100"
+                    className="bg-white md:rounded-xl py-8 px-4 lg:p-6 shadow-md border border-gray-100"
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.5, delay: index * 0.1 + 0.2 }}
@@ -430,7 +459,7 @@ const NewComparisonPage = () => {
       </div>
 
       {/* Trust Indicators */}
-      <section className="font-outfit pt-16 md:pt-20 bg-gradient-to-r from-primary-800 to-primary-700 relative overflow-hidden mt-6 md:mt-10 lg:mt-12">
+      <section className="font-outfit pt-16 md:pt-20 bg-gradient-to-r from-primary-800 to-primary-700 relative overflow-hidden md:mt-10 lg:mt-12">
         {/* Decorative elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-1/4 -left-10 w-40 h-40 rounded-full bg-secondary-500/30 blur-3xl"></div>
@@ -522,7 +551,7 @@ const NewComparisonPage = () => {
         className="bg-gradient-to-r from-primary-800 to-primary-700 text-center -mt-2 lg:mt-0 pt-4 font-outfit"
       >
         <p className="text-white/80 py-6 md:p-8 text-sm md:text-base border-t border-white/20 max-w-[90%] md:max-w-screen-xl mx-auto">
-          Lako Insurance Agency is regulated and is authorized by IRA (the
+          Lako Insurance Agency is regulated & is authorized by IRA (the
           Insurance Regulatory Authority) to handle all forms of general
           insurance business and compliant with the Kenya Data Protection Act.
         </p>

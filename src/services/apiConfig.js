@@ -30,6 +30,14 @@ apiClient.interceptors.request.use(
     // Get the token from localStorage
     const token = localStorage.getItem(TOKEN_KEY);
 
+    // Debug token info for protected routes
+    if (config.url && !config.url.includes("/auth/login")) {
+      console.log(
+        `🔑 Protected request to ${config.url} - Token exists:`,
+        !!token
+      );
+    }
+
     // If we have a token, add it to the request headers
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -73,12 +81,16 @@ apiClient.interceptors.response.use(
 
       // Handle 401 Unauthorized errors (token expired or invalid)
       if (error.response.status === 401) {
-        // Clear auth data from localStorage
-        localStorage.removeItem(TOKEN_KEY);
-        localStorage.removeItem(USER_KEY);
+        console.log("🚨 401 Unauthorized - Token issue detected");
+        console.log("🚨 Current path:", window.location.pathname);
+        console.log("🚨 Error details:", error.response.data);
 
-        // Redirect to login page if not already there
+        // Only clear auth and redirect if we're not already on the login page
         if (!window.location.pathname.includes("/admin/login")) {
+          console.log("🚨 Clearing auth data and redirecting to login");
+          // Clear auth data from localStorage
+          localStorage.removeItem(TOKEN_KEY);
+          localStorage.removeItem(USER_KEY);
           window.location.href = "/admin/login";
         }
       }

@@ -23,10 +23,19 @@ export const userAPI = {
   },
 
   // Reset user password
-  resetUserPassword: (userId, newPassword) => {
-    return apiClient.post(`/superadmin/users/${userId}/reset-password`, {
-      newPassword,
-    });
+  resetUserPassword: async (userId, newPassword) => {
+    return await safeApiCall(() =>
+      apiClient.post(`/superadmin/users/${userId}/reset-password`, {
+        newPassword,
+      })
+    );
+  },
+
+  // Disable 2FA for a user (SuperAdmin only)
+  disable2FAForUser: async (userId) => {
+    return await safeApiCall(() =>
+      apiClient.post(`/superadmin/users/${userId}/disable-2fa`)
+    );
   },
 };
 

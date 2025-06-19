@@ -7,14 +7,31 @@ const authService = {
   /**
    * Login an admin user
    * @param {Object} credentials - Admin credentials
-   * @returns {Promise<Object>} User data
+   * @returns {Promise<Object>} User data or 2FA requirement indicator
    */
   loginAdmin: async (credentials) => {
     try {
-      const response = await apiClient.post("/auth/login", credentials);
+      const { email, password, twoFactorCode } = credentials;
 
-      // Extract data from the correct structure
+      const loginData = { email, password };
+      if (twoFactorCode) {
+        loginData.twoFactorCode = twoFactorCode;
+      }
+
+      const response = await apiClient.post("/auth/login", loginData);
+
+      // Check if 2FA is required
+      if (response.data.requires2FA) {
+        return { requires2FA: true };
+      }
+
+      // Extract data from the successful login response
       const { token, user } = response.data;
+
+      // Validate that we have the required data
+      if (!token || !user) {
+        throw new Error("Invalid login response: missing token or user data");
+      }
 
       // Store token and user data
       localStorage.setItem(TOKEN_KEY, token);
@@ -25,7 +42,7 @@ const authService = {
       console.error("Login failed:", error);
       throw error;
     }
-  }, 
+  },
 
   /**
    * Logout the current admin user

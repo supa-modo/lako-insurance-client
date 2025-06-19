@@ -114,7 +114,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
                         <input
                           id="reset-email"
                           type="email"
-                          className="w-full pl-10 pr-4 py-2.5 bg-white text-gray-600 border border-gray-400 rounded-lg focus:ring-1 focus:ring-primary-600 focus:border-primary-600 focus:outline-none  transition-colors font-medium placeholder:font-normal"
+                          className="w-full pl-10 pr-4 py-2.5 bg-white text-gray-600 border border-gray-400 rounded-lg focus:ring-1 focus:ring-primary-500 focus:border-primary-500 focus:outline-none  transition-colors font-medium placeholder:font-normal"
                           placeholder="email@example.com"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}

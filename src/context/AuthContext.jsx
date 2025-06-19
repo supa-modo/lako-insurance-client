@@ -16,32 +16,49 @@ export const AuthProvider = ({ children }) => {
 
   // Initialize auth state only when needed (lazy initialization)
   const initializeAuth = async () => {
-    if (initialized) return; // Already initialized
+    if (initialized) {
+      console.log("🔄 AuthContext: Already initialized, skipping");
+      return; // Already initialized
+    }
 
+    console.log("🔄 AuthContext: Starting initialization");
     setLoading(true);
     setInitialized(true);
 
     try {
       if (authService.isAuthenticated()) {
+        console.log("🔄 AuthContext: Token found, getting user data");
         // Get user profile from token
         const userData = authService.getCurrentAdmin();
+        console.log("🔄 AuthContext: User data from token:", userData);
         setUser(userData);
 
         // Optionally fetch fresh data from API
         try {
           const freshUserData = await authService.getAdminProfile();
           if (freshUserData) {
+            console.log(
+              "🔄 AuthContext: Fresh user data retrieved:",
+              freshUserData
+            );
             setUser(freshUserData);
           }
         } catch (profileError) {
+          console.log(
+            "🔄 AuthContext: Could not fetch fresh profile, using stored data"
+          );
           // Continue with stored user data
         }
+      } else {
+        console.log("🔄 AuthContext: No token found");
       }
     } catch (err) {
+      console.error("🔄 AuthContext: Initialization error:", err);
       authService.logoutAdmin();
       setError("Authentication failed. Please log in again.");
     } finally {
       setLoading(false);
+      console.log("🔄 AuthContext: Initialization complete");
     }
   };
 
@@ -49,7 +66,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     // Only initialize if we're on an admin route or if there's a token
     const currentPath = window.location.pathname;
-    const isAdminRoute = currentPath.startsWith("/admin/login");
+    const isAdminRoute = currentPath.startsWith("/admin");
     const hasToken = authService.isAuthenticated();
 
     if (isAdminRoute || hasToken) {
@@ -60,17 +77,25 @@ export const AuthProvider = ({ children }) => {
   /**
    * Login function
    * @param {Object} credentials - User credentials
-   * @returns {Promise<Object>} User data
+   * @returns {Promise<Object>} User data or 2FA requirement indicator
    */
   const login = async (credentials) => {
     setError(null);
     setLoading(true);
 
     try {
-      const userData = await authService.loginAdmin(credentials);
-      setUser(userData);
-      return userData;
+      const result = await authService.loginAdmin(credentials);
+
+      // Check if 2FA is required
+      if (result.requires2FA) {
+        return { requires2FA: true };
+      }
+
+      // Login successful, update user state
+      setUser(result);
+      return result;
     } catch (err) {
+      console.error("AuthContext login error:", err);
       const errorMessage =
         err.response?.data?.message || "Login failed. Please try again.";
       setError(errorMessage);
@@ -111,6 +136,14 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  /**
+   * Update user data (for use after login)
+   * @param {Object} userData - User data to set
+   */
+  const updateUser = (userData) => {
+    setUser(userData);
+  };
+
   // Create context value object
   const value = {
     user,
@@ -119,6 +152,7 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     updateProfile,
+    updateUser,
     isAuthenticated: authService.isAuthenticated,
     initializeAuth, // Add this for manual initialization
   };

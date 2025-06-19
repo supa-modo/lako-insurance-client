@@ -1,8 +1,27 @@
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import AuditLogsHeader from "./AuditLogs/AuditLogsHeader";
-import AuditLogsFilters from "./AuditLogs/AuditLogsFilters";
-import AuditLogsTable from "./AuditLogs/AuditLogsTable";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  TbRefresh,
+  TbFilter,
+  TbChevronDown,
+  TbChevronUp,
+  TbX,
+  TbSearch,
+  TbAlertCircle,
+  TbReport,
+  TbDatabaseExport,
+  TbList,
+  TbEye,
+  TbClock,
+  TbUser,
+  TbActivity,
+  TbDatabase,
+  TbShield,
+  TbChevronLeft,
+  TbChevronRight,
+  TbCalendar,
+  TbClipboard,
+} from "react-icons/tb";
 import AuditLogDetailsDialog from "./AuditLogs/AuditLogDetailsDialog";
 import { getAuditLogs } from "../../api/superadminApi";
 
@@ -15,7 +34,9 @@ const AuditLogs = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [selectedLog, setSelectedLog] = useState(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
-  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Filters state
   const [filters, setFilters] = useState({
@@ -26,9 +47,30 @@ const AuditLogs = () => {
     dateTo: null,
   });
 
+  const actionTypes = [
+    "CREATE",
+    "UPDATE",
+    "DELETE",
+    "LOGIN",
+    "LOGOUT",
+    "ACCESS",
+    "EXPORT",
+    "IMPORT",
+  ];
+
+  const resourceTypes = [
+    "USER",
+    "APPLICATION",
+    "PLAN",
+    "COMPANY",
+    "SYSTEM",
+    "REPORT",
+  ];
+
   const fetchLogs = async () => {
     try {
       setLoading(true);
+      setIsRefreshing(true);
       setError("");
 
       const params = {
@@ -56,6 +98,7 @@ const AuditLogs = () => {
       console.error("Error fetching audit logs:", err);
     } finally {
       setLoading(false);
+      setIsRefreshing(false);
     }
   };
 
@@ -67,10 +110,15 @@ const AuditLogs = () => {
     setFilters((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    fetchLogs();
+  };
+
   const applyFilters = () => {
     setPage(0);
     fetchLogs();
-    setFiltersOpen(false);
+    setIsFilterDropdownOpen(false);
   };
 
   const clearFilters = () => {
@@ -81,6 +129,7 @@ const AuditLogs = () => {
       dateFrom: null,
       dateTo: null,
     });
+    setSearchTerm("");
     setPage(0);
   };
 
@@ -89,58 +138,517 @@ const AuditLogs = () => {
     setDetailsOpen(true);
   };
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="min-h-screen bg-gray-50"
-    >
-      <AuditLogsHeader
-        onRefresh={fetchLogs}
-        filtersOpen={filtersOpen}
-        onToggleFilters={() => setFiltersOpen(!filtersOpen)}
-      />
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
-      {error && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6"
-        >
-          <div className="flex">
-            <div className="ml-3">
-              <p className="text-sm">{error}</p>
+  const getActionColor = (action) => {
+    const colors = {
+      CREATE: "bg-green-100 text-green-800 border-green-300",
+      UPDATE: "bg-blue-100 text-blue-800 border-blue-300",
+      DELETE: "bg-red-100 text-red-800 border-red-300",
+      LOGIN: "bg-purple-100 text-purple-800 border-purple-300",
+      LOGOUT: "bg-gray-100 text-gray-800 border-gray-300",
+      ACCESS: "bg-yellow-100 text-yellow-800 border-yellow-300",
+      EXPORT: "bg-indigo-100 text-indigo-800 border-indigo-300",
+      IMPORT: "bg-pink-100 text-pink-800 border-pink-300",
+    };
+    return colors[action] || "bg-gray-100 text-gray-800 border-gray-300";
+  };
+
+  const totalPages = Math.ceil(totalCount / rowsPerPage);
+  const startIndex = page * rowsPerPage + 1;
+  const endIndex = Math.min((page + 1) * rowsPerPage, totalCount);
+
+  // Calculate statistics
+  const statistics = {
+    totalLogs: totalCount,
+    uniqueUsers: new Set(logs.map(l => l.userId)).size,
+    todayLogs: logs.filter(l => {
+      const today = new Date();
+      const logDate = new Date(l.timestamp);
+      return logDate.toDateString() === today.toDateString();
+    }).length,
+    criticalActions: logs.filter(l => ['DELETE', 'CREATE'].includes(l.action)).length,
+  };
+
+  return (
+    <div className="h-[calc(100vh-64px)] flex flex-col overflow-hidden">
+      {/* Page Header */}
+      <div className="bg-white px-8 py-3 border-b border-gray-200 flex-shrink-0">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+          <div>
+            <h1 className="text-[1.3rem] font-bold text-secondary-700">
+              Audit Logs
+            </h1>
+            <p className="text-gray-500 text-sm">
+              Track system activities and security events
+            </p>
+          </div>
+
+          <div className="flex flex-wrap mt-4 md:mt-0 space-x-2">
+            <button
+              onClick={handleRefresh}
+              className="bg-white border border-gray-200 rounded-lg p-2 text-gray-500 hover:text-primary-600 hover:border-primary-300 focus:outline-none focus:ring-1 focus:ring-primary-500 transition-all shadow-sm"
+            >
+              <TbRefresh
+                className={`h-5 w-5 ${isRefreshing ? "animate-spin" : ""}`}
+              />
+            </button>
+
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search audit logs..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9 pr-4 py-2 bg-neutral-200 border border-gray-600/20 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 min-w-[300px] shadow-sm"
+              />
+              <TbSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm("")}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <TbX className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+
+            <div className="relative">
+              <button
+                onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
+                className={`bg-white border ${
+                  Object.values(filters).some((v) => v !== "" && v !== null)
+                    ? "border-primary-300 text-primary-600"
+                    : "border-gray-200 text-gray-700"
+                } rounded-lg px-4 py-2 text-sm hover:text-primary-600 hover:border-primary-300 focus:outline-none focus:ring-1 focus:ring-primary-500 flex items-center shadow-sm transition-all`}
+              >
+                <TbFilter className="h-4 w-4 mr-2" />
+                Filters
+                {isFilterDropdownOpen ? (
+                  <TbChevronUp className="h-4 w-4 ml-2" />
+                ) : (
+                  <TbChevronDown className="h-4 w-4 ml-2" />
+                )}
+              </button>
+
+              {/* Filter Dropdown */}
+              {isFilterDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-96 bg-white border border-gray-200 rounded-lg shadow-lg z-10 overflow-hidden">
+                  <div className="p-4">
+                    <div className="flex justify-between items-center mb-3">
+                      <h3 className="font-medium text-primary-700">
+                        Filter Options
+                      </h3>
+                      {Object.values(filters).some((v) => v !== "" && v !== null) && (
+                        <button
+                          onClick={clearFilters}
+                          className="text-xs text-primary-600 hover:text-primary-800"
+                        >
+                          Clear all
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="space-y-4">
+                      {/* User ID Filter */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          User ID
+                        </label>
+                        <input
+                          type="text"
+                          value={filters.userId}
+                          onChange={(e) =>
+                            handleFilterChange("userId", e.target.value)
+                          }
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 text-sm"
+                          placeholder="Enter user ID"
+                        />
+                      </div>
+
+                      {/* Action Filter */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Action
+                        </label>
+                        <select
+                          value={filters.action}
+                          onChange={(e) =>
+                            handleFilterChange("action", e.target.value)
+                          }
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 text-sm"
+                        >
+                          <option value="">All Actions</option>
+                          {actionTypes.map((action) => (
+                            <option key={action} value={action}>
+                              {action}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Resource Filter */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Resource
+                        </label>
+                        <select
+                          value={filters.resource}
+                          onChange={(e) =>
+                            handleFilterChange("resource", e.target.value)
+                          }
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 text-sm"
+                        >
+                          <option value="">All Resources</option>
+                          {resourceTypes.map((resource) => (
+                            <option key={resource} value={resource}>
+                              {resource}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex gap-2 pt-2">
+                        <button
+                          onClick={applyFilters}
+                          className="flex-1 bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200"
+                        >
+                          Apply
+                        </button>
+                        <button
+                          onClick={clearFilters}
+                          className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200"
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-        </motion.div>
+        </div>
+      </div>
+
+      <div className="overflow-y-auto flex-1 px-6 py-4 space-y-6">
+        {/* Statistics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="bg-white px-6 py-4 rounded-xl border border-gray-200 border-l-4 border-l-blue-500 shadow-md">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">
+                  Total Logs
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {statistics.totalLogs}
+                </p>
+              </div>
+              <div className="p-3 bg-blue-100 rounded-lg">
+                <TbClipboard className="h-6 w-6 text-blue-600" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white px-6 py-4 rounded-xl border border-gray-200 border-l-4 border-l-green-500 shadow-md">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">
+                  Active Users
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {statistics.uniqueUsers}
+                </p>
+              </div>
+              <div className="p-3 bg-green-100 rounded-lg">
+                <TbUser className="h-6 w-6 text-green-600" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white px-6 py-4 rounded-xl border border-gray-200 border-l-4 border-l-purple-500 shadow-md">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">
+                  Today's Logs
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {statistics.todayLogs}
+                </p>
+              </div>
+              <div className="p-3 bg-purple-100 rounded-lg">
+                <TbCalendar className="h-6 w-6 text-purple-600" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white px-6 py-4 rounded-xl border border-gray-200 border-l-4 border-l-orange-500 shadow-md">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">
+                  Critical Actions
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {statistics.criticalActions}
+                </p>
+              </div>
+              <div className="p-3 bg-orange-100 rounded-lg">
+                <TbShield className="h-6 w-6 text-orange-600" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <div className="flex items-center">
+              <TbAlertCircle className="h-5 w-5 text-red-500 mr-2" />
+              <p className="text-red-800">{error}</p>
+              <button
+                onClick={() => setError("")}
+                className="ml-auto text-red-500 hover:text-red-700"
+              >
+                <TbX className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Audit Logs Table */}
+        <div className="flex-1 bg-white rounded-[0.7rem] border border-gray-200">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-secondary-200/40">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider">
+                    Timestamp
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider">
+                    User
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider">
+                    Action
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider">
+                    Resource
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider">
+                    Details
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider">
+                    IP Address
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-secondary-700 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {loading ? (
+                  <tr>
+                    <td colSpan={7} className="px-6 py-12 text-center">
+                      <div className="flex items-center justify-center">
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{
+                            duration: 1,
+                            repeat: Infinity,
+                            ease: "linear",
+                          }}
+                          className="w-8 h-8 border-4 border-primary-600 border-t-transparent rounded-full"
+                        />
+                        <span className="ml-3 text-gray-500">
+                          Loading audit logs...
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : logs.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={7}
+                      className="px-6 py-12 text-center text-gray-500"
+                    >
+                      <div className="flex flex-col items-center">
+                        <TbList className="h-12 w-12 text-gray-300 mb-3" />
+                        <p className="text-lg font-medium text-gray-500 mb-1">
+                          No audit logs found
+                        </p>
+                        <p className="text-sm text-gray-400">
+                          Audit logs will appear here when system activities occur
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  logs.map((log, index) => (
+                    <motion.tr
+                      key={log.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.05 }}
+                      className="hover:bg-gray-50 transition-colors duration-200"
+                    >
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {formatDate(log.timestamp)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <div className="flex-shrink-0 h-8 w-8">
+                            <div className="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center">
+                              <TbUser className="h-4 w-4 text-primary-600" />
+                            </div>
+                          </div>
+                          <div className="ml-3">
+                            <p className="text-sm font-mono text-gray-900">
+                              {log.userId}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span
+                          className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full border ${getActionColor(
+                            log.action
+                          )}`}
+                        >
+                          {log.action}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {log.resource}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
+                        {log.details || "No details available"}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">
+                        {log.ipAddress || "N/A"}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <button
+                          onClick={() => handleViewDetails(log)}
+                          className="flex items-center border border-blue-300 px-2 py-1 rounded-lg hover:bg-blue-100 hover:border-blue-300 text-blue-500 hover:text-blue-600"
+                          title="View Details"
+                        >
+                          <TbEye className="h-4 w-4 mr-1" />
+                          <span className="text-xs">View</span>
+                        </button>
+                      </td>
+                    </motion.tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination */}
+          <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+            <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-700">Rows per page:</span>
+                  <select
+                    value={rowsPerPage}
+                    onChange={(e) => {
+                      setRowsPerPage(parseInt(e.target.value, 10));
+                      setPage(0);
+                    }}
+                    className="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+                  >
+                    <option value={10}>10</option>
+                    <option value={25}>25</option>
+                    <option value={50}>50</option>
+                    <option value={100}>100</option>
+                  </select>
+                </div>
+
+                <div className="text-sm text-gray-700">
+                  {totalCount > 0 ? (
+                    <>
+                      Showing {startIndex} to {endIndex} of {totalCount} results
+                    </>
+                  ) : (
+                    "No results"
+                  )}
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => setPage(page - 1)}
+                  disabled={page === 0}
+                  className={`p-2 rounded-lg border ${
+                    page === 0
+                      ? "border-gray-200 text-gray-400 cursor-not-allowed"
+                      : "border-gray-300 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  }`}
+                >
+                  <TbChevronLeft className="h-4 w-4" />
+                </button>
+
+                <span className="text-sm text-gray-700">
+                  Page {page + 1} of {Math.max(1, totalPages)}
+                </span>
+
+                <button
+                  onClick={() => setPage(page + 1)}
+                  disabled={page >= totalPages - 1}
+                  className={`p-2 rounded-lg border ${
+                    page >= totalPages - 1
+                      ? "border-gray-200 text-gray-400 cursor-not-allowed"
+                      : "border-gray-300 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  }`}
+                >
+                  <TbChevronRight className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="bg-white border-t border-gray-200 px-6 py-3 flex-shrink-0">
+        <div className="flex flex-wrap justify-between items-center text-sm text-gray-600">
+          <div>{logs.length} Audit Logs Displayed</div>
+          <div className="flex space-x-4">
+            <button className="flex items-center hover:text-primary-600">
+              <TbReport className="mr-1 h-4 w-4" />
+              Generate Report
+            </button>
+            <button className="flex items-center hover:text-primary-600">
+              <TbDatabaseExport className="mr-1 h-4 w-4" />
+              Export Data
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Click outside handler for filter dropdown */}
+      {isFilterDropdownOpen && (
+        <div
+          className="fixed inset-0 z-0"
+          onClick={() => setIsFilterDropdownOpen(false)}
+        ></div>
       )}
 
-      <AuditLogsFilters
-        open={filtersOpen}
-        filters={filters}
-        onFilterChange={handleFilterChange}
-        onApplyFilters={applyFilters}
-        onClearFilters={clearFilters}
-      />
-
-      <AuditLogsTable
-        logs={logs}
-        loading={loading}
-        page={page}
-        rowsPerPage={rowsPerPage}
-        totalCount={totalCount}
-        onPageChange={setPage}
-        onRowsPerPageChange={setRowsPerPage}
-        onViewDetails={handleViewDetails}
-      />
-
+      {/* Details Modal */}
       <AuditLogDetailsDialog
         open={detailsOpen}
         log={selectedLog}
         onClose={() => setDetailsOpen(false)}
       />
-    </motion.div>
+    </div>
   );
 };
 

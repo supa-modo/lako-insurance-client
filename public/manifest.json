@@ -12,13 +12,13 @@
   "dir": "ltr",
   "icons": [
     {
-      "src": "/lako-logo.png",
+      "src": "/favicon.ico",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable any"
     },
     {
-      "src": "/lako.png",
+      "src": "/logo.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
@@ -33,7 +33,7 @@
       "url": "/compare",
       "icons": [
         {
-          "src": "/lako-logo.png",
+          "src": "/logo.png",
           "sizes": "96x96"
         }
       ]
@@ -45,7 +45,7 @@
       "url": "/buy-online",
       "icons": [
         {
-          "src": "/lako-logo.png",
+          "src": "/logo.png",
           "sizes": "96x96"
         }
       ]
@@ -57,7 +57,7 @@
       "url": "/contact",
       "icons": [
         {
-          "src": "/lako-logo.png",
+          "src": "/logo.png",
           "sizes": "96x96"
         }
       ]

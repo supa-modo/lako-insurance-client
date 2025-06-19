@@ -17,7 +17,7 @@ const PageNotFound = () => {
             <Link to="/" className="flex-shrink-0">
               <div className="w-20 md:w-24">
                 <img
-                  src="/lako-logo.png"
+                  src="/logo.png"
                   alt="Lako Insurance Logo"
                   className="w-full h-full object-cover"
                 />
