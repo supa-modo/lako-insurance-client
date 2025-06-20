@@ -21,7 +21,7 @@ import PlanDetailsModal from "../../components/results/PlanDetailsModal";
 import DownloadReport from "../../components/results/DownloadReport";
 import CallbackModal from "../../components/results/CallbackModal";
 import Footer from "../../components/layout/Footer";
-import { TbMailFilled, TbPhoneCall } from "react-icons/tb";
+import { TbInfoTriangle, TbMailFilled, TbPhoneCall } from "react-icons/tb";
 import Header from "../../components/layout/Header";
 import ToastContainer from "../../components/ui/ToastContainer";
 import { useToast } from "../../hooks/useToast";
@@ -331,65 +331,202 @@ const ResultsPage = () => {
     </div>
   );
 
-  // Error State Component
-  const ErrorState = ({ error, onGoBack }) => (
-    <div className="flex items-center justify-center py-20 px-2">
+  // Empty State Component
+  const EmptyState = ({ onGoBack }) => (
+    <div className="flex items-center justify-center py-16 px-4 min-h-[60vh]">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="text-center max-w-lg px-4 py-6 bg-white/10 backdrop-blur-md rounded-xl shadow-lg border border-red-400/20"
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="text-center max-w-2xl w-full p-8 md:p-12 bg-gradient-to-br from-white/15 via-white/10 to-white/5 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 relative overflow-hidden"
       >
-        <div className="inline-flex items-center justify-center w-16 h-16 bg-red-500/20 rounded-full mb-6">
-          <FiX className="text-red-400 h-8 w-8" />
-        </div>
-        <h2 className="text-2xl font-bold mb-3 text-white font-outfit">
-          Something Went Wrong
-        </h2>
-        <p className="text-neutral-300 mb-6 font-outfit">
-          We couldn't find any plans matching your selections. Please select
-          your preferences and try again.
-        </p>
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-          <button
-            onClick={onGoBack}
-            className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-secondary-500 to-secondary-600 hover:from-secondary-600 hover:to-secondary-700 text-white font-medium rounded-lg shadow-md transition-all group"
-          >
-            <FiArrowLeft className="mr-2" /> Try Again
-          </button>
+        {/* Background decorative elements */}
+        <div className="absolute top-0 right-0 w-32 h-32 bg-primary-400/20 rounded-full filter blur-2xl opacity-40"></div>
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-secondary-400/20 rounded-full filter blur-xl opacity-30"></div>
+
+        {/* Icon with animated glow */}
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="relative inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-primary-500/30 to-secondary-500/30 rounded-full mb-8 shadow-lg"
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-primary-400/40 to-secondary-400/40 rounded-full animate-pulse"></div>
+          <FiInfo className="text-white h-12 w-12 relative z-10" />
         </motion.div>
+
+        {/* Main heading */}
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="text-3xl md:text-4xl font-bold mb-4 text-white font-lexend bg-gradient-to-r from-white via-primary-200 to-white bg-clip-text text-transparent"
+        >
+          No Matching Plans Found
+        </motion.h2>
+
+        {/* Description */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="text-neutral-300 mb-8 font-outfit text-lg leading-relaxed"
+        >
+          We couldn't find any insurance plans that match your current criteria.
+          Don't worry - let's adjust your preferences to find the perfect plan
+          for you.
+        </motion.p>
+
+        {/* Suggestions */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          className="bg-white/10 rounded-xl p-6 mb-8 border border-white/20"
+        >
+          <h3 className="text-white font-semibold mb-3 font-outfit">
+            Try adjusting:
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-neutral-300">
+            <div className="flex items-center">
+              <div className="w-2 h-2 bg-primary-400 rounded-full mr-3"></div>
+              Your budget range
+            </div>
+            <div className="flex items-center">
+              <div className="w-2 h-2 bg-secondary-400 rounded-full mr-3"></div>
+              Coverage limits
+            </div>
+            <div className="flex items-center">
+              <div className="w-2 h-2 bg-primary-400 rounded-full mr-3"></div>
+              Age requirements
+            </div>
+            <div className="flex items-center">
+              <div className="w-2 h-2 bg-secondary-400 rounded-full mr-3"></div>
+              Optional benefits
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Action buttons */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.6 }}
+          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+        >
+          <motion.button
+            whileHover={{
+              scale: 1.05,
+              boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
+            }}
+            whileTap={{ scale: 0.95 }}
+            onClick={onGoBack}
+            className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-secondary-500 to-secondary-600 hover:from-secondary-600 hover:to-secondary-700 text-white font-semibold rounded-xl shadow-lg transition-all group font-outfit"
+          >
+            <FiArrowLeft className="mr-3 group-hover:-translate-x-1 transition-transform" />
+            Adjust My Preferences
+          </motion.button>
+
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleRequestCallback}
+            className="inline-flex items-center justify-center px-8 py-4 border-2 border-white/30 hover:border-white/50 text-white hover:bg-white/10 font-semibold rounded-xl transition-all group font-outfit"
+          >
+            <FiHelpCircle className="mr-3" />
+            Get Expert Help
+          </motion.button>
+        </motion.div>
+
+        {/* Help text */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.7 }}
+          className="text-neutral-400 text-sm mt-6 font-outfit"
+        >
+          Need immediate assistance? Call us at{" "}
+          <a
+            href="tel:+2547206363638"
+            className="text-primary-300 hover:text-primary-200 underline"
+          >
+            +254 720 636 3638
+          </a>
+        </motion.p>
       </motion.div>
     </div>
   );
 
-  // Empty State Component
-  const EmptyState = ({ onGoBack }) => (
-    <div className="flex items-center justify-center py-20">
+  // Error State Component
+  const ErrorState = ({ error, onGoBack }) => (
+    <div className="flex items-center justify-center py-2 md:py-4 lg:py-12 px-4 min-h-[60vh]">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="text-center max-w-md p-8 bg-white/10 backdrop-blur-md rounded-xl shadow-lg border border-primary-400/20"
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="text-center max-w-3xl w-full relative overflow-hidden"
       >
-        <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-500/20 rounded-full mb-6">
-          <FiInfo className="text-primary-400 h-8 w-8" />
+        <div className="flex flex-col items-center justify-center">
+          <TbInfoTriangle className="text-white h-12 lg:h-16 text-center w-12 lg:w-16 mb-4 lg:mb-6" />
+          <h2 className="text-[1.3rem] md:text-3xl lg:text-4xl font-bold mb-4 text-white font-lexend bg-gradient-to-r from-white via-primary-200 to-white bg-clip-text text-transparent">
+            No Matching Plans Found !
+          </h2>
         </div>
-        <h2 className="text-2xl font-bold mb-3 text-white font-outfit">
-          No Results Found
-        </h2>
-        <p className="text-neutral-300 mb-6 font-outfit">
-          We couldn't find any matching plans. Please try again with different
-          criteria.
-        </p>
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-          <button
+
+        {/* Description */}
+        <motion.p
+          // initial={{ opacity: 0, y: 20 }}
+          // animate={{ opacity: 1, y: 0 }}
+          // transition={{ duration: 0.5, delay: 0.1 }}
+          className="text-neutral-300 mb-8 font-outfit text-[0.93rem] md:text-base lg:text-lg leading-relaxed"
+        >
+          We couldn't find any insurance plans that match your current criteria.
+          Please try adjusting your age, budget or coverage limit preferences
+          and try again.
+        </motion.p>
+
+        {/* Action buttons */}
+        <motion.div className="flex flex-col md:flex-row gap-2 md:gap-3 lg:gap-4 justify-center items-center">
+          <motion.button
+            whileHover={{
+              boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
+            }}
+            whileTap={{ scale: 0.99 }}
             onClick={onGoBack}
-            className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-secondary-500 to-secondary-600 hover:from-secondary-600 hover:to-secondary-700 text-white font-medium rounded-lg shadow-md transition-all group"
+            className="w-full md:w-auto inline-flex items-center justify-center px-4 py-3 md:px-8 md:py-3.5 focus:outline-none bg-gradient-to-r from-secondary-500 to-secondary-600 hover:from-secondary-600 hover:to-secondary-700 text-white font-semibold rounded-[0.7rem] shadow-lg transition-colors group border-2 border-secondary-500  font-outfit"
           >
-            <FiArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />{" "}
-            Try Again
-          </button>
+            <FiArrowLeft
+              size={19}
+              className="mr-3 group-hover:-translate-x-1 transition-transform"
+            />
+            Adjust My Preferences
+          </motion.button>
+
+          <motion.button
+            whileTap={{ scale: 0.99 }}
+            onClick={handleRequestCallback}
+            className="w-full md:w-auto inline-flex items-center justify-center px-4 py-3 md:py-3.5 md:px-8 border-2 border-white/40 focus:outline-none hover:border-white/60 text-white hover:bg-white/10 font-semibold rounded-[0.7rem] transition-all group font-outfit"
+          >
+            <FiHelpCircle size={20} className="mr-2" />
+            Get Expert Help
+          </motion.button>
         </motion.div>
+
+        {/* Help text */}
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.6 }}
+          className="text-neutral-400 text-sm mt-6 font-outfit"
+        >
+          Need immediate assistance? Call us at{" "}
+          <a
+            href="tel:+2547206363638"
+            className="text-primary-300 hover:text-primary-200 underline underline-offset-4"
+          >
+            +254 720 636 3638
+          </a>
+        </motion.p>
       </motion.div>
     </div>
   );
@@ -420,8 +557,8 @@ const ResultsPage = () => {
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              We've found {comparisonResults.length || "several"} insurance
-              plans that match your preferences and budget
+              We've found {comparisonResults.length || "0"} insurance plans that
+              match your preferences and budget
             </motion.p>
           </header>
 
@@ -602,8 +739,9 @@ const ResultsPage = () => {
         <div className="mt-8 py-4 border-t border-white/10 relative z-10">
           <div className="container mx-auto px-4 text-center text-neutral-400">
             <p className="text-xs mt-2 font-outfit">
-              This is a comparison of senior health insurance plans based on
-              your preferences.
+              This is a system generated comparison of insurance plans based on
+              your preferences. Please consult with our insurance experts for
+              better detailed advice.
             </p>
           </div>
         </div>

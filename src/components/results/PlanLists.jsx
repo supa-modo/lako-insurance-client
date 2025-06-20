@@ -314,13 +314,23 @@ const PlanList = ({
 
                     {hasMaternity && (
                       <button
-                        disabled={true}
-                        className="flex items-center px-3 py-1 rounded-full text-xs font-medium font-strikethrough bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed"
-                        title="Not available for senior plans"
+                        onClick={() => toggleOptionalCover(planId, "maternity")}
+                        className={`flex items-center px-3 py-1 rounded-full text-xs font-medium  bg-gray-100 text-gray-400 border border-gray-200 ${
+                          planCurrentOptions.maternity
+                            ? "bg-green-100 text-green-700 border border-green-300"
+                            : "bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200"
+                        }`}
+                        title=""
                       >
                         <MdOutlineChildFriendly className="mr-1 h-4 w-4" />
-                        <span className="line-through">Maternity</span>
-                        <TbInfoCircle className="ml-1" />
+                        <span className="">Maternity</span>
+                        {planCurrentOptions.maternity && (
+                          <TbCheck className="ml-1" />
+                        )}
+                        <span className="ml-1 opacity-75">
+                          (+
+                          {formatCurrency(parseFloat(maternityPremium, 0))})
+                        </span>
                       </button>
                     )}
                   </div>

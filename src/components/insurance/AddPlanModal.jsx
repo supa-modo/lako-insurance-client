@@ -96,15 +96,12 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
         renewalAgeLimit: formData.renewalAgeLimit
           ? parseInt(formData.renewalAgeLimit)
           : null,
-        annualPremium:
-          formData.premiumStructure === "fixed" && formData.annualPremium
-            ? parseFloat(formData.annualPremium)
-            : null,
-        premiumsByAgeRange:
-          formData.premiumStructure === "age-based" &&
-          formData.premiumsByAgeRange
-            ? formData.premiumsByAgeRange
-            : null,
+        annualPremium: formData.annualPremium
+          ? parseFloat(formData.annualPremium)
+          : null,
+        premiumsByAgeRange: formData.premiumsByAgeRange
+          ? formData.premiumsByAgeRange
+          : null,
         dentalCoverageLimit:
           formData.hasDental && formData.dentalCoverageLimit
             ? parseFloat(formData.dentalCoverageLimit)
@@ -167,6 +164,12 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
       value: "individual",
       label: "Individual Cover",
       color: "text-indigo-600 bg-indigo-50 border-indigo-300",
+      icon: <TbShieldCheck className="w-5 h-5" />,
+    },
+    {
+      value: "seniors",
+      label: "Seniors Cover",
+      color: "text-orange-600 bg-orange-50 border-orange-300",
       icon: <TbShieldCheck className="w-5 h-5" />,
     },
     {
@@ -340,7 +343,7 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
                       }
                       required
                       placeholder="e.g., Bima Bora AfyaCare"
-                      className="w-full font-lexend text-[0.92rem] bg-neutral-100 text-neutral-900l px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                      className="w-full font-lexend text-[0.92rem] text-gray-600 bg-neutral-100 text-neutral-900l px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors"
                     />
                   </div>
 
@@ -934,7 +937,7 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
                   <TbCoins size={20} className="mr-2 text-primary-600" />
                   Premium Information
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Premium Structure
@@ -949,6 +952,7 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
                       >
                         <option value="fixed">Fixed Premium</option>
                         <option value="age-based">Age-Based Premium</option>
+                        <option value="hybrid">Hybrid (Both)</option>
                       </select>
 
                       <PiCaretDownDuotone
@@ -957,7 +961,8 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
                       />
                     </div>
                   </div>
-                  {formData.premiumStructure === "fixed" ? (
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Annual Premium (KES)
@@ -972,8 +977,11 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
                         placeholder="50000"
                         className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors"
                       />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Base annual premium amount (optional)
+                      </p>
                     </div>
-                  ) : (
+
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Age-Based Premiums (JSON)
@@ -995,7 +1003,7 @@ const AddPlanModal = ({ companies, onClose, onSave }) => {
                         {`{"age-range": premium, "70-74": 68341, "75+": 78729}`}
                       </p>
                     </div>
-                  )}
+                  </div>
                 </div>
               </div>
 

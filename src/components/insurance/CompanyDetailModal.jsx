@@ -30,6 +30,7 @@ import {
   TbShieldHalfFilled,
   TbLoader2,
   TbShieldX,
+  TbCoins,
 } from "react-icons/tb";
 import { PiUserDuotone } from "react-icons/pi";
 import insuranceService from "../../services/insuranceService";
@@ -314,7 +315,7 @@ const CompanyDetailModal = ({ company, onClose, onEdit, onDelete }) => {
                     {plans.map((plan) => (
                       <div
                         key={plan.id}
-                        className="bg-gray-50 border border-gray-200 rounded-xl px-6 py-5 hover:bg-gray-100 transition-colors"
+                        className="bg-neutral-50 shadow-sm hover:shadow-md border border-gray-300 rounded-xl px-6 py-5 hover:bg-gray-100 transition-all duration-300"
                       >
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
@@ -355,13 +356,13 @@ const CompanyDetailModal = ({ company, onClose, onEdit, onDelete }) => {
                                 <p className="font-semibold text-primary-600">
                                   {plan.annualPremium ? (
                                     <span className="flex items-center">
-                                      <TbCurrencyDollar className="h-4 w-4 mr-1" />
+                                      <TbCoins className="h-4 w-4 mr-1" />
                                       {typeof plan.annualPremium === "number"
                                         ? plan.annualPremium.toLocaleString()
                                         : plan.annualPremium}
                                     </span>
                                   ) : (
-                                    "Variable"
+                                    "Age-based"
                                   )}
                                 </p>
                               </div>

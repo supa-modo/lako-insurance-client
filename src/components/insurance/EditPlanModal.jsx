@@ -77,6 +77,29 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
   // Populate form with plan data when component mounts or plan changes
   useEffect(() => {
     if (plan) {
+      // Format premiumsByAgeRange for better display
+      let formattedPremiumsByAgeRange = "";
+      if (plan.premiumsByAgeRange) {
+        try {
+          // If it's already a string, try to parse and reformat it
+          if (typeof plan.premiumsByAgeRange === "string") {
+            const parsed = JSON.parse(plan.premiumsByAgeRange);
+            formattedPremiumsByAgeRange = JSON.stringify(parsed, null, 2);
+          } else {
+            // If it's already an object, stringify it with formatting
+            formattedPremiumsByAgeRange = JSON.stringify(
+              plan.premiumsByAgeRange,
+              null,
+              2
+            );
+          }
+        } catch (error) {
+          // If parsing fails, use the original value
+          console.warn("Failed to parse premiumsByAgeRange:", error);
+          formattedPremiumsByAgeRange = plan.premiumsByAgeRange;
+        }
+      }
+
       setFormData({
         companyId: plan.companyId || "",
         name: plan.name || "",
@@ -105,7 +128,15 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
         geographicalCoverage: plan.geographicalCoverage || "",
         premiumStructure: plan.premiumStructure || "fixed",
         annualPremium: plan.annualPremium || "",
-        premiumsByAgeRange: plan.premiumsByAgeRange || "",
+        premiumsByAgeRange: formattedPremiumsByAgeRange,
+      });
+
+      // Debug log to see what data we're getting
+      console.log("Plan data received:", {
+        premiumsByAgeRange: plan.premiumsByAgeRange,
+        formattedPremiumsByAgeRange,
+        annualPremium: plan.annualPremium,
+        premiumStructure: plan.premiumStructure,
       });
     }
   }, [plan]);
@@ -142,15 +173,12 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
         renewalAgeLimit: formData.renewalAgeLimit
           ? parseInt(formData.renewalAgeLimit)
           : null,
-        annualPremium:
-          formData.premiumStructure === "fixed" && formData.annualPremium
-            ? parseFloat(formData.annualPremium)
-            : null,
-        premiumsByAgeRange:
-          formData.premiumStructure === "age-based" &&
-          formData.premiumsByAgeRange
-            ? formData.premiumsByAgeRange
-            : null,
+        annualPremium: formData.annualPremium
+          ? parseFloat(formData.annualPremium)
+          : null,
+        premiumsByAgeRange: formData.premiumsByAgeRange
+          ? formData.premiumsByAgeRange.trim()
+          : null,
         dentalCoverageLimit:
           formData.hasDental && formData.dentalCoverageLimit
             ? parseFloat(formData.dentalCoverageLimit)
@@ -995,7 +1023,7 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
                   <TbCoins size={20} className="mr-2 text-secondary-600" />
                   Premium Information
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Premium Structure
@@ -1018,7 +1046,8 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
                       />
                     </div>
                   </div>
-                  {formData.premiumStructure === "fixed" ? (
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Annual Premium (KES)
@@ -1033,8 +1062,11 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
                         placeholder="50000"
                         className="w-full font-lexend text-[0.93rem] bg-neutral-100 text-neutral-900 px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500 transition-colors"
                       />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Base annual premium amount (optional)
+                      </p>
                     </div>
-                  ) : (
+
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Age-Based Premiums (JSON)
@@ -1056,7 +1088,7 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
                         {`{"age-range": premium, "70-74": 68341, "75+": 78729}`}
                       </p>
                     </div>
-                  )}
+                  </div>
                 </div>
               </div>
 

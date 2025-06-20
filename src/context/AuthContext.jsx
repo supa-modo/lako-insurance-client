@@ -33,32 +33,14 @@ export const AuthProvider = ({ children }) => {
         console.log("🔄 AuthContext: User data from token:", userData);
         setUser(userData);
 
-        // Optionally fetch fresh data from API
-        try {
-          const freshUserData = await authService.getAdminProfile();
-          if (freshUserData) {
-            console.log(
-              "🔄 AuthContext: Fresh user data retrieved:",
-              freshUserData
-            );
-            setUser(freshUserData);
-          }
-        } catch (profileError) {
-          console.log(
-            "🔄 AuthContext: Could not fetch fresh profile, using stored data"
-          );
-          // Continue with stored user data
-        }
       } else {
         console.log("🔄 AuthContext: No token found");
       }
     } catch (err) {
-      console.error("🔄 AuthContext: Initialization error:", err);
       authService.logoutAdmin();
       setError("Authentication failed. Please log in again.");
     } finally {
       setLoading(false);
-      console.log("🔄 AuthContext: Initialization complete");
     }
   };
 
