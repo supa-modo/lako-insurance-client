@@ -10,9 +10,7 @@ import {
   TbChevronRight,
   TbPhoneCall,
 } from "react-icons/tb";
-import {
-  PiSmileyDuotone,
-} from "react-icons/pi";
+import { PiSmileyDuotone } from "react-icons/pi";
 import contactService from "../../services/contactService";
 import { useToast } from "../../hooks/useToast";
 import { BiSupport } from "react-icons/bi";
@@ -322,11 +320,9 @@ const BenefitsSection = () => {
                             {item}
                           </span>
                         ))}
-                        <span
-                            className="inline-flex items-center text-[0.83rem] px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-white"
-                          >
-                            + more
-                          </span>
+                        <span className="inline-flex items-center text-[0.83rem] px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-white">
+                          + more
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -399,7 +395,8 @@ const BenefitsSection = () => {
                   </div>
                   <p className="text-white/90 text-[0.89rem] md:text-base">
                     We've got you covered from Medical Plans, Travel Insurance,
-                    Motor Insurance, Personal Accident, and many other General Insurance options.
+                    Motor Insurance, Personal Accident, and many other General
+                    Insurance options.
                   </p>
                 </div>
               </div>
@@ -434,9 +431,8 @@ const BenefitsSection = () => {
                     Prepare for the Unexpected
                   </h3>
                   <p className="text-white/90 text-sm md:text-base">
-                    Families have gone bankrupt paying for unplanned bills. With
-                    a comprehensive insurance cover, you can be financially
-                    prepared for what comes your way.
+                    With a comprehensive insurance cover, you can always be
+                    financially prepared for what comes your way without going bankrupt.
                   </p>
 
                   <div className="flex flex-wrap gap-3 mt-5">
@@ -459,7 +455,6 @@ const BenefitsSection = () => {
                   </div>
                 </div>
                 <div className="md:w-[30%] lg:w-[26%] w-full flex flex-col gap-2 lg:gap-3 justify-center lg:justify-end">
-                  
                   <motion.div
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.98 }}
@@ -480,12 +475,14 @@ const BenefitsSection = () => {
                       to="/contact"
                       className="w-full justify-center inline-flex items-center px-5 py-2 lg:py-3.5 bg-secondary-500 text-white font-medium rounded-lg shadow-xl hover:bg-secondary-600 transition-all duration-200 text-center group"
                     >
-                      <TbPhoneCall size={20} className="mr-2 group-hover:translate-x-1 transition-transform" />
+                      <TbPhoneCall
+                        size={20}
+                        className="mr-2 group-hover:translate-x-1 transition-transform"
+                      />
                       Talk to an expert
-                      </Link>
+                    </Link>
                   </motion.div>
-                  </div>
-                 
+                </div>
               </div>
             </motion.div>
 

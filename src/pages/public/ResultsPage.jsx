@@ -21,7 +21,12 @@ import PlanDetailsModal from "../../components/results/PlanDetailsModal";
 import DownloadReport from "../../components/results/DownloadReport";
 import CallbackModal from "../../components/results/CallbackModal";
 import Footer from "../../components/layout/Footer";
-import { TbInfoTriangle, TbMailFilled, TbPhoneCall } from "react-icons/tb";
+import {
+  TbInfoCircle,
+  TbInfoTriangle,
+  TbMailFilled,
+  TbPhoneCall,
+} from "react-icons/tb";
 import Header from "../../components/layout/Header";
 import ToastContainer from "../../components/ui/ToastContainer";
 import { useToast } from "../../hooks/useToast";
@@ -447,7 +452,7 @@ const ResultsPage = () => {
         >
           Need immediate assistance? Call us at{" "}
           <a
-            href="tel:+2547206363638"
+            href="tel:+254720636363"
             className="text-primary-300 hover:text-primary-200 underline"
           >
             +254 720 636 3638
@@ -467,8 +472,8 @@ const ResultsPage = () => {
         className="text-center max-w-3xl w-full relative overflow-hidden"
       >
         <div className="flex flex-col items-center justify-center">
-          <TbInfoTriangle className="text-white h-12 lg:h-16 text-center w-12 lg:w-16 mb-4 lg:mb-6" />
-          <h2 className="text-[1.3rem] md:text-3xl lg:text-4xl font-bold mb-4 text-white font-lexend bg-gradient-to-r from-white via-primary-200 to-white bg-clip-text text-transparent">
+          <TbInfoCircle className="text-white h-12 lg:h-[4.3rem] text-center w-12 lg:w-[4.3rem] mb-4 lg:mb-6" />
+          <h2 className="text-[1.3rem] md:text-3xl font-bold mb-4 text-white font-lexend bg-gradient-to-r from-white via-primary-200 to-white bg-clip-text text-transparent">
             No Matching Plans Found !
           </h2>
         </div>
@@ -493,7 +498,7 @@ const ResultsPage = () => {
             }}
             whileTap={{ scale: 0.99 }}
             onClick={onGoBack}
-            className="w-full md:w-auto inline-flex items-center justify-center px-4 py-3 md:px-8 md:py-3.5 focus:outline-none bg-gradient-to-r from-secondary-500 to-secondary-600 hover:from-secondary-600 hover:to-secondary-700 text-white font-semibold rounded-[0.7rem] shadow-lg transition-colors group border-2 border-secondary-500  font-outfit"
+            className="w-full md:w-auto inline-flex items-center justify-center font-lexend px-4 py-3 md:px-8 md:py-3.5 focus:outline-none bg-gradient-to-r from-secondary-500 to-secondary-600 hover:from-secondary-600 hover:to-secondary-700 text-white font-semibold rounded-[0.7rem] shadow-lg transition-colors group border-2 border-secondary-500  "
           >
             <FiArrowLeft
               size={19}
@@ -505,7 +510,7 @@ const ResultsPage = () => {
           <motion.button
             whileTap={{ scale: 0.99 }}
             onClick={handleRequestCallback}
-            className="w-full md:w-auto inline-flex items-center justify-center px-4 py-3 md:py-3.5 md:px-8 border-2 border-white/40 focus:outline-none hover:border-white/60 text-white hover:bg-white/10 font-semibold rounded-[0.7rem] transition-all group font-outfit"
+            className="w-full md:w-auto inline-flex items-center justify-center px-4 py-3 md:py-3.5 md:px-8 border-2 border-white/40 focus:outline-none hover:border-white/60 text-white hover:bg-white/10 font-semibold rounded-[0.7rem] transition-all group font-lexend"
           >
             <FiHelpCircle size={20} className="mr-2" />
             Get Expert Help
@@ -521,7 +526,7 @@ const ResultsPage = () => {
         >
           Need immediate assistance? Call us at{" "}
           <a
-            href="tel:+2547206363638"
+            href="tel:+254720636363"
             className="text-primary-300 hover:text-primary-200 underline underline-offset-4"
           >
             +254 720 636 3638
@@ -630,7 +635,7 @@ const ResultsPage = () => {
                             <motion.a
                               whileHover={{ scale: 1.02 }}
                               whileTap={{ scale: 0.98 }}
-                              href={`tel:+2547206363638`}
+                              href={`tel:+254720636363`}
                               className="w-full lg:w-auto flex items-center justify-center px-4 sm:px-6 py-3 bg-secondary-500 hover:bg-secondary-600 text-white font-medium rounded-lg shadow-md transition-all text-[0.8rem] md:text-sm lg:text-base"
                             >
                               <TbPhoneCall className="mr-2" size={20} /> Call
@@ -712,7 +717,7 @@ const ResultsPage = () => {
                         <motion.a
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          href={`tel:+2547206363638`}
+                          href={`tel:+254720636363`}
                           className="btn inline-flex items-center justify-center px-4 sm:px-5 py-2.5 bg-secondary-500 hover:bg-secondary-600 text-white font-medium rounded-lg shadow-md transition-all text-[0.8rem] md:text-sm"
                         >
                           <TbPhoneCall className="mr-2" size={20} /> Call Expert

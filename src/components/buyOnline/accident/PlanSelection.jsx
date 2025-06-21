@@ -306,48 +306,41 @@ Note: This is a summary document. Please contact ${
     if (ageRanges.length === 0) return null;
 
     return (
-      <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-        {/* <div className="flex items-center justify-between mb-2">
-          <label className="text-sm font-medium text-primary-600 flex items-center">
-            <TbCalendar className="w-4 h-4 mr-1" />
-            Age-base Pricing:
-          </label>{" "}
-        </div> */}
-
+      <div className="p-2 md:p-2.5 bg-gray-50 rounded-lg border border-gray-200">
         <div className="relative flex items-center">
-        <select
-          value={selectedAge || ""}
-          onChange={(e) => handleAgeChange(plan.id, e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {ageRanges.map((range) => {
-            let ageValue, ageLabel;
-            if (range.includes("-")) {
-              const [min, max] = range
-                .split("-")
-                .map((part) => parseInt(part.trim(), 10));
-              ageValue = min;
-              ageLabel = `${range} years`;
-            } else if (range.includes("+")) {
-              const min = parseInt(range.replace("+", "").trim(), 10);
-              ageValue = min;
-              ageLabel = `${range} years`;
-            } else {
-              ageValue = parseInt(range.trim(), 10);
-              ageLabel = `${range} years`;
-            }
-            return (
-              <option key={range} value={ageValue}>
-                {ageLabel}
-              </option>
-            );
-          })}
-        </select>
+          <select
+            value={selectedAge || ""}
+            onChange={(e) => handleAgeChange(plan.id, e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {ageRanges.map((range) => {
+              let ageValue, ageLabel;
+              if (range.includes("-")) {
+                const [min, max] = range
+                  .split("-")
+                  .map((part) => parseInt(part.trim(), 10));
+                ageValue = min;
+                ageLabel = `${range} years`;
+              } else if (range.includes("+")) {
+                const min = parseInt(range.replace("+", "").trim(), 10);
+                ageValue = min;
+                ageLabel = `${range} years`;
+              } else {
+                ageValue = parseInt(range.trim(), 10);
+                ageLabel = `${range} years`;
+              }
+              return (
+                <option key={range} value={ageValue}>
+                  {ageLabel}
+                </option>
+              );
+            })}
+          </select>
 
-        <PiCaretDownDuotone className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2" />
+          <PiCaretDownDuotone className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2" />
         </div>
-        
+
         <div className="mt-2 text-xs text-gray-500">
           {renderPremiumDisplay(plan)}
         </div>
@@ -460,7 +453,7 @@ Note: This is a summary document. Please contact ${
           plans.map((plan, index) => (
             <motion.div
               key={plan.id}
-              className={`relative rounded-xl border-2 p-2 md:p-6 cursor-pointer transition-all duration-200 ${
+              className={`relative rounded-xl border-2 p-2 md:p-4 lg:p-6 cursor-pointer transition-all duration-200 ${
                 selectedPlan?.id === plan.id
                   ? "border-primary-500 bg-primary-50 shadow-lg"
                   : "border-gray-200 bg-white hover:border-primary-300 hover:shadow-md"
@@ -529,7 +522,13 @@ Note: This is a summary document. Please contact ${
                   </div>
 
                   <div className=" rounded-lg px-2 py-2.5 md:py-0 w-full">
-                    <div className={`text-sm text-primary-600 font-medium ${plan.premiumStructure === "age-based" ? "hidden" : "block"} md:mb-1`}>
+                    <div
+                      className={`text-sm text-primary-600 font-medium ${
+                        plan.premiumStructure === "age-based"
+                          ? "hidden"
+                          : "block"
+                      } md:mb-1`}
+                    >
                       Cover Premium
                     </div>
                     {plan.premiumStructure === "age-based"

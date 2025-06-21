@@ -19,10 +19,12 @@ import {
   TbBabyCarriage,
   TbCoins,
   TbEdit,
+  TbPlaneTilt,
 } from "react-icons/tb";
 import { PiCaretDownDuotone, PiTooth, PiUsersDuotone } from "react-icons/pi";
 import insuranceService from "../../services/insuranceService";
 import { FaCarCrash } from "react-icons/fa";
+import { MdElderly } from "react-icons/md";
 
 const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
   const [loading, setLoading] = useState(false);
@@ -271,31 +273,31 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
       value: "seniors",
       label: "Seniors Insurance",
       description: "Medical coverage for individuals aged 55+",
-      icon: <TbUsers className="w-5 h-5" />,
+      icon: <MdElderly size={24} />,
     },
     {
       value: "health",
       label: "Health Insurance",
       description: "Medical coverage for individuals and families",
-      icon: <TbHeartRateMonitor className="w-5 h-5" />,
+      icon: <TbHeartRateMonitor size={24} />,
     },
     {
       value: "personal-accident",
       label: "Personal Accident",
       description: "Accident protection",
-      icon: <TbAmbulance className="w-5 h-5" />,
+      icon: <TbAmbulance size={24} />,
     },
     {
       value: "travel",
       label: "Travel Insurance",
       description: "Travel protection",
-      icon: <TbBuildingBank className="w-5 h-5" />,
+      icon: <TbPlaneTilt size={24} />,
     },
     {
       value: "motor",
       label: "Motor Insurance",
       description: "Motor vehicle protection",
-      icon: <FaCarCrash className="w-5 h-5" />,
+      icon: <FaCarCrash size={24} />,
     },
   ];
 
@@ -457,11 +459,11 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
                   />
                   Cover Type
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-gray-600">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-gray-600">
                   {coverTypeOptions.map((option) => (
                     <label
                       key={option.value}
-                      className={`relative flex items-center p-4 border-2 rounded-[0.7rem] cursor-pointer transition-all hover:bg-gray-50 ${
+                      className={`relative flex items-center p-3 md:p-4 border-2 rounded-[0.7rem] cursor-pointer transition-all hover:bg-gray-50 ${
                         formData.coverType === option.value
                           ? option.color + " border-current"
                           : "border-gray-200 bg-white hover:border-gray-300"
@@ -489,7 +491,7 @@ const EditPlanModal = ({ plan, companies, onClose, onSave }) => {
                         )}
                       </div>
                       <div className="flex items-center">
-                        <span className="font-medium text-[0.95rem] ml-2">
+                        <span className="font-medium text-sm md:text-[0.9rem] ml-1 md:ml-2">
                           {option.label}
                         </span>
                       </div>
