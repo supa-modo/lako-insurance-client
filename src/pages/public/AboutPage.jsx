@@ -700,7 +700,7 @@ const AboutPage = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="flex flex-col sm:flex-row gap-2 md:gap-4 justify-center"
+              className="flex flex-col sm:flex-row gap-2 md:gap-4 justify-center px-3 md:px-0"
             >
               <motion.div
                 whileHover={{ scale: 1.01 }}

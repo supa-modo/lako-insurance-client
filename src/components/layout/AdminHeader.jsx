@@ -53,44 +53,7 @@ const AdminHeader = ({ toggleSidebarCollapse, sidebarCollapsed }) => {
   const username = firstName && lastName ? `${firstName} ${lastName}` : "Admin";
 
   // Mock notifications data
-  const notifications = [
-    {
-      id: 1,
-      title: "New query received",
-      message: "John Mwangi submitted a new insurance quote request",
-      time: "5 minutes ago",
-      read: false,
-      type: "query",
-      priority: "high",
-    },
-    {
-      id: 2,
-      title: "Renewal alert",
-      message: "Mary Kamau's policy #KS-243 expires in 14 days",
-      time: "1 hour ago",
-      read: false,
-      type: "renewal",
-      priority: "medium",
-    },
-    {
-      id: 3,
-      title: "Lead converted",
-      message: "David Otieno has subscribed to Senior Gold Plan",
-      time: "2 hours ago",
-      read: false,
-      type: "conversion",
-      priority: "low",
-    },
-    {
-      id: 4,
-      title: "System update",
-      message: "CRM will undergo scheduled maintenance tonight",
-      time: "3 hours ago",
-      read: true,
-      type: "system",
-      priority: "medium",
-    },
-  ];
+  const notifications = [];
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
