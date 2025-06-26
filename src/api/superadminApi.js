@@ -42,15 +42,35 @@ export const userAPI = {
 // Analytics API
 export const analyticsAPI = {
   // Get security analytics
-  getSecurityAnalytics: (days = 30) => {
-    return apiClient.get("/superadmin/analytics/security", {
-      params: { days },
-    });
+  getSecurityAnalytics: async (days = 30) => {
+    try {
+      console.log("🔐 SuperAdmin API: Getting security analytics...");
+      const response = await apiClient.get("/superadmin/analytics/security", {
+        params: { days },
+      });
+      console.log(
+        "✅ SuperAdmin API: Security analytics retrieved successfully"
+      );
+      return response;
+    } catch (error) {
+      console.error("❌ SuperAdmin API: Security analytics failed", error);
+      throw error;
+    }
   },
 
   // Get system statistics
-  getSystemStatistics: () => {
-    return apiClient.get("/superadmin/statistics");
+  getSystemStatistics: async () => {
+    try {
+      console.log("🔐 SuperAdmin API: Getting system statistics...");
+      const response = await apiClient.get("/superadmin/statistics");
+      console.log(
+        "✅ SuperAdmin API: System statistics retrieved successfully"
+      );
+      return response;
+    } catch (error) {
+      console.error("❌ SuperAdmin API: System statistics failed", error);
+      throw error;
+    }
   },
 };
 

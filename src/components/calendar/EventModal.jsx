@@ -616,10 +616,10 @@ const EventModal = ({
                       onClick={() => handleUserSelect(user)}
                     >
                       <div className="flex items-center">
-                        <div className="flex-shrink-0 h-6 w-6 rounded-full bg-primary-100 flex items-center justify-center text-primary-600">
+                        <div className="flex-shrink-0 h-6 w-6 border border-primary-400 rounded-full bg-primary-100 flex items-center justify-center text-primary-600">
                           {user.firstName.charAt(0)}
                         </div>
-                        <span className="ml-3 block font-medium truncate">
+                        <span className="ml-3 block font-medium text-primary-600 truncate">
                           {user.firstName} {user.lastName}
                         </span>
                         <span className="ml-2 truncate text-gray-500">{user.email}</span>

@@ -64,14 +64,22 @@ const SuperAdminGuard = ({ children }) => {
   }
 
   if (!user) {
+    console.log("🛡️ SuperAdminGuard: No user found, redirecting to login");
     // Redirect to login with return path
     return (
       <Navigate to="/admin/login" state={{ from: location.pathname }} replace />
     );
   }
 
+  console.log("🛡️ SuperAdminGuard: User found:", {
+    id: user?.id,
+    email: user?.email,
+    role: user?.role,
+  });
+
   // Check if user has SuperAdmin role
   if (user.role !== "superadmin") {
+    console.log("🛡️ SuperAdminGuard: Access denied - user role is:", user.role);
     return (
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-red-100 via-red-200 to-red-100">
         <motion.div
@@ -105,6 +113,7 @@ const SuperAdminGuard = ({ children }) => {
     );
   }
 
+  console.log("🛡️ SuperAdminGuard: Access granted - user has superadmin role");
   return <>{children}</>;
 };
 

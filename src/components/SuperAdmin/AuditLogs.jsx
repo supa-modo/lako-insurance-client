@@ -21,6 +21,7 @@ import {
   TbChevronRight,
   TbCalendar,
   TbClipboard,
+  TbLoader2,
 } from "react-icons/tb";
 import AuditLogDetailsDialog from "./AuditLogs/AuditLogDetailsDialog";
 import { getAuditLogs } from "../../api/superadminApi";
@@ -458,15 +459,7 @@ const AuditLogs = () => {
                   <tr>
                     <td colSpan={7} className="px-6 py-12 text-center">
                       <div className="flex items-center justify-center">
-                        <motion.div
-                          animate={{ rotate: 360 }}
-                          transition={{
-                            duration: 1,
-                            repeat: Infinity,
-                            ease: "linear",
-                          }}
-                          className="w-8 h-8 border-4 border-primary-600 border-t-transparent rounded-full"
-                        />
+                        <TbLoader2 className="h-10 w-10 animate-spin text-primary-600" />
                         <span className="ml-3 text-gray-500">
                           Loading audit logs...
                         </span>

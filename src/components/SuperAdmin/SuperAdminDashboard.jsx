@@ -21,6 +21,7 @@ import {
   TbUserPlus,
   TbReport,
   TbDatabaseExport,
+  TbLoader2,
 } from "react-icons/tb";
 import { Link } from "react-router-dom";
 import { analyticsAPI } from "../../api/superadminApi";
@@ -96,7 +97,15 @@ const SuperAdminDashboard = () => {
     }, 1000);
   };
 
-  const StatCard = ({ title, value, icon: Icon, color, change, link, subtitle }) => (
+  const StatCard = ({
+    title,
+    value,
+    icon: Icon,
+    color,
+    change,
+    link,
+    subtitle,
+  }) => (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -112,8 +121,13 @@ const SuperAdminDashboard = () => {
               <p className="text-xs text-gray-500 mt-1">{subtitle}</p>
             )}
             {change && (
-              <p className={`text-sm mt-2 ${change >= 0 ? "text-green-600" : "text-red-600"}`}>
-                {change >= 0 ? "+" : ""}{change}% from last month
+              <p
+                className={`text-sm mt-2 ${
+                  change >= 0 ? "text-green-600" : "text-red-600"
+                }`}
+              >
+                {change >= 0 ? "+" : ""}
+                {change}% from last month
               </p>
             )}
           </div>
@@ -136,7 +150,14 @@ const SuperAdminDashboard = () => {
     </motion.div>
   );
 
-  const QuickActionCard = ({ title, description, icon: Icon, color, link, badge }) => (
+  const QuickActionCard = ({
+    title,
+    description,
+    icon: Icon,
+    color,
+    link,
+    badge,
+  }) => (
     <Link to={link}>
       <motion.div
         whileHover={{ scale: 1.02 }}
@@ -166,17 +187,21 @@ const SuperAdminDashboard = () => {
   const ActivityItem = ({ activity }) => {
     const getSeverityColor = (severity) => {
       switch (severity) {
-        case "success": return "text-green-600 bg-green-100";
-        case "warning": return "text-yellow-600 bg-yellow-100";
-        case "error": return "text-red-600 bg-red-100";
-        default: return "text-blue-600 bg-blue-100";
+        case "success":
+          return "text-green-600 bg-green-100";
+        case "warning":
+          return "text-yellow-600 bg-yellow-100";
+        case "error":
+          return "text-red-600 bg-red-100";
+        default:
+          return "text-blue-600 bg-blue-100";
       }
     };
 
     const getTimeAgo = (timestamp) => {
       const now = new Date();
       const diff = Math.floor((now - timestamp) / 1000);
-      
+
       if (diff < 60) return `${diff}s ago`;
       if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
       if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
@@ -185,7 +210,9 @@ const SuperAdminDashboard = () => {
 
     return (
       <div className="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
-        <div className={`p-2 rounded-full ${getSeverityColor(activity.severity)}`}>
+        <div
+          className={`p-2 rounded-full ${getSeverityColor(activity.severity)}`}
+        >
           <TbActivity className="h-4 w-4" />
         </div>
         <div className="flex-1 min-w-0">
@@ -203,11 +230,8 @@ const SuperAdminDashboard = () => {
     return (
       <div className="h-[calc(100vh-64px)] flex flex-col overflow-hidden">
         <div className="flex items-center justify-center flex-1">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full"
-          />
+          <TbLoader2 className="h-10 w-10 animate-spin text-primary-600" />
+          <span className="ml-3 text-gray-500">Loading dashboard ....</span>
         </div>
       </div>
     );
@@ -232,7 +256,9 @@ const SuperAdminDashboard = () => {
               onClick={handleRefresh}
               className="bg-white border border-gray-200 rounded-lg p-2 text-gray-500 hover:text-primary-600 hover:border-primary-300 focus:outline-none focus:ring-1 focus:ring-primary-500 transition-all"
             >
-              <TbRefresh className={`h-5 w-5 ${isRefreshing ? "animate-spin" : ""}`} />
+              <TbRefresh
+                className={`h-5 w-5 ${isRefreshing ? "animate-spin" : ""}`}
+              />
             </button>
 
             <Link
@@ -323,7 +349,9 @@ const SuperAdminDashboard = () => {
               icon={TbShield}
               color="bg-purple-500"
               link="/admin/users"
-              subtitle={`${statistics?.twoFAPercentage?.toFixed(1) || 0}% adoption rate`}
+              subtitle={`${
+                statistics?.twoFAPercentage?.toFixed(1) || 0
+              }% adoption rate`}
             />
             <StatCard
               title="Active Sessions"
@@ -354,7 +382,9 @@ const SuperAdminDashboard = () => {
               icon={TbUsers}
               color="bg-blue-500"
               link="/admin/users"
-              badge={statistics?.totalUsers > 100 ? "100+" : statistics?.totalUsers}
+              badge={
+                statistics?.totalUsers > 100 ? "100+" : statistics?.totalUsers
+              }
             />
             <QuickActionCard
               title="Security Monitoring"
@@ -362,7 +392,9 @@ const SuperAdminDashboard = () => {
               icon={TbShield}
               color="bg-red-500"
               link="/admin/security"
-              badge={analytics?.failedLogins > 0 ? analytics.failedLogins : null}
+              badge={
+                analytics?.failedLogins > 0 ? analytics.failedLogins : null
+              }
             />
             <QuickActionCard
               title="Audit Logs"
@@ -401,8 +433,10 @@ const SuperAdminDashboard = () => {
           <div className="bg-white rounded-xl shadow-md border border-gray-200">
             <div className="px-6 py-4 border-b border-gray-200">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900">Recent Activities</h3>
-                <Link 
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Recent Activities
+                </h3>
+                <Link
                   to="/admin/audit-logs"
                   className="text-sm text-primary-600 hover:text-primary-700"
                 >
@@ -422,42 +456,56 @@ const SuperAdminDashboard = () => {
           {/* System Health Overview */}
           <div className="bg-white rounded-xl shadow-md border border-gray-200">
             <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900">System Health</h3>
+              <h3 className="text-lg font-semibold text-gray-900">
+                System Health
+              </h3>
             </div>
             <div className="p-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
                   <div className="flex items-center space-x-3">
                     <TbShieldCheck className="h-5 w-5 text-green-500" />
-                    <span className="text-gray-900 font-medium">Overall System Status</span>
+                    <span className="text-gray-900 font-medium">
+                      Overall System Status
+                    </span>
                   </div>
                   <span className="text-green-600 font-semibold">Healthy</span>
                 </div>
-                
+
                 <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
                   <div className="flex items-center space-x-3">
                     <TbUsers className="h-5 w-5 text-blue-500" />
-                    <span className="text-gray-900 font-medium">User Account Health</span>
+                    <span className="text-gray-900 font-medium">
+                      User Account Health
+                    </span>
                   </div>
                   <span className="text-blue-600 font-semibold">
-                    {statistics?.twoFAPercentage > 50 ? "Excellent" : "Needs Improvement"}
+                    {statistics?.twoFAPercentage > 50
+                      ? "Excellent"
+                      : "Needs Improvement"}
                   </span>
                 </div>
-                
+
                 <div className="flex items-center justify-between p-4 bg-purple-50 rounded-lg">
                   <div className="flex items-center space-x-3">
                     <TbActivity className="h-5 w-5 text-purple-500" />
-                    <span className="text-gray-900 font-medium">Login Activity</span>
+                    <span className="text-gray-900 font-medium">
+                      Login Activity
+                    </span>
                   </div>
                   <span className="text-purple-600 font-semibold">
-                    {analytics?.successRate > 80 ? "Normal" : "Monitor Required"}
+                    {analytics?.successRate > 80
+                      ? "Normal"
+                      : "Monitor Required"}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div className="flex items-center space-x-3">
                     <TbDatabase className="h-5 w-5 text-gray-500" />
-                    <span className="text-gray-900 font-medium">Database Performance</span>
+                    <span className="text-gray-900 font-medium">
+                      Database Performance
+                    </span>
                   </div>
                   <span className="text-gray-600 font-semibold">Optimal</span>
                 </div>

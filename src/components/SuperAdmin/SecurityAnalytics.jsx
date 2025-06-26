@@ -22,6 +22,7 @@ import {
   TbClock,
   TbLock,
   TbKey,
+  TbLoader2,
 } from "react-icons/tb";
 import { analyticsAPI, auditAPI } from "../../api/superadminApi";
 
@@ -169,11 +170,7 @@ const SecurityAnalytics = () => {
     return (
       <div className="h-[calc(100vh-64px)] flex flex-col overflow-hidden">
         <div className="flex items-center justify-center flex-1">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            className="w-16 h-16 border-4 border-primary-600 border-t-transparent rounded-full"
-          />
+          <TbLoader2 className="h-10 w-10 animate-spin text-primary-600" />
         </div>
       </div>
     );

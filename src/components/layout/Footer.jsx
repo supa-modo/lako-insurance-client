@@ -45,11 +45,12 @@ const Footer = () => {
   const links = {
     explore: [
       { label: "Home", to: "/" },
+      { label: "Buy Insurance Online", to: "/buy-online" },
       { label: "Compare Plans", to: "/compare" },
       { label: "About Us", to: "/about" },
       { label: "Contact Us", to: "/contact" },
       // { label: "FAQs", to: "/faq" },
-      { label: "FAQs", to: "/" },
+      // { label: "FAQs", to: "/" },
     ],
     services: [
       { label: "Motor Insurance", to: "/services/motor-insurance" },

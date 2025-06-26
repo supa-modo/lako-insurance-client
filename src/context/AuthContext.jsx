@@ -17,11 +17,10 @@ export const AuthProvider = ({ children }) => {
   // Initialize auth state only when needed (lazy initialization)
   const initializeAuth = async () => {
     if (initialized) {
-      console.log("🔄 AuthContext: Already initialized, skipping");
       return; // Already initialized
     }
 
-    console.log("🔄 AuthContext: Starting initialization");
+    console.log("🔄 AuthContext: Initializing authentication");
     setLoading(true);
     setInitialized(true);
 
@@ -30,13 +29,25 @@ export const AuthProvider = ({ children }) => {
         console.log("🔄 AuthContext: Token found, getting user data");
         // Get user profile from token
         const userData = authService.getCurrentAdmin();
-        console.log("🔄 AuthContext: User data from token:", userData);
-        setUser(userData);
+        console.log("🔄 AuthContext: User data:", {
+          id: userData?.id,
+          email: userData?.email,
+          role: userData?.role,
+        });
 
+        if (userData && userData.role) {
+          console.log("🔄 AuthContext: User authenticated successfully");
+          setUser(userData);
+        } else {
+          console.error("🔄 AuthContext: Invalid user data, logging out");
+          authService.logoutAdmin();
+          setError("Invalid user data. Please log in again.");
+        }
       } else {
         console.log("🔄 AuthContext: No token found");
       }
     } catch (err) {
+      console.error("🔄 AuthContext: Error during initialization:", err);
       authService.logoutAdmin();
       setError("Authentication failed. Please log in again.");
     } finally {
@@ -50,6 +61,11 @@ export const AuthProvider = ({ children }) => {
     const currentPath = window.location.pathname;
     const isAdminRoute = currentPath.startsWith("/admin");
     const hasToken = authService.isAuthenticated();
+
+    console.log("🔄 AuthContext useEffect: Checking initialization conditions");
+    console.log("🔄 Current path:", currentPath);
+    console.log("🔄 Is admin route:", isAdminRoute);
+    console.log("🔄 Has token:", hasToken);
 
     if (isAdminRoute || hasToken) {
       initializeAuth();

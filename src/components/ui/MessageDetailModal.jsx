@@ -184,7 +184,7 @@ const MessageDetailModal = ({
 
                   {/* Message Content */}
                   <div>
-                    <h4 className="font-semibold text-gray-900 mb-4 flex items-center">
+                    <h4 className="font-semibold text-secondary-600 mb-4 flex items-center">
                       <TbMessage2 className="w-5 h-5 mr-2 text-primary-600" />
                       Message Content
                     </h4>
@@ -227,7 +227,7 @@ const MessageDetailModal = ({
                   {/* Processing Information */}
                   {message.processedBy && (
                     <div>
-                      <h4 className="font-semibold text-gray-900 mb-4 flex items-center">
+                      <h4 className="font-semibold text-secondary-600 mb-4 flex items-center">
                         <TbCheck className="w-5 h-5 mr-2 text-green-600" />
                         Processing Information
                       </h4>
@@ -243,7 +243,7 @@ const MessageDetailModal = ({
                           <div>
                             <div className="flex items-center text-sm text-green-600 mb-2">
                               <TbNotes className="h-4 w-4 mr-2" />
-                              <span className="font-medium">
+                              <span className="font-medium ">
                                 Processing Notes:
                               </span>
                             </div>
@@ -261,7 +261,7 @@ const MessageDetailModal = ({
                   {/* Processing Notes for pending messages */}
                   {message.status === "pending" && (
                     <div>
-                      <h4 className="font-semibold text-gray-900 mb-4 flex items-center">
+                      <h4 className="font-semibold text-secondary-600 mb-4 flex items-center">
                         <TbNotes className="w-5 h-5 mr-2 text-primary-600" />
                         Processing Notes
                       </h4>
