@@ -12,9 +12,9 @@ const AVAILABLE_INSURANCE_TYPES = {
     motor: false,
   },
   production: {
-    health: true, // Enable comprehensive health insurance
+    health: false, // Enable comprehensive health insurance
     "personal-accident": true,
-    travel: true, // Enable travel insurance
+    travel: false, // Enable travel insurance
     property: false,
     motor: false,
   },
