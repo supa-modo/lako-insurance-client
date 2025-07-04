@@ -22,7 +22,7 @@ const INSURANCE_AVAILABILITY = {
   },
   production: {
     comparison: {
-      health: false,
+      health: true,
       "personal-accident": true,
       travel: false,
       property: false,
