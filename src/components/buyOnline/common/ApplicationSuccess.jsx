@@ -471,14 +471,51 @@ const ApplicationSuccess = ({
 
     // Open print content in new window
     const printWindow = window.open("", "_blank");
+
+    if (!printWindow) {
+      alert(
+        "Print dialog was blocked by your browser. Please allow popups for this site."
+      );
+      return;
+    }
+
     printWindow.document.write(printContent);
     printWindow.document.close();
 
     // Wait for content to load, then print
-    printWindow.onload = () => {
-      printWindow.print();
-      printWindow.close();
+    const handlePrint = () => {
+      try {
+        // Focus the window first
+        printWindow.focus();
+
+        // Small delay to ensure content is rendered
+        setTimeout(() => {
+          printWindow.print();
+
+          // Close after a delay to allow print dialog to appear
+          setTimeout(() => {
+            if (!printWindow.closed) {
+              printWindow.close();
+            }
+          }, 1000);
+        }, 500);
+      } catch (error) {
+        console.error("Print error:", error);
+        alert("There was an error opening the print dialog. Please try again.");
+        printWindow.close();
+      }
     };
+
+    // Use multiple event listeners to ensure it works across browsers
+    if (printWindow.document.readyState === "complete") {
+      handlePrint();
+    } else {
+      printWindow.onload = handlePrint;
+      printWindow.addEventListener("load", handlePrint);
+
+      // Fallback timeout in case load events don't fire
+      setTimeout(handlePrint, 1000);
+    }
   };
 
   return (
@@ -546,7 +583,7 @@ const ApplicationSuccess = ({
             <label className="text-[0.8rem] md:text-sm font-medium text-gray-500">
               Email Address
             </label>
-            <p className="text-sm md:text-[0.93rem] lg:text-base font-semibold font-lexend text-primary-700">
+            <p className="text-sm md:text-[0.93rem] lg:text-base font-semibold font-lexend text-primary-700 truncate">
               {applicationData?.emailAddress}
             </p>
           </div>

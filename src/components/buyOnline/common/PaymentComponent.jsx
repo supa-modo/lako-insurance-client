@@ -147,8 +147,13 @@ const PaymentComponent = ({ applicationData, onPaymentComplete, onCancel }) => {
 
   // Start checking payment status
   const startStatusChecking = (paymentId) => {
+    let checkCount = 0;
+    const maxChecks = 100; // Maximum 5 minutes of checking (100 * 3 seconds)
+
     const interval = setInterval(async () => {
       try {
+        checkCount++;
+
         const response = await apiClient.get(`/payments/${paymentId}/status`);
 
         //TODO: Uncomment this when the API is ready
@@ -173,7 +178,8 @@ const PaymentComponent = ({ applicationData, onPaymentComplete, onCancel }) => {
         if (response.data.success) {
           const payment = response.data.data;
 
-          if (payment.status === "completed") {
+          // Payment completed successfully (must have receipt number)
+          if (payment.status === "completed" && payment.mpesaReceiptNumber) {
             setPaymentStep("success");
             setPaymentData(payment);
             clearInterval(interval);
@@ -182,23 +188,65 @@ const PaymentComponent = ({ applicationData, onPaymentComplete, onCancel }) => {
             // Notify parent component only once
             if (onPaymentComplete && !paymentCompleteNotified) {
               setPaymentCompleteNotified(true);
-              console.log("PaymentComponent: Notifying parent of payment completion (once)");
+              console.log(
+                "PaymentComponent: Payment completed with receipt:",
+                payment.mpesaReceiptNumber
+              );
               onPaymentComplete(payment);
             }
-          } else if (
+          }
+          // Payment failed, cancelled, or expired
+          else if (
             ["failed", "cancelled", "expired"].includes(payment.status)
           ) {
             setPaymentStep("failed");
             setPaymentData(payment);
-            setError(
-              payment.resultDesc || payment.failureReason || "Payment failed"
-            );
+
+            // Set appropriate error message based on status
+            let errorMessage = "Payment failed";
+            if (payment.status === "cancelled") {
+              errorMessage = "Payment was cancelled";
+            } else if (payment.status === "expired") {
+              errorMessage = "Payment session expired";
+            } else if (payment.failureReason) {
+              errorMessage = payment.failureReason;
+            } else if (payment.resultDesc) {
+              errorMessage = payment.resultDesc;
+            }
+
+            setError(errorMessage);
             clearInterval(interval);
             setStatusCheckInterval(null);
+          }
+          // Still processing - check if we should continue
+          else if (payment.status === "processing") {
+            console.log(
+              `Payment still processing (check ${checkCount}/${maxChecks})`
+            );
+
+            // If we've been checking for too long, stop and show timeout
+            if (checkCount >= maxChecks) {
+              setPaymentStep("failed");
+              setError(
+                "Payment is taking too long. Please check your M-Pesa messages or contact support with the transaction code."
+              );
+              clearInterval(interval);
+              setStatusCheckInterval(null);
+            }
           }
         }
       } catch (error) {
         console.error("Status check error:", error);
+
+        // If we get repeated errors, stop checking
+        if (checkCount >= 5) {
+          setPaymentStep("failed");
+          setError(
+            "Unable to check payment status. Please contact support for assistance."
+          );
+          clearInterval(interval);
+          setStatusCheckInterval(null);
+        }
       }
     }, 3000); // Check every 3 seconds
 
@@ -373,7 +421,7 @@ const PaymentComponent = ({ applicationData, onPaymentComplete, onCancel }) => {
       exit={{ opacity: 0, y: -20 }}
       className="max-w-2xl mx-auto text-center"
     >
-      <div className="bg-blue-50 rounded-xl p-5 md:p-6 mb-4">
+      <div className="bg-blue-50 border border-blue-300 rounded-xl p-5 md:p-6 mb-4">
         <div className="flex items-center justify-between">
           <h2 className="text-base lg:text-lg font-semibold text-blue-800 mb-4">
             Payment in Progress
@@ -427,6 +475,37 @@ const PaymentComponent = ({ applicationData, onPaymentComplete, onCancel }) => {
         <TbLoader className="w-5 h-5 animate-spin" />
         <span>Waiting for payment confirmation...</span>
       </div>
+
+      {/* Development Debug Button */}
+      {process.env.NODE_ENV === "development" && (
+        <div className="mt-4 pt-4 border-t border-gray-200">
+          <button
+            onClick={async () => {
+              try {
+                console.log(
+                  "Testing callback for payment:",
+                  paymentData?.paymentId
+                );
+                const response = await apiClient.post(
+                  "/payments/mpesa/test-callback",
+                  {
+                    checkoutRequestId: paymentData?.checkoutRequestId,
+                  }
+                );
+                console.log("Test callback response:", response.data);
+              } catch (error) {
+                console.error("Test callback error:", error);
+              }
+            }}
+            className="w-full bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors"
+          >
+            🧪 Test Callback (Dev Only)
+          </button>
+          <p className="text-xs text-gray-500 mt-1 text-center">
+            This simulates a successful M-Pesa callback for testing
+          </p>
+        </div>
+      )}
     </motion.div>
   );
 
@@ -449,13 +528,13 @@ const PaymentComponent = ({ applicationData, onPaymentComplete, onCancel }) => {
         <div className="space-y-3">
           <div className="flex justify-between">
             <span className="text-green-700">M-Pesa Receipt:</span>
-            <span className="font-medium text-green-800">
-              {paymentData?.mpesaReceiptNumber}
+            <span className="font-medium text-green-800 font-mono">
+              {paymentData?.mpesaReceiptNumber || "N/A"}
             </span>
           </div>
           <div className="flex justify-between">
             <span className="text-green-700">Amount Paid:</span>
-            <span className="font-medium text-green-800">
+            <span className="font-medium text-green-800 font-lexend">
               {formatCurrency(paymentData?.amount)}
             </span>
           </div>
@@ -465,6 +544,18 @@ const PaymentComponent = ({ applicationData, onPaymentComplete, onCancel }) => {
               {paymentData?.mpesaTransactionDate
                 ? new Date(paymentData.mpesaTransactionDate).toLocaleString()
                 : new Date().toLocaleString()}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-green-700">Phone Number:</span>
+            <span className="font-medium text-green-800 font-mono">
+              {paymentData?.phoneNumber || phoneNumber}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-green-700">Payment Reference:</span>
+            <span className="font-medium text-green-800 font-mono">
+              {paymentData?.paymentReference || "N/A"}
             </span>
           </div>
         </div>
@@ -479,7 +570,24 @@ const PaymentComponent = ({ applicationData, onPaymentComplete, onCancel }) => {
             </p>
             <p className="text-blue-700 text-sm">
               Your insurance policy is now active. You will receive your policy
-              documents via email as soon .
+              documents via email shortly. Keep your M-Pesa receipt number for
+              your records.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+        <div className="flex items-start">
+          <TbReceipt className="w-5 h-5 text-yellow-600 mt-0.5 mr-3 flex-shrink-0" />
+          <div className="text-left">
+            <p className="text-yellow-800 font-medium mb-1">
+              Important: Save Your Receipt
+            </p>
+            <p className="text-yellow-700 text-sm">
+              Please save your M-Pesa receipt number{" "}
+              <strong>{paymentData?.mpesaReceiptNumber}</strong>
+              for future reference and claims processing.
             </p>
           </div>
         </div>
@@ -502,7 +610,7 @@ const PaymentComponent = ({ applicationData, onPaymentComplete, onCancel }) => {
       exit={{ opacity: 0, y: -20 }}
       className="max-w-2xl mx-auto text-center"
     >
-      <div className="bg-red-100 rounded-[0.8rem] p-5 lg:p-6 mb-6">
+      <div className="bg-red-50 border border-red-300 rounded-[0.8rem] p-5 lg:p-6 mb-6">
         <div className="flex items-center justify-center gap-3 mb-2">
           <div className="w-8 h-8 md:w-10 md:h-10 bg-red-200 rounded-full flex items-center justify-center">
             <TbX className="w-4 h-4 md:w-6 md:h-6 text-red-600" />
@@ -560,7 +668,7 @@ const PaymentComponent = ({ applicationData, onPaymentComplete, onCancel }) => {
       <AnimatePresence mode="wait">
         {paymentStep === "initiate" && renderInitiateStep()}
         {paymentStep === "processing" && renderProcessingStep()}
-        {/* {paymentStep === "success" && renderSuccessStep()} */}
+        {paymentStep === "success" && renderSuccessStep()}
         {paymentStep === "failed" && renderFailedStep()}
       </AnimatePresence>
     </div>

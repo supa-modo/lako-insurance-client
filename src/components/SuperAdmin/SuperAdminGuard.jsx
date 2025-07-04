@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { TbLock, TbLoader, TbShieldCheck, TbUserOff } from "react-icons/tb";
+import {
+  TbLock,
+  TbLoader,
+  TbShieldCheck,
+  TbUserOff,
+  TbArrowBackUp,
+} from "react-icons/tb";
 import { useAuth } from "../../context/AuthContext";
 import { RiUserUnfollowLine } from "react-icons/ri";
 
@@ -81,12 +87,19 @@ const SuperAdminGuard = ({ children }) => {
   if (user.role !== "superadmin") {
     console.log("🛡️ SuperAdminGuard: Access denied - user role is:", user.role);
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-red-100 via-red-200 to-red-100">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900  to-red-900 flex items-center justify-center p-4">
+        {/* Security warning background pattern */}
+        <div
+          className="absolute inset-0 opacity-5"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M20 20.5V18H0v-2h20v2.5zm0 2.5v2H0v2h20v-2.5zm10 0V23H40v-2H30v2.5zM40 22H20v-2h20v2z'/%3E%3C/g%3E%3C/svg%3E")`,
+          }}
+        ></div>
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
-          className="text-center p-8 bg-white rounded-xl border border-red-200 shadow-lg max-w-lg"
+          className="text-center p-8 bg-red-300 rounded-xl shadow-lg max-w-lg relative z-10"
         >
           <div className="flex items-center justify-center mb-6">
             <div className="h-16 w-16 rounded-full bg-red-100 flex items-center justify-center">
@@ -97,15 +110,19 @@ const SuperAdminGuard = ({ children }) => {
             Access Denied !!
           </h2>
           <p className="text-gray-600 font-outfit mb-6">
-            You don't have SuperAdmin privileges to access this page.
+            You don't have SuperAdmin privileges to access this page. Please
+            contact your System Admin for assistance.
           </p>
 
           <div className="mt-6">
             <button
               onClick={() => window.history.back()}
-              className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+              className="border border-red-700 text-red-700 font-medium px-6 py-2 rounded-lg hover:bg-white transition-colors"
             >
-              Go Back
+              <div className="flex items-center gap-2">
+                <TbArrowBackUp size={22} className="" />
+                <span>Go Back</span>
+              </div>
             </button>
           </div>
         </motion.div>
