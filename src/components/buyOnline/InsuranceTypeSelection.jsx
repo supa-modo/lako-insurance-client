@@ -12,7 +12,7 @@ import { GiLifeInTheBalance } from "react-icons/gi";
 import { FaCarCrash } from "react-icons/fa";
 import { FaUserInjured } from "react-icons/fa6";
 import {
-  isInsuranceTypeAvailable,
+  isBuyOnlineInsuranceTypeAvailable,
   isProductionMode,
 } from "../../utils/featureFlags";
 
@@ -71,7 +71,7 @@ const InsuranceTypeSelection = ({ onSelect, formData }) => {
     if (type.comingSoon) return true;
 
     // Check environment-based availability
-    return !isInsuranceTypeAvailable(type.id);
+    return !isBuyOnlineInsuranceTypeAvailable(type.id);
   };
 
   const getDisabledMessage = (type) => {

@@ -3,32 +3,62 @@ const isDevelopment = process.env.NODE_ENV === "development";
 const isProduction = process.env.NODE_ENV === "production";
 
 // Define which insurance types are available in each environment
-const AVAILABLE_INSURANCE_TYPES = {
+const INSURANCE_AVAILABILITY = {
   development: {
-    health: true,
-    "personal-accident": true,
-    travel: true,
-    property: false,
-    motor: false,
+    comparison: {
+      health: true,
+      "personal-accident": true,
+      travel: true,
+      property: false,
+      motor: false,
+    },
+    buyOnline: {
+      health: true,
+      "personal-accident": true,
+      travel: true,
+      property: false,
+      motor: false,
+    },
   },
   production: {
-    health: false, // Enable comprehensive health insurance
-    "personal-accident": true,
-    travel: false, // Enable travel insurance
-    property: false,
-    motor: false,
+    comparison: {
+      health: false,
+      "personal-accident": true,
+      travel: false,
+      property: false,
+      motor: false,
+    },
+    buyOnline: {
+      health: true,
+      "personal-accident": true,
+      travel: false,
+      property: false,
+      motor: false,
+    },
   },
 };
 
-// Get available insurance types for current environment
-export const getAvailableInsuranceTypes = () => {
+// Get available insurance types for comparison
+export const getAvailableInsuranceTypesForComparison = () => {
   const environment = isProduction ? "production" : "development";
-  return AVAILABLE_INSURANCE_TYPES[environment];
+  return INSURANCE_AVAILABILITY[environment].comparison;
 };
 
-// Check if a specific insurance type is available
-export const isInsuranceTypeAvailable = (insuranceType) => {
-  const availableTypes = getAvailableInsuranceTypes();
+// Get available insurance types for buyOnline
+export const getAvailableInsuranceTypesForBuyOnline = () => {
+  const environment = isProduction ? "production" : "development";
+  return INSURANCE_AVAILABILITY[environment].buyOnline;
+};
+
+// Check if a specific insurance type is available for comparison
+export const isComparisonInsuranceTypeAvailable = (insuranceType) => {
+  const availableTypes = getAvailableInsuranceTypesForComparison();
+  return availableTypes[insuranceType] || false;
+};
+
+// Check if a specific insurance type is available for buyOnline
+export const isBuyOnlineInsuranceTypeAvailable = (insuranceType) => {
+  const availableTypes = getAvailableInsuranceTypesForBuyOnline();
   return availableTypes[insuranceType] || false;
 };
 
@@ -55,11 +85,20 @@ export const FEATURES = {
   PREMIUM_FEATURES: isDevelopment,
 };
 
+// Keep original generic helpers for backward compatibility (default to buyOnline behaviour)
+export const getAvailableInsuranceTypes =
+  getAvailableInsuranceTypesForBuyOnline;
+export const isInsuranceTypeAvailable = isBuyOnlineInsuranceTypeAvailable;
+
 export default {
-  getAvailableInsuranceTypes,
-  isInsuranceTypeAvailable,
+  getAvailableInsuranceTypesForComparison,
+  getAvailableInsuranceTypesForBuyOnline,
+  isComparisonInsuranceTypeAvailable,
+  isBuyOnlineInsuranceTypeAvailable,
   isDevelopmentMode,
   isProductionMode,
   getEnvironment,
   FEATURES,
+  getAvailableInsuranceTypes,
+  isInsuranceTypeAvailable,
 };

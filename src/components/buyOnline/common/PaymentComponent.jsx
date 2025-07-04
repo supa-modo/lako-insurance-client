@@ -14,6 +14,7 @@ import {
   TbDeviceMobile,
   TbReceipt,
   TbCheckupList,
+  TbArrowBack,
 } from "react-icons/tb";
 import { formatCurrency } from "../../../utils/formatCurrency";
 import { apiClient } from "../../../services/apiConfig";
@@ -389,7 +390,7 @@ const PaymentComponent = ({ applicationData, onPaymentComplete, onCancel }) => {
           onClick={onCancel}
           className="w-full bg-gray-200 hover:bg-gray-200 text-gray-700 font-medium py-3 px-6 rounded-lg transition-colors flex items-center justify-center"
         >
-          <TbArrowLeft className="w-5 h-5 mr-2" />
+          <TbArrowBack className="w-5 h-5 mr-2" />
           Back to Application
         </button>
 
