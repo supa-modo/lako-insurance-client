@@ -148,7 +148,7 @@ const HeroSection = ({ activeSlide, heroSlides }) => {
               <div className="absolute inset-0 border-2 border-white/20 rounded-3xl transform rotate-3 translate-x-4 translate-y-4 hidden lg:block"></div>
 
               {/* Main card */}
-              <div className="relative bg-white/10 backdrop-blur-md rounded-3xl p-6 shadow-2xl border border-white/30 ">
+              <div className="relative bg-white/10 backdrop-blur-md rounded-3xl pt-6 pb-2 px-6 shadow-2xl border border-white/30 ">
                 {/* Card header with visual elements */}
                 <div className="flex items-center justify-between mb-4 sm:mb-6">
                   <div className="flex items-center space-x-2">
@@ -193,8 +193,8 @@ const HeroSection = ({ activeSlide, heroSlides }) => {
                   </motion.div>
 
                   {/* Features Carousel */}
-                  <div className="mt-3 relative">
-                    <div className="h-11 overflow-hidden rounded-lg bg-white/10 backdrop-blur-sm flex items-center justify-center">
+                  <div className="mt-2 relative">
+                    <div className="py-2 overflow-hidden flex items-center justify-center">
                       <AnimatePresence mode="wait">
                         {features.map(
                           (feature, index) =>
@@ -205,7 +205,7 @@ const HeroSection = ({ activeSlide, heroSlides }) => {
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -10 }}
-                                transition={{ duration: 0.3 }}
+                                transition={{ duration: 0.7 }}
                               >
                                 <div className="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center mr-3">
                                   <feature.icon className="h-5 w-5 text-white" />
@@ -220,7 +220,7 @@ const HeroSection = ({ activeSlide, heroSlides }) => {
                     </div>
 
                     {/* Feature carousel indicators */}
-                    <div className="flex justify-center space-x-1.5 mt-2">
+                    {/* <div className="flex justify-center space-x-1.5 mt-2">
                       {features.map((_, index) => (
                         <button
                           key={index}
@@ -233,7 +233,7 @@ const HeroSection = ({ activeSlide, heroSlides }) => {
                           aria-label={`Go to feature ${index + 1}`}
                         />
                       ))}
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>

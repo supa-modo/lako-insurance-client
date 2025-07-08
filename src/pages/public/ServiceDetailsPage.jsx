@@ -27,6 +27,7 @@ import {
   organizationSchema,
 } from "../../components/SEO/structuredData";
 import { serviceDetails } from "../../data/serviceDetails";
+import SocialMediaBar from "../../components/common/SocialMediaBar";
 
 const ServiceDetailsPage = () => {
   const { serviceId } = useParams();
@@ -110,6 +111,11 @@ const ServiceDetailsPage = () => {
     return (
       <div className="bg-gradient-to-r from-primary-800 via-primary-700 to-primary-800 min-h-screen overflow-hidden font-outfit relative">
         <Header />
+
+        {/* Social Media Bar */}
+        <SocialMediaBar />
+
+
         <div className="min-h-[70vh] flex flex-col items-center justify-center px-4">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -158,6 +164,9 @@ const ServiceDetailsPage = () => {
 
       <div className="bg-neutral-50 min-h-screen overflow-hidden font-outfit relative">
         <Header />
+
+        {/* Social Media Bar */}
+        <SocialMediaBar />
 
         {/* Hovering Back Button */}
         <motion.button

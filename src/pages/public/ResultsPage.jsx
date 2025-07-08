@@ -30,6 +30,7 @@ import {
 import Header from "../../components/layout/Header";
 import ToastContainer from "../../components/ui/ToastContainer";
 import { useToast } from "../../hooks/useToast";
+import SocialMediaBar from "../../components/common/SocialMediaBar";
 
 const ResultsPage = () => {
   const { toasts, removeToast } = useToast();
@@ -540,6 +541,10 @@ const ResultsPage = () => {
     <>
       <div className="min-h-screen bg-gradient-to-br from-primary-800 via-neutral-800 to-primary-800 text-white relative overflow-hidden">
         <Header />
+
+        {/* Social Media Bar */}
+        <SocialMediaBar />
+
         {/* Decorative elements */}
         <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-primary-500/40 rounded-full filter blur-3xl opacity-20 animate-pulse-slow"></div>
         <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-blue-500/30 rounded-full filter blur-3xl opacity-20 transform translate-y-1/4 translate-x-[-30%]"></div>

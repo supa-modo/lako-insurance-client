@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiMail, FiLock, FiShield } from "react-icons/fi";
 import {
@@ -19,11 +19,12 @@ import { PiPasswordBold, PiPasswordDuotone } from "react-icons/pi";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useAuth } from "../../context/AuthContext";
 import ForgotPasswordModal from "../../components/auth/ForgotPasswordModal";
+import { LuLogIn } from "react-icons/lu";
 
 const AdminLoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [twoFactorCode, setTwoFactorCode] = useState("");
+  const [twoFactorCode, setTwoFactorCode] = useState(["", "", "", "", "", ""]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -32,6 +33,14 @@ const AdminLoginPage = () => {
   const [tempLoginData, setTempLoginData] = useState(null);
   const navigate = useNavigate();
   const { login } = useAuth();
+
+  // Refs for 2FA inputs
+  const inputRefs = useRef([]);
+
+  useEffect(() => {
+    // Initialize refs array
+    inputRefs.current = inputRefs.current.slice(0, 6);
+  }, []);
 
   const handleCredentialsSubmit = async (e) => {
     e.preventDefault();
@@ -47,6 +56,12 @@ const AdminLoginPage = () => {
         // User has 2FA enabled, show 2FA step
         setTempLoginData({ email, password });
         setLoginStep("2fa");
+        // Focus on first 2FA input after a short delay
+        setTimeout(() => {
+          if (inputRefs.current[0]) {
+            inputRefs.current[0].focus();
+          }
+        }, 300);
       } else {
         // No 2FA required, login successful - navigate to dashboard
         navigate("/admin/dashboard");
@@ -70,10 +85,11 @@ const AdminLoginPage = () => {
 
     try {
       // Complete login with 2FA code
+      const code = twoFactorCode.join("");
       await login({
         email: tempLoginData.email,
         password: tempLoginData.password,
-        twoFactorCode,
+        twoFactorCode: code,
       });
       navigate("/admin/dashboard");
     } catch (err) {
@@ -91,14 +107,69 @@ const AdminLoginPage = () => {
   const handleBackToCredentials = () => {
     setLoginStep("credentials");
     setTempLoginData(null);
-    setTwoFactorCode("");
+    setTwoFactorCode(["", "", "", "", "", ""]);
     setError("");
   };
 
-  const handle2FACodeChange = (e) => {
-    const value = e.target.value.replace(/\D/g, "").slice(0, 6);
-    setTwoFactorCode(value);
+  const handle2FAChange = (index, value) => {
+    // Only allow single digits
+    if (value.length > 1) return;
+
+    // Only allow numbers
+    if (value !== "" && !/^\d$/.test(value)) return;
+
+    const newCode = [...twoFactorCode];
+    newCode[index] = value;
+    setTwoFactorCode(newCode);
+
+    // Clear error when user starts typing
     if (error) setError("");
+
+    // Auto-focus next input
+    if (value !== "" && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handle2FAKeyDown = (index, e) => {
+    // Handle backspace
+    if (e.key === "Backspace") {
+      if (twoFactorCode[index] === "" && index > 0) {
+        // If current field is empty, focus previous field
+        inputRefs.current[index - 1]?.focus();
+      } else if (twoFactorCode[index] !== "") {
+        // If current field has value, clear it
+        const newCode = [...twoFactorCode];
+        newCode[index] = "";
+        setTwoFactorCode(newCode);
+      }
+    }
+
+    // Handle arrow keys
+    if (e.key === "ArrowLeft" && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+    if (e.key === "ArrowRight" && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handle2FAPaste = (e) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData("text").slice(0, 6);
+
+    // Only allow digits
+    if (!/^\d+$/.test(pastedData)) return;
+
+    const newCode = ["", "", "", "", "", ""];
+    for (let i = 0; i < Math.min(pastedData.length, 6); i++) {
+      newCode[i] = pastedData[i];
+    }
+    setTwoFactorCode(newCode);
+
+    // Focus last filled input or first empty input
+    const focusIndex = Math.min(pastedData.length, 5);
+    inputRefs.current[focusIndex]?.focus();
   };
 
   return (
@@ -287,46 +358,38 @@ const AdminLoginPage = () => {
                 onSubmit={handle2FASubmit}
                 className="space-y-4 lg:space-y-6"
               >
-                {/* 2FA Header */}
-                <div className="text-center mb-6">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-white/10 rounded-full mb-4">
-                    <TbShieldCheck className="h-8 w-8 text-white" />
-                  </div>
-                  <h3 className="text-white font-semibold text-lg mb-2">
-                    Two-Factor Authentication
-                  </h3>
-                  <p className="text-white/70 text-sm">
-                    Enter the 6-digit code from your authenticator app
-                  </p>
-                </div>
-
                 <div>
                   <label
                     htmlFor="twoFactorCode"
-                    className="block text-secondary-500 mb-2 tracking-wide text-sm font-outfit text-center"
+                    className="block text-secondary-500 mb-4 tracking-wide text-sm font-outfit text-center"
                   >
-                    Verification Code
+                    Enter 6-digit verification code
                   </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 z-10 left-4 flex items-center pointer-events-none">
-                      <TbShieldLock className="h-6 w-6 text-primary-400" />
-                    </div>
-                    <input
-                      id="twoFactorCode"
-                      type="text"
-                      className="w-full h-12 pl-12 lg:pl-14 pr-4 text-sm sm:text-base text-white rounded-lg border-2 bg-white/10 backdrop-blur-sm focus:bg-white/20
-                      duration-200 focus:ring-2 focus:outline-none focus:ring-primary-400 focus:border-0
-                      font-lexend placeholder-white/50 border-white/30 text-center tracking-widest"
-                      placeholder="000000"
-                      value={twoFactorCode}
-                      onChange={handle2FACodeChange}
-                      maxLength="6"
-                      required
-                    />
+                  <div className="flex gap-3 justify-center">
+                    {[0, 1, 2, 3, 4, 5].map((index) => (
+                      <input
+                        key={index}
+                        type="text"
+                        inputMode="numeric"
+                        className="w-[2.9rem] md:w-14 h-[3.2rem] md:h-[3.8rem] text-center text-lg md:text-xl font-bold text-white rounded-lg border-2 bg-white/10 backdrop-blur-sm 
+                                 focus:bg-white/20 focus:ring-1 focus:outline-none focus:ring-secondary-500 focus:border-secondary-500
+                                 transition-all duration-200 font-lexend border-white/30 hover:border-white/50"
+                        value={twoFactorCode[index]}
+                        onChange={(e) => handle2FAChange(index, e.target.value)}
+                        onKeyDown={(e) => handle2FAKeyDown(index, e)}
+                        onPaste={handle2FAPaste}
+                        maxLength="1"
+                        required
+                        ref={(el) => (inputRefs.current[index] = el)}
+                      />
+                    ))}
                   </div>
+                  <p className="text-white/60 text-xs text-center mt-3 font-outfit">
+                    Check your registered authenticator app for the code
+                  </p>
                 </div>
 
-                <div className="space-y-3">
+                <div className="flex flex-col md:flex-row-reverse items-center justify-center gap-3">
                   <motion.button
                     whileHover={{ scale: 1.01 }}
                     whileTap={{ scale: 0.98 }}
@@ -334,7 +397,9 @@ const AdminLoginPage = () => {
                     className="w-full h-12 bg-secondary-600 hover:bg-secondary-500 text-white font-medium rounded-lg
                     shadow-lg hover:shadow-xl transition-all duration-300 transform font-outfit
                     flex items-center justify-center gap-2"
-                    disabled={loading || twoFactorCode.length !== 6}
+                    disabled={
+                      loading || twoFactorCode.some((code) => code === "")
+                    }
                   >
                     {loading ? (
                       <>
@@ -363,7 +428,7 @@ const AdminLoginPage = () => {
                     ) : (
                       <>
                         <div className="flex items-center gap-2">
-                          <TbShieldCheck className="h-5 w-5" />
+                          <LuLogIn className="h-5 w-5" />
                           <span>Verify & Sign In</span>
                         </div>
                       </>

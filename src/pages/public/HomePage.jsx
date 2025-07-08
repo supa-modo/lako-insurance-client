@@ -9,6 +9,7 @@ import BenefitsSection from "../../components/home/BenefitsSection";
 import TestimonialsSection from "../../components/home/TestimonialsSection";
 import BottomCTASection from "../../components/home/BottomCTASection";
 import SEOHelmet from "../../components/SEO/SEOHelmet";
+import SocialMediaBar from "../../components/common/SocialMediaBar";
 import {
   organizationSchema,
   localBusinessSchema,
@@ -118,6 +119,9 @@ const HomePage = () => {
       <div className="bg-neutral-50 min-h-screen overflow-hidden">
         <Header />
 
+        {/* Social Media Bar */}
+        <SocialMediaBar />
+
         {/* Hero Section */}
         <HeroSection activeSlide={activeSlide} heroSlides={heroSlides} />
 
@@ -153,7 +157,7 @@ const HomePage = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.1 }}
-                  className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-700 mb-6"
+                  className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-700 mb-3 md:mb-4 lg:mb-6"
                 >
                   Expanding Across{" "}
                   <span className="text-secondary-500">Eastern Africa</span>
@@ -164,7 +168,7 @@ const HomePage = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.2 }}
-                  className="text-gray-600 text-base lg:text-lg mb-6"
+                  className="text-gray-600 text-[0.9rem] md:text-base lg:text-lg mb-6"
                 >
                   Lako Insurance Agency is based in Kenya but with adequate
                   footprint in four countries within the Eastern Africa region,
@@ -176,7 +180,7 @@ const HomePage = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.3 }}
-                  className="text-gray-600 text-base lg:text-lg mb-8"
+                  className="text-gray-600 text-[0.9rem] md:text-base lg:text-lg mb-4 md:mb-6 lg:mb-8"
                 >
                   We are continuously expanding and hope to cover more regions
                   within the continent.
@@ -203,10 +207,10 @@ const HomePage = () => {
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.4, delay: 0.5 + index * 0.1 }}
-                      className="flex items-center space-x-3 p-3 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300"
+                      className="flex items-center space-x-3 p-1 md:p-2 lg:p-3 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300"
                     >
                       <span className="text-xl">{country.flag}</span>
-                      <span className="text-gray-700 font-medium">
+                      <span className="text-gray-700 text-[0.9rem] md:text-base font-medium">
                         {country.name}
                       </span>
                     </motion.div>

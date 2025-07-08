@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { TbArrowLeft, TbHome2, TbPhoneCall } from "react-icons/tb";
+import { TbArrowBack, TbArrowLeft, TbHome2, TbPhoneCall } from "react-icons/tb";
 
 const PageNotFound = () => {
   const handleGoBack = () => {
@@ -68,7 +68,7 @@ const PageNotFound = () => {
               onClick={handleGoBack}
               className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors duration-200"
             >
-              <TbArrowLeft className="w-4 h-4 mr-2" />
+              <TbArrowBack size={21} className="mr-2" />
               Go Back
             </button>
             <Link

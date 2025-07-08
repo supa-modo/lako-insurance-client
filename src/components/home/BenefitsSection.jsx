@@ -14,6 +14,7 @@ import { PiSmileyDuotone } from "react-icons/pi";
 import contactService from "../../services/contactService";
 import { useToast } from "../../hooks/useToast";
 import { BiSupport } from "react-icons/bi";
+import { GrEmptyCircle } from "react-icons/gr";
 
 const BenefitsSection = () => {
   const { toast } = useToast();
@@ -283,50 +284,43 @@ const BenefitsSection = () => {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
-                className="bg-white rounded-2xl mt-6 overflow-hidden shadow-xl border border-gray-100 h-full relative"
+                className="relative h-[560px]"
               >
-                <div className="h-[560px] overflow-hidden">
-                  <img
-                    src="/group2.jpg"
-                    alt="Insurance Experience"
-                    className="w-full h-full "
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary-900/90 to-primary-900/20"></div>
-                  <div className="absolute bottom-0 left-0 right-0 p-8">
-                    <div className="text-white">
-                      <div className="flex items-center mb-3">
-                        <TbAward className="h-10 w-10 text-secondary-500 mr-2" />
-                        <h3 className="text-2xl md:text-3xl font-bold text-secondary-500">
-                          10+ Years of Excellence
-                        </h3>
-                      </div>
-                      <p className="text-white/90 md:text-[1.25rem]">
-                        We've been in the insurance industry for over a decade,
-                        providing comprehensive coverage solutions across a wide
-                        variety of insurance products.
-                      </p>
-                      <div className="mt-4 flex flex-wrap gap-3">
-                        {[
-                          "Medical Health Covers",
-                          "Travel Insurance",
-                          "Motor Insurance",
-                          "Personal Accident",
-                        ].map((item, i) => (
-                          <span
-                            key={i}
-                            className="inline-flex items-center text-[0.83rem] px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-white"
-                          >
-                            <TbCheck className="mr-1 h-4 w-4" />
-                            {item}
-                          </span>
-                        ))}
-                        <span className="inline-flex items-center text-[0.83rem] px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm text-white">
-                          + more
-                        </span>
-                      </div>
-                    </div>
+                {/* First Image - Main background */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
+                  className="absolute top-0 left-0 w-[80%] h-[350px] bg-white rounded-2xl overflow-hidden shadow-xl border border-gray-100"
+                >
+                  <div className="relative h-full">
+                    <img
+                      src="/slider02.png"
+                      alt="Insurance Team"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary-900/80 to-transparent"></div>
                   </div>
-                </div>
+                </motion.div>
+
+                {/* Second Image - Overlapping bottom right */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9, x: 20, y: 20 }}
+                  whileInView={{ opacity: 1, scale: 1, x: 0, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className="absolute bottom-[-30px] right-[-30px] w-[65%] h-[350px] bg-white rounded-2xl overflow-hidden shadow-2xl border border-gray-100 z-20"
+                >
+                  <div className="relative h-full">
+                    <img
+                      src="/slider09.png"
+                      alt="Professional Consultation"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-secondary-900/60 to-transparent"></div>
+                  </div>
+                </motion.div>
               </motion.div>
             </div>
           </div>
@@ -335,8 +329,7 @@ const BenefitsSection = () => {
         {/* Mobile View */}
         <div className="lg:hidden">
           {/* Mobile Benefits */}
-
-          <div className=" space-y-3">
+          <div className="space-y-4 px-4">
             {benefits.map((benefit, index) => (
               <motion.div
                 key={index}
@@ -344,7 +337,7 @@ const BenefitsSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.1 }}
-                className=" px-4 py-1 shadow-sm rounded-xl"
+                className=""
               >
                 <div className="flex items-start">
                   <div
@@ -358,7 +351,7 @@ const BenefitsSection = () => {
                   </div>
                   <div>
                     <h3
-                      className={`text-lg font-bold mb-1 ${
+                      className={`text-lg font-bold mb-2 ${
                         benefit.color === "primary"
                           ? "text-primary-700"
                           : "text-secondary-700"
@@ -366,7 +359,7 @@ const BenefitsSection = () => {
                     >
                       {benefit.title}
                     </h3>
-                    <p className="text-gray-600 text-[0.9rem] mb-2">
+                    <p className="text-gray-600 text-sm leading-relaxed">
                       {benefit.description}
                     </p>
                   </div>
@@ -375,111 +368,291 @@ const BenefitsSection = () => {
             ))}
           </div>
 
-          {/* Mobile Experience Banner */}
-          <div className="">
-            <div className="bg-white overflow-hidden shadow-lg relative">
-              <img
-                src="/group2.jpg"
-                alt="Insurance Experience"
-                className="w-full h-[19rem] md:h-[28rem] object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-primary-900/95 to-primary-900/20"></div>
-              <div className="absolute bottom-0 left-0 right-0 px-4 pb-3 md:pb-6">
-                <div className="text-white">
-                  <div className="flex items-center mb-2">
-                    <TbAward className="h-8 w-8 text-secondary-500 mr-2" />
+          {/* Mobile Hero Images Section */}
+          <div className="mt-8 px-2 md:px-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="relative h-[260px] md:h-[450px]"
+            >
+              {/* Main image */}
+              <div className="absolute top-0 left-0 w-[80%] h-[180px] md:h-[300px] bg-white rounded-xl overflow-hidden shadow-lg">
+                <img
+                  src="/slider02.png"
+                  alt="Insurance Team"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-primary-900/60 to-transparent"></div>
+              </div>
 
-                    <h3 className="text-2xl md:text-3xl font-bold text-secondary-500">
-                      10+ Years of Excellence
-                    </h3>
+              {/* Overlapping image */}
+              <div className="absolute bottom-0 right-0 w-[60%] h-[160px] md:h-[280px] bg-white rounded-xl overflow-hidden shadow-xl z-10">
+                <img
+                  src="/slider09.png"
+                  alt="Professional Team"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-secondary-900/50 to-transparent"></div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Mobile Experience Section */}
+          <div className="mt-12 px-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-center"
+            >
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
+                Experience That{" "}
+                <span className="text-secondary-500">Matters</span>
+              </h2>
+
+              <div className="border-l-4 border-secondary-400 pl-4 text-[0.9rem] md:text-base text-left mb-6">
+                <p className="text-gray-600 leading-relaxed">
+                  Our notable years of operation signify a journey filled with
+                  success stories, where we've seamlessly navigated the
+                  complexities of insurance dynamics. Through dedication and
+                  innovation, we've been instrumental in sculpting coverage
+                  solutions that foster growth, security, and peace of mind.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="bg-primary-100 rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-primary-600 mb-1">
+                    10+
                   </div>
-                  <p className="text-white/90 text-[0.89rem] md:text-base">
-                    We've got you covered from Medical Plans, Travel Insurance,
-                    Motor Insurance, Personal Accident, and many other General
-                    Insurance options.
-                  </p>
+                  <div className="text-xs text-gray-600">
+                    Years of Excellence
+                  </div>
+                </div>
+                <div className="bg-secondary-100 rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-secondary-600 mb-1">
+                    5000+
+                  </div>
+                  <div className="text-xs text-gray-600">Policies Sold</div>
                 </div>
               </div>
+            </motion.div>
+          </div>
+
+          {/* Mobile CTA Section */}
+          <div className="mt-4 md:mt-10">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-center"
+            >
+              {/* Mobile CTA Image */}
+              <div className="relative h-[240px] md:h-[450px] mb-4 md:mb-5">
+                <img
+                  src="/group1.png"
+                  alt="Professional Team"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="mx-2.5 md:mx-4 border-r-4 border-secondary-400 text-[0.9rem] md:text-base text-left mb-6">
+                <p className="text-gray-600 leading-relaxed">
+                  At Lako, expertise is not just a word; it's the cornerstone of
+                  our service. Our seasoned professionals possess a wealth of
+                  industry knowledge, strategic acumen, and hands-on experience.
+                  This amalgamation of skills allows us to stay ahead of
+                  industry trends, offering cutting-edge solutions that redefine
+                  insurance standards.
+                </p>
+              </div>
+
+              <div className="flex gap-3 mx-2.5 md:mx-4">
+                <Link
+                  to="/compare"
+                  className="inline-flex items-center justify-center text-sm md:text-base px-4 md:px-6 py-2.5 md:py-3 bg-primary-600 text-white font-semibold rounded-lg shadow-lg hover:bg-primary-700 transition-all duration-200"
+                >
+                  Talk to an Expert
+                </Link>
+                <Link
+                  to="/contact"
+                  className="inline-flex items-center justify-center text-sm md:text-base px-4 md:px-6 py-2.5 md:py-3 border-2 border-secondary-500 text-secondary-600 font-semibold rounded-lg hover:bg-secondary-50 transition-all duration-200"
+                >
+                  <GrEmptyCircle
+                    size={18}
+                    className="mr-2 group-hover:scale-110 transition-transform"
+                  />
+                  Buy Insurance Online
+                </Link>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Experience Section - Desktop Only */}
+        <div className="hidden lg:block mt-28">
+          <div className="grid grid-cols-12 gap-8 items-center">
+            {/* Left side - Image */}
+            <div className="col-span-5 relative">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+                className="relative"
+              >
+                {/* Decorative pattern boxes - Top right */}
+                <div className="absolute -top-4 -right-4 z-10 grid grid-cols-2 gap-0.5">
+                  {[...Array(4)].map((_, i) => (
+                    <motion.div
+                      key={`top-${i}`}
+                      initial={{ opacity: 0, scale: 0 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: i * 0.1 }}
+                      className={`w-4 h-4 ${
+                        i < 2 ? "bg-primary-600" : "bg-secondary-500"
+                      } rounded-sm`}
+                    />
+                  ))}
+                </div>
+
+                {/* Decorative pattern boxes - Bottom left */}
+                <div className="absolute -bottom-4 -left-4 z-10 grid grid-cols-2 gap-0.5">
+                  {[...Array(4)].map((_, i) => (
+                    <motion.div
+                      key={`bottom-${i}`}
+                      initial={{ opacity: 0, scale: 0 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: 0.4 + i * 0.1 }}
+                      className={`w-4 h-4 ${
+                        i < 2 ? "bg-secondary-500" : "bg-primary-600"
+                      } rounded-sm`}
+                    />
+                  ))}
+                </div>
+
+                {/* Main Image */}
+                <div className="bg-white rounded-2xl overflow-hidden shadow-xl border border-gray-100 relative">
+                  <img
+                    src="/group1.png"
+                    alt="Professional Team Experience"
+                    className="w-full h-[350px] object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900/40 to-transparent"></div>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Right side - Content */}
+            <div className="col-span-7 pl-8">
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+              >
+                <h2 className="text-3xl lg:text-4xl font-bold text-gray-800 mb-6">
+                  Experience That{" "}
+                  <span className="text-secondary-500">Matters</span>
+                </h2>
+
+                <div className="border-l-4 border-secondary-400 pl-6 mb-6">
+                  <p className="text-gray-600 text-lg leading-relaxed">
+                    Our notable years of operation signify a journey filled with
+                    success stories, where we've seamlessly navigated the
+                    complexities of insurance dynamics. Through dedication and
+                    innovation, we've been instrumental in sculpting coverage
+                    solutions that foster growth, security, and peace of mind.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-6 mt-8">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                    className="text-center p-4 bg-primary-100 rounded-xl"
+                  >
+                    <div className="text-3xl font-bold text-primary-600 mb-2">
+                      10+
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      Years of Excellence
+                    </div>
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                    className="text-center p-4 bg-secondary-100 rounded-xl"
+                  >
+                    <div className="text-3xl font-bold text-secondary-600 mb-2">
+                      5000+
+                    </div>
+                    <div className="text-sm text-gray-600">Policies Sold</div>
+                  </motion.div>
+                </div>
+              </motion.div>
             </div>
           </div>
         </div>
 
         {/* CTA Cards */}
-        <div className="lg:mt-20 lg:px-1.5">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {/* CTA 1 */}
+        <div className="hidden lg:block lg:mt-20 lg:px-1.5">
+          <div className="grid grid-cols-1 lg:grid-cols-12 items-center gap-8">
+            {/* Text Content with CTAs */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="lg:col-span-7 bg-gradient-to-br from-primary-600 to-primary-800 lg:rounded-2xl overflow-hidden shadow-xl relative group hover:shadow-2xl"
+              className="lg:col-span-7 flex flex-col justify-center"
             >
-              <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-1/4 -left-10 w-40 h-40 rounded-full bg-primary-400/30 blur-3xl group-hover:w-44 group-hover:h-44 transition-all duration-700"></div>
-                <div className="absolute bottom-1/3 -right-10 w-60 h-60 rounded-full bg-primary-600/40 blur-3xl group-hover:w-64 group-hover:h-64 transition-all duration-700"></div>
-                <div className="absolute bottom-0 right-0 w-32 h-32 rounded-full bg-white/5 backdrop-blur-xl transform translate-x-1/2 translate-y-1/2"></div>
-              </div>
-              <div className="p-5 lg:p-8 relative z-10 flex flex-col md:flex-row items-center">
-                <div className="lg:w-[75%] md:w-[70%] mb-6 lg:mb-0 lg:pr-4">
-                  <div className="hidden md:inline-block mb-4">
-                    <span className="bg-white/10 backdrop-blur-sm text-secondary-100 text-sm px-4 py-1.5 rounded-full">
-                      Comprehensive Coverage
-                    </span>
-                  </div>
-                  <h3 className="text-2xl md:text-3xl font-bold text-secondary-300 mb-3">
-                    Prepare for the Unexpected
-                  </h3>
-                  <p className="text-white/90 text-sm md:text-base">
-                    With a comprehensive insurance cover, you can always be
-                    financially prepared for what comes your way without going bankrupt.
+              <div className="w-full">
+                <div className="border-l-4 border-secondary-400 pl-6 mb-8">
+                  <p className="text-gray-600 text-lg leading-relaxed">
+                    At Lako, expertise is not just a word; it's the cornerstone
+                    of our service. Our seasoned professionals possess a wealth
+                    of industry knowledge, strategic acumen, and hands-on
+                    experience. This amalgamation of skills allows us to stay
+                    ahead of industry trends, offering cutting-edge solutions
+                    that redefine insurance standards.
                   </p>
-
-                  <div className="flex flex-wrap gap-3 mt-5">
-                    {[
-                      "Financial Security",
-                      "Peace of Mind",
-                      "Expert Support",
-                    ].map((item, i) => (
-                      <div
-                        key={i}
-                        className="flex items-center bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-lg"
-                      >
-                        <div className="w-3.5 h-3.5 rounded-full bg-secondary-600 flex items-center justify-center mr-2">
-                          <TbCheck className="text-white h-2.5 w-2.5" />
-                        </div>
-
-                        <span className="text-white text-xs">{item}</span>
-                      </div>
-                    ))}
-                  </div>
                 </div>
-                <div className="md:w-[30%] lg:w-[26%] w-full flex flex-col gap-2 lg:gap-3 justify-center lg:justify-end">
+
+                <div className="flex flex-col sm:flex-row gap-4">
                   <motion.div
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <Link
-                      to="/compare"
-                      className="w-full justify-center inline-flex items-center px-6 py-2 lg:py-3.5 bg-white text-primary-700 font-medium rounded-lg shadow-xl hover:bg-primary-50 transition-all duration-200 text-center group"
-                    >
-                      Get a quote now
-                      <TbArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-                    </Link>
-                  </motion.div>
-                  <motion.div
-                    whileHover={{ scale: 1.03 }}
+                    whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
                     <Link
                       to="/contact"
-                      className="w-full justify-center inline-flex items-center px-5 py-2 lg:py-3.5 bg-secondary-500 text-white font-medium rounded-lg shadow-xl hover:bg-secondary-600 transition-all duration-200 text-center group"
+                      className="inline-flex items-center justify-center px-8 py-3 bg-primary-600 text-white font-semibold rounded-lg shadow-lg hover:bg-primary-700 transition-all duration-200 group"
                     >
-                      <TbPhoneCall
+                      Talk to an Expert
+                      <TbArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  </motion.div>
+                  <motion.div
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Link
+                      to="/buy-online"
+                      className="inline-flex items-center justify-center px-8 py-3 border-2 border-secondary-500 text-secondary-600 font-semibold rounded-lg hover:bg-secondary-50 transition-all duration-200 group"
+                    >
+                      <GrEmptyCircle
                         size={20}
-                        className="mr-2 group-hover:translate-x-1 transition-transform"
+                        className="mr-2 group-hover:scale-110 transition-transform"
                       />
-                      Talk to an expert
+                      Buy Insurance Online
                     </Link>
                   </motion.div>
                 </div>
@@ -499,7 +672,7 @@ const BenefitsSection = () => {
                 <div className="absolute bottom-0 left-0 w-40 h-40 rounded-full bg-primary-100 blur-xl opacity-70 transform -translate-x-1/3 translate-y-1/3"></div>
               </div>
               <div className="p-4 lg:p-6 relative z-10">
-                <div className="text-left mb-6">
+                <div className="text-left mb-4">
                   <p className="text-gray-700 text-base">
                     Have any questions? We're here to help you find the perfect
                     insurance solution.
@@ -547,7 +720,7 @@ const BenefitsSection = () => {
                       whileTap={{ scale: 0.98 }}
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full py-2 px-6 bg-gradient-to-r from-secondary-500 to-secondary-600 text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed"
+                      className="w-full mt-2 py-2 px-6 bg-gradient-to-r from-secondary-500 to-secondary-600 text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed"
                     >
                       {isSubmitting ? (
                         <>

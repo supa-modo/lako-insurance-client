@@ -6,6 +6,7 @@ import InsuranceTypeSelection from "../../components/buyOnline/InsuranceTypeSele
 import HealthInsuranceFlow from "../../components/buyOnline/health/HealthInsuranceFlow";
 import PersonalAccidentFlow from "../../components/buyOnline/accident/PersonalAccidentFlow";
 import TravelInsuranceFlow from "../../components/buyOnline/travel/TravelInsuranceFlow";
+import SocialMediaBar from "../../components/common/SocialMediaBar";
 import {
   TbArrowLeft,
   TbClipboardText,
@@ -209,6 +210,9 @@ const BuyOnlinePage = () => {
   return (
     <div className="min-h-screen bg-slate-50 from-neutral-50 to-neutral-100 font-outfit">
       <Header />
+
+      {/* Social Media Bar */}
+      <SocialMediaBar />
 
       <main className="pt-24 md:pt-28 pb-20 relative z-10">
         <div className="container mx-auto max-w-screen-2xl">

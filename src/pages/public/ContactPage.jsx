@@ -36,6 +36,7 @@ import {
 import contactService from "../../services/contactService";
 import ToastContainer from "../../components/ui/ToastContainer";
 import { useToast } from "../../hooks/useToast";
+import SocialMediaBar from "../../components/common/SocialMediaBar";
 
 const ContactPage = () => {
   const { toasts, toast, removeToast } = useToast();
@@ -179,6 +180,9 @@ const ContactPage = () => {
 
       <div className="bg-neutral-50 min-h-screen overflow-hidden font-outfit">
         <Header />
+
+        {/* Social Media Bar */}
+        <SocialMediaBar />
 
         {/* Hero Section */}
         <section className="relative pt-32 pb-16 md:pt-36 md:pb-20 bg-gradient-to-bl from-primary-700 to-primary-800 overflow-hidden">

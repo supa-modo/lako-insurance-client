@@ -34,6 +34,7 @@ import { RiUserCommunityLine } from "react-icons/ri";
 import { BiSupport } from "react-icons/bi";
 import { LuGoal } from "react-icons/lu";
 import { HiMiniUserGroup } from "react-icons/hi2";
+import SocialMediaBar from "../../components/common/SocialMediaBar";
 
 const AboutPage = () => {
   // Breadcrumb data
@@ -102,6 +103,9 @@ const AboutPage = () => {
 
       <div className="bg-neutral-50 min-h-screen overflow-hidden font-outfit">
         <Header />
+
+        {/* Social Media Bar */}
+        <SocialMediaBar />
 
         {/* Hero Section */}
         <section className="relative pt-32 pb-8 md:pt-36 lg:pb-14 bg-gradient-to-bl from-primary-700 to-primary-800 overflow-hidden">

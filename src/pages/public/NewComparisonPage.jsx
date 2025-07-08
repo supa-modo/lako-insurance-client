@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Header from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
 import { useComparison } from "../../context/ComparisonContext";
+import SocialMediaBar from "../../components/common/SocialMediaBar";
 
 // Icons
 import {
@@ -159,7 +160,8 @@ const NewComparisonPage = () => {
         />
       ),
       title: "Filter Preference",
-      description: "Choose between budget or inpatient coverage limit for better results",
+      description:
+        "Choose between budget or inpatient coverage limit for better results",
       icon: <TbCoin className="w-6 h-6" />,
       color: "teal",
     },
@@ -267,6 +269,9 @@ const NewComparisonPage = () => {
     <>
       <div className="min-h-screen bg-slate-50 font-outfit">
         <Header />
+
+        {/* Social Media Bar */}
+        <SocialMediaBar />
 
         <main className="pt-24 md:pt-28 pb-20 relative z-10">
           <div className="container mx-auto px-2.5 max-w-screen-2xl">
