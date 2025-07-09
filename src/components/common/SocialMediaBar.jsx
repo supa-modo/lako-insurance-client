@@ -21,25 +21,25 @@ const SocialMediaBar = () => {
   const socialLinks = [
     {
       name: "Facebook",
-      url: "https://facebook.com/lakoinsurance",
+      url: "https://web.facebook.com/lakoinsuranceagency?_rdc=1&_rdr",
       icon: FaFacebookF,
       bgColor: "bg-[#1877F2]", // Facebook official blue
     },
     {
       name: "Twitter",
-      url: "https://twitter.com/lakoinsurance",
+      url: "https://x.com/lakoinsurance",
       icon: FaXTwitter,
       bgColor: "bg-[#000000]", // X official black
     },
     {
       name: "LinkedIn",
-      url: "https://linkedin.com/company/lakoinsurance",
+      url: "https://www.linkedin.com/company/lako-insurance/",
       icon: FaLinkedinIn,
       bgColor: "bg-[#0A66C2]", // LinkedIn official blue
     },
     {
       name: "Instagram",
-      url: "https://instagram.com/lakoinsurance",
+      url: "https://www.instagram.com/lakoinsurance",
       icon: FaInstagram,
       bgColor: "bg-gradient-to-r from-[#E4405F] to-[#833AB4]", // Instagram gradient
     },

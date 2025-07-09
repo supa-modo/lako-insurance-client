@@ -376,7 +376,7 @@ const BuyOnlinePage = () => {
                       description:
                         "Select the insurance type and coverage that best suits your needs and budget.",
                       icon: (
-                        <TbShieldHalfFilled className="text-white w-6 h-6" />
+                        <TbShieldHalfFilled className="text-white w-6 md:w-8 lg:w-10 h-6 md:h-8 lg:h-10" />
                       ),
                     },
                     {
@@ -384,7 +384,9 @@ const BuyOnlinePage = () => {
                       title: "Fill Details",
                       description:
                         "Provide your personal information through our secure, encrypted application form.",
-                      icon: <TbClipboardText className="text-white w-6 h-6" />,
+                      icon: (
+                        <TbClipboardText className="text-white w-6 md:w-8 lg:w-10 h-6 md:h-8 lg:h-10" />
+                      ),
                     },
                     {
                       step: "03",
@@ -392,7 +394,7 @@ const BuyOnlinePage = () => {
                       description:
                         "Complete your purchase using M-Pesa, bank transfer, or other secure payment methods.",
                       icon: (
-                        <MpesaIcon variant="white" height={24} width={55} />
+                        <MpesaIcon variant="white" height={28} width={65} />
                       ),
                     },
                     {
@@ -400,7 +402,9 @@ const BuyOnlinePage = () => {
                       title: "Get Coverage",
                       description:
                         "Receive your policy documents instantly and enjoy immediate coverage protection.",
-                      icon: <FiCheckCircle className="text-white w-6 h-6" />,
+                      icon: (
+                        <FiCheckCircle className="text-white w-6 md:w-8 lg:w-10 h-6 md:h-8 lg:h-10" />
+                      ),
                     },
                   ].map((item, index) => (
                     <motion.div
@@ -417,7 +421,7 @@ const BuyOnlinePage = () => {
 
                       <div className="flex flex-row lg:flex-col items-center lg:justify-center gap-4 lg:gap-0 relative z-10">
                         <div className="relative lg:mb-6">
-                          <div className="w-14 lg:w-[4.7rem] h-14 lg:h-[4.7rem] bg-gradient-to-r from-primary-700 to-primary-600 rounded-full flex items-center justify-center mx-auto mb-2 md:mb-3 lg:mb-4 text-white shadow-lg">
+                          <div className="w-16 lg:w-[5.5rem] h-16 lg:h-[5.5rem] bg-gradient-to-r from-primary-700 to-primary-600 rounded-full flex items-center justify-center mx-auto mb-2 md:mb-3 lg:mb-4 text-white shadow-lg">
                             {item.icon}
                           </div>
                           <div className="text-[0.83rem] md:text-sm font-semibold font-lexend text-primary-600 mb-2 text-center">
