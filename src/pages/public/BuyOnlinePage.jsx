@@ -414,9 +414,69 @@ const BuyOnlinePage = () => {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: index * 0.1 + 0.3 }}
                     >
-                      {/* Horizontal connecting line for desktop */}
+                      {/* Animated connecting line for desktop */}
                       {index < 3 && (
-                        <div className="hidden lg:block absolute top-8 left-[55%] w-full h-[2px] bg-secondary-400 transform -translate-x-4"></div>
+                        <div className="hidden lg:block absolute top-11 left-[55%] w-full h-[4px] transform -translate-x-4 overflow-hidden">
+                          {/* Base line with gradient */}
+                          <div className="absolute inset-0 bg-gradient-to-r from-secondary-400 via-primary-500 to-secondary-500 rounded-full opacity-60"></div>
+
+                          {/* Animated flowing overlay */}
+                          <motion.div
+                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent rounded-full opacity-40"
+                            animate={{
+                              x: ["-100%", "200%"],
+                            }}
+                            transition={{
+                              duration: 3,
+                              repeat: Infinity,
+                              ease: "linear",
+                              delay: index * 0.5,
+                            }}
+                          />
+
+                          {/* Moving dots */}
+                          <motion.div
+                            className="absolute top-1/2 left-0 w-1.5 h-1.5 bg-secondary-500 rounded-full transform -translate-y-1/2"
+                            animate={{
+                              x: [0, "calc(100% + 0.375rem)"],
+                            }}
+                            transition={{
+                              duration: 2.5,
+                              repeat: Infinity,
+                              ease: "easeInOut",
+                              delay: index * 0.3,
+                            }}
+                          />
+
+                          {/* Secondary dot */}
+                          <motion.div
+                            className="absolute top-1/2 left-0 w-1 h-1 bg-primary-500 rounded-full transform -translate-y-1/2 opacity-70"
+                            animate={{
+                              x: ["-0.25rem", "calc(100% + 0.625rem)"],
+                            }}
+                            transition={{
+                              duration: 3,
+                              repeat: Infinity,
+                              ease: "easeInOut",
+                              delay: index * 0.4 + 0.8,
+                            }}
+                          />
+
+                          {/* Pulse effect at connection points */}
+                          <motion.div
+                            className="absolute top-1/2 right-0 w-2 h-2 bg-secondary-400 rounded-full transform -translate-y-1/2 translate-x-1"
+                            animate={{
+                              scale: [1, 1.5, 1],
+                              opacity: [0.6, 1, 0.6],
+                            }}
+                            transition={{
+                              duration: 2,
+                              repeat: Infinity,
+                              ease: "easeInOut",
+                              delay: index * 0.6,
+                            }}
+                          />
+                        </div>
                       )}
 
                       <div className="flex flex-row lg:flex-col items-center lg:justify-center gap-4 lg:gap-0 relative z-10">

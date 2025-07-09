@@ -7,9 +7,10 @@ import {
   TbBuildingBank,
   TbLock,
   TbPlane,
+  TbX,
 } from "react-icons/tb";
 import { GiLifeInTheBalance } from "react-icons/gi";
-import { FaCarCrash } from "react-icons/fa";
+import { FaCarCrash, FaTools } from "react-icons/fa";
 import { FaUserInjured } from "react-icons/fa6";
 import {
   isBuyOnlineInsuranceTypeAvailable,
@@ -77,14 +78,16 @@ const InsuranceTypeSelection = ({ onSelect, formData }) => {
   const getDisabledMessage = (type) => {
     if (type.comingSoon)
       return (
-        <span className="bg-slate-200 text-slate-600 px-4 py-2 rounded-lg font-semibold text-sm shadow-sm">
+        <span className="bg-slate-300 text-slate-500 px-4 py-2 rounded-lg font-medium text-[0.78rem] md:text-sm shadow-sm flex items-center">
+          <TbX className="h-4 md:h-5 w-4 md:w-5 text-slate-500 mr-1.5" />
           Coming Soon !
         </span>
       );
     if (isProductionMode())
       return (
-        <span className="bg-secondary-200 text-primary-600 px-4 py-2 rounded-lg font-semibold text-[0.78rem] md:text-sm shadow-sm">
-          Under Maintenance🛠️
+        <span className="bg-secondary-300 text-primary-600 px-4 py-2 rounded-lg font-medium text-[0.78rem] md:text-sm shadow-sm flex items-center">
+          <TbLock className="h-6 md:h-5 w-6 md:w-5 text-primary-600 mr-2" />
+          Under Maintenance 🛠️
         </span>
       );
     return (
@@ -110,8 +113,8 @@ const InsuranceTypeSelection = ({ onSelect, formData }) => {
           <div className="flex items-center">
             <TbLock className="h-6 md:h-5 w-6 md:w-5 text-blue-600 mr-2" />
             <p className="text-blue-700 text-[0.82rem] md:text-sm">
-              This section is temporarily unavailable for maintenance. Please
-              check back later.
+              Some features of this section are temporarily unavailable for
+              maintenance. Please check back later.
             </p>
           </div>
         </div>
@@ -127,7 +130,7 @@ const InsuranceTypeSelection = ({ onSelect, formData }) => {
               whileTap={!isDisabled ? { scale: 0.99 } : {}}
               className={`relative rounded-xl overflow-hidden border-2 ${
                 isDisabled
-                  ? "border-slate-200 bg-slate-50 cursor-not-allowed"
+                  ? "border-slate-200 bg-slate-100 cursor-not-allowed"
                   : type.id === formData.insuranceType
                   ? "border-primary-500 bg-primary-50 shadow-lg "
                   : "border-slate-200 bg-white hover:border-primary-300 cursor-pointer shadow-sm"
