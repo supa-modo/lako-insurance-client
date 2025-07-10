@@ -54,15 +54,15 @@ const insuranceTypes = [
     comingSoon: true,
     benefits: ["Premises Cover", "Employees Liability", "Medical Expenses"],
   },
-  {
-    id: "motor",
-    name: "Motor Insurance",
-    icon: <FaCarCrash className="h-6 w-6 md:h-7 md:w-7" />,
-    description:
-      "Reliable coverage for your vehicles and third-party liability",
-    comingSoon: true,
-    benefits: ["Third Party Liability", "Vehicle Damage", "Driver's Liability"],
-  },
+  // {
+  //   id: "motor",
+  //   name: "Motor Insurance",
+  //   icon: <FaCarCrash className="h-6 w-6 md:h-7 md:w-7" />,
+  //   description:
+  //     "Reliable coverage for your vehicles and third-party liability",
+  //   comingSoon: true,
+  //   benefits: ["Third Party Liability", "Vehicle Damage", "Driver's Liability"],
+  // },
 ];
 
 const InsuranceTypeSelection = ({ onSelect, formData }) => {

@@ -195,11 +195,11 @@ const HomePage = () => {
                   className="grid grid-cols-2 gap-2 md:gap-3"
                 >
                   {[
-                    { name: "Kenya", flag: "🇰🇪" },
-                    { name: "Uganda", flag: "🇺🇬" },
-                    { name: "Tanzania", flag: "🇹🇿" },
-                    { name: "Rwanda", flag: "🇷🇼" },
-                    { name: "South Sudan", flag: "🇸🇸" },
+                    { name: "Kenya", code: "ke" },
+                    { name: "Uganda", code: "ug" },
+                    { name: "Tanzania", code: "tz" },
+                    { name: "Rwanda", code: "rw" },
+                    { name: "South Sudan", code: "ss" },
                   ].map((country, index) => (
                     <motion.div
                       key={country.name}
@@ -209,7 +209,12 @@ const HomePage = () => {
                       transition={{ duration: 0.4, delay: 0.5 + index * 0.1 }}
                       className="flex items-center space-x-3 p-1 md:p-2 lg:p-3 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-300"
                     >
-                      <span className="text-xl">{country.flag}</span>
+                      <img
+                        src={`https://flagcdn.com/24x18/${country.code}.png`}
+                        alt={`${country.name} flag`}
+                        className="w-6 h-auto rounded-sm shadow-sm"
+                        loading="lazy"
+                      />
                       <span className="text-gray-700 text-[0.9rem] md:text-base font-medium">
                         {country.name}
                       </span>

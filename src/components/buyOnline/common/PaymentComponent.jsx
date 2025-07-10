@@ -149,7 +149,9 @@ const PaymentComponent = ({ applicationData, onPaymentComplete, onCancel }) => {
   // Start checking payment status
   const startStatusChecking = (paymentId) => {
     let checkCount = 0;
+    let consecutiveErrors = 0;
     const maxChecks = 100; // Maximum 5 minutes of checking (100 * 3 seconds)
+    const maxConsecutiveErrors = 3; // Allow some API failures before giving up
 
     const interval = setInterval(async () => {
       try {
@@ -178,6 +180,7 @@ const PaymentComponent = ({ applicationData, onPaymentComplete, onCancel }) => {
 
         if (response.data.success) {
           const payment = response.data.data;
+          consecutiveErrors = 0; // Reset error count on successful response
 
           // Payment completed successfully (must have receipt number)
           if (payment.status === "completed" && payment.mpesaReceiptNumber) {
@@ -225,25 +228,88 @@ const PaymentComponent = ({ applicationData, onPaymentComplete, onCancel }) => {
               `Payment still processing (check ${checkCount}/${maxChecks})`
             );
 
+            // Handle special case where M-Pesa API is having issues
+            if (
+              payment.failureReason?.includes(
+                "M-Pesa API temporarily unavailable"
+              )
+            ) {
+              console.log("M-Pesa API connectivity issues detected");
+              // Don't show error immediately, keep checking but inform user
+              setError(
+                "M-Pesa system is experiencing connectivity issues. Please wait while we continue checking your payment status..."
+              );
+            }
+
             // If we've been checking for too long, stop and show timeout
             if (checkCount >= maxChecks) {
               setPaymentStep("failed");
               setError(
-                "Payment is taking too long. Please check your M-Pesa messages or contact support with the transaction code."
+                "Payment is taking too long to process. If you completed the M-Pesa transaction, your payment may still be processing. Please check your M-Pesa messages for confirmation or contact support."
               );
               clearInterval(interval);
               setStatusCheckInterval(null);
             }
           }
+          // Handle pending payments that might be stuck
+          else if (payment.status === "pending") {
+            console.log(
+              `Payment still pending (check ${checkCount}/${maxChecks})`
+            );
+
+            // After 10 checks (30 seconds), suggest user action
+            if (checkCount >= 10) {
+              setError(
+                "Payment request sent. Please check your phone for the M-Pesa prompt and enter your PIN to complete the payment."
+              );
+            }
+
+            // If pending for too long, show timeout
+            if (checkCount >= maxChecks) {
+              setPaymentStep("failed");
+              setError(
+                "Payment request has expired. Please try again and complete the M-Pesa prompt within 5 minutes."
+              );
+              clearInterval(interval);
+              setStatusCheckInterval(null);
+            }
+          }
+
+          // Show additional context if available
+          if (payment.note) {
+            console.log("Payment note:", payment.note);
+          }
         }
       } catch (error) {
         console.error("Status check error:", error);
+        consecutiveErrors++;
 
-        // If we get repeated errors, stop checking
-        if (checkCount >= 5) {
+        // Handle specific 404 errors (payment not found)
+        if (error.response?.status === 404) {
           setPaymentStep("failed");
           setError(
-            "Unable to check payment status. Please contact support for assistance."
+            "Payment record not found. Please try initiating payment again or contact support for assistance."
+          );
+          clearInterval(interval);
+          setStatusCheckInterval(null);
+          return;
+        }
+
+        // If we get repeated errors, show user-friendly message but keep trying for a bit longer
+        if (consecutiveErrors >= maxConsecutiveErrors) {
+          console.log(
+            `${consecutiveErrors} consecutive errors, informing user`
+          );
+          setError(
+            "Having trouble checking payment status due to connectivity issues. Please wait while we continue trying, or contact support if the issue persists."
+          );
+        }
+
+        // Only stop checking after many consecutive errors AND many attempts
+        if (consecutiveErrors >= maxConsecutiveErrors && checkCount >= 20) {
+          setPaymentStep("failed");
+          setError(
+            "Unable to check payment status due to system connectivity issues. If you completed the M-Pesa transaction, please contact support with your transaction details."
           );
           clearInterval(interval);
           setStatusCheckInterval(null);
@@ -636,7 +702,7 @@ const PaymentComponent = ({ applicationData, onPaymentComplete, onCancel }) => {
           onClick={onCancel}
           className="w-full bg-gray-200 hover:bg-gray-200 text-gray-700 font-medium py-3 px-6 rounded-lg transition-colors flex items-center justify-center"
         >
-          <TbArrowLeft className="w-5 h-5 mr-2" />
+          <TbArrowBack className="w-5 h-5 mr-2" />
           Back to Application
         </button>
 

@@ -138,6 +138,27 @@ const applicationService = {
   },
 
   /**
+   * Get insurance plans filtered for health insurance
+   * @param {Object} filters - Filter criteria
+   * @returns {Promise<Object>} Response with filtered plans
+   */
+  getHealthPlans: async (filters = {}) => {
+    try {
+      const params = new URLSearchParams({
+        insuranceType: "health",
+        limit: 50, // Get more health plans for selection
+        ...filters,
+      });
+
+      const response = await apiClient.get(`/applications/plans?${params}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching health insurance plans:", error);
+      throw error;
+    }
+  },
+
+  /**
    * Get all applications (Admin only)
    * @param {Object} params - Query parameters
    * @returns {Promise<Object>} Response with applications list

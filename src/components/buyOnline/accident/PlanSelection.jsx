@@ -25,6 +25,7 @@ import {
 } from "../../../utils/premiumUtils";
 import { FaFilePdf, FaRegFilePdf } from "react-icons/fa";
 import { PiCaretDownDuotone } from "react-icons/pi";
+import { Link } from "react-router-dom";
 
 const PlanSelection = ({ formData, updateFormData, nextStep, prevStep }) => {
   const [plans, setPlans] = useState([]);
@@ -442,10 +443,26 @@ Note: This is a summary document. Please contact ${
             Accident Cover
           </span>
         </h3>
-        <p className="text-gray-600 text-sm md:text-base max-w-3xl mx-auto">
-          Compare plans from top insurance providers and select the one that
-          best fits your needs and budget.
-        </p>
+        {/* Help Options */}
+        <div className="mt-3">
+          <p className="text-gray-600 text-sm md:text-base">
+            Not sure which plan to choose?
+            <a
+              href="tel:+2547206363638"
+              className="text-secondary-600 px-2 font-medium underline underline-offset-2"
+            >
+              Talk to an agent
+            </a>
+            for personalized advice or use our
+            <Link
+              to="/compare"
+              className="text-secondary-600 px-2 font-medium underline underline-offset-2"
+            >
+              comparison tool
+            </Link>
+            to view detailed benefits.
+          </p>
+        </div>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">

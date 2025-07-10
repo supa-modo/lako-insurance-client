@@ -151,6 +151,13 @@ const PersonalDetailsForm = ({
           delete newErrors[name];
         }
         break;
+      case "kraPin":
+        if (!value || value.trim().length === 0) {
+          newErrors[name] = "KRA PIN is required";
+        } else {
+          delete newErrors[name];
+        }
+        break;
       case "policyStartDate":
         if (!value) {
           newErrors[name] = "Policy start date is required";
@@ -400,7 +407,7 @@ const PersonalDetailsForm = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div>
           <label className="block text-sm font-semibold text-neutral-800/90 mb-2">
-            KRA PIN No.
+            KRA PIN No. *
           </label>
           <input
             type="text"
@@ -408,9 +415,14 @@ const PersonalDetailsForm = ({
             onChange={(e) =>
               handleInputChange("kraPin", e.target.value.toUpperCase())
             }
-            className="w-full px-3 py-2.5 bg-neutral-100 border border-gray-300 rounded-lg text-gray-600 font-medium placeholder:font-normal focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+            className={`w-full px-3 py-2.5 bg-neutral-100 border rounded-lg text-gray-600 font-medium placeholder:font-normal focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 ${
+              errors.kraPin ? "border-red-500" : "border-gray-300"
+            }`}
             placeholder="Enter your KRA PIN"
           />
+          {errors.kraPin && (
+            <p className="text-red-500 text-xs mt-1">{errors.kraPin}</p>
+          )}
         </div>
 
         <div>

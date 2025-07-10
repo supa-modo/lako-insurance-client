@@ -29,7 +29,7 @@ const INSURANCE_AVAILABILITY = {
       motor: false,
     },
     buyOnline: {
-      health: false,
+      health: true,
       "personal-accident": true,
       travel: false,
       property: false,

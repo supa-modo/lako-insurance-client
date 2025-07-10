@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import CoverTypeSelection from "./CoverTypeSelection";
 import PlanSelection from "./PlanSelection";
 import PersonalDetailsForm from "./PersonalDetailsForm";
-import DocumentUpload from "./DocumentUpload";
+import DocumentUpload from "../common/DocumentUpload";
 import ReviewAndSubmit from "./ReviewAndSubmit";
 import ApplicationSuccess from "../common/ApplicationSuccess";
 import PaymentComponent from "../common/PaymentComponent";
@@ -516,6 +516,7 @@ const PersonalAccidentFlow = ({
             updateFormData={updateFormData}
             nextStep={nextStep}
             prevStep={prevStep}
+            insuranceType="personal-accident"
           />
         );
       case 5:
