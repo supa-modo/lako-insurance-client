@@ -108,7 +108,7 @@ const BottomCTASection = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   whileTap={{ scale: 0.98 }}
-                  className="text-[0.9rem] md:text-base lg:text-lg border-r pr-4 border-primary-600 font-semibold text-primary-600 hover:text-primary-700 "
+                  className="text-[0.8rem] sm:text-[0.9rem] md:text-base lg:text-lg border-r pr-4 border-primary-600 font-semibold text-primary-600 hover:text-primary-700 "
                 >
                   {phone}
                 </motion.a>
