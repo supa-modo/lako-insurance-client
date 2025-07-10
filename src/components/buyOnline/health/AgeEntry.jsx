@@ -99,36 +99,49 @@ const AgeEntry = ({ formData, updateFormData, nextStep, prevStep }) => {
   const canContinue = dateOfBirth && isValidAge;
 
   return (
-    <div className="min-h-[50vh] flex items-center justify-center py-4">
-      <div className="max-w-5xl w-full mx-auto px-4">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+    <div className="min-h-[50vh] flex items-center justify-center md:py-3 lg:py-4">
+      <div className="max-w-5xl w-full mx-auto md:px-2 lg:px-4">
+        <div className="grid lg:grid-cols-2 gap-6 md:gap-12 items-center">
           {/* Left Section - Content */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
-            className="space-y-8"
+            className="space-y-4 md:space-y-8"
           >
             {/* Header Section */}
-            <div className="space-y-6">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                className="flex items-center space-x-4"
-              >
-                <div className="w-16 h-16 bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 rounded-[0.7rem] flex items-center justify-center shadow-lg">
-                  <LuAlignStartVertical className="w-8 h-8 text-white" />
+            <div className="space-y-4 md:space-y-6">
+              <div className="flex items-center justify-between">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  className="flex items-center space-x-4"
+                >
+                  <div className="w-12 h-12 md:w-14 lg:w-16 md:h-14 lg:h-16 bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 rounded-[0.7rem] flex items-center justify-center shadow-lg">
+                    <LuAlignStartVertical className="w-6 h-6 md:w-8 md:h-8 text-white" />
+                  </div>
+                  <div>
+                    <h1 className="text-lg md:text-xl lg:text-3xl font-bold text-gray-600 leading-tight">
+                      Let's Get Started
+                    </h1>
+                    <p className="text-[0.9rem] md:text-base text-neutral-600 font-medium">
+                      Step 1 of 6
+                    </p>
+                  </div>
+                </motion.div>
+
+                {/* Back Button */}
+                <div className="flex justify-start lg:hidden">
+                  <button
+                    onClick={prevStep}
+                    className="inline-flex items-center text-[0.95rem] md:text-base underline underline-offset-4 text-primary-500 hover:text-secondary-600 font-semibold transition-colors duration-200"
+                  >
+                    <TbArrowBack className="w-5 h-5 mr-2" />
+                    Go Back
+                  </button>
                 </div>
-                <div>
-                  <h1 className="text-lg md:text-xl lg:text-3xl font-bold text-gray-600 leading-tight">
-                    Let's Get Started
-                  </h1>
-                  <p className="text-[0.9rem] md:text-base text-neutral-600 font-medium">
-                    Step 1 of 6
-                  </p>
-                </div>
-              </motion.div>
+              </div>
 
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -136,7 +149,7 @@ const AgeEntry = ({ formData, updateFormData, nextStep, prevStep }) => {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="space-y-4"
               >
-                <p className="text-lg text-gray-600 leading-relaxed">
+                <p className="text-[0.9rem] md:text-base lg:text-lg text-gray-600 leading-relaxed">
                   Enter your date of birth to get eligible health insurance
                   plans for your age group.
                 </p>
@@ -144,7 +157,7 @@ const AgeEntry = ({ formData, updateFormData, nextStep, prevStep }) => {
             </div>
 
             {/* Back Button */}
-            <div className="flex justify-start">
+            <div className="hidden lg:flex justify-start">
               <button
                 onClick={prevStep}
                 className="inline-flex items-center underline underline-offset-4 text-primary-500 hover:text-secondary-600 font-medium transition-colors duration-200"
@@ -165,10 +178,10 @@ const AgeEntry = ({ formData, updateFormData, nextStep, prevStep }) => {
             {/* Main Form Card */}
             <div className="bg-white rounded-3xl shadow-xl border border-neutral-300 overflow-hidden">
               {/* Card Header */}
-              <div className="bg-gradient-to-r from-neutral-100/60 to-neutral-100 px-8 py-6 border-b border-neutral-200">
+              <div className="bg-gradient-to-r from-neutral-100/60 to-neutral-100 px-5 md:px-8 py-4 md:py-6 border-b border-neutral-200">
                 <div className="flex items-center space-x-3">
                   <TbCalendar className="w-6 h-6 text-primary-600" />
-                  <h3 className="text-xl font-bold text-neutral-800">
+                  <h3 className="text-lg md:text-xl font-bold text-neutral-800">
                     Your Date of Birth
                   </h3>
                 </div>
@@ -178,7 +191,7 @@ const AgeEntry = ({ formData, updateFormData, nextStep, prevStep }) => {
               </div>
 
               {/* Form Content */}
-              <div className="px-8 pt-4 pb-6 space-y-6">
+              <div className="px-5 md:px-8 pt-4 pb-6 space-y-4 md:space-y-6">
                 <div>
                   <label
                     htmlFor="dateOfBirth"
@@ -194,7 +207,7 @@ const AgeEntry = ({ formData, updateFormData, nextStep, prevStep }) => {
                       onChange={handleDateChange}
                       min={minDateString}
                       max={today}
-                      className={`w-full px-5 py-4 text-lg border-2 rounded-xl text-neutral-700 bg-white focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 transition-all duration-300 ${
+                      className={`w-full px-4 md:px-5 py-3 md:py-3.5 text-base md:text-lg border-2 rounded-[0.8rem] md:rounded-xl text-neutral-700 bg-white focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 transition-all duration-300 ${
                         error
                           ? "border-red-300 focus:border-red-500 focus:ring-red-100"
                           : isValidAge
@@ -218,7 +231,7 @@ const AgeEntry = ({ formData, updateFormData, nextStep, prevStep }) => {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3 }}
-                      className="mt-3 flex items-center space-x-2 text-red-600"
+                      className="mt-2 md:mt-3 flex items-center space-x-2 text-red-600"
                     >
                       <TbInfoCircle className="w-4 h-4 flex-shrink-0" />
                       <span className="text-sm font-medium">{error}</span>
@@ -238,19 +251,19 @@ const AgeEntry = ({ formData, updateFormData, nextStep, prevStep }) => {
                     }}
                     className="relative overflow-hidden"
                   >
-                    <div className="bg-gradient-to-br from-primary-50 via-primary-25 to-secondary-50 border-2 border-primary-200 rounded-2xl py-4 px-5">
+                    <div className="bg-gradient-to-br from-primary-50 via-primary-25 to-secondary-50 border-2 border-primary-200 rounded-[1.2rem] md:rounded-2xl py-2 md:py-2.5 px-4 md:px-5">
                       <div className="flex items-center justify-between">
                         <div className="flex items-baseline space-x-2">
-                          <span className="text-4xl font-bold text-primary-800">
+                          <span className="text-4xl font-bold text-primary-700">
                             {age}
                           </span>
-                          <span className="text-lg font-medium text-primary-600">
+                          <span className="text-base font-medium text-primary-600">
                             years old
                           </span>
                         </div>
                         <div className="relative">
-                          <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center shadow-lg">
-                            <PiUserDuotone className="w-8 h-8 text-white" />
+                          <div className="w-14 h-14 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center shadow-lg">
+                            <PiUserDuotone className="w-7 h-7 text-white" />
                           </div>
                           <motion.div
                             initial={{ scale: 0 }}
@@ -258,11 +271,11 @@ const AgeEntry = ({ formData, updateFormData, nextStep, prevStep }) => {
                             transition={{
                               delay: 0.2,
                               type: "spring",
-                              stiffness: 400,
+                              stiffness: 300,
                             }}
                             className="absolute bottom-2 right-2 "
                           >
-                            <PiCheckCircleFill className="w-5 h-5 text-secondary-200" />
+                            <PiCheckCircleFill className="w-4 h-4 text-secondary-200" />
                           </motion.div>
                         </div>
                       </div>
@@ -276,7 +289,7 @@ const AgeEntry = ({ formData, updateFormData, nextStep, prevStep }) => {
                   disabled={!canContinue}
                   whileHover={canContinue ? { scale: 1.01 } : {}}
                   whileTap={canContinue ? { scale: 0.99 } : {}}
-                  className={`w-full py-4 px-6 rounded-xl font-semibold text-lg transition-all duration-300 ${
+                  className={`w-full py-3 md:py-3.5 px-5 md:px-6 rounded-[0.8rem] md:rounded-xl font-semibold text-base md:text-lg transition-all duration-300 ${
                     canContinue
                       ? "bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white shadow-lg hover:shadow-xl"
                       : "bg-neutral-200 text-neutral-400 cursor-not-allowed"
@@ -284,7 +297,7 @@ const AgeEntry = ({ formData, updateFormData, nextStep, prevStep }) => {
                 >
                   <div className="flex items-center justify-center space-x-2">
                     <span>Click to Continue</span>
-                    <FaChevronRight className="w-[1.1rem] h-[1.1rem]" />
+                    <FaChevronRight className="w-[1rem] h-[1rem] md:w-[1.1rem] md:h-[1.1rem]" />
                   </div>
                 </motion.button>
               </div>
