@@ -399,7 +399,7 @@ Note: This is a summary document. Please contact ${
         {Array.isArray(plans) && plans.length > 0 ? (
           plans.map((plan) => renderPlanCard(plan))
         ) : (
-          <div className="text-center py-8">
+          <div className="flex flex-col items-center justify-center text-center py-8">
             <p className="text-gray-600">
               No health insurance plans available for age {userAge}.
             </p>

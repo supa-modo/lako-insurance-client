@@ -23,7 +23,6 @@ import { FaUserInjured } from "react-icons/fa";
 import InsuranceTypeStep from "../../components/comparison/steps/InsuranceTypeStep";
 import HealthAgeStep from "../../components/comparison/steps/HealthAgeStep";
 import HealthFilterStep from "../../components/comparison/steps/HealthFilterStep";
-import BudgetRangeStep from "../../components/comparison/steps/BudgetRangeStep";
 import SummaryStep from "../../components/comparison/steps/SummaryStep";
 
 // Personal Accident Step components
@@ -146,7 +145,7 @@ const NewComparisonPage = () => {
         />
       ),
       title: "Age Information",
-      description: "Enter your age or date of birth for accurate plans",
+      description: "Enter your date of birth or choose an age range for accurate plans",
       icon: <TbUserCircle className="w-6 h-6" />,
       color: "indigo",
     },
@@ -161,7 +160,7 @@ const NewComparisonPage = () => {
       ),
       title: "Filter Preference",
       description:
-        "Choose between budget or inpatient coverage limit for better results",
+        "Select between annual budget range or inpatient coverage limit for better results",
       icon: <TbCoin className="w-6 h-6" />,
       color: "teal",
     },

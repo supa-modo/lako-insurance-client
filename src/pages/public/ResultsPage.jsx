@@ -487,7 +487,7 @@ const ResultsPage = () => {
           className="text-neutral-300 mb-8 font-outfit text-[0.93rem] md:text-base lg:text-lg leading-relaxed"
         >
           We couldn't find any insurance plans that match your current criteria.
-          Please try adjusting your age, budget or coverage limit preferences
+          Please try adjusting your budget or coverage limit preferences
           and try again.
         </motion.p>
 

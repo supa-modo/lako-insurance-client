@@ -477,14 +477,7 @@ Note: This is a summary document. Please contact ${
               }`}
               onClick={() => handleSelectPlan(plan)}
             >
-              {/* Popular badge */}
-              {/* {plan.popular && (
-                <div className="absolute -top-3 left-6">
-                  <span className="bg-secondary-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                    Most Popular
-                  </span>
-                </div>
-              )} */}
+              
 
               {/* Selected indicator */}
               {selectedPlan?.id === plan.id && (

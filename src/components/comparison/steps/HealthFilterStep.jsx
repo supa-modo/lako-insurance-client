@@ -264,54 +264,6 @@ const HealthFilterStep = ({ formData, updateFormData, nextStep, prevStep }) => {
     updateFormData("coverageLimitMax", selectedRange?.maxValue || 10000000);
   };
 
-  const getColorClasses = (color, isSelected) => {
-    const colorMap = {
-      blue: {
-        border: isSelected ? "border-blue-500" : "border-blue-200",
-        bg: isSelected ? "bg-blue-50" : "bg-white",
-        text: isSelected ? "text-blue-600" : "text-blue-500",
-        accent: "bg-blue-500",
-        hover: "hover:border-blue-300",
-      },
-      green: {
-        border: isSelected ? "border-green-500" : "border-green-200",
-        bg: isSelected ? "bg-green-50" : "bg-white",
-        text: isSelected ? "text-green-600" : "text-green-500",
-        accent: "bg-green-500",
-        hover: "hover:border-green-300",
-      },
-      teal: {
-        border: isSelected ? "border-teal-500" : "border-teal-200",
-        bg: isSelected ? "bg-teal-50" : "bg-white",
-        text: isSelected ? "text-teal-600" : "text-teal-500",
-        accent: "bg-teal-500",
-        hover: "hover:border-teal-300",
-      },
-      orange: {
-        border: isSelected ? "border-orange-500" : "border-orange-200",
-        bg: isSelected ? "bg-orange-50" : "bg-white",
-        text: isSelected ? "text-orange-600" : "text-orange-500",
-        accent: "bg-orange-500",
-        hover: "hover:border-orange-300",
-      },
-      red: {
-        border: isSelected ? "border-red-500" : "border-red-200",
-        bg: isSelected ? "bg-red-50" : "bg-white",
-        text: isSelected ? "text-red-600" : "text-red-500",
-        accent: "bg-red-500",
-        hover: "hover:border-red-300",
-      },
-      purple: {
-        border: isSelected ? "border-purple-500" : "border-purple-200",
-        bg: isSelected ? "bg-purple-50" : "bg-white",
-        text: isSelected ? "text-purple-600" : "text-purple-500",
-        accent: "bg-purple-500",
-        hover: "hover:border-purple-300",
-      },
-    };
-    return colorMap[color] || colorMap.blue;
-  };
-
   return (
     <div>
       <p className="hidden lg:block text-slate-600 text-[0.9rem] md:text-[1.1rem] mb-6">
@@ -321,9 +273,6 @@ const HealthFilterStep = ({ formData, updateFormData, nextStep, prevStep }) => {
 
       {/* Filter Type Selection */}
       <div className="mb-8">
-        <h3 className="text-lg font-semibold text-slate-700 mb-4">
-          Choose your comparison preference:
-        </h3>
 
         <div className="grid grid-cols-2 gap-2 md:gap-4 max-w-2xl mx-auto lg:max-w-none lg:mx-0">
           {/* Budget Filter Option */}
