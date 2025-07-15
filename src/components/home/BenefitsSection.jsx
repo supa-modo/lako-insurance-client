@@ -288,11 +288,12 @@ const BenefitsSection = () => {
               >
                 {/* First Image - Main background */}
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
+                  initial={{ opacity: 0, scale: 0.9, rotate: -6 }}
+                  whileInView={{ opacity: 1, scale: 1, rotate: -3 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6 }}
-                  className="absolute top-0 left-0 w-[80%] h-[350px] bg-white rounded-2xl overflow-hidden shadow-xl border border-gray-100"
+                  className="absolute top-0 left-0 w-[80%] h-[350px] bg-white rounded-2xl overflow-hidden shadow-xl border border-gray-100 transform -rotate-3"
+                  style={{ transformOrigin: "center center" }}
                 >
                   <div className="relative h-full">
                     <img
@@ -306,11 +307,12 @@ const BenefitsSection = () => {
 
                 {/* Second Image - Overlapping bottom right */}
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.9, x: 20, y: 20 }}
-                  whileInView={{ opacity: 1, scale: 1, x: 0, y: 0 }}
+                  initial={{ opacity: 0, scale: 0.9, x: 20, y: 20, rotate: 6 }}
+                  whileInView={{ opacity: 1, scale: 1, x: 0, y: 0, rotate: 3 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: 0.2 }}
-                  className="absolute bottom-[-30px] right-[-30px] w-[65%] h-[350px] bg-white rounded-2xl overflow-hidden shadow-2xl border border-gray-100 z-20"
+                  className="absolute bottom-[-30px] right-[-30px] w-[65%] h-[350px] bg-white rounded-2xl overflow-hidden shadow-2xl border border-gray-100 z-20 transform rotate-3"
+                  style={{ transformOrigin: "center center" }}
                 >
                   <div className="relative h-full">
                     <img
@@ -378,7 +380,10 @@ const BenefitsSection = () => {
               className="relative h-[260px] md:h-[450px]"
             >
               {/* Main image */}
-              <div className="absolute top-0 left-0 w-[80%] h-[180px] md:h-[300px] bg-white rounded-xl overflow-hidden shadow-lg">
+              <div
+                className="absolute top-0 left-0 w-[80%] h-[180px] md:h-[300px] bg-white rounded-xl overflow-hidden shadow-lg transform -rotate-3"
+                style={{ transformOrigin: "center center" }}
+              >
                 <img
                   src="/slider02.png"
                   alt="Insurance Team"
@@ -388,7 +393,10 @@ const BenefitsSection = () => {
               </div>
 
               {/* Overlapping image */}
-              <div className="absolute bottom-0 right-0 w-[60%] h-[160px] md:h-[280px] bg-white rounded-xl overflow-hidden shadow-xl z-10">
+              <div
+                className="absolute bottom-0 right-0 w-[60%] h-[160px] md:h-[280px] bg-white rounded-xl overflow-hidden shadow-xl z-10 transform rotate-3"
+                style={{ transformOrigin: "center center" }}
+              >
                 <img
                   src="/slider09.png"
                   alt="Professional Team"
