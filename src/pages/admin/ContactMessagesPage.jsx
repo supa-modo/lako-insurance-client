@@ -33,14 +33,15 @@ import contactService from "../../services/contactService";
 import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../hooks/useToast";
 import ToastContainer from "../../components/ui/ToastContainer";
-import DeleteConfirmationModal from "../../components/ui/DeleteConfirmationModal";
 import MessageDetailModal from "../../components/ui/MessageDetailModal";
+import { useNotification } from "../../context/NotificationContext";
 import { formatDateWithTime } from "../../utils/formatDate";
 import { PiUserDuotone } from "react-icons/pi";
 
 const ContactMessagesPage = () => {
   const { user } = useAuth();
   const { toasts, toast, removeToast } = useToast();
+  const { showConfirmation } = useNotification();
 
   // State management
   const [messages, setMessages] = useState([]);
@@ -53,7 +54,6 @@ const ContactMessagesPage = () => {
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [processingNotes, setProcessingNotes] = useState("");
-  const [deleteConfirmation, setDeleteConfirmation] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
   // Filter and search states
@@ -214,22 +214,31 @@ const ContactMessagesPage = () => {
   };
 
   // Handle message deletion
-  const handleDeleteMessage = async () => {
-    if (!deleteConfirmation) return;
-
-    setIsDeleting(true);
-    try {
-      await contactService.deleteContactMessage(deleteConfirmation.id);
-      toast.success("Message deleted successfully");
-      fetchMessages();
-      fetchStats();
-      setDeleteConfirmation(null);
-    } catch (error) {
-      console.error("Error deleting message:", error);
-      toast.error("Failed to delete message");
-    } finally {
-      setIsDeleting(false);
-    }
+  const handleDeleteMessage = async (messageId, messageName) => {
+    showConfirmation(
+      `Are you sure you want to delete the message from "${messageName}" from the database?`,
+      async () => {
+        setIsDeleting(true);
+        try {
+          await contactService.deleteContactMessage(messageId);
+          toast.success("Message deleted successfully");
+          fetchMessages();
+          fetchStats();
+        } catch (error) {
+          console.error("Error deleting message:", error);
+          toast.error("Failed to delete message");
+        } finally {
+          setIsDeleting(false);
+        }
+      },
+      null,
+      {
+        type: "delete",
+        title: "Delete Message",
+        confirmButtonText: "Delete",
+        itemName: messageName,
+      }
+    );
   };
 
   // Handle refresh
@@ -855,7 +864,10 @@ const ContactMessagesPage = () => {
                                       <button
                                         onClick={(e) => {
                                           e.stopPropagation();
-                                          setDeleteConfirmation(message);
+                                          handleDeleteMessage(
+                                            message.id,
+                                            message.name
+                                          );
                                         }}
                                         className="flex items-center px-3 py-1.5 text-xs font-medium text-red-700 bg-red-100 border border-red-300 rounded-lg hover:bg-red-200 transition-colors"
                                         title="Delete Message"
@@ -973,16 +985,6 @@ const ContactMessagesPage = () => {
 
       {/* Modals */}
       <AnimatePresence>
-        {/* Delete Confirmation Modal */}
-        <DeleteConfirmationModal
-          isOpen={!!deleteConfirmation}
-          onClose={() => setDeleteConfirmation(null)}
-          onConfirm={handleDeleteMessage}
-          itemName={deleteConfirmation?.name}
-          message={`Are you sure you want to delete the message from "${deleteConfirmation?.name}"?`}
-          isLoading={isDeleting}
-        />
-
         {/* Message Detail Modal */}
         <MessageDetailModal
           isOpen={showModal}

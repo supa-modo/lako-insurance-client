@@ -33,11 +33,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import AddApplicationModal from "../../components/applications/AddApplicationModal";
 import EditApplicationModal from "../../components/applications/EditApplicationModal";
 import ApplicationDetailModal from "../../components/applications/ApplicationDetailModal";
-import DeleteConfirmationModal from "../../components/ui/DeleteConfirmationModal";
+import { useNotification } from "../../context/NotificationContext";
 import applicationService from "../../services/applicationService";
 import { formatDate } from "../../utils/formatDate";
 
 const ApprovedApplicationsPage = () => {
+  const { showConfirmation } = useNotification();
+
   // State management
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -67,8 +69,6 @@ const ApprovedApplicationsPage = () => {
   // UI States
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
 
-  // Confirmation state
-  const [deleteConfirmation, setDeleteConfirmation] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
   // Fetch applications using API service
@@ -180,29 +180,42 @@ const ApprovedApplicationsPage = () => {
     setCurrentPage(1);
   };
 
-  const handleDelete = async () => {
-    if (!deleteConfirmation) return;
+  const handleDelete = async (application) => {
+    showConfirmation({
+      title: "Delete Application",
+      message: `Are you sure you want to delete application ${application.applicationNumber}? This action cannot be undone.`,
+      confirmText: "Delete Application",
+      cancelText: "Cancel",
+      isDestructive: true,
+      onConfirm: async () => {
+        setIsDeleting(true);
+        try {
+          const response = await applicationService.deleteApplication(
+            application.id
+          );
 
-    setIsDeleting(true);
-    try {
-      const response = await applicationService.deleteApplication(
-        deleteConfirmation.id
-      );
-
-      if (response && response.success) {
-        setApplications(
-          applications.filter((app) => app.id !== deleteConfirmation.id)
-        );
-        setDeleteConfirmation(null);
-      } else {
-        setError(response?.message || "Failed to delete application");
-      }
-    } catch (err) {
-      setError("Failed to delete application");
-      console.error(err);
-    } finally {
-      setIsDeleting(false);
-    }
+          if (response && response.success) {
+            setApplications(
+              applications.filter((app) => app.id !== application.id)
+            );
+            showConfirmation({
+              title: "Success",
+              message: "Application deleted successfully",
+              confirmText: "OK",
+              hideCancel: true,
+              autoClose: 2000,
+            });
+          } else {
+            setError(response?.message || "Failed to delete application");
+          }
+        } catch (err) {
+          setError("Failed to delete application");
+          console.error(err);
+        } finally {
+          setIsDeleting(false);
+        }
+      },
+    });
   };
 
   const handleRefresh = () => {
@@ -648,9 +661,10 @@ const ApprovedApplicationsPage = () => {
                               <span className="text-xs">Edit</span>
                             </button>
                             <button
-                              onClick={() => setDeleteConfirmation(application)}
+                              onClick={() => handleDelete(application)}
                               className="flex items-center border border-red-300 px-2 py-1 rounded-lg focus:outline-none hover:bg-red-100 hover:border-red-300 text-red-500 hover:text-red-600"
                               title="Delete Application"
+                              disabled={isDeleting}
                             >
                               <TbTrash className="h-4 w-4 mr-1" />
                               <span className="text-xs">Delete</span>
@@ -807,15 +821,6 @@ const ApprovedApplicationsPage = () => {
             }}
           />
         )}
-
-        <DeleteConfirmationModal
-          isOpen={!!deleteConfirmation}
-          onClose={() => setDeleteConfirmation(null)}
-          onConfirm={handleDelete}
-          itemName={deleteConfirmation?.applicationNumber}
-          message={`Are you sure you want to delete application "${deleteConfirmation?.applicationNumber}"? This action cannot be undone.`}
-          isLoading={isDeleting}
-        />
       </AnimatePresence>
     </>
   );

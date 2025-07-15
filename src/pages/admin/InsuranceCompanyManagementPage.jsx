@@ -35,9 +35,11 @@ import AddCompanyModal from "../../components/insurance/AddCompanyModal";
 import EditCompanyModal from "../../components/insurance/EditCompanyModal";
 import insuranceService from "../../services/insuranceService";
 import CompanyDetailModal from "../../components/insurance/CompanyDetailModal";
-import DeleteConfirmationModal from "../../components/ui/DeleteConfirmationModal";
+import { useNotification } from "../../context/NotificationContext";
 
 const InsuranceCompanyManagementPage = () => {
+  const { showConfirmation } = useNotification();
+
   // State management
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -65,8 +67,6 @@ const InsuranceCompanyManagementPage = () => {
   // UI States
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
 
-  // Confirmation state
-  const [deleteConfirmation, setDeleteConfirmation] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
   // Fetch companies using API service
@@ -203,29 +203,76 @@ const InsuranceCompanyManagementPage = () => {
     setCurrentPage(1);
   };
 
-  const handleDelete = async () => {
-    if (!deleteConfirmation) return;
+  const handleDelete = async (companyId, companyName) => {
+    showConfirmation(
+      `Are you sure you want to delete the insurance company "${companyName}" from the system?`,
+      async () => {
+        setIsDeleting(true);
+        try {
+          const response = await insuranceService.deleteCompany(companyId);
 
-    setIsDeleting(true);
-    try {
-      const response = await insuranceService.deleteCompany(
-        deleteConfirmation.id
-      );
-
-      if (response && response.success) {
-        setCompanies(
-          companies.filter((company) => company.id !== deleteConfirmation.id)
-        );
-        setDeleteConfirmation(null);
-      } else {
-        setError(response?.message || "Failed to delete company");
+          if (response && response.success) {
+            setCompanies(
+              companies.filter((company) => company.id !== companyId)
+            );
+            // Show success feedback
+            showConfirmation(
+              `Insurance company "${companyName}" has been successfully deleted from the system.`,
+              null,
+              null,
+              {
+                type: "success",
+                title: "Company Deleted",
+                confirmButtonText: "OK",
+                showCancel: false,
+                autoClose: true,
+                autoCloseDelay: 3000,
+              }
+            );
+          } else {
+            setError(response?.message || "Failed to delete company");
+            // Show error feedback
+            showConfirmation(
+              `Failed to delete insurance company "${companyName}". ${
+                response?.message || "Please try again."
+              }`,
+              null,
+              null,
+              {
+                type: "error",
+                title: "Delete Failed",
+                confirmButtonText: "OK",
+                showCancel: false,
+              }
+            );
+          }
+        } catch (err) {
+          setError("Failed to delete company");
+          console.error(err);
+          // Show error feedback
+          showConfirmation(
+            `An error occurred while deleting insurance company "${companyName}". Please try again.`,
+            null,
+            null,
+            {
+              type: "error",
+              title: "Delete Failed",
+              confirmButtonText: "OK",
+              showCancel: false,
+            }
+          );
+        } finally {
+          setIsDeleting(false);
+        }
+      },
+      null,
+      {
+        type: "delete",
+        title: "Delete Company",
+        confirmButtonText: "Delete",
+        itemName: companyName,
       }
-    } catch (err) {
-      setError("Failed to delete company");
-      console.error(err);
-    } finally {
-      setIsDeleting(false);
-    }
+    );
   };
 
   const handleRefresh = () => {
@@ -738,7 +785,9 @@ const InsuranceCompanyManagementPage = () => {
                               </span>
                             </button>
                             <button
-                              onClick={() => setDeleteConfirmation(company)}
+                              onClick={() =>
+                                handleDelete(company.id, company.name)
+                              }
                               className="flex items-center border border-red-300 px-2 py-1 rounded-lg hover:bg-red-100 hover:border-red-300 text-red-500 hover:text-red-600"
                               title="Delete Company"
                             >
@@ -892,15 +941,6 @@ const InsuranceCompanyManagementPage = () => {
             }}
           />
         )}
-
-        <DeleteConfirmationModal
-          isOpen={!!deleteConfirmation}
-          onClose={() => setDeleteConfirmation(null)}
-          onConfirm={handleDelete}
-          itemName={deleteConfirmation?.name}
-          message={`Are you sure you want to delete "${deleteConfirmation?.name}"? This will also remove all insurance plans associated with it.`}
-          isLoading={isDeleting}
-        />
       </AnimatePresence>
     </>
   );

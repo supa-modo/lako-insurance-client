@@ -182,15 +182,17 @@ const HeroSection = ({ activeSlide, heroSlides }) => {
                     >
                       <motion.span
                         className="inline-flex items-center font-lexend font-semibold justify-center"
-                        whileHover={{ x: 5 }}
+                        whileHover={{ x: 2 }}
                       >
                         Get a Quote
-                        <motion.div whileHover={{ x: 6 }}>
+                        <motion.div whileHover={{ x: 3 }}>
                           <TbArrowRight className="ml-2" />
                         </motion.div>
                       </motion.span>
                     </Link>
                   </motion.div>
+
+
 
                   {/* Features Carousel */}
                   <div className="mt-2 relative">
@@ -219,21 +221,6 @@ const HeroSection = ({ activeSlide, heroSlides }) => {
                       </AnimatePresence>
                     </div>
 
-                    {/* Feature carousel indicators */}
-                    {/* <div className="flex justify-center space-x-1.5 mt-2">
-                      {features.map((_, index) => (
-                        <button
-                          key={index}
-                          onClick={() => setActiveFeature(index)}
-                          className={`h-1.5 rounded-full transition-all duration-300 ${
-                            index === activeFeature
-                              ? "w-4 bg-secondary-400"
-                              : "w-1.5 bg-white/30"
-                          }`}
-                          aria-label={`Go to feature ${index + 1}`}
-                        />
-                      ))}
-                    </div> */}
                   </div>
                 </div>
               </div>

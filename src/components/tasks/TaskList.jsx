@@ -14,7 +14,7 @@ import {
   TbSearch,
   TbCalendarDot,
 } from "react-icons/tb";
-import DeleteConfirmationModal from "../ui/DeleteConfirmationModal";
+import { useNotification } from "../../context/NotificationContext";
 
 const TaskList = ({
   tasks = [],
@@ -26,11 +26,11 @@ const TaskList = ({
   searchQuery,
   setSearchQuery,
 }) => {
+  const { showConfirmation } = useNotification();
   const [sortField, setSortField] = useState("dueDate");
   const [sortDirection, setSortDirection] = useState("asc");
   const [viewMode, setViewMode] = useState("all"); // all, active, completed
   const [showActionMenu, setShowActionMenu] = useState(null);
-  const [deleteModal, setDeleteModal] = useState({ isOpen: false, task: null });
 
   // Function to handle sorting
   const handleSort = (field) => {
@@ -481,7 +481,17 @@ const TaskList = ({
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          setDeleteModal({ isOpen: true, task });
+                          showConfirmation(
+                            `Are you sure you want to delete this task "${task.title}" from the system?`,
+                            () => onDeleteTask(task.id),
+                            null,
+                            {
+                              type: "delete",
+                              title: "Delete Task",
+                              confirmButtonText: "Delete",
+                              itemName: task.title,
+                            }
+                          );
                         }}
                         title="Delete task"
                         className="text-red-400 hover:text-red-600"
@@ -497,19 +507,7 @@ const TaskList = ({
         </div>
       </div>
 
-      {/* Delete Confirmation Modal */}
-      <DeleteConfirmationModal
-        isOpen={deleteModal.isOpen}
-        onClose={() => setDeleteModal({ isOpen: false, task: null })}
-        onConfirm={() => {
-          onDeleteTask(deleteModal.task.id);
-          setDeleteModal({ isOpen: false, task: null });
-        }}
-        title="Delete Task"
-        itemName={deleteModal.task?.title}
-        message={`Are you sure you want to delete the task "${deleteModal.task?.title}"? This action cannot be undone.`}
-        confirmButtonText="Delete Task"
-      />
+
     </div>
   );
 };

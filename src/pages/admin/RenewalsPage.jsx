@@ -22,8 +22,11 @@ import {
 } from "react-icons/tb";
 
 import RenewalModal from "../../components/renewals/RenewalModal";
+import { useNotification } from "../../context/NotificationContext";
 
 const RenewalsPage = () => {
+  const { showConfirmation } = useNotification();
+
   // State management
   const [renewals, setRenewals] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -240,13 +243,22 @@ const RenewalsPage = () => {
 
   // Handle delete renewal
   const handleDeleteRenewal = (renewalId) => {
-    if (window.confirm("Are you sure you want to delete this renewal?")) {
-      const updatedRenewals = renewals.filter((r) => r.id !== renewalId);
-      setRenewals(updatedRenewals);
-      updateStats(updatedRenewals);
-      setShowRenewalModal(false);
-      setSelectedRenewal(null);
-    }
+    showConfirmation(
+      "Are you sure you want to delete this renewal from the system?",
+      () => {
+        const updatedRenewals = renewals.filter((r) => r.id !== renewalId);
+        setRenewals(updatedRenewals);
+        updateStats(updatedRenewals);
+        setShowRenewalModal(false);
+        setSelectedRenewal(null);
+      },
+      null,
+      {
+        type: "delete",
+        title: "Delete Renewal",
+        confirmButtonText: "Delete",
+      }
+    );
   };
 
   // Handle close modal

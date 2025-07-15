@@ -38,7 +38,9 @@ import {
 import { userAPI } from "../../api/superadminApi";
 import CreateUserModal from "./CreateUserModal";
 import EditUserModal from "./EditUserModal";
-import DeleteConfirmationModal from "../ui/DeleteConfirmationModal";
+import { useNotification } from "../../context/NotificationContext";
+import DependencyHandlingModal from "../common/DependencyHandlingModal";
+import userService from "../../services/userService";
 import { PiUserDuotone, PiUsersDuotone } from "react-icons/pi";
 import {
   RiUserFollowLine,
@@ -49,6 +51,8 @@ import {
 import { formatDate } from "../../utils/formatDate";
 
 const UserManagement = () => {
+  const { showConfirmation } = useNotification();
+
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -66,9 +70,8 @@ const UserManagement = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
   const [showResetPasswordDialog, setShowResetPasswordDialog] = useState(false);
-  const [deleteConfirmation, setDeleteConfirmation] = useState(null);
+
   const [isDeleting, setIsDeleting] = useState(false);
-  const [disable2FAConfirmation, setDisable2FAConfirmation] = useState(null);
   const [isDisabling2FA, setIsDisabling2FA] = useState(false);
   const [statistics, setStatistics] = useState({
     totalUsers: 0,
@@ -76,6 +79,13 @@ const UserManagement = () => {
     twoFAEnabled: 0,
     adminUsers: 0,
   });
+
+  // Dependency handling state
+  const [showDependencyModal, setShowDependencyModal] = useState(false);
+  const [currentUserForDeletion, setCurrentUserForDeletion] = useState(null);
+  const [dependencies, setDependencies] = useState({});
+  const [availableUsersForReassignment, setAvailableUsersForReassignment] =
+    useState([]);
 
   const roles = ["superadmin", "admin", "agent", "manager", "staff"];
   const roleColors = {
@@ -157,37 +167,179 @@ const UserManagement = () => {
     }
   };
 
-  const handleDeleteUser = async () => {
-    if (!deleteConfirmation) return;
+  const handleDeleteUser = async (userId, userName) => {
+    try {
+      // First check if user has dependencies
+      const dependencyCheck = await userService.checkUserDependencies(userId);
 
+      if (dependencyCheck.success && dependencyCheck.data.hasDependencies) {
+        // User has dependencies, show dependency handling modal
+        setCurrentUserForDeletion({ id: userId, name: userName });
+        setDependencies(dependencyCheck.data.dependencies);
+
+        // Get available users for reassignment
+        const availableUsers = await userService.getActiveUsersForReassignment(
+          userId
+        );
+        if (availableUsers.success) {
+          setAvailableUsersForReassignment(availableUsers.data);
+        }
+
+        setShowDependencyModal(true);
+      } else {
+        // No dependencies, proceed with normal deletion confirmation
+        showConfirmation(
+          `Are you sure you want to delete user "${userName}" from the system?`,
+          async () => {
+            await performUserDeletion(userId, userName);
+          },
+          null,
+          {
+            type: "delete",
+            title: "Delete User",
+            confirmButtonText: "Delete",
+            itemName: userName,
+          }
+        );
+      }
+    } catch (error) {
+      console.error("Error checking user dependencies:", error);
+      // If dependency check fails, show error
+      showConfirmation(
+        `Unable to check user dependencies. ${
+          error.message || "Please try again."
+        }`,
+        null,
+        null,
+        {
+          type: "error",
+          title: "Check Failed",
+          confirmButtonText: "OK",
+          showCancel: false,
+        }
+      );
+    }
+  };
+
+  const performUserDeletion = async (userId, userName, options = {}) => {
     setIsDeleting(true);
     try {
-      await userAPI.deleteUser(deleteConfirmation.id);
-      setUsers(users.filter((user) => user.id !== deleteConfirmation.id));
-      setDeleteConfirmation(null);
+      if (options.handleDependencies) {
+        // Use the enhanced deletion service with dependency handling
+        await userService.deleteUserWithDependencies(userId, options);
+      } else {
+        // Standard deletion
+        await userAPI.deleteUser(userId);
+      }
+
+      setUsers(users.filter((user) => user.id !== userId));
+
+      // Show success feedback
+      const successMessage =
+        options.handleDependencies === "soft"
+          ? `User "${userName}" has been successfully archived.`
+          : options.handleDependencies === "reassign"
+          ? `User "${userName}" has been deleted and their data has been reassigned.`
+          : `User "${userName}" has been successfully deleted from the system.`;
+
+      showConfirmation(successMessage, null, null, {
+        type: "success",
+        title: "Operation Successful",
+        confirmButtonText: "OK",
+        showCancel: false,
+        autoClose: true,
+        autoCloseDelay: 3000,
+      });
     } catch (error) {
       console.error("Error deleting user:", error);
       setError("Failed to delete user");
+      // Show error feedback
+      showConfirmation(
+        `Failed to delete user "${userName}". ${
+          error.message || "Please try again."
+        }`,
+        null,
+        null,
+        {
+          type: "error",
+          title: "Delete Failed",
+          confirmButtonText: "OK",
+          showCancel: false,
+        }
+      );
     } finally {
       setIsDeleting(false);
     }
   };
 
-  const handleDisable2FA = async () => {
-    if (!disable2FAConfirmation) return;
+  const handleDependencyAction = async (options) => {
+    const { id: userId, name: userName } = currentUserForDeletion;
 
-    setIsDisabling2FA(true);
-    try {
-      await userAPI.disable2FAForUser(disable2FAConfirmation.id);
-      // Refresh users list to show updated 2FA status
-      fetchUsers();
-      setDisable2FAConfirmation(null);
-    } catch (error) {
-      console.error("Error disabling 2FA:", error);
-      setError("Failed to disable 2FA");
-    } finally {
-      setIsDisabling2FA(false);
+    if (options.handleDependencies === "block") {
+      // User chose to cancel deletion
+      setShowDependencyModal(false);
+      setCurrentUserForDeletion(null);
+      return;
     }
+
+    // Proceed with deletion using selected strategy
+    await performUserDeletion(userId, userName, options);
+    setShowDependencyModal(false);
+    setCurrentUserForDeletion(null);
+  };
+
+  const handleDisable2FA = async (userId, userName) => {
+    showConfirmation(
+      `Are you sure you want to disable 2FA for user "${userName}"?`,
+      async () => {
+        setIsDisabling2FA(true);
+        try {
+          await userAPI.disable2FAForUser(userId);
+          // Refresh users list to show updated 2FA status
+          fetchUsers();
+          // Show success feedback
+          showConfirmation(
+            `Two-factor authentication has been successfully disabled for user "${userName}".`,
+            null,
+            null,
+            {
+              type: "success",
+              title: "2FA Disabled",
+              confirmButtonText: "OK",
+              showCancel: false,
+              autoClose: true,
+              autoCloseDelay: 3000,
+            }
+          );
+        } catch (error) {
+          console.error("Error disabling 2FA:", error);
+          setError("Failed to disable 2FA");
+          // Show error feedback
+          showConfirmation(
+            `Failed to disable 2FA for user "${userName}". ${
+              error.message || "Please try again."
+            }`,
+            null,
+            null,
+            {
+              type: "error",
+              title: "Disable 2FA Failed",
+              confirmButtonText: "OK",
+              showCancel: false,
+            }
+          );
+        } finally {
+          setIsDisabling2FA(false);
+        }
+      },
+      null,
+      {
+        type: "warning",
+        title: "Disable 2FA",
+        confirmButtonText: "Disable",
+        itemName: `2FA for ${userName}`,
+      }
+    );
   };
 
   const handleResetPassword = async () => {
@@ -296,7 +448,9 @@ const UserManagement = () => {
 
           {user.twoFactorEnabled && (
             <button
-              onClick={() => setDisable2FAConfirmation(user)}
+              onClick={() =>
+                handleDisable2FA(user.id, `${user.firstName} ${user.lastName}`)
+              }
               className="flex items-center border border-amber-300 px-2 py-1 rounded-lg focus:outline-none hover:bg-amber-100 hover:border-amber-300 text-amber-500 hover:text-amber-600"
               title="Disable 2FA"
             >
@@ -306,7 +460,9 @@ const UserManagement = () => {
           )}
 
           <button
-            onClick={() => setDeleteConfirmation(user)}
+            onClick={() =>
+              handleDeleteUser(user.id, `${user.firstName} ${user.lastName}`)
+            }
             className="flex items-center border border-red-300 px-2 py-1 rounded-lg focus:outline-none hover:bg-red-100 hover:border-red-300 text-red-500 hover:text-red-600"
             title="Delete User"
           >
@@ -670,27 +826,6 @@ const UserManagement = () => {
         onSubmit={handleEditUser}
       />
 
-      <DeleteConfirmationModal
-        isOpen={!!deleteConfirmation}
-        onClose={() => setDeleteConfirmation(null)}
-        onConfirm={handleDeleteUser}
-        itemName={`${deleteConfirmation?.firstName} ${deleteConfirmation?.lastName}`}
-        message={`Are you sure you want to delete ${deleteConfirmation?.firstName} ${deleteConfirmation?.lastName}? This action cannot be undone.`}
-        isLoading={isDeleting}
-      />
-
-      {/* Disable 2FA Confirmation Modal */}
-      <DeleteConfirmationModal
-        isOpen={!!disable2FAConfirmation}
-        onClose={() => setDisable2FAConfirmation(null)}
-        onConfirm={handleDisable2FA}
-        itemName={`2FA for ${disable2FAConfirmation?.firstName} ${disable2FAConfirmation?.lastName}`}
-        message={`Are you sure you want to disable two-factor authentication for ${disable2FAConfirmation?.firstName} ${disable2FAConfirmation?.lastName}? This will reduce their account security.`}
-        isLoading={isDisabling2FA}
-        actionText="Disable 2FA"
-        actionColor="bg-amber-600 hover:bg-amber-700"
-      />
-
       {/* Reset Password Dialog */}
       <AnimatePresence>
         {showResetPasswordDialog && (
@@ -759,6 +894,21 @@ const UserManagement = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Dependency Handling Modal */}
+      <DependencyHandlingModal
+        isOpen={showDependencyModal}
+        onClose={() => {
+          setShowDependencyModal(false);
+          setCurrentUserForDeletion(null);
+        }}
+        onConfirm={handleDependencyAction}
+        dependencies={dependencies}
+        itemName={currentUserForDeletion?.name || ""}
+        itemType="user"
+        availableUsers={availableUsersForReassignment}
+        loading={isDeleting}
+      />
 
       {/* Click outside handler for filter dropdown */}
       {isFilterDropdownOpen && (

@@ -26,9 +26,11 @@ import eventService from "../../services/eventService";
 import { useToast } from "../../hooks/useToast";
 import ToastContainer from "../../components/ui/ToastContainer";
 import taskService from "../../services/taskService";
+import { useNotification } from "../../context/NotificationContext";
 
 const CalendarPage = () => {
   const { toasts, toast, removeToast } = useToast();
+  const { showConfirmation } = useNotification();
   const [view, setView] = useState("month"); // month, week, day
   const [currentDate, setCurrentDate] = useState(new Date());
   const [events, setEvents] = useState([]);
@@ -278,35 +280,44 @@ const CalendarPage = () => {
 
     const confirmMessage = isTaskEvent
       ? "This will only remove the task from the calendar view. To delete the task completely, please go to the Tasks page."
-      : "Are you sure you want to delete this event?";
+      : "Are you sure you want to delete this event from the system?";
 
-    if (window.confirm(confirmMessage)) {
-      // Optimistically update UI
-      setEvents(events.filter((e) => e.id !== eventId));
-      setShowEventDetails(false);
+    showConfirmation(
+      confirmMessage,
+      async () => {
+        // Optimistically update UI
+        setEvents(events.filter((e) => e.id !== eventId));
+        setShowEventDetails(false);
 
-      // If we're also showing the modal for this event, close it
-      if (selectedEvent && selectedEvent.id === eventId && showEventModal) {
-        setShowEventModal(false);
-      }
-
-      // For task-based events, we don't actually delete the task
-      if (!isTaskEvent) {
-        // Delete from backend
-        try {
-          await eventService.deleteEvent(eventId);
-          toast.success("Event deleted successfully");
-        } catch (error) {
-          console.error("Error deleting event:", error);
-          toast.error("Failed to delete event");
-
-          // Refresh events to restore state
-          handleRefresh();
+        // If we're also showing the modal for this event, close it
+        if (selectedEvent && selectedEvent.id === eventId && showEventModal) {
+          setShowEventModal(false);
         }
-      } else {
-        toast.success("Task removed from calendar view");
+
+        // For task-based events, we don't actually delete the task
+        if (!isTaskEvent) {
+          // Delete from backend
+          try {
+            await eventService.deleteEvent(eventId);
+            toast.success("Event deleted successfully");
+          } catch (error) {
+            console.error("Error deleting event:", error);
+            toast.error("Failed to delete event");
+
+            // Refresh events to restore state
+            handleRefresh();
+          }
+        } else {
+          toast.success("Task removed from calendar view");
+        }
+      },
+      null,
+      {
+        type: isTaskEvent ? "warning" : "delete",
+        title: isTaskEvent ? "Remove from Calendar" : "Delete Event",
+        confirmButtonText: isTaskEvent ? "Remove" : "Delete",
       }
-    }
+    );
   };
 
   // Handle save event

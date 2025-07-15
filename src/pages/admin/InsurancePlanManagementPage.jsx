@@ -36,11 +36,13 @@ import AddPlanModal from "../../components/insurance/AddPlanModal";
 import EditPlanModal from "../../components/insurance/EditPlanModal";
 import PlanDetailModal from "../../components/insurance/PlanDetailModal";
 import insuranceService from "../../services/insuranceService";
-import DeleteConfirmationModal from "../../components/ui/DeleteConfirmationModal";
+import { useNotification } from "../../context/NotificationContext";
 import { formatCurrency } from "../../utils/formatCurrency";
 import { PiMapPinAreaDuotone, PiUsersDuotone } from "react-icons/pi";
 
 const InsurancePlanManagementPage = () => {
+  const { showConfirmation } = useNotification();
+
   // State management
   const [plans, setPlans] = useState([]);
   const [companies, setCompanies] = useState([]);
@@ -70,7 +72,6 @@ const InsurancePlanManagementPage = () => {
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
 
   // Confirmation state
-  const [deleteConfirmation, setDeleteConfirmation] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
   // Insurance types available
@@ -200,25 +201,74 @@ const InsurancePlanManagementPage = () => {
     setCurrentPage(1);
   };
 
-  const handleDelete = async () => {
-    if (!deleteConfirmation) return;
+  const handleDelete = async (planId, planName) => {
+    showConfirmation(
+      `Are you sure you want to delete the insurance plan "${planName}" from the system?`,
+      async () => {
+        setIsDeleting(true);
+        try {
+          const response = await insuranceService.deletePlan(planId);
 
-    setIsDeleting(true);
-    try {
-      const response = await insuranceService.deletePlan(deleteConfirmation.id);
-
-      if (response && response.success) {
-        setPlans(plans.filter((plan) => plan.id !== deleteConfirmation.id));
-        setDeleteConfirmation(null);
-      } else {
-        setError(response?.message || "Failed to delete plan");
+          if (response && response.success) {
+            setPlans(plans.filter((plan) => plan.id !== planId));
+            // Show success feedback
+            showConfirmation(
+              `Insurance plan "${planName}" has been successfully deleted from the system.`,
+              null,
+              null,
+              {
+                type: "success",
+                title: "Plan Deleted",
+                confirmButtonText: "OK",
+                showCancel: false,
+                autoClose: true,
+                autoCloseDelay: 3000,
+              }
+            );
+          } else {
+            setError(response?.message || "Failed to delete plan");
+            // Show error feedback
+            showConfirmation(
+              `Failed to delete insurance plan "${planName}". ${
+                response?.message || "Please try again."
+              }`,
+              null,
+              null,
+              {
+                type: "error",
+                title: "Delete Failed",
+                confirmButtonText: "OK",
+                showCancel: false,
+              }
+            );
+          }
+        } catch (err) {
+          setError("Failed to delete plan");
+          console.error(err);
+          // Show error feedback
+          showConfirmation(
+            `An error occurred while deleting insurance plan "${planName}". Please try again.`,
+            null,
+            null,
+            {
+              type: "error",
+              title: "Delete Failed",
+              confirmButtonText: "OK",
+              showCancel: false,
+            }
+          );
+        } finally {
+          setIsDeleting(false);
+        }
+      },
+      null,
+      {
+        type: "delete",
+        title: "Delete Plan",
+        confirmButtonText: "Delete",
+        itemName: planName,
       }
-    } catch (err) {
-      setError("Failed to delete plan");
-      console.error(err);
-    } finally {
-      setIsDeleting(false);
-    }
+    );
   };
 
   const handleRefresh = () => {
@@ -756,7 +806,7 @@ const InsurancePlanManagementPage = () => {
                               </span>
                             </button>
                             <button
-                              onClick={() => setDeleteConfirmation(plan)}
+                              onClick={() => handleDelete(plan.id, plan.name)}
                               className="flex items-center border border-red-300 px-2 py-1 rounded-lg hover:bg-red-100 hover:border-red-300 text-red-500 hover:text-red-600"
                               title="Delete Plan"
                             >
@@ -911,14 +961,6 @@ const InsurancePlanManagementPage = () => {
             }}
           />
         )}
-
-        <DeleteConfirmationModal
-          isOpen={!!deleteConfirmation}
-          onClose={() => setDeleteConfirmation(null)}
-          onConfirm={handleDelete}
-          itemName={deleteConfirmation?.name}
-          isLoading={isDeleting}
-        />
       </AnimatePresence>
     </>
   );

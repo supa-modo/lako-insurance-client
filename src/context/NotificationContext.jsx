@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useCallback } from "react";
-import NotificationModal from "../components/common/NotificationModal";
+import ConfirmationModal from "../components/common/ConfirmationModal";
 
 // Create the context
 const NotificationContext = createContext();
@@ -17,64 +17,84 @@ export const NotificationProvider = ({ children }) => {
   }, []);
 
   // Add a notification
-  const addNotification = useCallback((notification) => {
-    const id = generateId();
-    setNotifications((prev) => [...prev, { ...notification, id }]);
-    return id;
-  }, [generateId]);
+  const addNotification = useCallback(
+    (notification) => {
+      const id = generateId();
+      setNotifications((prev) => [...prev, { ...notification, id }]);
+      return id;
+    },
+    [generateId]
+  );
 
   // Remove a notification
   const removeNotification = useCallback((id) => {
-    setNotifications((prev) => prev.filter((notification) => notification.id !== id));
+    setNotifications((prev) =>
+      prev.filter((notification) => notification.id !== id)
+    );
   }, []);
 
   // Success notification
-  const showSuccess = useCallback((message, options = {}) => {
-    return addNotification({
-      type: "success",
-      message,
-      ...options,
-    });
-  }, [addNotification]);
+  const showSuccess = useCallback(
+    (message, options = {}) => {
+      return addNotification({
+        type: "success",
+        message,
+        ...options,
+      });
+    },
+    [addNotification]
+  );
 
   // Error notification
-  const showError = useCallback((message, options = {}) => {
-    return addNotification({
-      type: "error",
-      message,
-      ...options,
-    });
-  }, [addNotification]);
+  const showError = useCallback(
+    (message, options = {}) => {
+      return addNotification({
+        type: "error",
+        message,
+        ...options,
+      });
+    },
+    [addNotification]
+  );
 
   // Info notification
-  const showInfo = useCallback((message, options = {}) => {
-    return addNotification({
-      type: "info",
-      message,
-      ...options,
-    });
-  }, [addNotification]);
+  const showInfo = useCallback(
+    (message, options = {}) => {
+      return addNotification({
+        type: "info",
+        message,
+        ...options,
+      });
+    },
+    [addNotification]
+  );
 
   // Warning notification
-  const showWarning = useCallback((message, options = {}) => {
-    return addNotification({
-      type: "warning",
-      message,
-      ...options,
-    });
-  }, [addNotification]);
+  const showWarning = useCallback(
+    (message, options = {}) => {
+      return addNotification({
+        type: "warning",
+        message,
+        ...options,
+      });
+    },
+    [addNotification]
+  );
 
   // Confirmation dialog
-  const showConfirmation = useCallback((message, onConfirm, onCancel, options = {}) => {
-    return addNotification({
-      type: "confirm",
-      message,
-      onConfirm,
-      onCancel,
-      autoClose: 0, // Don't auto-close confirmation dialogs
-      ...options,
-    });
-  }, [addNotification]);
+  const showConfirmation = useCallback(
+    (message, onConfirm, onCancel, options = {}) => {
+      return addNotification({
+        type: "confirm",
+        message,
+        onConfirm,
+        onCancel,
+        autoClose: 0, // Don't auto-close confirmation dialogs
+        ...options,
+      });
+    },
+    [addNotification]
+  );
 
   // Value to be provided by the context
   const value = {
@@ -91,15 +111,31 @@ export const NotificationProvider = ({ children }) => {
     <NotificationContext.Provider value={value}>
       {children}
       {notifications.map((notification) => (
-        <NotificationModal
+        <ConfirmationModal
           key={notification.id}
+          isOpen={true}
           type={notification.type}
           message={notification.message}
           title={notification.title}
-          onConfirm={notification.onConfirm}
-          onCancel={notification.onCancel}
-          autoClose={notification.autoClose}
-          onClose={() => removeNotification(notification.id)}
+          onConfirm={() => {
+            if (notification.onConfirm) {
+              notification.onConfirm();
+            }
+            removeNotification(notification.id);
+          }}
+          onClose={() => {
+            if (notification.onCancel) {
+              notification.onCancel();
+            }
+            removeNotification(notification.id);
+          }}
+          autoClose={notification.autoClose > 0}
+          autoCloseDelay={notification.autoClose || 3000}
+          itemName={notification.itemName}
+          confirmButtonText={notification.confirmButtonText}
+          cancelButtonText={notification.cancelButtonText}
+          showCancel={notification.showCancel}
+          isLoading={notification.isLoading}
         />
       ))}
     </NotificationContext.Provider>
@@ -110,7 +146,9 @@ export const NotificationProvider = ({ children }) => {
 export const useNotification = () => {
   const context = useContext(NotificationContext);
   if (!context) {
-    throw new Error("useNotification must be used within a NotificationProvider");
+    throw new Error(
+      "useNotification must be used within a NotificationProvider"
+    );
   }
   return context;
 };

@@ -30,8 +30,10 @@ import QueryForm from "../../components/queries/QueryForm";
 import QueryTable from "../../components/queries/QueryTable";
 import { RiUserAddLine } from "react-icons/ri";
 import { PiCaretDownDuotone } from "react-icons/pi";
+import { useNotification } from "../../context/NotificationContext";
 
 const QueryManagementPage = () => {
+  const { showConfirmation, showInfo } = useNotification();
   const [selectedStatus, setSelectedStatus] = useState("all");
   // Generate mock query data
   const getMockQueries = () => {
@@ -270,24 +272,34 @@ const QueryManagementPage = () => {
     }
 
     // In a real app, you would also create a lead in the CRM system here
-    alert(
-      `Query ${query.id} has been converted to a lead. In a real application, this would create a lead in the CRM.`
+    showInfo(
+      `Query ${query.id} has been converted to a lead. In a real application, this would create a lead in the CRM.`,
+      { title: "Query Converted" }
     );
   };
 
   // Handle deleting a query
   const handleDeleteQuery = (queryId) => {
-    if (window.confirm("Are you sure you want to delete this query?")) {
-      const updatedQueries = queries.filter((q) => q.id !== queryId);
-      setQueries(updatedQueries);
-      updateStats(updatedQueries);
+    showConfirmation(
+      "Are you sure you want to delete this user's query from the system?",
+      () => {
+        const updatedQueries = queries.filter((q) => q.id !== queryId);
+        setQueries(updatedQueries);
+        updateStats(updatedQueries);
 
-      // If the deleted query is the selected one, close the detail view
-      if (selectedQuery && selectedQuery.id === queryId) {
-        setShowQueryDetail(false);
-        setSelectedQuery(null);
+        // If the deleted query is the selected one, close the detail view
+        if (selectedQuery && selectedQuery.id === queryId) {
+          setShowQueryDetail(false);
+          setSelectedQuery(null);
+        }
+      },
+      null,
+      {
+        type: "delete",
+        title: "Delete Query",
+        confirmButtonText: "Delete",
       }
-    }
+    );
   };
 
   // Handle search

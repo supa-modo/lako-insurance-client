@@ -41,8 +41,10 @@ import {
   deleteLead 
 } from "../../services/leadService";
 import { PiUserDuotone } from "react-icons/pi";
+import { useNotification } from "../../context/NotificationContext";
 
 const LeadManagementPage = () => {
+  const { showConfirmation } = useNotification();
   // Lead stages configuration
   const stages = [
     { id: "new", name: "New Leads", color: "blue" },
@@ -192,33 +194,42 @@ const LeadManagementPage = () => {
 
   // Handle deleting a lead
   const handleDeleteLead = async (leadId) => {
-    if (window.confirm("Are you sure you want to delete this lead?")) {
-      try {
-        const response = await deleteLead(leadId);
-        
-        if (response.success) {
-          // Refresh leads to get the updated data
-          fetchLeads();
+    showConfirmation(
+      "Are you sure you want to delete this lead from the system?",
+      async () => {
+        try {
+          const response = await deleteLead(leadId);
           
-          // Close the detail view if open
-          if (showLeadDetail && selectedLead && selectedLead.id === leadId) {
-            setShowLeadDetail(false);
-            setSelectedLead(null);
+          if (response.success) {
+            // Refresh leads to get the updated data
+            fetchLeads();
+            
+            // Close the detail view if open
+            if (showLeadDetail && selectedLead && selectedLead.id === leadId) {
+              setShowLeadDetail(false);
+              setSelectedLead(null);
+            }
+            
+            // Show success notification
+            showNotification("success", "Lead deleted successfully!");
+          } else {
+            console.error("Failed to delete lead:", response.message);
+            // Show error notification
+            showNotification("error", `Failed to delete lead: ${response.message || 'Unknown error'}`);
           }
-          
-          // Show success notification
-          showNotification("success", "Lead deleted successfully!");
-        } else {
-          console.error("Failed to delete lead:", response.message);
+        } catch (error) {
+          console.error("Error deleting lead:", error);
           // Show error notification
-          showNotification("error", `Failed to delete lead: ${response.message || 'Unknown error'}`);
+          showNotification("error", `An error occurred: ${error.message || 'Unknown error'}`);
         }
-      } catch (error) {
-        console.error("Error deleting lead:", error);
-        // Show error notification
-        showNotification("error", `An error occurred: ${error.message || 'Unknown error'}`);
+      },
+      null,
+      {
+        type: "delete",
+        title: "Delete Lead",
+        confirmButtonText: "Delete",
       }
-    }
+    );
   };
 
   // Handle marking lead as converted

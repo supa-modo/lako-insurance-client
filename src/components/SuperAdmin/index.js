@@ -10,9 +10,6 @@ export { default as SuperAdminGuard } from "./SuperAdminGuard";
 export { default as CreateUserModal } from "./CreateUserModal";
 export { default as EditUserModal } from "./EditUserModal";
 
-// Common components
-export { default as ConfirmDialog } from "../common/ConfirmDialog";
-
 // AuditLogs sub-components
 export { default as AuditLogsHeader } from "./AuditLogs/AuditLogsHeader";
 export { default as AuditLogsFilters } from "./AuditLogs/AuditLogsFilters";

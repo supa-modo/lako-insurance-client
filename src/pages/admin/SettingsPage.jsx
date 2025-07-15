@@ -7,6 +7,7 @@ import {
   TbCheck,
   TbX,
   TbChevronRight,
+  TbEdit,
 } from "react-icons/tb";
 import { useAuth } from "../../context/AuthContext";
 import userService from "../../services/userService";
@@ -14,6 +15,8 @@ import { useNotification } from "../../context/NotificationContext";
 import ProfileTab from "../../components/settings/ProfileTab";
 import SecurityTab from "../../components/settings/SecurityTab";
 import NotificationsTab from "../../components/settings/NotificationsTab";
+import { PiUserDuotone } from "react-icons/pi";
+import { GrSecure } from "react-icons/gr";
 
 const SettingsPage = () => {
   const { user, updateUser } = useAuth();
@@ -70,13 +73,13 @@ const SettingsPage = () => {
     {
       id: "profile",
       label: "Profile",
-      icon: TbUser,
+      icon: PiUserDuotone,
       description: "Personal information and contact details",
     },
     {
       id: "security",
       label: "Security",
-      icon: TbShield,
+      icon: GrSecure,
       description: "Password and two-factor authentication",
     },
     {
@@ -233,15 +236,19 @@ const SettingsPage = () => {
         updateUser(response.user);
         setIsEditing(false);
         setSaveStatus("success");
-        showSuccess("Profile updated successfully");
+        showSuccess("Profile changes saved successfully");
         setTimeout(() => setSaveStatus(null), 3000);
       } else {
-        throw new Error(response.message || "Failed to update profile");
+        throw new Error(
+          response.message || "Failed to save profile changes, please try again"
+        );
       }
     } catch (error) {
       console.error("Error updating profile:", error);
       setSaveStatus("error");
-      showError(error.message || "Failed to update profile");
+      showError(
+        error.message || "Failed to save profile changes, please try again"
+      );
       setTimeout(() => setSaveStatus(null), 3000);
     } finally {
       setLoading(false);
@@ -265,14 +272,19 @@ const SettingsPage = () => {
           newPassword: "",
           confirmPassword: "",
         });
-        showSuccess("Password changed successfully");
+        showSuccess("Your account password has been changed successfully");
       } else {
-        throw new Error(response.message || "Failed to change password");
+        throw new Error(
+          response.message ||
+            "Failed to change password, please try again"
+        );
       }
     } catch (error) {
       console.error("Error changing password:", error);
       setErrors({ currentPassword: error.message });
-      showError(error.message || "Failed to change password");
+      showError(
+        error.message || "Failed to change password, please try again"
+      );
     } finally {
       setLoading(false);
     }
@@ -292,11 +304,15 @@ const SettingsPage = () => {
           setupInProgress: true,
         }));
       } else {
-        throw new Error(response.message || "Failed to setup 2FA");
+        throw new Error(
+          response.message || "Failed to setup 2FA, please try again"
+        );
       }
     } catch (error) {
       console.error("Error setting up 2FA:", error);
-      showError(error.message || "Failed to setup 2FA");
+        showError(
+        error.message || "Failed to setup 2FA, please try again"
+      );
     } finally {
       setLoading(false);
     }
@@ -325,14 +341,22 @@ const SettingsPage = () => {
           verificationToken: "",
           backupCodes: response.backupCodes,
         }));
-        showSuccess("Two-factor authentication enabled successfully");
+        showSuccess(
+          "Two-factor authentication for your account has been enabled successfully"
+        );
       } else {
-        throw new Error(response.message || "Invalid verification code");
+        throw new Error(
+          response.message ||
+            "Failed to enable 2FA, please try again with a valid verification code"
+        );
       }
     } catch (error) {
       console.error("Error enabling 2FA:", error);
       setErrors({ verificationToken: error.message });
-      showError(error.message || "Failed to enable 2FA");
+      showError(
+        error.message ||
+          "Failed to enable 2FA, please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -365,14 +389,19 @@ const SettingsPage = () => {
           verificationToken: "",
           setupInProgress: false,
         }));
-        showSuccess("Two-factor authentication disabled");
+        showSuccess(
+          "Two-factor authentication for your account has been disabled successfully"
+        );
       } else {
-        throw new Error(response.message || "Invalid verification code");
+        throw new Error(
+          response.message ||
+            "Failed to disable 2FA, please try again with a valid verification code"
+        );
       }
     } catch (error) {
       console.error("Error disabling 2FA:", error);
       setErrors({ verificationToken: error.message });
-      showError(error.message || "Failed to disable 2FA");
+      showError(error.message || "Failed to disable 2FA, please try again");
     } finally {
       setLoading(false);
     }
@@ -459,7 +488,7 @@ const SettingsPage = () => {
                     {profileData.lastName.charAt(0)}
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg">
+                    <h3 className="font-semibold text-lg text-secondary-200">
                       {profileData.firstName} {profileData.lastName}
                     </h3>
                     <p className="text-primary-100 text-sm capitalize">
@@ -516,7 +545,7 @@ const SettingsPage = () => {
             <div className="bg-white rounded-xl shadow-sm border border-slate-200">
               {/* Content Header */}
               <div className="p-6 border-b border-slate-200">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between w-full">
                   <div className="flex items-center space-x-3">
                     {(() => {
                       const currentTab = tabs.find(
@@ -536,6 +565,18 @@ const SettingsPage = () => {
                       </p>
                     </div>
                   </div>
+                  {/* Edit Profile Button in Header */}
+                  {activeTab === "profile" && !isEditing && (
+                    <button
+                      onClick={() => setIsEditing(true)}
+                      className="px-4 py-2 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-lg hover:from-primary-700 hover:to-primary-800 transition-all duration-200 flex items-center space-x-2 shadow-md hover:shadow-lg"
+                    >
+                      <span className="inline-block align-middle">
+                        <TbEdit className="w-4 h-4" />
+                      </span>
+                      <span>Edit Profile</span>
+                    </button>
+                  )}
                 </div>
               </div>
 

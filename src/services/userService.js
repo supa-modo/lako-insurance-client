@@ -127,6 +127,69 @@ const userService = {
       return response.data;
     });
   },
+
+  // NEW: Dependency handling functions using consistent apiClient pattern
+
+  /**
+   * Check if user has dependencies before deletion
+   * @param {string} userId - User ID to check dependencies for
+   * @returns {Promise<Object>} Response with dependency information
+   */
+  checkUserDependencies: async (userId) => {
+    return safeApiCall(async () => {
+      const response = await apiClient.get(
+        `/superadmin/users/${userId}/dependencies`
+      );
+      return response.data;
+    });
+  },
+
+  /**
+   * Delete user with dependency handling options
+   * @param {string} userId - User ID to delete
+   * @param {Object} options - Deletion options
+   * @returns {Promise<Object>} Response with deletion result
+   */
+  deleteUserWithDependencies: async (userId, options = {}) => {
+    return safeApiCall(async () => {
+      const response = await apiClient.delete(`/superadmin/users/${userId}`, {
+        data: {
+          handleDependencies: options.handleDependencies || "block",
+          reassignTo: options.reassignTo || null,
+          cascade: options.cascade || false,
+        },
+      });
+      return response.data;
+    });
+  },
+
+  /**
+   * Soft delete user (mark as deleted without removing from database)
+   * @param {string} userId - User ID to soft delete
+   * @returns {Promise<Object>} Response with soft delete result
+   */
+  softDeleteUser: async (userId) => {
+    return safeApiCall(async () => {
+      const response = await apiClient.patch(
+        `/superadmin/users/${userId}/soft-delete`
+      );
+      return response.data;
+    });
+  },
+
+  /**
+   * Get all active users for reassignment
+   * @param {string} excludeUserId - User ID to exclude from the list
+   * @returns {Promise<Object>} Response with available users for reassignment
+   */
+  getActiveUsersForReassignment: async (excludeUserId) => {
+    return safeApiCall(async () => {
+      const response = await apiClient.get(
+        `/superadmin/users/active?exclude=${excludeUserId}`
+      );
+      return response.data;
+    });
+  },
 };
 
 export default userService;

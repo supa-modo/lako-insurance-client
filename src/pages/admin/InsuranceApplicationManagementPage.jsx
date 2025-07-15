@@ -31,12 +31,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import AddApplicationModal from "../../components/applications/AddApplicationModal";
 import EditApplicationModal from "../../components/applications/EditApplicationModal";
 import ApplicationDetailModal from "../../components/applications/ApplicationDetailModal";
-import DeleteConfirmationModal from "../../components/ui/DeleteConfirmationModal";
+import { useNotification } from "../../context/NotificationContext";
 import applicationService from "../../services/applicationService";
 import { formatDate } from "../../utils/formatDate";
 import { formatCurrency } from "../../utils/formatCurrency";
 
 const InsuranceApplicationManagementPage = () => {
+  const { showConfirmation } = useNotification();
+
   // State management
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -66,8 +68,6 @@ const InsuranceApplicationManagementPage = () => {
   // UI States
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
 
-  // Confirmation state
-  const [deleteConfirmation, setDeleteConfirmation] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
   // Fetch applications using API service
@@ -193,29 +193,78 @@ const InsuranceApplicationManagementPage = () => {
     setCurrentPage(1);
   };
 
-  const handleDelete = async () => {
-    if (!deleteConfirmation) return;
+  const handleDelete = async (applicationId, applicationNumber) => {
+    showConfirmation(
+      `Are you sure you want to delete application "${applicationNumber}" from the system?`,
+      async () => {
+        setIsDeleting(true);
+        try {
+          const response = await applicationService.deleteApplication(
+            applicationId
+          );
 
-    setIsDeleting(true);
-    try {
-      const response = await applicationService.deleteApplication(
-        deleteConfirmation.id
-      );
-
-      if (response && response.success) {
-        setApplications(
-          applications.filter((app) => app.id !== deleteConfirmation.id)
-        );
-        setDeleteConfirmation(null);
-      } else {
-        setError(response?.message || "Failed to delete application");
+          if (response && response.success) {
+            setApplications(
+              applications.filter((app) => app.id !== applicationId)
+            );
+            // Show success feedback
+            showConfirmation(
+              `Application "${applicationNumber}" has been successfully deleted from the system.`,
+              null,
+              null,
+              {
+                type: "success",
+                title: "Application Deleted",
+                confirmButtonText: "OK",
+                showCancel: false,
+                autoClose: true,
+                autoCloseDelay: 3000,
+              }
+            );
+          } else {
+            setError(response?.message || "Failed to delete application");
+            // Show error feedback
+            showConfirmation(
+              `Failed to delete application "${applicationNumber}". ${
+                response?.message || "Please try again."
+              }`,
+              null,
+              null,
+              {
+                type: "error",
+                title: "Delete Failed",
+                confirmButtonText: "OK",
+                showCancel: false,
+              }
+            );
+          }
+        } catch (err) {
+          setError("Failed to delete application");
+          console.error(err);
+          // Show error feedback
+          showConfirmation(
+            `An error occurred while deleting application "${applicationNumber}". Please try again.`,
+            null,
+            null,
+            {
+              type: "error",
+              title: "Delete Failed",
+              confirmButtonText: "OK",
+              showCancel: false,
+            }
+          );
+        } finally {
+          setIsDeleting(false);
+        }
+      },
+      null,
+      {
+        type: "delete",
+        title: "Delete Application",
+        confirmButtonText: "Delete",
+        itemName: applicationNumber,
       }
-    } catch (err) {
-      setError("Failed to delete application");
-      console.error(err);
-    } finally {
-      setIsDeleting(false);
-    }
+    );
   };
 
   const handleRefresh = () => {
@@ -711,7 +760,12 @@ const InsuranceApplicationManagementPage = () => {
                               <span className="text-xs">Edit</span>
                             </button>
                             <button
-                              onClick={() => setDeleteConfirmation(application)}
+                              onClick={() =>
+                                handleDelete(
+                                  application.id,
+                                  application.applicationNumber
+                                )
+                              }
                               className="flex items-center border border-red-300 px-2 py-1 rounded-lg focus:outline-none hover:bg-red-100 hover:border-red-300 text-red-500 hover:text-red-600"
                               title="Delete Application"
                             >
@@ -870,15 +924,6 @@ const InsuranceApplicationManagementPage = () => {
             }}
           />
         )}
-
-        <DeleteConfirmationModal
-          isOpen={!!deleteConfirmation}
-          onClose={() => setDeleteConfirmation(null)}
-          onConfirm={handleDelete}
-          itemName={deleteConfirmation?.applicationNumber}
-          message={`Are you sure you want to delete application "${deleteConfirmation?.applicationNumber}"? This action cannot be undone.`}
-          isLoading={isDeleting}
-        />
       </AnimatePresence>
     </>
   );

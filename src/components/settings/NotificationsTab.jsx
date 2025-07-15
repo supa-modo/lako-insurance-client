@@ -81,18 +81,6 @@ const NotificationsTab = ({
       transition={{ duration: 0.3 }}
       className="space-y-8"
     >
-      {/* Header */}
-      <div>
-        <h3 className="text-xl font-semibold text-slate-800 flex items-center">
-          <TbBell className="w-6 h-6 mr-3 text-primary-600" />
-          Notification Preferences
-        </h3>
-        <p className="text-slate-600 text-sm mt-1">
-          Choose how you want to receive notifications and updates from the
-          system
-        </p>
-      </div>
-
       {/* Notification Settings */}
       <div className="bg-gradient-to-br from-white to-slate-50 border border-slate-200 rounded-2xl p-8 shadow-sm">
         <div className="space-y-6">
