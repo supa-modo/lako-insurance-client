@@ -22,6 +22,7 @@ import DownloadReport from "../../components/results/DownloadReport";
 import CallbackModal from "../../components/results/CallbackModal";
 import Footer from "../../components/layout/Footer";
 import {
+  TbArrowBack,
   TbInfoCircle,
   TbInfoTriangle,
   TbMailFilled,
@@ -429,7 +430,10 @@ const ResultsPage = () => {
             onClick={onGoBack}
             className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-secondary-500 to-secondary-600 hover:from-secondary-600 hover:to-secondary-700 text-white font-semibold rounded-xl shadow-lg transition-all group font-outfit"
           >
-            <FiArrowLeft className="mr-3 group-hover:-translate-x-1 transition-transform" />
+            <TbArrowBack
+              size={25}
+              className="mr-3 group-hover:-translate-x-1 transition-transform"
+            />
             Adjust My Preferences
           </motion.button>
 
@@ -487,8 +491,8 @@ const ResultsPage = () => {
           className="text-neutral-300 mb-8 font-outfit text-[0.93rem] md:text-base lg:text-lg leading-relaxed"
         >
           We couldn't find any insurance plans that match your current criteria.
-          Please try adjusting your budget or coverage limit preferences
-          and try again.
+          Please try adjusting your budget or coverage limit preferences and try
+          again.
         </motion.p>
 
         {/* Action buttons */}
@@ -501,8 +505,8 @@ const ResultsPage = () => {
             onClick={onGoBack}
             className="w-full md:w-auto inline-flex items-center justify-center font-lexend px-4 py-3 md:px-8 md:py-3.5 focus:outline-none bg-gradient-to-r from-secondary-500 to-secondary-600 hover:from-secondary-600 hover:to-secondary-700 text-white font-semibold rounded-[0.7rem] shadow-lg transition-colors group border-2 border-secondary-500  "
           >
-            <FiArrowLeft
-              size={19}
+            <TbArrowBack
+              size={25}
               className="mr-3 group-hover:-translate-x-1 transition-transform"
             />
             Adjust My Preferences
