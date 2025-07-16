@@ -603,7 +603,8 @@ const BenefitsSection = () => {
                   className="inline-flex items-center justify-center text-sm md:text-base px-4 md:px-6 py-2.5 md:py-3 bg-primary-600 text-white font-semibold rounded-lg shadow-lg hover:bg-primary-700 transition-all duration-200"
                 >
                   Talk to an Expert
-                </Link>
+                      <TbArrowRight size={20} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                    </Link>
                 <Link
                   to="/contact"
                   className="inline-flex items-center justify-center text-sm md:text-base px-4 md:px-6 py-2.5 md:py-3 border-2 border-secondary-500 text-secondary-600 font-semibold rounded-lg hover:bg-secondary-50 transition-all duration-200"
