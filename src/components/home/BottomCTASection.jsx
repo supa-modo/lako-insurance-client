@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { TbArrowRight } from "react-icons/tb";
-import { FiCheck } from "react-icons/fi";
+import { FiCheck, FiCheckCircle } from "react-icons/fi";
 
 const BottomCTASection = () => {
   return (
@@ -21,7 +21,7 @@ const BottomCTASection = () => {
             <div className="grid lg:grid-cols-12 gap-10 items-center">
               <div className="lg:col-span-8">
                 <div className="flex flex-col space-y-4">
-                  <div className="inline-block mb-2">
+                  <div className="inline-block">
                     <span className="bg-white/10 backdrop-blur-sm text-white text-sm px-4 py-1.5 rounded-full">
                       Start Today
                     </span>
@@ -36,17 +36,28 @@ const BottomCTASection = () => {
                     preferences.
                   </p>
 
-                  <div className="flex flex-wrap gap-3 mt-2 md:mt-4">
+                  <div className="flex lg:hidden flex-wrap gap-3 mt-2 md:mt-4">
+                    {["Fast Comparison", "Top Providers", "Expert Support"].map(
+                      (item, i) => (
+                        <div key={i} className="flex items-center ">
+                          <FiCheckCircle className="text-secondary-400 mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                          <span className="text-white text-[0.8rem] sm:text-sm">
+                            {item}
+                          </span>
+                        </div>
+                      )
+                    )}
+                  </div>
+
+                  <div className="hidden md:flex flex-wrap gap-3 mt-2 md:mt-4">
                     {["Fast Comparison", "Top Providers", "Expert Support"].map(
                       (item, i) => (
                         <div
                           key={i}
                           className="flex items-center bg-white/10 backdrop-blur-sm px-3 sm:px-4 py-1.5 rounded-lg"
                         >
-                          <div className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-secondary-500 flex items-center justify-center mr-2">
-                            <FiCheck className="text-white h-2 sm:h-2.5 w-2 sm:w-2.5" />
-                          </div>
-                          <span className="text-white text-xs sm:text-sm">
+                          <FiCheckCircle className="text-secondary-400 mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                          <span className="text-white text-[0.8rem] sm:text-sm">
                             {item}
                           </span>
                         </div>

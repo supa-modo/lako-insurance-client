@@ -63,13 +63,13 @@ const HowItWorksSection = () => {
             },
           ].map((item, index) => (
             <div key={index} className="relative z-10">
-              <div className="h-full bg-white rounded-xl shadow-xl p-5 lg:p-8 border border-gray-100 transition duration-300 hover:shadow-2xl hover:translate-y-[-8px] overflow-hidden group">
+              <div className="h-full bg-white rounded-xl shadow-xl p-5 lg:p-6 border border-gray-100 transition duration-300 hover:shadow-2xl hover:translate-y-[-8px] overflow-hidden group">
                 {/* Step indicator */}
                 <div className="absolute top-0 right-0 w-14 h-14 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-end justify-start pb-3 pl-3 text-xl font-bold text-neutral-600 opacity-50 group-hover:opacity-80 transition-opacity overflow-hidden">
                   {item.step}
                 </div>
 
-                <div className="flex flex-row md:flex-col items-center md:items-start gap-4 mb-2 sm:mb-3 md:mb-4">
+                <div className="flex flex-row md:flex-col items-center md:items-start gap-4 mb-2 sm:mb-3">
                   <div
                     className={`inline-block p-3 sm:p-4 rounded-xl ${
                       item.color === "primary"

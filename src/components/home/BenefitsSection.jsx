@@ -223,55 +223,174 @@ const BenefitsSection = () => {
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className={`p-5 rounded-xl cursor-pointer group ${
+                    animate={{
+                      scale: activeFeature === index ? 1.01 : 1,
+                      boxShadow:
+                        activeFeature === index
+                          ? benefit.color === "primary"
+                            ? "0 20px 25px -5px rgba(59, 130, 246, 0.15), 0 10px 10px -5px rgba(59, 130, 246, 0.1), 0 0 0 1px rgba(59, 130, 246, 0.05)"
+                            : "0 20px 25px -5px rgba(236, 72, 153, 0.15), 0 10px 10px -5px rgba(236, 72, 153, 0.1), 0 0 0 1px rgba(236, 72, 153, 0.05)"
+                          : "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+                    }}
+                    transition={{
+                      opacity: { duration: 0.8, delay: index * 0.1 },
+                      y: { duration: 0.7, delay: index * 0.1 },
+                      scale: { duration: 0.6 },
+                      boxShadow: { duration: 0.8 },
+                      default: { duration: 0.8, ease: [0.25, 0.1, 0.25, 1] },
+                    }}
+                    className={`relative p-5 rounded-xl cursor-pointer group overflow-hidden ${
                       activeFeature === index
-                        ? `bg-gradient-to-r ${
-                            benefit.color === "primary"
-                              ? "from-primary-50 to-primary-100"
-                              : "from-secondary-50 to-secondary-100"
-                          } border ${
-                            benefit.color === "primary"
-                              ? "border-primary-200"
-                              : "border-secondary-200"
-                          }`
-                        : "bg-gradient-to-r from-neutral-100 to-neutral-50 border border-neutral-200"
-                    }`}
+                        ? benefit.color === "primary"
+                          ? "bg-gradient-to-br from-primary-100 via-primary-50 to-primary-200 border-primary-200"
+                          : "bg-gradient-to-br from-secondary-100 via-secondary-50 to-secondary-200 border-secondary-200"
+                        : "bg-gradient-to-br from-neutral-100 via-white to-neutral-200 border-neutral-200 hover:from-neutral-100 hover:to-neutral-50"
+                    } border-2`}
                     onClick={() => setActiveFeature(index)}
                   >
-                    <div className="flex items-start">
-                      <div
-                        className={`flex-shrink-0 p-3 rounded-xl ${
+                    {/* Animated background overlay */}
+                    <motion.div
+                      initial={false}
+                      animate={{
+                        opacity: activeFeature === index ? 0.1 : 0,
+                        scale: activeFeature === index ? 1 : 0.8,
+                      }}
+                      transition={{ duration: 0.8, ease: "easeOut" }}
+                      className={`absolute inset-0 rounded-xl ${
+                        benefit.color === "primary"
+                          ? "bg-gradient-to-r from-primary-300 to-primary-400"
+                          : "bg-gradient-to-r from-secondary-300 to-secondary-400"
+                      }`}
+                    />
+
+                    {/* Glowing border effect */}
+                    {activeFeature === index && (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.5 }}
+                        className={`absolute inset-0 rounded-xl border-2 ${
+                          benefit.color === "primary"
+                            ? "border-primary-300"
+                            : "border-secondary-300"
+                        } blur-sm opacity-40`}
+                      />
+                    )}
+
+                    <div className="flex items-start relative z-10">
+                      <motion.div
+                        animate={{
+                          scale: activeFeature === index ? 1.15 : 1,
+                          rotate: activeFeature === index ? 5 : 0,
+                        }}
+                        transition={{
+                          duration: 0.5,
+                          ease: [0.25, 0.1, 0.25, 1],
+                          scale: { duration: 0.8 },
+                          rotate: { duration: 0.9 },
+                        }}
+                        className={`flex-shrink-0 p-3 rounded-xl mr-4 relative overflow-hidden  ease-out ${
                           activeFeature === index
                             ? benefit.color === "primary"
-                              ? "bg-primary-500 text-white"
-                              : "bg-secondary-500 text-white"
+                              ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg"
+                              : "bg-gradient-to-r from-secondary-500 to-secondary-600 text-white shadow-lg"
                             : benefit.color === "primary"
-                            ? "bg-primary-100 text-primary-600"
-                            : "bg-secondary-100 text-secondary-600"
-                        } group-hover:scale-110 transition-all duration-300 mr-4`}
+                            ? "bg-gradient-to-r from-primary-200 to-primary-100 text-primary-600"
+                            : "bg-gradient-to-r from-secondary-200 to-secondary-100 text-secondary-600"
+                        }`}
                       >
-                        {benefit.icon}
-                      </div>
-                      <div>
-                        <h3
-                          className={`text-xl font-bold ${
-                            activeFeature === index
-                              ? benefit.color === "primary"
-                                ? "text-primary-700"
-                                : "text-secondary-700"
-                              : "text-gray-600"
-                          } mb-2`}
+                        {/* Icon glow effect */}
+                        {activeFeature === index && (
+                          <motion.div
+                            initial={{ scale: 0, opacity: 0 }}
+                            animate={{ scale: 1.5, opacity: 0.3 }}
+                            transition={{ duration: 0.6, ease: "easeOut" }}
+                            className={`absolute inset-0 rounded-xl ${
+                              benefit.color === "primary"
+                                ? "bg-primary-500"
+                                : "bg-secondary-500"
+                            } blur-md`}
+                          />
+                        )}
+                        <motion.div
+                          animate={{
+                            scale: activeFeature === index ? 1.15 : 1,
+                          }}
+                          transition={{ duration: 0.4 }}
+                          className="relative z-10"
+                        >
+                          {benefit.icon}
+                        </motion.div>
+                      </motion.div>
+                      <div className="flex-1">
+                        <motion.h3
+                          animate={{
+                            color:
+                              activeFeature === index
+                                ? benefit.color === "primary"
+                                  ? "#247f7c" // primary-700
+                                  : "#e07b13" // secondary-700
+                                : "#4b5563", // gray-600
+                          }}
+                          transition={{ duration: 0.5 }}
+                          className="text-xl font-bold mb-2 transition-all duration-500"
                         >
                           {benefit.title}
-                        </h3>
-                        <p className="text-gray-600 text-base">
+                        </motion.h3>
+                        <motion.p
+                          animate={{
+                            color:
+                              activeFeature === index ? "#374151" : "#6b7280",
+                          }}
+                          transition={{ duration: 0.5 }}
+                          className="text-base leading-relaxed transition-colors duration-500"
+                        >
                           {benefit.description.length > 120
                             ? `${benefit.description.substring(0, 120)}...`
                             : benefit.description}
-                        </p>
+                        </motion.p>
                       </div>
                     </div>
+
+                    {/* Subtle sparkle effect for active card */}
+                    {activeFeature === index && (
+                      <>
+                        <motion.div
+                          initial={{ scale: 0, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          exit={{ scale: 0, opacity: 0 }}
+                          transition={{ duration: 0.4, delay: 0.2 }}
+                          className={`absolute top-3 right-3 w-2 h-2 rounded-full ${
+                            benefit.color === "primary"
+                              ? "bg-primary-400"
+                              : "bg-secondary-400"
+                          } opacity-60`}
+                        />
+                        <motion.div
+                          initial={{ scale: 0, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          exit={{ scale: 0, opacity: 0 }}
+                          transition={{ duration: 0.4, delay: 0.4 }}
+                          className={`absolute top-6 right-6 w-1 h-1 rounded-full ${
+                            benefit.color === "primary"
+                              ? "bg-primary-300"
+                              : "bg-secondary-300"
+                          } opacity-40`}
+                        />
+                        <motion.div
+                          initial={{ scale: 0, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          exit={{ scale: 0, opacity: 0 }}
+                          transition={{ duration: 0.4, delay: 0.6 }}
+                          className={`absolute bottom-4 right-4 w-1.5 h-1.5 rounded-full ${
+                            benefit.color === "primary"
+                              ? "bg-primary-500"
+                              : "bg-secondary-500"
+                          } opacity-30`}
+                        />
+                      </>
+                    )}
                   </motion.div>
                 ))}
               </div>

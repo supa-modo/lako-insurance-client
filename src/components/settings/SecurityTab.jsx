@@ -103,7 +103,7 @@ const VerificationCodeInput = ({ value, onChange, error, disabled }) => {
               onKeyDown={(e) => handleKeyDown(index, e)}
               onPaste={index === 0 ? handlePaste : undefined}
               disabled={disabled}
-              className={`w-full h-full text-center text-xl font-bold border-2 rounded-xl transition-all duration-200 ${
+              className={`w-full h-full text-center text-xl font-bold border-2 rounded-[0.7rem] transition-all duration-200 ${
                 error
                   ? "border-red-400 bg-red-50 text-red-700"
                   : localValues[index]
@@ -323,18 +323,13 @@ const SecurityTab = ({
 
       {/* Two-Factor Authentication Section */}
       <div className="bg-gradient-to-br from-white to-slate-50 border border-slate-200 rounded-2xl p-8 shadow-sm">
-        <div className="flex items-center mb-6">
-          <div className="p-3 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-xl mr-4">
-            <TbShieldCheck className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <h3 className="text-xl font-semibold text-slate-800">
-              Two-Factor Authentication
-            </h3>
-            <p className="text-slate-600 text-sm">
-              Add an extra layer of security to your account
-            </p>
-          </div>
+        <div>
+          <h3 className="text-xl font-semibold text-slate-800">
+            Two-Factor Authentication
+          </h3>
+          <p className="text-slate-600 text-sm">
+            Add an extra layer of security to your account
+          </p>
         </div>
 
         {/* 2FA Status Card */}
@@ -553,30 +548,14 @@ const SecurityTab = ({
               exit={{ opacity: 0, y: -20 }}
               className="space-y-6"
             >
-              {/* Success Message */}
-              <div className="bg-gradient-to-r from-emerald-50 to-green-50 border-2 border-emerald-200 rounded-xl p-6">
-                <div className="flex items-center">
-                  <FiCheckCircle className="w-6 h-6 text-emerald-600 mr-3" />
-                  <div>
-                    <h5 className="font-semibold text-emerald-900">
-                      Two-factor authentication is active
-                    </h5>
-                    <p className="text-emerald-700 text-sm mt-1">
-                      Your account is protected with an additional security
-                      layer.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
               {/* Disable 2FA */}
               <div className="bg-white rounded-xl border-2 border-slate-200 p-6">
-                <h5 className="font-semibold text-lg text-slate-800 mb-4">
+                <h5 className="font-semibold text-lg text-gray-700 mb-3">
                   Disable Two-Factor Authentication
                 </h5>
                 <p className="text-slate-600 mb-6">
                   Enter a verification code from your authenticator app to
-                  disable 2FA:
+                  confirm disabling 2FA:
                 </p>
 
                 <VerificationCodeInput
@@ -603,7 +582,7 @@ const SecurityTab = ({
                     disabled={
                       loading || twoFAData.verificationToken.length !== 6
                     }
-                    className="px-8 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl hover:from-red-700 hover:to-red-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 shadow-md hover:shadow-lg font-medium"
+                    className="px-8 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-[0.7rem] hover:from-red-700 hover:to-red-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 shadow-md hover:shadow-lg font-medium"
                   >
                     {loading ? (
                       <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
