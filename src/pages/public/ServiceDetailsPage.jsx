@@ -15,6 +15,8 @@ import {
   TbLifebuoy,
   TbMessageShare,
   TbArrowLeft,
+  TbArrowBackUp,
+  TbArrowBack,
 } from "react-icons/tb";
 import { BiSupport } from "react-icons/bi";
 import Header from "../../components/layout/Header";
@@ -115,7 +117,6 @@ const ServiceDetailsPage = () => {
         {/* Social Media Bar */}
         <SocialMediaBar />
 
-
         <div className="min-h-[70vh] flex flex-col items-center justify-center px-4">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -130,16 +131,26 @@ const ServiceDetailsPage = () => {
               Service Not Found
             </h1>
             <p className="text-gray-600 text-sm md:text-base mb-6 md:mb-8">
-              Sorry, the service you're looking for doesn't exist or is no
-              longer available.
+              Sorry, the service you're looking for might have been removed or
+              is temporarily unavailable. Please contact our support team for
+              more assistance.
             </p>
-            <button
-              onClick={() => navigate(-1)}
-              className="px-6 py-2 md:py-3 bg-primary-600 text-white font-medium rounded-lg shadow-lg hover:bg-primary-700 transition-all duration-200 flex items-center justify-center mx-auto"
-            >
-              <TbArrowLeft className="mr-2" />
-              Go Back
-            </button>
+            <div className="flex flex-col md:flex-row gap-2 md:gap-4">
+              <button
+                onClick={() => navigate(-1)}
+                className="w-full px-6 py-2 md:py-3 bg-primary-600 text-white font-medium rounded-lg shadow-lg hover:bg-primary-700 transition-all duration-200 flex items-center justify-center mx-auto"
+              >
+                <TbArrowBack size={20} className="mr-2" />
+                Go Back
+              </button>
+              <Link
+                to="/contact"
+                className="w-full px-6 py-2 md:py-3 bg-secondary-600 text-white font-medium rounded-lg shadow-lg hover:bg-secondary-700 transition-all duration-200 flex items-center justify-center mx-auto"
+              >
+                <BiSupport className="mr-2 h-5 w-5" />
+                Contact Support
+              </Link>
+            </div>
           </motion.div>
         </div>
         <Footer />
