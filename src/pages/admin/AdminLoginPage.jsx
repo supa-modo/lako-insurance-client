@@ -451,21 +451,6 @@ const AdminLoginPage = () => {
           </AnimatePresence>
         </motion.div>
 
-        {/* Demo credentials - outside the main form container */}
-        {/* <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.7 }}
-          className="mt-6 p-4 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 flex items-center justify-between"
-        >
-          <h3 className="text-white/90 text-sm font-semibold font-outfit">
-            Demo credentials:
-          </h3>
-          <code className="bg-white/10 text-xs text-white/90 px-2 py-0.5 rounded">
-            admin@lako.com / admin123
-          </code>
-        </motion.div> */}
-
         {/* Back to Homepage */}
         <motion.div
           initial={{ opacity: 0 }}

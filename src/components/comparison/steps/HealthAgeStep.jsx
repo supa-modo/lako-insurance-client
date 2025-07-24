@@ -2,18 +2,22 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   TbCalendar,
-  TbUser,
-  TbUserCheck,
   TbInfoCircle,
+  TbCheck,
+  TbArrowBack,
+  TbArrowBackUp,
   TbArrowRight,
+  TbCalendarShare,
+  TbCalendarDot,
 } from "react-icons/tb";
+import { LuAlignStartVertical } from "react-icons/lu";
 import {
-  PiCaretDownDuotone,
-  PiUserCheckBold,
-  PiUserCheckDuotone,
+  PiCheckCircleFill,
   PiUserDuotone,
+  PiCaretDownDuotone,
 } from "react-icons/pi";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaChevronRight } from "react-icons/fa6";
+import { FaArrowRight } from "react-icons/fa";
 
 const HealthAgeStep = ({ formData, updateFormData, nextStep, prevStep }) => {
   const [inputMethod, setInputMethod] = useState("dateOfBirth"); // "dateOfBirth" or "ageRange"
@@ -26,43 +30,35 @@ const HealthAgeStep = ({ formData, updateFormData, nextStep, prevStep }) => {
 
   // Age ranges for health insurance
   const ageRanges = [
-    { value: "18-25", label: "18 - 25 years", description: "Young adults" },
-    { value: "26-35", label: "26 - 35 years", description: "Adults" },
+    { value: "18-25", label: "18 - 25 " },
+    { value: "26-35", label: "26 - 35 " },
     {
       value: "36-45",
-      label: "36 - 45 years",
-      description: "Middle-aged adults",
+      label: "36 - 45 ",
     },
-    { value: "46-55", label: "46 - 55 years", description: "Mature adults" },
+    { value: "46-55", label: "46 - 55" },
     {
       value: "56-65",
-      label: "56 - 65 years",
-      description: "Pre-senior adults",
+      label: "56 - 65 ",
     },
-    { value: "65-75", label: "65 - 75 years", description: "Senior citizens" },
-    { value: "76-85", label: "76 - 85 years", description: "Elderly" },
-    { value: "85+", label: "85+ years", description: "Very elderly" },
+    { value: "65-75", label: "65 - 75" },
+    { value: "76-85", label: "76 - 85" },
+    { value: "85+", label: "85+" },
   ];
 
   // Calculate age from date of birth
   const calculateAge = (birthDate) => {
     const today = new Date();
     const birth = new Date(birthDate);
-
-    if (birth > today) {
-      return null; // Invalid future date
-    }
-
+    if (birth > today) return null;
     let age = today.getFullYear() - birth.getFullYear();
     const monthDiff = today.getMonth() - birth.getMonth();
-
     if (
       monthDiff < 0 ||
       (monthDiff === 0 && today.getDate() < birth.getDate())
     ) {
       age--;
     }
-
     return age;
   };
 
@@ -70,7 +66,6 @@ const HealthAgeStep = ({ formData, updateFormData, nextStep, prevStep }) => {
   const handleDateOfBirthChange = (value) => {
     setDateOfBirth(value);
     setError("");
-
     if (value) {
       const age = calculateAge(value);
       if (age === null) {
@@ -105,8 +100,6 @@ const HealthAgeStep = ({ formData, updateFormData, nextStep, prevStep }) => {
     setInputMethod(method);
     setError("");
     setCalculatedAge(null);
-
-    // Clear the other input
     if (method === "dateOfBirth") {
       setSelectedAgeRange("");
     } else {
@@ -121,28 +114,20 @@ const HealthAgeStep = ({ formData, updateFormData, nextStep, prevStep }) => {
         setError("Please select your date of birth");
         return;
       }
-
       if (calculatedAge === null || error) {
         setError("Please enter a valid date of birth");
         return;
       }
-
-      // Update form data with date of birth and calculated age
       updateFormData("dateOfBirth", dateOfBirth);
       updateFormData("age", calculatedAge);
       updateFormData("ageMin", calculatedAge);
       updateFormData("ageMax", calculatedAge);
-
-      // Clear age range since we're using date of birth
       updateFormData("ageRange", "");
     } else {
-      // inputMethod === "ageRange"
       if (!selectedAgeRange) {
         setError("Please select an age range");
         return;
       }
-
-      // Parse age range
       let ageMin, ageMax;
       if (selectedAgeRange.includes("+")) {
         ageMin = parseInt(selectedAgeRange.replace("+", ""));
@@ -152,21 +137,15 @@ const HealthAgeStep = ({ formData, updateFormData, nextStep, prevStep }) => {
         ageMin = parseInt(parts[0]);
         ageMax = parseInt(parts[1]);
       }
-
-      // Update form data with age range
       updateFormData("ageRange", selectedAgeRange);
       updateFormData("ageMin", ageMin);
       updateFormData("ageMax", ageMax);
       updateFormData("age", selectedAgeRange);
-
-      // Clear date of birth since we're using age range
       updateFormData("dateOfBirth", "");
     }
-
     nextStep();
   };
 
-  // Auto-select appropriate age range based on calculated age
   useEffect(() => {
     if (calculatedAge !== null && inputMethod === "dateOfBirth") {
       const appropriateRange = ageRanges.find((range) => {
@@ -178,228 +157,317 @@ const HealthAgeStep = ({ formData, updateFormData, nextStep, prevStep }) => {
           return calculatedAge >= min && calculatedAge <= max;
         }
       });
-
       if (appropriateRange) {
-        console.log(
-          `Auto-selected age range ${appropriateRange.value} for age ${calculatedAge}`
-        );
+        // For future: could auto-select or highlight
       }
     }
   }, [calculatedAge, inputMethod]);
 
+  // Date input min/max
+  const today = new Date().toISOString().split("T")[0];
+  const minDate = new Date();
+  minDate.setFullYear(minDate.getFullYear() - 120);
+  const minDateString = minDate.toISOString().split("T")[0];
+  const isValidAge =
+    calculatedAge !== null &&
+    calculatedAge >= 18 &&
+    calculatedAge <= 120 &&
+    !error;
+  const canContinue =
+    (inputMethod === "dateOfBirth" && dateOfBirth && isValidAge) ||
+    (inputMethod === "ageRange" && selectedAgeRange && !error);
+
   return (
-    <div className="lg:px-6">
-      <div className="mb-8">
-        <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-primary-600 mb-3 md:mb-4">
-          What's your age?
-        </h2>
-        <p className="text-slate-600 text-[0.95rem] md:text-base lg:text-lg mb-3 md:mb-6">
-          Help us find the most suitable health insurance plans for your age
-          group.
-        </p>
-
-        {/* Input Method Selection */}
-        <div className="grid grid-cols-2 gap-2 md:gap-4 mb-6">
-          <motion.button
-            type="button"
-            onClick={() => handleInputMethodChange("dateOfBirth")}
-            className={`p-4 rounded-xl border-2 transition-all duration-300 ${
-              inputMethod === "dateOfBirth"
-                ? "border-primary-500 bg-primary-50 text-primary-700"
-                : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
-            }`}
-            whileHover={{ scale: 1.005 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <TbCalendar className="w-6 h-6 mx-auto mb-2" />
-            <span className="font-medium">Date of Birth</span>
-            <p className="text-sm mt-1 opacity-80">Exact age calculation</p>
-          </motion.button>
-
-          <motion.button
-            type="button"
-            onClick={() => handleInputMethodChange("ageRange")}
-            className={`p-4 rounded-xl border-2 transition-all duration-300 ${
-              inputMethod === "ageRange"
-                ? "border-primary-500 bg-primary-50 text-primary-700"
-                : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
-            }`}
-            whileHover={{ scale: 1.005 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <PiUserDuotone className="w-6 h-6 mx-auto mb-2" />
-            <span className="font-medium">Age Range</span>
-            <p className="text-sm mt-1 opacity-80">Select age group</p>
-          </motion.button>
-        </div>
-      </div>
-
-      <AnimatePresence mode="wait">
-        {inputMethod === "dateOfBirth" ? (
+    <div className="min-h-[50vh] flex items-center justify-center md:py-3 lg:py-4">
+      <div className="max-w-5xl w-full mx-auto md:px-2 lg:px-4">
+        <div className="grid lg:grid-cols-2 gap-6 md:gap-12 items-center">
+          {/* Left Section - Content */}
           <motion.div
-            key="dateOfBirth"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
-            className="space-y-6"
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            className="space-y-4 md:space-y-8"
           >
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
-                Date of Birth
-              </label>
-              <input
-                type="date"
-                value={dateOfBirth}
-                onChange={(e) => handleDateOfBirthChange(e.target.value)}
-                max={new Date().toISOString().split("T")[0]} // Prevent future dates
-                min="1920-01-01" // Reasonable minimum date
-                className="w-full px-4 py-3 rounded-[0.6rem] border border-slate-300 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-base md:text-lg"
-                placeholder="Select your date of birth"
-              />
-            </div>
-
-            {calculatedAge !== null && !error && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-green-100 border border-green-200 rounded-[0.6rem] p-3 md:p-4"
-              >
-                <div className="flex items-center">
-                  <PiUserCheckDuotone className="w-5 h-5 text-green-600 mr-2" />
-                  <span className="text-green-800 font-medium">
-                    Your current age: {calculatedAge} years
-                  </span>
-                </div>
-              </motion.div>
-            )}
-          </motion.div>
-        ) : (
-          <motion.div
-            key="ageRange"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
-            className="space-y-4"
-          >
-            {/* Mobile Select Box - Hidden on md and up */}
-            <div className="lg:hidden">
-              <label className="block text-sm font-lexend font-semibold text-primary-700 mb-2">
-                Select Age Range
-              </label>
-              <div className="relative">
-                <select
-                  value={selectedAgeRange}
-                  onChange={(e) => handleAgeRangeChange(e.target.value)}
-                  className="w-full px-4 py-3 rounded-[0.6rem] font-lexend font-semibold text-slate-600 border border-slate-300 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-base bg-white"
+            {/* Header Section */}
+            <div className="space-y-4 md:space-y-6">
+              <div className="flex items-center justify-between">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  className="flex items-center space-x-4"
                 >
-                  <option value="">Choose your age range</option>
-                  {ageRanges.map((range) => (
-                    <option key={range.value} value={range.value}>
-                      {range.label}
-                    </option>
-                  ))}
-                </select>
+                  <div className="w-12 h-12 md:w-14 lg:w-16 md:h-14 lg:h-16 bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 rounded-[0.7rem] flex items-center justify-center shadow-lg">
+                    <LuAlignStartVertical className="w-6 h-6 md:w-8 md:h-8 text-white" />
+                  </div>
+                  <div>
+                    <h1 className="text-lg md:text-xl lg:text-3xl font-bold text-gray-600 leading-tight">
+                      What's your age?
+                    </h1>
+                    <p className="text-[0.9rem] md:text-base text-neutral-600 font-medium">
+                      Step 2 of 4
+                    </p>
+                  </div>
+                </motion.div>
+              </div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className=""
+              >
+                <p className="text-[0.9rem] md:text-base lg:text-lg text-gray-600 leading-relaxed">
+                  Enter your date of birth for exact age calculation or use an
+                  age range to find suitable health insurance plans for your age
+                  group.
+                </p>
+              </motion.div>
+              <div className="">
+                <button
+                  onClick={() =>
+                    handleInputMethodChange(
+                      inputMethod === "dateOfBirth" ? "ageRange" : "dateOfBirth"
+                    )
+                  }
+                  className="inline-flex items-center px-4 py-2 rounded-lg font-medium text-primary-600 bg-primary-50 hover:bg-primary-100 border border-primary-200 transition-colors duration-200 shadow-sm"
+                >
+                  {inputMethod === "dateOfBirth" ? (
+                    <TbCalendarShare className="w-[1rem] h-[1rem] md:w-[1.4rem] md:h-[1.4rem] mr-2 " />
+                  ) : (
+                    <TbCalendarDot className="w-[1rem] h-[1rem] md:w-[1.4rem] md:h-[1.4rem] mr-2 " />
+                  )}
 
-                <PiCaretDownDuotone className="w-5 h-5 pointer-events-none text-slate-600 absolute right-3 top-1/2 -translate-y-1/2" />
+                  {inputMethod === "dateOfBirth"
+                    ? "Use Age Range Instead"
+                    : "Use Exact Age Instead"}
+                  <FaArrowRight className="w-[0.8rem] h-[0.8rem] md:w-[0.9rem] md:h-[0.9rem] ml-2 " />
+                </button>
               </div>
             </div>
+            <div className="hidden lg:flex justify-start">
+              <button
+                onClick={prevStep}
+                className="inline-flex items-center underline underline-offset-4 text-primary-500 hover:text-secondary-600 font-medium transition-colors duration-200"
+              >
+                <TbArrowBackUp className="w-5 h-5 mr-2" />
+                Back to Insurance Types
+              </button>
+            </div>
+          </motion.div>
 
-            {/* Desktop Button Grid - Hidden on sm and below */}
-            <div className="hidden lg:grid grid-cols-3 gap-4">
-              {ageRanges.map((range) => (
+          {/* Right Section - Form */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="space-y-6"
+          >
+            {/* Main Form Card */}
+            <div className="bg-white rounded-3xl shadow-xl border border-neutral-300 overflow-hidden">
+              {/* Card Header */}
+              <div className="bg-gradient-to-r from-neutral-100/60 to-neutral-100 px-5 md:px-8 py-4 md:py-6 border-b border-neutral-200">
+                <div className="flex items-center space-x-3">
+                  <TbCalendar className="w-6 h-6 text-primary-600" />
+                  <h3 className="text-lg md:text-xl font-bold text-neutral-800">
+                    {inputMethod === "dateOfBirth"
+                      ? "Your Date of Birth"
+                      : "Select Age Range"}
+                  </h3>
+                </div>
+                <p className="text-sm text-neutral-700 mt-1">
+                  {inputMethod === "dateOfBirth"
+                    ? "This helps us show you age-relevant plans to choose from."
+                    : "Choose your age group for plan recommendations."}
+                </p>
+              </div>
+
+              {/* Form Content */}
+              <div className="px-5 md:px-7 pt-4 pb-6 space-y-4 md:space-y-6">
+                {inputMethod === "dateOfBirth" ? (
+                  <>
+                    <div>
+                      <label
+                        htmlFor="dateOfBirth"
+                        className="block text-sm font-semibold text-gray-600 mb-3"
+                      >
+                        Enter your date of birth
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="date"
+                          id="dateOfBirth"
+                          value={dateOfBirth}
+                          onChange={(e) =>
+                            handleDateOfBirthChange(e.target.value)
+                          }
+                          min={minDateString}
+                          max={today}
+                          className={`w-full px-4 md:px-5 py-3 md:py-3.5 text-base md:text-lg border-2 rounded-[0.8rem] md:rounded-xl text-neutral-700 bg-white focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 transition-all duration-300 ${
+                            error
+                              ? "border-red-300 focus:border-red-500 focus:ring-red-100"
+                              : isValidAge
+                              ? "border-green-600 focus:border-green-500 focus:ring-green-100"
+                              : "border-neutral-200"
+                          }`}
+                          placeholder="Enter your date of birth"
+                        />
+                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                          {isValidAge ? (
+                            <div className="w-16 h-10 px-2 rounded-full bg-gradient-to-br from-secondary-500 to-secondary-700 flex items-center justify-center shadow text-white font-bold text-lg">
+                              {calculatedAge}{" "}
+                              <span className="text-[0.8rem] ml-1 font-medium">
+                                yrs
+                              </span>
+                            </div>
+                          ) : (
+                            <TbCalendar className="w-6 h-6 text-neutral-400" />
+                          )}
+                        </div>
+                      </div>
+                      {/* Error Message */}
+                      {error && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="mt-2 md:mt-3 flex items-center space-x-2 text-red-600"
+                        >
+                          <TbInfoCircle className="w-4 h-4 flex-shrink-0" />
+                          <span className="text-sm font-medium">{error}</span>
+                        </motion.div>
+                      )}
+                    </div>
+                    {/* Age Display */}
+                    {/* Removed: was below input, now shown in input as circle */}
+                  </>
+                ) : (
+                  <>
+                    {/* Age Range Selection */}
+                    <div>
+                      {/* Mobile Select Box */}
+                      <div className="lg:hidden relative">
+                        <select
+                          value={selectedAgeRange}
+                          onChange={(e) => handleAgeRangeChange(e.target.value)}
+                          className="w-full px-4 py-3 rounded-[0.6rem] font-semibold text-slate-600 border border-slate-300 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 text-base bg-white"
+                        >
+                          <option value="">Choose your age range</option>
+                          {ageRanges.map((range) => (
+                            <option key={range.value} value={range.value}>
+                              {range.label}
+                            </option>
+                          ))}
+                        </select>
+                        <PiCaretDownDuotone className="w-5 h-5 pointer-events-none text-slate-600 absolute right-3 top-1/2 -translate-y-1/2" />
+                      </div>
+                      {/* Desktop Button Grid */}
+                      <div className="hidden lg:grid grid-cols-3 gap-3 mt-2">
+                        {ageRanges.map((range) => (
+                          <motion.button
+                            key={range.value}
+                            type="button"
+                            onClick={() => handleAgeRangeChange(range.value)}
+                            className={`px-3 py-2 rounded-full border-[2.5px] text-center transition-all duration-300 shadow-sm hover:shadow-md ${
+                              selectedAgeRange === range.value
+                                ? "border-primary-500 bg-primary-50 text-primary-700"
+                                : "border-neutral-600/30 bg-white text-gray-500/80 hover:border-secondary-300 hover:bg-secondary-100"
+                            }`}
+                            whileTap={{ scale: 0.99 }}
+                          >
+                            <div className="font-bold  text-lg">
+                              {range.label}
+                              <span className="ml-1 text-[0.8rem] text-gray-400 font-paytone font-normal">
+                                yrs
+                              </span>
+                            </div>
+                          </motion.button>
+                        ))}
+                      </div>
+                    </div>
+                    {/* Error Message */}
+                    {error && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="mt-2 md:mt-3 flex items-center space-x-2 text-red-600"
+                      >
+                        <TbInfoCircle className="w-4 h-4 flex-shrink-0" />
+                        <span className="text-sm font-medium">{error}</span>
+                      </motion.div>
+                    )}
+                    {/* Selected Age Range Display */}
+                    {selectedAgeRange &&
+                      inputMethod === "dateOf Birth" &&
+                      !error && (
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{
+                            duration: 0.4,
+                            type: "spring",
+                            stiffness: 300,
+                          }}
+                          className="relative overflow-hidden"
+                        >
+                          <div className="bg-gradient-to-br from-primary-50 via-primary-25 to-secondary-50 border-2 border-primary-200 rounded-[1.2rem] md:rounded-2xl py-2 md:py-2.5 px-4 md:px-5">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-baseline space-x-2">
+                                <span className="text-2xl font-bold text-primary-700">
+                                  {
+                                    ageRanges.find(
+                                      (r) => r.value === selectedAgeRange
+                                    )?.label
+                                  }
+                                </span>
+                                <span className="text-base font-medium text-primary-600">
+                                  selected
+                                </span>
+                              </div>
+                              <div className="relative">
+                                <div className="w-14 h-14 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center shadow-lg">
+                                  <PiUserDuotone className="w-7 h-7 text-white" />
+                                </div>
+                                <motion.div
+                                  initial={{ scale: 0 }}
+                                  animate={{ scale: 1 }}
+                                  transition={{
+                                    delay: 0.2,
+                                    type: "spring",
+                                    stiffness: 300,
+                                  }}
+                                  className="absolute bottom-2 right-2 "
+                                >
+                                  <PiCheckCircleFill className="w-4 h-4 text-secondary-200" />
+                                </motion.div>
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                  </>
+                )}
+                {/* Continue Button */}
                 <motion.button
-                  key={range.value}
-                  type="button"
-                  onClick={() => handleAgeRangeChange(range.value)}
-                  className={`p-4  rounded-xl border-2 text-left transition-all duration-300 shadow-sm hover:shadow-md ${
-                    selectedAgeRange === range.value
-                      ? "border-primary-500 bg-primary-50 text-primary-700"
-                      : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                  onClick={handleContinue}
+                  disabled={!canContinue}
+                  whileHover={canContinue ? { scale: 1.01 } : {}}
+                  whileTap={canContinue ? { scale: 0.99 } : {}}
+                  className={`w-full py-3 md:py-3.5 px-5 md:px-6 rounded-[0.8rem] md:rounded-xl font-semibold text-base md:text-lg transition-all duration-300 ${
+                    canContinue
+                      ? "bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white shadow-lg hover:shadow-xl"
+                      : "bg-neutral-200 text-neutral-400 cursor-not-allowed"
                   }`}
-                  whileTap={{ scale: 0.99 }}
                 >
-                  <div className="font-semibold text-lg mb-1">
-                    {range.label}
-                  </div>
-                  <div className="text-sm opacity-80 truncate">
-                    {range.description}
+                  <div className="flex items-center justify-center space-x-2">
+                    <span>Continue</span>
+                    <FaChevronRight className="w-[1rem] h-[1rem] md:w-[1.1rem] md:h-[1.1rem]" />
                   </div>
                 </motion.button>
-              ))}
+              </div>
             </div>
           </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Error Message */}
-      <AnimatePresence>
-        {error && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="mt-4 bg-red-100 border border-red-200 rounded-[0.6rem] text-[0.95rem] md:text-base p-3 md:p-4"
-          >
-            <div className="flex items-center text-red-800">
-              <TbInfoCircle className="w-5 h-5 mr-2 flex-shrink-0" />
-              <span>{error}</span>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Navigation Buttons */}
-      <div className="flex justify-between pt-8 pb-3">
-        <motion.button
-          type="button"
-          onClick={prevStep}
-          className="px-6 py-3 flex items-center justify-center font-lexend border border-slate-300 text-slate-600 rounded-lg hover:bg-slate-50 transition-colors"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <FaChevronLeft className="mr-2" />
-          <span>Back</span>
-        </motion.button>
-
-        <motion.button
-          type="button"
-          onClick={handleContinue}
-          disabled={
-            (inputMethod === "dateOfBirth" &&
-              (!dateOfBirth || calculatedAge === null || error)) ||
-            (inputMethod === "ageRange" && !selectedAgeRange)
-          }
-          className={`px-8 py-3 rounded-lg font-medium font-lexend transition-all flex items-center justify-center ${
-            (inputMethod === "dateOfBirth" &&
-              (!dateOfBirth || calculatedAge === null || error)) ||
-            (inputMethod === "ageRange" && !selectedAgeRange)
-              ? "bg-slate-200 text-slate-400 cursor-not-allowed"
-              : "bg-gradient-to-r from-primary-700 to-primary-600 text-white hover:from-primary-800 hover:to-primary-700 shadow-lg hover:shadow-xl"
-          }`}
-          whileHover={
-            !(
-              (inputMethod === "dateOfBirth" &&
-                (!dateOfBirth || calculatedAge === null || error)) ||
-              (inputMethod === "ageRange" && !selectedAgeRange)
-            )
-              ? { scale: 1.005 }
-              : {}
-          }
-          whileTap={
-            !(
-              (inputMethod === "dateOfBirth" &&
-                (!dateOfBirth || calculatedAge === null || error)) ||
-              (inputMethod === "ageRange" && !selectedAgeRange)
-            )
-              ? { scale: 0.98 }
-              : {}
-          }
-        >
-          <span>Continue</span>
-          <FaChevronRight className="w-4 md:w-5 h-4 md:h-5 ml-2" />
-        </motion.button>
+        </div>
       </div>
     </div>
   );

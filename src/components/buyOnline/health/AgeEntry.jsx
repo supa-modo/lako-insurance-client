@@ -218,7 +218,12 @@ const AgeEntry = ({ formData, updateFormData, nextStep, prevStep }) => {
                     />
                     <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
                       {isValidAge ? (
-                        <TbCheck className="w-6 h-6 text-green-600" />
+                        <div className="w-16 h-10 px-2 rounded-full bg-gradient-to-br from-secondary-500 to-secondary-700 flex items-center justify-center shadow text-white font-bold text-lg">
+                          {age}{" "}
+                          <span className="text-[0.8rem] ml-1 font-medium">
+                            yrs
+                          </span>
+                        </div>
                       ) : (
                         <TbCalendar className="w-6 h-6 text-neutral-400" />
                       )}
@@ -240,48 +245,7 @@ const AgeEntry = ({ formData, updateFormData, nextStep, prevStep }) => {
                 </div>
 
                 {/* Age Display */}
-                {isValidAge && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{
-                      duration: 0.4,
-                      type: "spring",
-                      stiffness: 300,
-                    }}
-                    className="relative overflow-hidden"
-                  >
-                    <div className="bg-gradient-to-br from-primary-50 via-primary-25 to-secondary-50 border-2 border-primary-200 rounded-[1.2rem] md:rounded-2xl py-2 md:py-2.5 px-4 md:px-5">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-baseline space-x-2">
-                          <span className="text-4xl font-bold text-primary-700">
-                            {age}
-                          </span>
-                          <span className="text-base font-medium text-primary-600">
-                            years old
-                          </span>
-                        </div>
-                        <div className="relative">
-                          <div className="w-14 h-14 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center shadow-lg">
-                            <PiUserDuotone className="w-7 h-7 text-white" />
-                          </div>
-                          <motion.div
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            transition={{
-                              delay: 0.2,
-                              type: "spring",
-                              stiffness: 300,
-                            }}
-                            className="absolute bottom-2 right-2 "
-                          >
-                            <PiCheckCircleFill className="w-4 h-4 text-secondary-200" />
-                          </motion.div>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
+                {/* Removed: was below input, now shown in input as circle */}
 
                 {/* Continue Button */}
                 <motion.button

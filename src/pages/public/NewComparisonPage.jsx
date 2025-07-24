@@ -402,9 +402,9 @@ const NewComparisonPage = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.6 }}
-              className="max-w-[75rem] mx-auto px-0 md:px-2.5 lg::px-0"
+              className="max-w-[90rem] mx-auto px-0 md:px-2.5 lg::px-0"
             >
-              <div className="text-center mb-4 md:mb-8 lg:mb-12">
+              <div className="text-center mb-4 md:mb-6 lg:mb-8">
                 <h2 className="text-2xl lg:text-3xl font-bold text-secondary-600 mb-4">
                   Frequently Asked Questions
                 </h2>
