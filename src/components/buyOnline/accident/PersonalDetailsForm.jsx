@@ -30,7 +30,7 @@ const PersonalDetailsForm = ({
 
   const sections = [
     {
-      title: "Personal Information",
+      title: "Your Personal Details & Contacts",
       icon: <PiUserDuotone className="w-5 h-5" />,
       fields: [
         "firstName",
@@ -48,7 +48,7 @@ const PersonalDetailsForm = ({
       ],
     },
     {
-      title: "Emergency Contacts",
+      title: "Emergency Contacts & Beneficiaries",
       icon: <MdEmergency className="w-5 h-5" />,
       fields: [
         "nextOfKinName",
@@ -58,7 +58,7 @@ const PersonalDetailsForm = ({
       ],
     },
     {
-      title: "Medical History",
+      title: "Medical Health History & Details",
       icon: <TbActivity className="w-5 h-5" />,
       fields: [
         "previousAccidents",
@@ -68,7 +68,7 @@ const PersonalDetailsForm = ({
       ],
     },
     {
-      title: "Policy Details",
+      title: "Policy Preferences",
       icon: <TbCalendar className="w-5 h-5" />,
       fields: [
         "policyStartDate",
@@ -875,10 +875,10 @@ const PersonalDetailsForm = ({
       <div className="text-center ">
         <h3 className="flex items-center justify-center text-lg md:text-xl lg:text-2xl font-bold text-primary-700/90 mb-2">
           <span className="block lg:hidden mr-1">3.</span>{" "}
-          <span className="">Your Personal Details</span>
+          <span className="">Your Application Details</span>
         </h3>
         <p className="text-gray-600 text-sm md:text-base max-w-2xl mx-auto">
-          Please provide your personal information to complete your insurance
+          Please provide your personal and medical information to complete your insurance
           application.
         </p>
       </div>
@@ -910,7 +910,7 @@ const PersonalDetailsForm = ({
         </div>
       )}
 
-      {/* Section Navigation */}
+      {/* Section Navigation
       <div className="flex flex-wrap justify-center gap-2 mb-4 md:mb-6 lg:mb-8">
         {sections.map((section, index) => {
           const sectionHasErrors = section.fields.some(
@@ -936,7 +936,7 @@ const PersonalDetailsForm = ({
             </button>
           );
         })}
-      </div>
+      </div> */}
 
       {/* Current Section Content */}
       <motion.div
@@ -948,7 +948,6 @@ const PersonalDetailsForm = ({
         className="bg-white lg:rounded-xl lg:border border-gray-200 lg:p-6"
       >
         <div className="flex items-center mb-4 md:mb-6">
-          {sections[currentSection].icon}
           <h4 className="text-lg font-semibold text-secondary-700 ml-1">
             {sections[currentSection].title}
           </h4>

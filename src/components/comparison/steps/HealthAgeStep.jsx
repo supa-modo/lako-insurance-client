@@ -194,7 +194,7 @@ const HealthAgeStep = ({ formData, updateFormData, nextStep, prevStep }) => {
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.1 }}
+                  transition={{ duration: 0.6, delay: 0.1 }}
                   className="flex items-center space-x-4"
                 >
                   <div className="w-12 h-12 md:w-14 lg:w-16 md:h-14 lg:h-16 bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 rounded-[0.7rem] flex items-center justify-center shadow-lg">
@@ -213,7 +213,7 @@ const HealthAgeStep = ({ formData, updateFormData, nextStep, prevStep }) => {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
                 className=""
               >
                 <p className="text-[0.9rem] md:text-base lg:text-lg text-gray-600 leading-relaxed">

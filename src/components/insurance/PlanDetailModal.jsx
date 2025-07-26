@@ -143,10 +143,10 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
             {/* Plan Overview Header */}
             <div className="mb-6">
               <div
-                className={`p-6 rounded-xl border ${planConfig.borderColor} ${planConfig.bgColor}`}
+                className={`p-6 rounded-xl border border-neutral-400 bg-neutral-200`}
               >
                 <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center">
+                  <div className="flex items-center"> 
                     <img
                       src={plan.companyLogo}
                       alt={plan.companyName}
@@ -248,14 +248,13 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
             <div className="border-b border-gray-200 mb-6">
               <nav className="flex space-x-8">
                 {[
-                  { id: "overview", label: "Overview", icon: TbInfoCircle },
-                  { id: "benefits", label: "Benefits", icon: TbShieldCheck },
+                  { id: "overview", label: "Overview" },
+                  { id: "benefits", label: "Benefits" },
                   {
                     id: "coverage",
                     label: "Coverage",
-                    icon: TbBuildingHospital,
                   },
-                  { id: "premium", label: "Premium", icon: TbCurrencyDollar },
+                  { id: "premium", label: "Premium" },
                 ].map((tab) => (
                   <button
                     key={tab.id}
@@ -266,7 +265,6 @@ const PlanDetailModal = ({ plan, onClose, onEdit, onDelete }) => {
                         : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                     }`}
                   >
-                    <tab.icon className="w-4 h-4 mr-2" />
                     {tab.label}
                   </button>
                 ))}

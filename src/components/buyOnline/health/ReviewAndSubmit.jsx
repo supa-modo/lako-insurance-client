@@ -22,29 +22,28 @@ import {
   TbFileText,
   TbEye,
   TbLoader,
+  TbExclamationCircle,
 } from "react-icons/tb";
-import { formatCurrency } from "../../../utils/formatCurrency";
 
 const ReviewAndSubmit = ({
   formData,
   updateFormData,
   nextStep,
   prevStep,
-  isSubmitting,
-  validationErrors,
+  isSubmitting = false,
+  validationErrors = {},
   setValidationErrors,
 }) => {
   const [agreed, setAgreed] = useState(false);
-  const [showTerms, setShowTerms] = useState(false);
+  const [errors, setErrors] = useState({});
 
+  // Format helpers
   const formatDate = (dateString) => {
     if (!dateString) return "Not specified";
     return new Date(dateString).toLocaleDateString("en-GB");
   };
-
   const formatPhoneNumber = (phone) => {
     if (!phone) return "Not specified";
-    // Format as +254 XXX XXX XXX
     const cleaned = phone.replace(/\D/g, "");
     if (cleaned.startsWith("254")) {
       return `+${cleaned.slice(0, 3)} ${cleaned.slice(3, 6)} ${cleaned.slice(
@@ -54,41 +53,31 @@ const ReviewAndSubmit = ({
     }
     return phone;
   };
-
-  const handleSubmit = () => {
-    if (!agreed) {
-      alert("Please agree to the terms and conditions to continue");
-      return;
-    }
-
-    // Clear any previous validation errors
-    setValidationErrors({});
-
-    // Proceed to next step (payment or final submission)
-    nextStep();
+  const formatCurrency = (amount) => {
+    if (!amount) return "Not specified";
+    return new Intl.NumberFormat("en-KE", {
+      style: "currency",
+      currency: "KES",
+      minimumFractionDigits: 0,
+    }).format(amount);
   };
 
+  // Error summary
   const renderValidationErrors = () => {
-    if (!validationErrors || Object.keys(validationErrors).length === 0) {
-      return null;
-    }
-
+    const allErrors = { ...validationErrors, ...errors };
+    if (!allErrors || Object.keys(allErrors).length === 0) return null;
     return (
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6"
-      >
+      <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
         <div className="flex items-start">
-          <TbAlertCircle className="w-5 h-5 text-red-500 mt-0.5 mr-3 flex-shrink-0" />
+          <TbExclamationCircle className="text-red-600 h-5 w-5 mr-3 flex-shrink-0 mt-0.5" />
           <div className="flex-1">
-            <h4 className="text-red-800 font-medium mb-2">
-              Please correct the following errors:
+            <h4 className="text-red-800 font-medium text-sm mb-2">
+              Please correct the following errors before submitting:
             </h4>
             <ul className="text-red-700 text-sm space-y-1">
-              {Object.entries(validationErrors).map(([field, error]) => (
+              {Object.entries(allErrors).map(([field, error]) => (
                 <li key={field} className="flex items-start">
-                  <span className="inline-block w-2 h-2 bg-red-500 rounded-full mt-2 mr-2 flex-shrink-0"></span>
+                  <span className="w-1.5 h-1.5 bg-red-600 rounded-full mr-2 mt-2 flex-shrink-0"></span>
                   <span>
                     <strong className="capitalize">
                       {field.replace(/([A-Z])/g, " $1").toLowerCase()}:
@@ -100,19 +89,18 @@ const ReviewAndSubmit = ({
             </ul>
           </div>
         </div>
-      </motion.div>
+      </div>
     );
   };
 
+  // Section cards
   const renderPersonalInformation = () => (
-    <div className="bg-white rounded-lg border border-gray-200 p-6">
+    <div className="bg-white rounded-xl border border-gray-200 p-4 lg:p-6">
       <div className="flex items-center justify-between mb-4">
-        <h4 className="text-lg font-semibold text-gray-700 flex items-center">
-          <TbUser className="w-5 h-5 mr-2" />
-          Personal Information
+        <h4 className="text-base md:text-lg font-semibold text-neutral-700 flex items-center">
+          <TbUser className="w-5 h-5 mr-2" /> Personal Information
         </h4>
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div>
           <label className="text-xs text-gray-500 font-medium">Full Name</label>
@@ -153,14 +141,12 @@ const ReviewAndSubmit = ({
   );
 
   const renderContactInformation = () => (
-    <div className="bg-white rounded-lg border border-gray-200 p-6">
+    <div className="bg-white rounded-xl border border-gray-200 p-4 lg:p-6">
       <div className="flex items-center justify-between mb-4">
-        <h4 className="text-lg font-semibold text-gray-700 flex items-center">
-          <TbMail className="w-5 h-5 mr-2" />
-          Contact Information
+        <h4 className="text-base md:text-lg font-semibold text-neutral-700 flex items-center">
+          <TbMail className="w-5 h-5 mr-2" /> Contact Information
         </h4>
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="text-xs text-gray-500 font-medium">
@@ -193,7 +179,6 @@ const ReviewAndSubmit = ({
           </p>
         </div>
       </div>
-
       {(formData.nextOfKinName || formData.nextOfKinContacts) && (
         <div className="border-t border-gray-200 pt-4 mt-4">
           <h5 className="text-sm font-medium text-gray-700 mb-3">
@@ -221,16 +206,14 @@ const ReviewAndSubmit = ({
   );
 
   const renderHealthInformation = () => (
-    <div className="bg-white rounded-lg border border-gray-200 p-6">
+    <div className="bg-white rounded-xl border border-gray-200 p-4 lg:p-6">
       <div className="flex items-center justify-between mb-4">
-        <h4 className="text-lg font-semibold text-gray-700 flex items-center">
-          <TbStethoscope className="w-5 h-5 mr-2" />
-          Health Information
+        <h4 className="text-base md:text-lg font-semibold text-neutral-700 flex items-center">
+          <TbStethoscope className="w-5 h-5 mr-2" /> Medical Health History &
+          Details
         </h4>
       </div>
-
       <div className="space-y-4">
-        {/* Pre-existing conditions */}
         <div>
           <label className="text-xs text-gray-500 font-medium">
             Pre-existing Conditions
@@ -253,8 +236,6 @@ const ReviewAndSubmit = ({
             )}
           </div>
         </div>
-
-        {/* Current medication */}
         {formData.currentMedication && (
           <div>
             <label className="text-xs text-gray-500 font-medium">
@@ -265,8 +246,6 @@ const ReviewAndSubmit = ({
             </p>
           </div>
         )}
-
-        {/* Allergies */}
         {formData.allergies && (
           <div>
             <label className="text-xs text-gray-500 font-medium">
@@ -275,8 +254,6 @@ const ReviewAndSubmit = ({
             <p className="text-sm text-gray-700 mt-1">{formData.allergies}</p>
           </div>
         )}
-
-        {/* Family medical history */}
         {formData.familyMedicalHistory && (
           <div>
             <label className="text-xs text-gray-500 font-medium">
@@ -287,7 +264,6 @@ const ReviewAndSubmit = ({
             </p>
           </div>
         )}
-
         {!formData.preExistingConditions?.length &&
           !formData.currentMedication &&
           !formData.allergies &&
@@ -302,25 +278,20 @@ const ReviewAndSubmit = ({
 
   const renderLifestyleInformation = () => {
     const lifestyle = formData.lifestyle || {};
-
     if (
       !lifestyle.smokingStatus &&
       !lifestyle.alcoholConsumption &&
       !lifestyle.exerciseFrequency &&
       !lifestyle.occupation
-    ) {
+    )
       return null;
-    }
-
     return (
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 lg:p-6">
         <div className="flex items-center justify-between mb-4">
-          <h4 className="text-lg font-semibold text-gray-700 flex items-center">
-            <TbHeartPlus className="w-5 h-5 mr-2" />
-            Lifestyle Information
+          <h4 className="text-base md:text-lg font-semibold text-neutral-700 flex items-center">
+            <TbHeartPlus className="w-5 h-5 mr-2" /> Lifestyle Information
           </h4>
         </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {lifestyle.smokingStatus && (
             <div>
@@ -372,19 +343,16 @@ const ReviewAndSubmit = ({
       formData.coverType !== "family" ||
       !formData.dependents ||
       formData.dependents.length === 0
-    ) {
+    )
       return null;
-    }
-
     return (
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 lg:p-6">
         <div className="flex items-center justify-between mb-4">
-          <h4 className="text-lg font-semibold text-gray-700 flex items-center">
-            <TbUsers className="w-5 h-5 mr-2" />
-            Family Members ({formData.dependents.length})
+          <h4 className="text-base md:text-lg font-semibold text-neutral-700 flex items-center">
+            <TbUsers className="w-5 h-5 mr-2" /> Family Members (
+            {formData.dependents.length})
           </h4>
         </div>
-
         <div className="space-y-4">
           {formData.dependents.map((dependent, index) => (
             <div
@@ -440,14 +408,12 @@ const ReviewAndSubmit = ({
   };
 
   const renderPlanSummary = () => (
-    <div className="bg-gradient-to-r from-primary-50 to-secondary-50 rounded-lg border border-primary-200 p-6">
+    <div className="bg-gradient-to-r from-primary-50 to-secondary-50 rounded-xl border border-primary-200 p-4 lg:p-6">
       <div className="flex items-center justify-between mb-4">
-        <h4 className="text-lg font-semibold text-primary-700 flex items-center">
-          <TbShield className="w-5 h-5 mr-2" />
-          Selected Plan
+        <h4 className="text-base md:text-lg font-semibold text-primary-700 flex items-center">
+          <TbShield className="w-5 h-5 mr-2" /> Selected Plan
         </h4>
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-3">
           <div>
@@ -485,7 +451,6 @@ const ReviewAndSubmit = ({
             </p>
           </div>
         </div>
-
         <div className="space-y-3">
           <div>
             <label className="text-xs text-primary-600 font-medium">
@@ -516,8 +481,6 @@ const ReviewAndSubmit = ({
           </div>
         </div>
       </div>
-
-      {/* Health verification notice */}
       {formData.requiresHealthVerification && (
         <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
           <div className="flex items-start">
@@ -541,16 +504,13 @@ const ReviewAndSubmit = ({
   const renderDocumentsSummary = () => {
     const documents = formData.documents || {};
     const documentCount = Object.keys(documents).length;
-
     return (
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 lg:p-6">
         <div className="flex items-center justify-between mb-4">
-          <h4 className="text-lg font-semibold text-gray-700 flex items-center">
-            <TbFileText className="w-5 h-5 mr-2" />
-            Documents ({documentCount})
+          <h4 className="text-base md:text-lg font-semibold text-neutral-700 flex items-center">
+            <TbFileText className="w-5 h-5 mr-2" /> Documents ({documentCount})
           </h4>
         </div>
-
         {documentCount > 0 ? (
           <div className="space-y-2">
             {Object.entries(documents).map(([docType, fileData]) => (
@@ -565,8 +525,7 @@ const ReviewAndSubmit = ({
                   </span>
                 </div>
                 <div className="flex items-center text-xs text-gray-500">
-                  <TbCheck className="w-4 h-4 text-green-500 mr-1" />
-                  Uploaded
+                  <TbCheck className="w-4 h-4 text-green-500 mr-1" /> Uploaded
                 </div>
               </div>
             ))}
@@ -600,7 +559,6 @@ const ReviewAndSubmit = ({
         </div>
       );
     }
-
     return (
       <div className="bg-green-50 border border-green-200 rounded-lg p-4">
         <div className="flex items-start">
@@ -618,8 +576,61 @@ const ReviewAndSubmit = ({
     );
   };
 
+  // Custom styled agree-to-terms checkbox
+  const renderAgreementCheckbox = () => (
+    <div className="flex items-start space-x-3">
+      <label className="pt-0.5 flex items-center">
+        <div
+          className={`relative flex items-center justify-center h-[1.1rem] w-[1.1rem] rounded-[0.2rem] border focus:outline-none ${
+            agreed === true
+              ? "border-primary-600 bg-primary-100"
+              : "border-gray-500"
+          }`}
+        >
+          <input
+            type="checkbox"
+            name="agreement"
+            checked={agreed === true}
+            onChange={(e) => {
+              setAgreed(e.target.checked);
+              setErrors({});
+            }}
+            className="absolute opacity-0 h-full w-full cursor-pointer"
+          />
+          {agreed === true && (
+            <div className="">
+              <TbCheck className="text-primary-600" />
+            </div>
+          )}
+        </div>
+      </label>
+      <label htmlFor="agreement" className="text-sm md:text-base text-gray-600">
+        <span
+          className={`font-medium ${
+            agreed === true ? "text-primary-700" : "text-gray-600"
+          }`}
+        >
+          I agree to the terms and conditions and privacy policy. I confirm the
+          information provided is accurate and complete.
+        </span>
+      </label>
+    </div>
+  );
+
+  // Submission handler
+  const handleSubmit = () => {
+    if (!agreed) {
+      setErrors({ agreement: "You must agree to the terms and conditions" });
+      return;
+    }
+    setErrors({});
+    setValidationErrors && setValidationErrors({});
+    nextStep();
+  };
+
+  // Main render
   return (
-    <div className="space-y-6 md:space-y-8">
+    <div className="space-y-8">
       <div className="text-center mb-8">
         <h3 className="flex items-center justify-center text-lg md:text-xl lg:text-2xl font-bold text-primary-700/90 mb-2">
           <span className="block lg:hidden mr-1">5.</span>
@@ -630,11 +641,7 @@ const ReviewAndSubmit = ({
           health insurance application.
         </p>
       </div>
-
-      {/* Validation Errors */}
       {renderValidationErrors()}
-
-      {/* Application Summary */}
       <div className="space-y-6">
         {renderPlanSummary()}
         {renderPersonalInformation()}
@@ -645,61 +652,19 @@ const ReviewAndSubmit = ({
         {renderDocumentsSummary()}
         {renderPaymentInfo()}
       </div>
-
-      {/* Terms and Conditions */}
       <div className="bg-gray-50 rounded-lg p-6">
-        <div className="flex items-start space-x-3">
-          <input
-            type="checkbox"
-            id="terms"
-            checked={agreed}
-            onChange={(e) => setAgreed(e.target.checked)}
-            className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500 mt-1"
-          />
-          <div className="flex-1">
-            <label
-              htmlFor="terms"
-              className="text-sm text-gray-700 cursor-pointer"
-            >
-              I agree to the{" "}
-              <button
-                type="button"
-                onClick={() => setShowTerms(true)}
-                className="text-primary-600 hover:text-primary-700 underline"
-              >
-                terms and conditions
-              </button>{" "}
-              and{" "}
-              <button
-                type="button"
-                onClick={() => setShowTerms(true)}
-                className="text-primary-600 hover:text-primary-700 underline"
-              >
-                privacy policy
-              </button>
-              . I understand that the information provided is accurate and
-              complete.
-            </label>
-          </div>
-        </div>
-
-        {!agreed && (
-          <p className="text-red-600 text-sm mt-2 ml-7">
-            Please agree to the terms and conditions to continue
-          </p>
+        {renderAgreementCheckbox()}
+        {errors.agreement && (
+          <p className="text-red-500 text-xs mt-2 ml-7">{errors.agreement}</p>
         )}
       </div>
-
-      {/* Navigation */}
       <div className="flex justify-between items-center pt-6 border-t border-gray-200">
         <button
           onClick={prevStep}
           className="flex items-center px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
         >
-          <TbChevronLeft className="w-4 h-4 mr-2" />
-          Back
+          <TbChevronLeft className="w-4 h-4 mr-2" /> Back
         </button>
-
         <button
           onClick={handleSubmit}
           disabled={!agreed || isSubmitting}
@@ -726,14 +691,6 @@ const ReviewAndSubmit = ({
           )}
         </button>
       </div>
-
-      {!agreed && (
-        <div className="text-center">
-          <p className="text-sm text-red-600">
-            Please agree to the terms and conditions to continue
-          </p>
-        </div>
-      )}
     </div>
   );
 };

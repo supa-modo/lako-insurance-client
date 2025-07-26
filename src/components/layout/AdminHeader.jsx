@@ -127,9 +127,9 @@ const AdminHeader = ({ toggleSidebarCollapse, sidebarCollapsed }) => {
             </div>
             <input
               type="text"
-              placeholder="Search clients, plans, reports..."
+              placeholder="Search applications, insurance plans, messages, tasks..."
               className="w-full h-10 pl-10 pr-4 rounded-lg bg-white/10 border border-white/20 focus:bg-white/20 
-              text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-secondary-400 font-lexend text-sm"
+              text-white placeholder-white/50 focus:outline-none focus:ring-1 focus:border-white/60 focus:ring-white/60 font-lexend text-sm"
             />
             <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none text-xs text-white/30 font-lexend">
               Press / to search
