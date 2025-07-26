@@ -355,7 +355,7 @@ const DocumentUpload = ({
           <span className="block lg:hidden mr-1">4.</span>{" "}
           <span className="">{getStepTitle()}</span>
         </h3>
-        <p className="text-gray-600 text-sm md:text-base max-w-2xl mx-auto">
+        <p className="text-gray-600 text-sm md:text-base max-w-5xl mx-auto">
           Please upload the required documents to complete your application. All
           files must be in PDF, JPEG, or PNG format and under 5MB.
         </p>

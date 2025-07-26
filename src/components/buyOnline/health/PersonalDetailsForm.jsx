@@ -83,7 +83,7 @@ const PersonalDetailsForm = ({
     },
     {
       id: "lifestyle",
-      title: "Lifestyle",
+      title: "Lifestyle & Habits",
       icon: <TbHeartPlus className="w-5 h-5" />,
       fields: [
         "smokingStatus",
@@ -477,7 +477,7 @@ const PersonalDetailsForm = ({
   const renderRadio = (name, value, checked, onChange, label) => (
     <label className="flex items-center cursor-pointer">
       <div
-        className={`relative flex items-center justify-center h-[1.1rem] w-[1.1rem] rounded-md border-2 focus:outline-none ${
+        className={`relative flex items-center justify-center h-4 md:h-5 w-4 md:w-5 rounded-[0.3rem] md:rounded-md border-2 focus:outline-none ${
           checked ? "border-primary-500 bg-primary-50" : "border-neutral-400"
         }`}
       >
@@ -489,10 +489,12 @@ const PersonalDetailsForm = ({
           onChange={() => onChange(value)}
           className="absolute opacity-0 h-full w-full cursor-pointer"
         />
-        {checked && <div className="h-2 w-2 rounded-sm bg-primary-500"></div>}
+        {checked && (
+          <div className="h-2 md:h-2.5 w-2 md:w-2.5 rounded-sm bg-primary-500"></div>
+        )}
       </div>
       <span
-        className={`ml-2 text-sm ${
+        className={`ml-2 text-sm md:text-[0.9rem] lg:text-base ${
           checked ? "text-primary-700" : "text-gray-600"
         } font-medium capitalize`}
       >
@@ -505,14 +507,14 @@ const PersonalDetailsForm = ({
     <div className="space-y-6">
       {/* Pre-existing conditions */}
       <div>
-        <label className="block text-sm md:text-[0.9rem] lg:text-base font-medium text-gray-700 mb-3">
+        <label className="block text-sm md:text-[0.9rem] lg:text-base font-semibold text-gray-700 mb-3">
           Do you have any pre-existing medical conditions?
         </label>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {commonConditions.map((condition) => (
             <div
               key={condition}
-              className="flex items-center space-x-2 text-sm"
+              className="flex items-center space-x-2 text-sm md:text-[0.9rem] lg:text-[0.95rem] font-medium"
             >
               {renderSwitch(
                 formData.preExistingConditions?.includes(condition) || false,
@@ -531,14 +533,14 @@ const PersonalDetailsForm = ({
                   }
                 }
               )}
-              <span className="text-gray-700">{condition}</span>
+              <span className="text-gray-600">{condition}</span>
             </div>
           ))}
         </div>
       </div>
       {/* Current medication */}
       <div>
-        <label className="block text-sm md:text-[0.9rem] lg:text-base font-medium text-gray-700 mb-2">
+        <label className="block text-sm md:text-[0.9rem] lg:text-base font-semibold text-gray-700 mb-2">
           Current Medications
         </label>
         <textarea
@@ -551,7 +553,7 @@ const PersonalDetailsForm = ({
       </div>
       {/* Allergies */}
       <div>
-        <label className="block text-sm md:text-[0.9rem] lg:text-base font-medium text-gray-700 mb-2">
+        <label className="block text-sm md:text-[0.9rem] lg:text-base font-semibold text-gray-700 mb-2">
           Known Allergies
         </label>
         <textarea
@@ -564,7 +566,7 @@ const PersonalDetailsForm = ({
       </div>
       {/* Family medical history */}
       <div>
-        <label className="block text-sm md:text-[0.9rem] lg:text-base font-medium text-gray-700 mb-2">
+        <label className="block text-sm md:text-[0.9rem] lg:text-base font-semibold text-gray-700 mb-2">
           Family Medical History
         </label>
         <textarea
@@ -582,23 +584,9 @@ const PersonalDetailsForm = ({
 
   const renderLifestyleSection = () => (
     <div className="space-y-6">
-      <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-        <div className="flex items-start">
-          <TbHeartPlus className="w-5 h-5 text-green-600 mt-0.5 mr-3 flex-shrink-0" />
-          <div>
-            <h5 className="text-green-800 font-medium mb-1">
-              Lifestyle Information
-            </h5>
-            <p className="text-green-700 text-sm">
-              This information may affect your premium rates and help us
-              recommend the best coverage options.
-            </p>
-          </div>
-        </div>
-      </div>
       {/* Smoking status */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-3">
+        <label className="block text-sm md:text-[0.9rem] lg:text-base font-semibold text-gray-700 mb-3">
           Smoking Status
         </label>
         <div className="flex flex-wrap gap-4">
@@ -620,7 +608,7 @@ const PersonalDetailsForm = ({
       </div>
       {/* Alcohol consumption */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-3">
+        <label className="block text-sm md:text-[0.9rem] lg:text-base font-semibold text-gray-700 mb-3">
           Alcohol Consumption
         </label>
         <div className="flex flex-wrap gap-4">
@@ -637,7 +625,7 @@ const PersonalDetailsForm = ({
       </div>
       {/* Exercise frequency */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-3">
+        <label className="block text-sm md:text-[0.9rem] lg:text-base font-semibold text-gray-700 mb-3">
           Exercise Frequency
         </label>
         <div className="flex flex-wrap gap-4">
@@ -660,7 +648,7 @@ const PersonalDetailsForm = ({
       </div>
       {/* Occupation */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm md:text-[0.9rem] lg:text-base font-semibold text-gray-700 mb-2">
           Occupation
         </label>
         <input
@@ -818,34 +806,6 @@ const PersonalDetailsForm = ({
           </button>
         </div>
       )}
-    </div>
-  );
-
-  // --- Section Navigation ---
-  const renderSectionNav = () => (
-    <div className="flex flex-wrap justify-center gap-2 mb-4 md:mb-6 lg:mb-8">
-      {sections.map((section, index) => {
-        const sectionHasErrors = section.fields.some((field) => errors[field]);
-        return (
-          <button
-            key={index}
-            onClick={() => setCurrentSection(index)}
-            className={`flex items-center px-4 md:px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-              index === currentSection
-                ? "bg-primary-600 text-white"
-                : sectionHasErrors
-                ? "bg-red-100 text-red-700 border border-red-300"
-                : index < currentSection
-                ? "bg-green-100 text-green-700"
-                : "bg-gray-200 text-gray-600"
-            }`}
-          >
-            {sectionHasErrors && <TbAlertCircle className="w-4 h-4 mr-1" />}
-            {section.icon}
-            <span className="ml-2 hidden md:inline">{section.title}</span>
-          </button>
-        );
-      })}
     </div>
   );
 
